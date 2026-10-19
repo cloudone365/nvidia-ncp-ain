@@ -36,7 +36,7 @@ Weekly rhythm that works:
 - [ ] Can write from memory: NVUE lossless RoCE + adaptive routing config for a leaf; opensm partitions.conf entry; NicClusterPolicy skeleton; Ansible play that applies NVUE YAML
 - [ ] Can explain ibstat output states; what each ib* utility is for; what mlxlink BER fields mean
 - [ ] Can draw a rail-optimized SU and explain why GPU-N-to-GPU-N is one hop
-- [ ] Re-read every "Common pitfalls & exam traps" section
+- [ ] Re-read every module's "Appendix B — Exam traps & key takeaways" and complete every hands-on assignment before opening its solution guide
 - [ ] Register on Certiverse, test webcam/room, read the proctoring rules
 
 ## Exam-day tactics

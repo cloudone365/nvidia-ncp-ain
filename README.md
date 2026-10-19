@@ -26,13 +26,27 @@ A self-paced, open training course for the **NCP-AIN** certification exam. It is
 
 Full breakdown: [00-exam-guide/exam-blueprint.md](00-exam-guide/exam-blueprint.md)
 
+## How every module is built
+
+Each module is written as an instructor-led lesson and follows the same five-part structure:
+
+| # | Section | What you get |
+|---|---|---|
+| 1 | **Learning objectives** | "By the end of this module you will be able to…" — testable, mapped to exam objectives |
+| 2 | **Key technical concepts** | Beginner-friendly explanation of the mechanics, analogy first, precise mechanism second, "why the exam cares" third |
+| 3 | **Live-style walkthrough** | A step-by-step, heavily commented command/config session or architectural trace showing the concept in action |
+| 4 | **Troubleshooting / common gotchas** | 2–3 errors learners actually hit here: Symptom → Why → How to debug → Fix |
+| 5 | **Hands-on assignment** | A mini-project you build independently, with a **Hint** section — and the **Solution guide held until the very bottom of the file** |
+
+After those, each module carries appendices you'll want on exam day: a quick command/config reference, exam traps & key takeaways, a knowledge check (scenario MCQs + answer key), and references.
+
 ## How to use this course
 
 1. Read the [exam blueprint](00-exam-guide/exam-blueprint.md) and pick a [study plan](00-exam-guide/study-plan.md) (8-week default, 4-week accelerated).
-2. Work the modules in order — each one lists objectives, concepts, config/command reference, pitfalls, key takeaways, and review questions with an answer key.
+2. Work the modules in order. Do the hands-on assignment **before** reading the solution guide — the assignment is where competency is actually built.
 3. Do the [labs](09-labs/) as you reach them. Most Ethernet labs run free in NVIDIA Air; InfiniBand labs need real Quantum gear or a UFM demo.
 4. Finish with the [practice exam](10-practice-exam/practice-exam.md) and [flashcards](10-practice-exam/flashcards.md).
-5. Before exam day, re-read every module's **Common pitfalls & exam traps** section.
+5. Before exam day, re-read every module's **Appendix B — Exam traps & key takeaways**.
 
 ## Course map
 
