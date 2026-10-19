@@ -107,7 +107,7 @@ Applications that use RDMA CM (NCCL does not — it sets `traffic_class` itself;
 cma_roce_mode -d mlx5_2 -p 1              # show: "RoCE v2"
 cma_roce_mode -d mlx5_2 -p 1 -m 2         # force RoCE v2 (1 = v1)
 cma_roce_tos  -d mlx5_2 -p 1              # show ToS used for CM connections
-cma_roce_tos  -d mlx5_2 -p 1 -t 106       # ToS 106 = DSCP 26 << 2  (DSCP*4)
+cma_roce_tos  -d mlx5_2 -p 1 -t 106       # ToS 106 = (DSCP 26 << 2) | ECT(0) = 104 + 2
 # (Both write under /sys/kernel/config/rdma_cm/mlx5_2/ports/1/default_roce_mode|default_roce_tos)
 
 # Raw-verbs applications pick version via the GID index and set traffic_class themselves:
@@ -115,7 +115,7 @@ show_gids                                  # choose the v2 IPv4 GID index (Modul
 # Legacy (ConnectX-3) only: set_roce_mode / ibv_exp_* - obsolete on mlx5 devices
 ```
 
-NCCL equivalents: `NCCL_IB_GID_INDEX=<v2 index>` (or auto in recent versions), `NCCL_IB_TC=106` (ToS = DSCP 26 × 4), `NCCL_IB_SL` is ignored on RoCE but `NCCL_IB_PKEY` is not applicable. perftest: `-x <gid>` and `--tclass=106`.
+NCCL equivalents: `NCCL_IB_GID_INDEX=<v2 index>` (or auto in recent versions), `NCCL_IB_TC=106` (ToS = DSCP 26 × 4 + ECN ECT bit), `NCCL_IB_SL` is ignored on RoCE but `NCCL_IB_PKEY` is not applicable. perftest: `-x <gid>` and `--tclass=106`.
 
 ### 4.3 ECN on the host
 ECN marking *response* must be enabled on the NIC per priority, for both roles:

@@ -304,7 +304,7 @@ B. `ping -s 65000`
 C. `iperf3 -c <server>`
 D. `ibping -L <lid>`
 
-**49.** `ib_write_bw` between two NDR-connected hosts reports ~195 Gb/s instead of ~390 Gb/s. `iblinkinfo` shows the host port at `2X 100.0 Gbps`. Most likely cause:
+**49.** `ib_write_bw` between two NDR-connected hosts reports ~195 Gb/s instead of ~390 Gb/s. `iblinkinfo` shows the host port at `2X 106.25 Gbps ... ( Could be 4X )`. Most likely cause:
 A. SM is not running
 B. The link negotiated reduced width — check the cable/transceiver with mlxlink and reseat or replace
 C. PFC is misconfigured

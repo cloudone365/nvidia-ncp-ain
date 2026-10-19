@@ -160,9 +160,9 @@ Partitions are IB's VLAN equivalent, enforced per packet at the transport layer.
 
 | Value | Meaning |
 |---|---|
-| `0x7fff` | **Default partition**, full membership. Every port is a member unless the SM is told otherwise |
+| `0x7fff` | **Default partition** (full-membership form `0xffff`). Every port is a full member unless the SM is told otherwise |
 | `0x0001`–`0x7ffe` | Admin-defined partitions (limited membership form) |
-| `0x8000 | key` (high bit set, e.g. `0x8001`) | **Full membership** in that partition |
+| `0x8000 \| key` (high bit set, e.g. `0x8001`) | **Full membership** in that partition |
 | high bit clear (e.g. `0x0001`) | **Limited membership** |
 
 Membership rules, which the exam loves:
@@ -194,7 +194,7 @@ tenantB=0x0a02, ipoib, sl=1 : 0xb83fd20300556677=full, 0xb83fd20300556688=full ;
 Flags you should recognise:
 
 - `ipoib` — create the IPoIB broadcast multicast group for this partition (without it, IPoIB will not come up on the child interface).
-- `mtu=` and `rate=` — encoded values for the multicast group (mtu 4 = 2048, 5 = 4096; rate 7 = 100G, etc.; check the table in the opensm man page).
+- `mtu=` and `rate=` — encoded values for the multicast group (mtu 4 = 2048, 5 = 4096; rate 7 = 40G, 16 = 100G, 17 = 200G, etc.; check the table in the opensm man page).
 - `sl=` — service level for the group, which ties partitions to QoS (Module 2.3).
 - `defmember=full|limited` — default membership for ports listed without an explicit one.
 - `ALL`, `ALL_CAS`, `ALL_SWITCHES`, `ALL_ROUTERS`, `SELF` — keywords instead of GUID lists.

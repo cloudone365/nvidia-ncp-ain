@@ -410,7 +410,7 @@ IPoIB (`ib0`) puts IP on top of IB using the broadcast multicast group of a **PK
 Check in this order:
 
 1. **Port Active?** `ibstat` — IPoIB is dead without a LID.
-2. **Same PKey?** `cat /sys/class/net/ib0/pkey` on both hosts (default `0x7fff` = full-member default partition). A child interface (`ib0.8001`) created with `echo 0x8001 > /sys/class/net/ib0/create_child`) must use a PKey the SM has actually assigned to *both* ports (`saquery -p`, or `smpquery pkeys <lid>`). Mismatched PKey = no multicast group join = no ARP.
+2. **Same PKey?** `cat /sys/class/net/ib0/pkey` on both hosts (default `0xffff` = full-member form of the default partition `0x7fff`). A child interface (`ib0.8001`) created with `echo 0x8001 > /sys/class/net/ib0/create_child`) must use a PKey the SM has actually assigned to *both* ports (`saquery -p`, or `smpquery pkeys <lid>`). Mismatched PKey = no multicast group join = no ARP.
 3. **Mode:** `cat /sys/class/net/ib0/mode` — `datagram` (UD, MTU up to 4092 B, works everywhere) vs `connected` (RC, MTU up to 65520 B, higher throughput, both ends must agree or large packets fail while small pings succeed).
 4. **MTU:** `ip link show ib0`; a 65520 connected-mode MTU talking to a 2044 datagram peer fails on large frames (PMTU does not help on the same L2).
 5. **Multicast group join:** `saquery MCMR` shows the IPoIB broadcast groups the SM created; if the SM's `opensm.conf` partitions file omits `ipoib` for that PKey, no group exists.

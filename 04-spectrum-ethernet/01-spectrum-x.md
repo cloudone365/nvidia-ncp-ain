@@ -33,7 +33,7 @@ Why does NVIDIA position Spectrum-X against InfiniBand rather than replacing it?
 | Switch | ASIC | Capacity | Ports | Typical role |
 |---|---|---|---|---|
 | SN5600 | Spectrum-4 | 51.2 Tb/s | 64 × 800G OSFP (+1 mgmt SFP28); each 800G port breaks out to 2×400G or 4×200G | Spine and leaf in Spectrum-X SuperPOD; 128×400G leaf when broken out |
-| SN5400 | Spectrum-4 | 25.6 Tb/s | 64 × 400G QSFP-DD (+ 2×100G) | Leaf, storage, or smaller fabrics |
+| SN5400 | Spectrum-4 | 25.6 Tb/s | 64 × 400G QSFP-DD (+ 2 × SFP28) | Leaf, storage, or smaller fabrics |
 | SN4600/SN4700 | Spectrum-3 | 12.8 Tb/s | 64 × 200G / 32 × 400G | Prior generation; supports AR but not the full Spectrum-X feature set — verify against the Spectrum-X support matrix |
 
 Port breakout is configured in NVUE exactly as on any Cumulus switch (Module 4.2): `nv set interface swp1 link breakout 2x` yields `swp1s0`/`swp1s1`. On the SN5600, a 400G breakout is how you connect 400G SuperNICs to an 800G leaf port.
@@ -151,7 +151,7 @@ nv set qos congestion-control default-global traffic-class 3 min-threshold 15000
 nv set qos congestion-control default-global traffic-class 3 max-threshold 1500000
 nv set qos congestion-control default-global traffic-class 3 probability 100
 nv set qos pfc default-global cable-length 100     # metres; sizes PFC headroom
-nv set qos ets default-global traffic-class 3 bw-percent 50
+nv set qos egress-scheduler default-global traffic-class 3 bw-percent 50
 ```
 Threshold units are bytes; cable length affects PFC headroom calculation (longer cable → more in-flight bytes → more headroom). Defaults vary by platform — check the current doc before quoting a number.
 
