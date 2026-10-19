@@ -120,7 +120,7 @@ Front / back pairs, grouped by domain. Import into Anki by splitting on ` — `.
 - cl-resource-query — ASIC table utilization (routes, hosts, MACs, ACLs, ECMP)
 - cl-support — Cumulus support bundle
 - smonctl / nv show platform environment — hardware sensors
-- WJH enable — `nv set system wjh enable on` (+ channels/triggers)
+- WJH enable — `nv set system wjh enable on` (≤5.14) / `nv set system wjh state enabled` (5.15+), plus channels/triggers
 - WJH categories — L1, L2, router, tunnel, ACL, buffer
 - NetQ check vs show — check = validation suite with pass/fail; show = state
 - NetQ agent config — `netq config add server <ip> vrf mgmt` then `netq config restart agent`
@@ -177,7 +177,7 @@ Front / back pairs, grouped by domain. Import into Anki by splitting on ` — `.
 - Bottom-up method — physical → link → SM/LID (IB) or L2/L3 (Eth) → QoS → RDMA perf → app (NCCL)
 
 ## Automation / Kubernetes
-- nvidia.nvue collection — Ansible modules for NVUE objects + `config_apply`
+- nvidia.nvue collection — Ansible modules per NVUE object (interface, bridge, router, vrf, evpn, api…); apply via `nvidia.nvue.config` with `state: apply` (no `config_apply` module)
 - NVUE YAML root — `- set:` (and `- unset:`)
 - NVUE REST — `https://<switch>:8765/nvue_v1/…` (GET state, PATCH to stage, POST revision apply)
 - Jinja2 + NVUE — template per role (leaf/spine) with host_vars for loopbacks/ASNs/breakouts

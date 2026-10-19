@@ -183,7 +183,7 @@ export NCCL_SHARP_GROUP_SIZE_THRESH=2  # verify name/default; minimum ranks per 
 export SHARP_COLL_ENABLE_SAT=1       # streaming aggregation (large messages) on Quantum-2 — verify
 export SHARP_COLL_LOG_LEVEL=3
 ```
-Check with `NCCL_DEBUG=INFO` for lines mentioning `SHARP` / `CollNet` and with `sharp_hello` / `sharp_benchmark.sh` from the SHARP package. SHARP needs the AM reachable, the switches licensed/enabled for SHARP, and the job's partition (**PKey**) allowed in the AM configuration. Only one or a few SHARP jobs can hold switch aggregation resources concurrently per tree; verify limits per switch generation. Module [`../02-infiniband/03-ib-qos-ar-sharp.md`](../02-infiniband/03-ib-qos-ar-sharp.md) covers the fabric side.
+Check with `NCCL_DEBUG=INFO` for lines mentioning `SHARP` / `CollNet` and with `sharp_hello` / `sharp_benchmark.sh` from the SHARP package. SHARP needs the AM reachable, the switches licensed/enabled for SHARP, and the job's partition (**PKey**) allowed in the AM configuration. Only one or a few SHARP jobs can hold switch aggregation resources concurrently per tree; verify limits per switch generation. Module [`../02-infiniband/03-infiniband-qos-adaptive-routing-sharp.md`](../02-infiniband/03-infiniband-qos-adaptive-routing-sharp.md) covers the fabric side.
 
 ## 7. PXN and rail-optimized topologies
 
@@ -353,4 +353,4 @@ mpirun -np 16 -H dgx01:8,dgx02:8 --bind-to none -x NCCL_DEBUG -x NCCL_IB_HCA \
 - NVIDIA SHARP documentation — https://docs.nvidia.com/networking/display/sharpv300
 - NVIDIA Developer Blog: "Doubling all2all Performance with NVIDIA Collective Communication Library 2.12" (PXN) — https://developer.nvidia.com/blog/
 - nccl-rdma-sharp-plugins — https://github.com/Mellanox/nccl-rdma-sharp-plugins
-- Related modules: [1.2 SuperPOD RA (rail-optimized)](02-dgx-superpod-basepod-reference-architectures.md), [IB QoS/AR/SHARP](../02-infiniband/03-ib-qos-ar-sharp.md), [RDMA fundamentals](../03-rdma/), [IB diag and perftest](../08-troubleshooting/)
+- Related modules: [1.2 SuperPOD RA (rail-optimized)](02-dgx-superpod-basepod-reference-architectures.md), [IB QoS/AR/SHARP](../02-infiniband/03-infiniband-qos-adaptive-routing-sharp.md), [RDMA fundamentals](../03-rdma/), [IB diag and perftest](../08-troubleshooting/)

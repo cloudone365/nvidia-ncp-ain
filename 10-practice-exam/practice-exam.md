@@ -406,7 +406,7 @@ D. 22
 
 **65.** In an Ansible playbook using `nvidia.nvue`, what is typically the final task after pushing configuration objects?
 A. A reboot
-B. A `config_apply` / `nv config apply` task so the staged changes take effect
+B. An apply step (`nvidia.nvue.config` with `state: apply`, or `nv config apply` via the command module) so the staged revision takes effect
 C. `nv config save` only
 D. `netq install`
 
