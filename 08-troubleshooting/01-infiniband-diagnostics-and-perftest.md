@@ -5,57 +5,63 @@
 > **Source docs:** NVIDIA InfiniBand Fabric Utilities (infiniband-diags); ibdiagnet User Manual; perftest (github.com/linux-rdma/perftest); "Testing RDMA latency with ib_write_lat"; IPoIB chapter of the MLNX_OFED / DOCA-Host user manual; NCCL Troubleshooting guide  
 > **Estimated study time:** 4 hours
 
-## Learning objectives
-- Describe what each InfiniBand port state and physical state means and infer the most likely cause from the combination (for example `Initializing` + `LinkUp` + no LID = no Subnet Manager).
-- Inventory a fabric and locate degraded links with **ibnodes**, ibswitches, ibhosts and **iblinkinfo**.
-- Verify end-to-end IB-layer reachability with **ibping**, ibtracert and ibroute, and explain why ICMP ping does not test the same thing.
-- Read port error counters with perfquery and distinguish "cable/physical" counters from "congestion" counters.
-- Run **ibdiagnet** with the flags the exam expects, locate its output files, and interpret the error/warning summary.
-- Run **ib_write_bw** / **ib_write_lat** / ib_read_bw / ib_send_bw in client–server mode (including GPUDirect with `--use_cuda`) and judge whether the numbers are healthy for the link rate.
-- Troubleshoot an IPoIB interface that is up but cannot ping (PKey, SM, connected vs. datagram mode).
-- Apply a bottom-up troubleshooting methodology and pick the right tool for a given symptom.
+## 1. Learning objectives
 
-## 1. Where these tools live and how they talk to the fabric
+By the end of this module you will be able to:
 
-The InfiniBand diagnostics ship as part of MLNX_OFED / DOCA-Host (package `infiniband-diags`, plus `ibutils2` for ibdiagnet) and are also present on managed Quantum switches (MLNX-OS / NVOS) and on the UFM appliance. There are two mechanisms underneath:
+- **Describe** what each InfiniBand port state and physical state means and infer the most likely cause from the combination (for example `Initializing` + `LinkUp` + no LID = no Subnet Manager). *(Troubleshooting Tools — interpret IB port status)*
+- **Verify** fabric inventory and locate degraded links with **ibnodes**, ibswitches, ibhosts and **iblinkinfo**, including spotting the "Could be 4X" width downgrade. *(Troubleshooting Tools — fabric discovery utilities)*
+- **Verify** end-to-end IB-layer reachability with **ibping**, ibtracert and ibroute, and explain why ICMP ping does not test the same thing. *(Troubleshooting Tools / InfiniBand Networking — reachability and routing)*
+- **Troubleshoot** a link using perfquery port counters, distinguishing "cable/physical" counters from "congestion" counters. *(Troubleshooting Tools — counter interpretation)*
+- **Configure and run** **ibdiagnet** with the flags the exam expects, locate its output files under `/var/tmp/ibdiagnet2/`, and interpret the error/warning summary. *(Troubleshooting Tools — ibdiagnet)*
+- **Run** **ib_write_bw** / **ib_write_lat** / ib_read_bw / ib_send_bw in client–server mode (including GPUDirect with `--use_cuda`) and judge whether the numbers are healthy for the link rate. *(Troubleshooting Tools — perftest)*
+- **Troubleshoot** an IPoIB interface that is up but cannot ping (PKey, SM, connected vs. datagram mode). *(InfiniBand Networking — IPoIB and partitions)*
+- **Write** a bottom-up troubleshooting procedure and pick the right tool for a given symptom. *(Troubleshooting Tools — methodology)*
+
+## 2. Key technical concepts
+
+### 2.1 Bottom-up troubleshooting: check the plug before the app
+
+**Analogy.** When the lamp does not come on you check the plug, then the bulb, then the switch, then the wiring, and only then do you call the electrician about the house. You do not start by rewiring the house. InfiniBand troubleshooting works the same way: every layer depends on the one below it, so you start at the cable and climb.
+
+**Mechanism.** The layers, and the tool that answers each one:
+
+```text
+1. Physical/cable  -> ibstat Physical state; mlxlink -m / -c (8.3); perfquery SymbolErrors
+2. Link state      -> ibstat State; iblinkinfo width/speed ("Could be 4X")
+3. SM / LID        -> sminfo; Base lid != 0; SM lid identical everywhere
+4. Partition/QoS   -> saquery -p; /sys/class/net/ib0/pkey; saquery PR for SL
+5. Routing         -> ibtracert; ibroute; ibdiagnet -r (credit loops, AR)
+6. RDMA perf       -> ib_write_bw / ib_write_lat per link; ucx_perftest
+7. Application     -> nccl-tests; NCCL_DEBUG=INFO; GPU/NIC PCIe affinity
+```
+
+A fault at layer 2 (a link that trained at half width) *will* show up at layer 7 as a slow NCCL collective. If you start at layer 7 you spend a day tuning NCCL environment variables for a bad cable.
+
+**Why the exam cares.** Nearly every troubleshooting question is "given this symptom, what do you check first?". The answer is always the lowest layer that could produce the symptom.
+
+### 2.2 How the tools talk to the fabric: local reads vs. MADs
+
+**Analogy.** Some tools read the gauge on your own dashboard; others radio the control tower and ask about everyone else's aircraft. The second kind only works if the radio (your port) is live and the tower (the SM) is on duty.
+
+**Mechanism.** The InfiniBand diagnostics ship as part of MLNX_OFED / DOCA-Host (package `infiniband-diags`, plus `ibutils2` for ibdiagnet) and are also present on managed Quantum switches (MLNX-OS / NVOS) and on the UFM appliance. Two mechanisms sit underneath:
 
 | Mechanism | Used by | What it needs |
 |---|---|---|
 | **Local verbs query** (reads the HCA driver) | ibstat, ibstatus, ibv_devinfo | Only a working driver; works even with no SM |
 | **Management Datagrams (MADs)** over QP0/QP1 | ibnodes, iblinkinfo, ibping, ibtracert, ibroute, perfquery, ibportstate, saquery, sminfo, ibdiagnet | A port in `Active` state with a LID, i.e. a running **SM**. Most MAD tools need root for the `umad` device. |
 
-That split is the first thing to internalize: if a tool like `iblinkinfo` hangs or returns "MAD timeout", the problem is usually upstream of the tool — the local port is not Active, or the SM is not running, not that the fabric is broken.
+If a MAD-based tool like `iblinkinfo` hangs or returns "MAD timeout", the problem is usually upstream of the tool — the local port is not Active, or the SM is not running — not that the fabric is broken.
 
-Common options shared by MAD-based tools: `-C <ca>` selects the HCA (`-C mlx5_0`), `-P <port>` the port number, `-G` interprets an address as a **GUID** instead of a **LID**, `-t <ms>` sets MAD timeout.
+Common options shared by MAD-based tools: `-C <ca>` selects the HCA (`-C mlx5_0`), `-P <port>` the port number, `-G` interprets an address as a **GUID** instead of a **LID**, `-t <ms>` sets the MAD timeout.
 
-## 2. Local port state: ibstat, ibstatus, ibv_devinfo
+**Why the exam cares.** "iblinkinfo times out on a freshly cabled fabric" is a trick question: the answer is "no SM yet", not "bad cable".
 
-### 2.1 ibstat
+### 2.3 Port state and physical state: two different questions
 
-**ibstat** is the first command in every IB troubleshooting session. It reads the local HCA and reports every port.
+**Analogy.** *Physical state* is whether the phone line has dial tone. *State* is whether the exchange has given you a phone number. You can have perfect dial tone and still no number.
 
-```bash
-$ ibstat
-CA 'mlx5_0'
-    CA type: MT4129
-    Number of ports: 1
-    Firmware version: 28.41.1000
-    Hardware version: 0
-    Node GUID: 0x946dae0300a1b2c0
-    System image GUID: 0x946dae0300a1b2c0
-    Port 1:
-        State: Active
-        Physical state: LinkUp
-        Rate: 400
-        Base lid: 37
-        LMC: 0
-        SM lid: 1
-        Capability mask: 0xa651e848
-        Port GUID: 0x946dae0300a1b2c0
-        Link layer: InfiniBand
-```
-
-Field by field:
+**Mechanism.** **ibstat** reads the local HCA and reports both:
 
 | Field | Meaning | Healthy value |
 |---|---|---|
@@ -67,7 +73,7 @@ Field by field:
 | Port GUID | 64-bit unique port identifier (burned in) | Used by `-G` options and UFM |
 | Link layer | `InfiniBand` or `Ethernet` (RoCE) | Depends on `LINK_TYPE_P1` in mlxconfig |
 
-The state machine matters because the exam asks you to infer cause from state:
+The combinations tell you the cause:
 
 | State | Physical state | Meaning | Most likely cause |
 |---|---|---|---|
@@ -77,91 +83,17 @@ The state machine matters because the exam asks you to infer cause from state:
 | `Armed` | `LinkUp` | SM has configured the port but not yet moved it to Active | Transient during SM sweep; persistent Armed = SM problem |
 | `Active` | `LinkUp` | Fully operational | — |
 
-Rule of thumb: **Physical state** is about layer 1 (cable, transceiver, port). **State** is about the SM. A port stuck in `Initializing` with `LinkUp` is almost never a cable problem.
+**ibstatus** is the terse variant (LIDs in hex: `0x25` = 37, whereas `ibstat` prints decimal 37 — the exam likes that mismatch). `ibv_devinfo` (`-v` for everything) comes from `libibverbs` and shows what an RDMA application sees: `active_mtu`, max QPs, and the GID table you need for RoCE perftest (`ibv_devinfo -d mlx5_0 -v | grep -i gid`).
 
-### 2.2 ibstatus and ibv_devinfo
+**Why the exam cares.** `Initializing` + `LinkUp` + LID 0 → SM problem. `Down` + `Polling` → physical. This is the single most-tested distinction in the domain.
 
-**ibstatus** is a terse variant that is handy in scripts and shows the rate as text:
+### 2.4 Inventory and link health: ibnodes, iblinkinfo
 
-```bash
-$ ibstatus mlx5_0
-Infiniband device 'mlx5_0' port 1 status:
-    default gid:     fe80:0000:0000:0000:946d:ae03:00a1:b2c0
-    base lid:        0x25
-    sm lid:          0x1
-    state:           4: ACTIVE
-    phys state:      5: LinkUp
-    rate:            400 Gb/sec (4X NDR)
-    link_layer:      InfiniBand
-```
+**Analogy.** Roll call, then a walk down every corridor checking each door.
 
-Note that LIDs are shown in hex here (0x25 = 37) and in decimal in `ibstat`. The exam likes that mismatch.
+**Mechanism.** **ibnodes** discovers the whole subnet via MADs and lists every node; ibswitches and ibhosts are the filtered views. `ibhosts | wc -l` versus the expected count answers "are all 32 nodes present?". The node description string (`"MF0;leaf-01:MQM9700/U1"`) comes from the switch hostname — set hostnames early or every later step is harder. `sminfo` reports the master SM (state 3 = `SMINFO_MASTER`); if it times out there is no SM, which explains every host sitting in `Initializing`. `saquery` queries the Subnet Administrator database: `saquery NR` for node records, `saquery PR <src-lid> <dst-lid>` for path records (SL, MTU, rate), `saquery -p` for the PKey table, `saquery MCMR` for multicast groups.
 
-`ibv_devinfo` (`-v` for everything) comes from `libibverbs` rather than `infiniband-diags` and shows what an RDMA application sees: max QPs, MTU, GID table entries, and the device's verbs capabilities. Use `ibv_devinfo -d mlx5_0 -v | grep -i gid` to find the GID index you will need for RoCE perftest (`-x`).
-
-```bash
-$ ibv_devinfo -d mlx5_0
-hca_id: mlx5_0
-    transport:            InfiniBand (0)
-    fw_ver:               28.41.1000
-    node_guid:            946d:ae03:00a1:b2c0
-    max_mr_size:          0xffffffffffffffff
-    port:   1
-        state:            PORT_ACTIVE (4)
-        max_mtu:          4096 (5)
-        active_mtu:       4096 (5)
-        sm_lid:           1
-        port_lid:         37
-        link_layer:       InfiniBand
-```
-
-`active_mtu` is worth checking: an IB fabric with a 2048 MTU somewhere will negotiate paths down, and IPoIB MTU depends on it.
-
-## 3. Fabric inventory: ibnodes, ibswitches, ibhosts, sminfo, saquery
-
-**ibnodes** discovers the whole subnet via MADs and lists every node (switches and channel adapters). ibswitches and ibhosts are the filtered views.
-
-```bash
-$ ibswitches
-Switch : 0xb8cef603002a1a00 ports 65 "MF0;leaf-01:MQM9700/U1" enhanced port 0 lid 3 lmc 0
-Switch : 0xb8cef603002a1b40 ports 65 "MF0;leaf-02:MQM9700/U1" enhanced port 0 lid 4 lmc 0
-Switch : 0xb8cef603002a2200 ports 65 "MF0;spine-01:MQM9700/U1" enhanced port 0 lid 1 lmc 0
-
-$ ibhosts
-Ca  : 0x946dae0300a1b2c0 ports 1 "dgx-01 mlx5_0"
-Ca  : 0x946dae0300a1b2d4 ports 1 "dgx-01 mlx5_1"
-...
-```
-
-Use this to answer "are all 32 nodes present?" — count the output (`ibhosts | wc -l`) and compare to the expected inventory. The node description string (`"MF0;leaf-01:MQM9700/U1"`) comes from the switch's configured hostname; unlabelled switches show a default and make every later step harder, so set hostnames early.
-
-`sminfo` tells you who the master SM is and its priority/state:
-
-```bash
-$ sminfo
-sminfo: sm lid 1 sm guid 0xb8cef603002a2200, activity count 189231 priority 15 state 3 SMINFO_MASTER
-```
-
-State 3 = MASTER. If `sminfo` times out, there is no SM, which explains every host sitting in `Initializing`.
-
-`saquery` queries the Subnet Administrator database directly: `saquery NR` lists node records, `saquery PR <src-lid> <dst-lid>` returns path records (SL, MTU, rate) — useful to confirm that the SM actually computed a path with the SL your QoS policy expects. `saquery -p` shows the PKey table the SM holds, which is the authoritative source when debugging partition membership.
-
-## 4. Per-link health: iblinkinfo
-
-**iblinkinfo** walks the fabric and prints every link with its negotiated width and speed, and what the far end is. It is the fastest way to find a degraded link.
-
-```bash
-$ iblinkinfo --switches-only
-Switch: 0xb8cef603002a1a00 MF0;leaf-01:MQM9700/U1:
-      3    1[  ]  ==( 4X  106.25 Gbps Active/  LinkUp)==>      37    1[  ] "dgx-01 mlx5_0" ( )
-      3    2[  ]  ==( 2X  106.25 Gbps Active/  LinkUp)==>      38    1[  ] "dgx-01 mlx5_1" ( Could be 4X )
-      3    3[  ]  ==(                Down/ Polling)==>             [  ] "" ( )
-      3   33[  ]  ==( 4X  106.25 Gbps Active/  LinkUp)==>       1   17[  ] "MF0;spine-01:MQM9700/U1" ( )
-```
-
-Reading the line: local LID 3, port 1, width 4X, lane speed 106.25 Gbps (NDR per lane), state Active/LinkUp, connected to LID 37 port 1 on `dgx-01 mlx5_0`. The second line is the exam's favourite: a link that came up at **2X instead of 4X**. iblinkinfo flags it in parentheses with `Could be 4X` (and similarly `Could be 100 Gbps` for speed downgrades). Half the lanes failed to train; the usual causes are a damaged or marginal cable, a dirty connector, or an OSFP breakout plugged into the wrong port. Correlate with `mlxlink` (Module 8.3) for the per-lane view.
-
-Useful options:
+**iblinkinfo** walks every link and prints negotiated width, lane speed, state and far end. NDR per-lane speed shows as **106.25 Gbps**. A link that came up at **2X instead of 4X** is flagged `( Could be 4X )`; a speed downgrade shows `Could be 100 Gbps` or similar.
 
 | Option | Purpose |
 |---|---|
@@ -171,219 +103,95 @@ Useful options:
 | `-S <guid>` / `-n <hops>` | Start from a given switch GUID / limit discovery depth |
 | `--load-cache <file>` / `--diff` | Compare against a saved discovery to spot what changed |
 
-The one-liner every IB admin knows: `iblinkinfo -l | grep -i "could be"` lists every degraded link in the fabric.
+**Why the exam cares.** `iblinkinfo -l | grep -i "could be"` is *the* fabric-scale way to find a degraded cable; the exam shows you an iblinkinfo line and asks what it means.
 
-## 5. Reachability and routing: ibping, ibtracert, ibroute
+### 2.5 Reachability and path: ibping, ibtracert, ibroute
 
-### 5.1 ibping
+**Analogy.** ICMP ping asks "does your house answer the doorbell?". **ibping** asks "does the postal system have a route to your address?" — it tests the fabric, not the application stack. And unlike a doorbell, somebody has to be standing behind the door to answer: you must start a responder.
 
-**ibping** tests IB-layer reachability using vendor-specific MADs, not IP. Unlike ICMP, the far end does not answer by default: you must start a responder.
+**Mechanism.** `ibping -S` on the target; `ibping -L <lid>` or `ibping -G <guid>` on the source. It proves both ports are Active, the SM assigned LIDs, and the switches hold forwarding entries between them. It does **not** prove RDMA data QPs work, PKeys match, or performance is acceptable. "ibping works but IPoIB ping fails" therefore points at IPoIB configuration (PKey, IP, mode).
 
-```bash
-# On the target host
-$ sudo ibping -S
-# On the source host, by LID or by port GUID
-$ sudo ibping -L 37
-Pong from dgx-01.(none) (Lid 37): time 0.041 ms
-Pong from dgx-01.(none) (Lid 37): time 0.038 ms
-$ sudo ibping -G 0x946dae0300a1b2c0 -c 5
-```
+`ibtracert <src-lid> <dst-lid>` prints the hop-by-hop path by reading each switch's linear forwarding table (LFT) — use it to confirm rail-0 to rail-0 traffic stays on the rail-0 leaf. `ibroute <switch-lid>` dumps a switch's LFT; `-M` the multicast table. With **adaptive routing**, the LFT is only the static fallback; AR groups are inspected via `ibdiagnet -r` or UFM.
 
-What ibping proves: both ports are Active, the SM has assigned LIDs, and the switches have forwarding table entries between the two LIDs. What it does **not** prove: that RDMA data QPs work, that PKeys match for your application partition, or that performance is acceptable. "ibping works but IPoIB ping fails" therefore points straight at IPoIB configuration (PKey, IP, mode) rather than the fabric. Exam trap: candidates forget `-S`; without a server you get `ibwarn: ... ibping ... timeout` and wrongly conclude the fabric is broken.
+**Why the exam cares.** Forgetting `ibping -S` and concluding "fabric broken" is a classic distractor.
 
-### 5.2 ibtracert and ibroute
+### 2.6 Port counters: typos vs. traffic jams
 
-`ibtracert <src-lid> <dst-lid>` prints the hop-by-hop path the SM programmed, by reading each switch's linear forwarding table (LFT):
+**Analogy.** Some counters count *typos* on the wire (physical); others count *time stuck in traffic* (congestion). You fix typos by replacing the pen; you fix traffic by changing routes. Replacing a cable for a congestion counter fixes nothing.
 
-```bash
-$ sudo ibtracert 37 52
-From ca {0x946dae0300a1b2c0} portnum 1 lid 37-37 "dgx-01 mlx5_0"
-[1] -> switch port {0xb8cef603002a1a00}[1] lid 3-3 "MF0;leaf-01:MQM9700/U1"
-[33] -> switch port {0xb8cef603002a2200}[17] lid 1-1 "MF0;spine-01:MQM9700/U1"
-[21] -> switch port {0xb8cef603002a1b40}[34] lid 4-4 "MF0;leaf-02:MQM9700/U1"
-[5] -> ca port {0x946dae0300a1c110}[1] lid 52-52 "dgx-05 mlx5_0"
-To ca {0x946dae0300a1c110} portnum 1 lid 52-52 "dgx-05 mlx5_0"
-```
-
-Use it to confirm that traffic between two rail-0 NICs really stays on the rail-0 leaf (rail-optimized design) rather than taking an extra spine hop, and to find which switch to inspect when only one pair of nodes is slow. `-m <mlid>` traces a multicast tree instead.
-
-`ibroute <switch-lid>` dumps a switch's LFT — which output port serves each destination LID. `ibroute -M` dumps the multicast forwarding table. With **adaptive routing** enabled, the LFT is only the static fallback; AR groups are inspected via `ibdiagnet -r` or UFM, not `ibroute`.
-
-## 6. Port counters: perfquery and ibqueryerrors
-
-perfquery reads the Port Counters performance MAD of any port in the fabric: `perfquery [lid] [port]`. With no arguments it reads the local port.
-
-```bash
-$ sudo perfquery -x 3 2
-# Port extended counters: Lid 3 port 2 (CapMask: 0x5A00)
-PortSelect:......................2
-CounterSelect:...................0x0000
-PortXmitData:....................8812003346122
-PortRcvData:.....................9122381910023
-PortXmitPkts:....................33120239812
-PortRcvPkts:.....................34092312891
-SymbolErrorCounter:..............1182
-LinkErrorRecoveryCounter:........3
-LinkDownedCounter:...............1
-PortRcvErrors:...................27
-PortRcvRemotePhysicalErrors:.....0
-PortRcvSwitchRelayErrors:........0
-PortXmitDiscards:................0
-PortXmitConstraintErrors:........0
-PortRcvConstraintErrors:.........0
-LocalLinkIntegrityErrors:........0
-ExcessiveBufferOverrunErrors:....0
-VL15Dropped:.....................0
-PortXmitWait:....................4421902
-```
-
-`-x` requests the 64-bit extended counters (the 32-bit data counters wrap in seconds at NDR). `-R` resets the counters after reading, which is how you measure a rate: reset, wait 60 seconds, read again. `-a` reads all ports of a switch.
-
-Interpretation, grouped by what they imply:
+**Mechanism.** perfquery reads the Port Counters MAD of any port: `perfquery [lid] [port]`; `-x` for 64-bit extended counters (32-bit data counters wrap in seconds at NDR); `-R` resets after reading; `-a` reads all ports of a switch.
 
 | Counter | Category | Interpretation |
 |---|---|---|
-| SymbolErrorCounter | Physical | Bit errors on the wire, pre-FEC-correction visible errors. Rising steadily = marginal cable/transceiver/connector |
-| LinkErrorRecoveryCounter | Physical | Link retrained successfully. A few at boot are fine; incrementing during operation = flapping link |
-| LinkDownedCounter | Physical | Link went fully down. Correlate with cable events |
-| PortRcvErrors | Physical/protocol | Malformed or corrupt packets received (CRC). Cable-side issue on the *remote* transmitter or this receiver |
-| PortRcvRemotePhysicalErrors | Physical (upstream) | Packets marked bad *by an earlier hop*. The fault is somewhere before this link, not on it |
-| LocalLinkIntegrityErrors / ExcessiveBufferOverrunErrors | Physical | Serious; usually goes with symbol errors |
-| PortXmitDiscards | Congestion/forwarding | Packets dropped on transmit (switch lifetime limit exceeded, no route). Points at congestion or routing, not cables |
-| PortXmitWait | Congestion | Ticks the port had data but no credits. High relative to XmitData = head-of-line blocking / congested path. The key counter for "fabric is up but slow" |
+| SymbolErrorCounter | Physical | Bit errors on the wire. Rising steadily = marginal cable/transceiver/connector |
+| LinkErrorRecoveryCounter | Physical | Link retrained successfully. A few at boot fine; incrementing during operation = flapping |
+| LinkDownedCounter | Physical | Link went fully down |
+| PortRcvErrors | Physical/protocol | Malformed/corrupt packets received (CRC). Remote transmitter or this receiver |
+| PortRcvRemotePhysicalErrors | Physical (upstream) | Packets marked bad *by an earlier hop* — fault is before this link |
+| LocalLinkIntegrityErrors / ExcessiveBufferOverrunErrors | Physical | Serious; usually with symbol errors |
+| PortXmitDiscards | Congestion/forwarding | Dropped on transmit (lifetime limit, no route). Congestion or routing, not cables |
+| PortXmitWait | Congestion | Ticks the port had data but no credits. The key counter for "fabric is up but slow" |
 | VL15Dropped | Management | SM traffic dropped; usually only during storms |
 
-Exam distinction to memorize: **SymbolError / LinkErrorRecovery / LinkDowned / PortRcvErrors → cable and physical layer. PortXmitDiscards / PortXmitWait → congestion and routing.** A single error is not a failure; what matters is the *rate*.
+ibqueryerrors sweeps the fabric and prints only ports over threshold (`-r` rates, `-k` reset after reading, `-s` suppress counters).
 
-ibqueryerrors sweeps the whole fabric and prints only ports whose counters exceed thresholds (`-s` to suppress specific counters, `-r` to also show per-port rates, `--data` for data counters, `-k` to reset after reading). It is the quick "show me every unhealthy port" command when you do not want the full ibdiagnet run.
+**Why the exam cares.** **SymbolError / LinkErrorRecovery / LinkDowned / PortRcvErrors → physical. PortXmitDiscards / PortXmitWait → congestion/routing.** A single error is not a failure; the *rate* is.
 
-## 7. Port control: ibportstate
+### 2.7 ibdiagnet: the full physical
 
-ibportstate queries or changes a *remote* port via MADs — the way to bounce a switch port from a host without logging into the switch:
+**Analogy.** Everything above is a stethoscope; **ibdiagnet** is the annual full physical with blood work — slower, but it looks at everything and writes a report.
 
-```bash
-$ sudo ibportstate 3 2 query          # show state, width, speed of LID 3 port 2
-$ sudo ibportstate 3 2 disable        # admin-down it (Physical state -> Disabled)
-$ sudo ibportstate 3 2 enable
-$ sudo ibportstate 3 2 reset          # force a retrain without disabling
-$ sudo ibportstate 3 2 width 1        # bitmask; 1=1X,2=4X,4=8X,8=12X (verify in current docs)
-$ sudo ibportstate 3 2 speed 1        # SDR mask; use espeed/fdr10 for extended speeds
-```
-
-Disabling a switch port that carries your own path cuts you off — the classic self-inflicted outage. Prefer UFM or the switch CLI for anything near the management path, and remember that `Disabled` physical state in `ibstat` output means someone did this on purpose.
-
-## 8. Full fabric diagnostic: ibdiagnet
-
-**ibdiagnet** (ibutils2) is the comprehensive sweep: it discovers topology, reads every port's counters and capabilities, checks the SM's routing tables for correctness and credit loops, pulls cable EEPROM data, and writes a set of files to `/var/tmp/ibdiagnet2/`.
-
-```bash
-# Baseline run, reset counters first and pause 30s so counters reflect a measured window
-$ sudo ibdiagnet --pc --pm_pause_width=30 -P all=1 --extended_speeds all --get_cable_info -r
-```
+**Mechanism.** ibdiagnet (ibutils2) discovers topology, reads every port's counters and capabilities, validates the SM's routing tables for dead-ends and credit loops, pulls cable EEPROM data, and writes to `/var/tmp/ibdiagnet2/`.
 
 | Flag | Purpose |
 |---|---|
 | `--pc` | Clear (reset) all port counters at the start |
-| `--pm_pause_width=<sec>` | Wait this long after clearing so the second read measures a real interval |
-| `-P all=1` | Report any counter that incremented by ≥1 as a warning (threshold policy; tune for production, e.g. `-P symbol_error_counter=100`) |
-| `--extended_speeds all` | Read extended speed and lane info (needed to see NDR per-lane details) |
-| `--get_cable_info` | Pull transceiver/cable EEPROM: vendor, PN, SN, length, temperature. Written to `ibdiagnet2.cables` |
-| `-r` | Routing validation: checks LFTs for correctness, dead-ends and credit loops; reports AR configuration |
+| `--pm_pause_width=<sec>` | Wait after clearing so the second read measures a real interval |
+| `-P all=1` | Report any counter that incremented by ≥1 (tune for production, e.g. `-P symbol_error_counter=100`) |
+| `--extended_speeds all` | Read extended speed and lane info (NDR per-lane details) |
+| `--get_cable_info` | Pull transceiver EEPROM: vendor, PN, SN, length, temperature → `ibdiagnet2.cables` |
+| `-r` | Routing validation: LFT correctness, dead-ends, credit loops; reports AR configuration |
 | `--sc` / `--skip` | Skip stages (e.g. `--skip dup_guids`) |
 | `-o <dir>` | Alternate output directory |
 | `--sharp` | Validate **SHARP** aggregation tree configuration |
-| `-i <ca> -p <port>` | Which local HCA/port to use as the discovery point |
-
-On a managed switch or UFM appliance the same tool is available (`ibdiagnet` from the switch CLI; UFM runs it on a schedule and shows results under Fabric Health).
-
-Output files (in `/var/tmp/ibdiagnet2/`):
+| `-i <ca> -p <port>` | Which local HCA/port to discover from |
 
 | File | Contents |
 |---|---|
-| `ibdiagnet2.log` | Human-readable stage-by-stage log and the summary table — read this first |
-| `ibdiagnet2.db_csv` | Full machine-readable database: nodes, ports, counters, cable info; what UFM and scripts parse |
+| `ibdiagnet2.log` | Stage-by-stage log and the summary table — read this first |
+| `ibdiagnet2.db_csv` | Full machine-readable database; what UFM and scripts parse |
 | `ibdiagnet2.pm` | Port counters for every port |
-| `ibdiagnet2.fdbs` | Linear forwarding tables (routing) of every switch |
-| `ibdiagnet2.net_dump` | Topology in a node/port/neighbor listing (useful diff against a cabling plan — see Module 8.2) |
+| `ibdiagnet2.fdbs` | Linear forwarding tables of every switch |
+| `ibdiagnet2.net_dump` | Topology as node/port/neighbor listing (diff against a cabling plan — Module 8.2) |
 | `ibdiagnet2.cables` | Cable EEPROM data when `--get_cable_info` is used |
 | `ibdiagnet2.sm` | SM information |
 | `ibdiagnet2.ar` / `.plft` | Adaptive routing groups and tables when `-r` is used |
 
-The summary at the end of the log is what you act on:
+"Routing" errors mentioning **credit loops** indicate a cyclic dependency in forwarding tables that can deadlock under load; they come from miscabling that violates the routing engine's topology assumptions. Fix cabling or pick the right engine in `opensm.conf` / UFM. On a multi-rail SuperPOD each rail may be a *separate subnet* and needs its own run with `-i <ca>`.
 
-```text
--I- Stage                     Warnings   Errors   Comment
--I- Discovery                        0        0
--I- Lids Check                       0        0
--I- Links Check                      1        0
--I- Subnet Manager                   0        0
--I- Port Counters                    2        0
--I- Nodes Information                0        0
--I- Speed / Width checks             1        0
--I- Partition Keys                   0        0
--I- Alias GUIDs                      0        0
--I- Temperature Sensing              0        0
--I- Routing                          0        0
--I- Cables                           0        0
+**Why the exam cares.** It asks for the default output path (`/var/tmp/ibdiagnet2/`), which file holds what, and what `--pc` does.
 
--W- link ... : Unexpected actual link width 2x (expected 4x) ...
--W- lid=0x0003 ... port=2 : SymbolErrorCounter=1182 exceeds threshold
-```
+### 2.8 perftest: measuring the pipe
 
-Workflow: run once at bring-up with `--pc` to establish a clean baseline, keep the `db_csv`, then re-run after any change and diff. "Routing" errors mentioning **credit loops** indicate a cyclic dependency in the forwarding tables that can deadlock the fabric under load; they come from miscabling that does not match the routing engine's topology assumptions (for example, a fat-tree engine on a fabric with an unexpected cross-link). Fix the cabling or choose the right routing engine in `opensm.conf` / UFM.
+**Analogy.** A speed test for one pipe between two taps. One tap alone cannot fill an NDR pipe — open several (`-q`).
 
-## 9. RDMA performance: perftest
-
-The perftest suite (`ib_write_bw`, **ib_write_lat**, `ib_read_bw`, `ib_read_lat`, `ib_send_bw`, `ib_send_lat`, plus `ib_atomic_*`) is the standard micro-benchmark for a single link or path. It is client–server: start the server with no address, then point the client at the server's IP (the TCP/IP connection is only used to exchange QP information; the actual test traffic is RDMA).
-
-```bash
-# Server (dgx-05)
-$ ib_write_bw -d mlx5_0 -i 1 -F --report_gbits -a
-# Client (dgx-01)
-$ ib_write_bw -d mlx5_0 -i 1 -F --report_gbits -a 10.0.0.5
-```
-
-Key options:
+**Mechanism.** The perftest suite (`ib_write_bw`, **ib_write_lat**, `ib_read_bw`, `ib_read_lat`, `ib_send_bw`, `ib_send_lat`, `ib_atomic_*`) is client–server: start the server with no address, then point the client at the server's IP. TCP is only used to exchange QP information; the test traffic is RDMA.
 
 | Option | Meaning |
 |---|---|
-| `-d mlx5_0` / `-i 1` | Device and port. Always specify on a multi-NIC node, or you may test the wrong rail |
-| `-x <gid-index>` | GID index — required for **RoCE** (pick the RoCEv2 GID for the IP you use, from `show_gids`/`ibv_devinfo -v`). Not needed on IB |
-| `-R` | Use `rdma_cm` for connection setup (resolves GID/route automatically; the normal way on RoCE) |
-| `-a` | Run all message sizes 2 B → 8 MB; `-s <bytes>` for one size |
-| `-q <n>` | Number of QPs; a single QP will not saturate an NDR link, use `-q 4`–`-q 8` |
-| `-D <sec>` | Run for a duration instead of iteration count (`-n`) |
-| `-F` | Do not fail if CPU frequency scaling is on (otherwise it refuses to run on many servers) |
+| `-d mlx5_0` / `-i 1` | Device and port. Always specify on a multi-NIC node or you test the wrong rail |
+| `-x <gid-index>` | GID index — required for **RoCE**; not needed on IB |
+| `-R` | Use `rdma_cm` for connection setup (the normal way on RoCE) |
+| `-a` | All message sizes 2 B → 8 MB; `-s <bytes>` for one size |
+| `-q <n>` | QP count; a single QP will not saturate NDR, use `-q 4`–`-q 8` |
+| `-D <sec>` | Duration instead of iteration count (`-n`) |
+| `-F` | Do not fail if CPU frequency scaling is on |
 | `--report_gbits` | Gb/s instead of MB/s |
-| `-S <sl>` | Service level — test the specific SL / traffic class your QoS policy maps RDMA to |
-| `-m <mtu>` | Path MTU; `--tclass` sets DSCP-bearing traffic class on RoCE |
-| `--use_cuda=<gpu>` | Allocate buffers in GPU memory → tests **GPUDirect RDMA** across the NIC/GPU PCIe path. Requires the perftest build with CUDA support and `nvidia-peermem` or DMA-BUF |
+| `-S <sl>` | Service level — test the SL your QoS maps RDMA to |
+| `-m <mtu>` / `--tclass` | Path MTU / DSCP-bearing traffic class on RoCE |
+| `--use_cuda=<gpu>` | Buffers in GPU memory → tests **GPUDirect RDMA**. Needs CUDA-enabled perftest and `nvidia-peermem` or DMA-BUF |
 | `-b` | Bidirectional |
-| `--run_infinitely` | Keep going until killed — useful while reseating a cable to watch for drops |
-
-Sample output (illustrative) from `ib_write_bw -a --report_gbits` on 4x NDR:
-
-```text
----------------------------------------------------------------------------------------
-                    RDMA_Write BW Test
- Dual-port       : OFF          Device         : mlx5_0
- Number of qps   : 1            Transport type : IB
- Connection type : RC           Using SRQ      : OFF
- TX depth        : 128
- Mtu             : 4096[B]
- Link type       : IB
- Max inline data : 0[B]
- rdma_cm QPs     : OFF
----------------------------------------------------------------------------------------
- #bytes     #iterations    BW peak[Gb/sec]    BW average[Gb/sec]   MsgRate[Mpps]
- 2          5000             0.11               0.11                 6.812
- 64         5000             3.41               3.38                 6.605
- 4096       5000           189.32             188.90                 5.764
- 65536      5000           391.84             391.67                 0.747
- 1048576    5000           392.11             392.05                 0.047
- 8388608    5000           392.02             392.01                 0.006
----------------------------------------------------------------------------------------
-```
+| `--run_infinitely` | Keep going until killed — watch for drops while reseating a cable |
 
 Expected ballpark numbers (verify against your exact platform):
 
@@ -393,43 +201,214 @@ Expected ballpark numbers (verify against your exact platform):
 | 4x HDR (200G) | 200 Gb/s | ~195 Gb/s | ~1.0–1.4 µs |
 | 400G RoCE (ConnectX-7 / BlueField-3) | 400 Gb/s | ~380–390 Gb/s | ~1.5–2.5 µs |
 
-If you see ~195 Gb/s on an NDR link, the link trained at 2X or HDR — go back to `iblinkinfo`. If you see 350 Gb/s and a GPU is the buffer, check the PCIe topology (`nvidia-smi topo -m`): the NIC and GPU should share a PCIe switch for full GPUDirect performance. Latency tests report a table of minimum, typical (median) and maximum, plus 99% and 99.9% percentiles; a high max with a good median usually means the host (CPU power states, IRQ affinity), not the fabric.
+~195 Gb/s on an NDR link = the link trained at 2X or HDR; go back to iblinkinfo. ~350 Gb/s with GPU buffers = check PCIe topology (`nvidia-smi topo -m`). A high latency max with a good median = host (CPU power states, IRQ affinity), not fabric. `ucx_perftest` tests the UCX layer under HPC-X MPI, the step between raw verbs and MPI.
 
-`ucx_perftest` (`ucx_perftest -t ucp_put_bw` server; `ucx_perftest <host> -t ucp_put_bw` client) tests the UCX layer that HPC-X MPI uses, and is the step between raw verbs and MPI when debugging an MPI performance complaint.
+**Why the exam cares.** Which option is RoCE-only (`-x`/`-R`), what `--use_cuda` tests, and what half-rate means.
 
-## 10. nccl-tests as a fabric test
+### 2.9 nccl-tests and IPoIB
 
-Once every link passes perftest, run `all_reduce_perf` from nccl-tests across the nodes: `mpirun -np 16 -H dgx-01:8,dgx-02:8 ./all_reduce_perf -b 8 -e 8G -f 2 -g 1`. The *busbw* column at large sizes should approach the per-GPU NIC rate: bus bandwidth is reported in GB/s, and with one 400 Gb/s (50 GB/s) NIC per GPU a healthy multi-node all_reduce lands in the mid-40s GB/s (verify against the reference numbers published for your system). A single degraded link drags the *whole* collective down to that link's speed, which is why fabric-wide `iblinkinfo` comes first.
+Once every link passes perftest, run `all_reduce_perf` from nccl-tests: `mpirun -np 16 -H dgx-01:8,dgx-02:8 ./all_reduce_perf -b 8 -e 8G -f 2 -g 1`. *busbw* at large sizes should approach the per-GPU NIC rate (50 GB/s for 400 Gb/s; a healthy multi-node all_reduce lands in the mid-40s GB/s — verify against reference numbers for your system). One degraded link drags the whole collective down to that link's speed. Useful environment: `NCCL_DEBUG=INFO`, `NCCL_IB_HCA`, `NCCL_IB_GID_INDEX`, `NCCL_IB_TC` / `NCCL_IB_SL`, `NCCL_NET_GDR_LEVEL`. "NCCL WARN NET/IB : Got completion with error 12" (transport retry exceeded) is almost always a fabric link problem or PFC/ECN misconfiguration on RoCE.
 
-Useful environment: `NCCL_DEBUG=INFO` (prints which NICs/GIDs were selected and whether GDR was used), `NCCL_IB_HCA=mlx5_0,mlx5_1,...` (restrict to the rail NICs — exclude storage NICs), `NCCL_IB_GID_INDEX` (RoCE GID), `NCCL_IB_TC` / `NCCL_IB_SL` (QoS class), `NCCL_NET_GDR_LEVEL`. "NCCL WARN NET/IB : Got completion with error 12" (transport retry exceeded) during a run is almost always a fabric link problem or PFC/ECN misconfiguration on RoCE, not NCCL. See `../01-ai-datacenter-design/` for NCCL fundamentals.
+IPoIB (`ib0`) puts IP over IB using the broadcast multicast group of a **PKey**. `cat /sys/class/net/ib0/pkey` reads `0xffff` on the default partition (full-member form of `0x7fff`). A child interface (`echo 0x8001 > /sys/class/net/ib0/create_child`) must use a PKey the SM assigned to *both* ports (`saquery -p`, `smpquery pkeys <lid>`). `cat /sys/class/net/ib0/mode` shows `datagram` (UD, MTU up to 4092) vs `connected` (RC, MTU up to 65520; both ends must agree or large packets fail while small pings succeed). IPoIB throughput is CPU-bound and far below RDMA line rate by design — a 40 Gb/s `iperf` on an NDR link is normal.
 
-## 11. IPoIB troubleshooting
+## 3. Live-style walkthrough: "the training job hangs on node 7"
 
-IPoIB (`ib0`) puts IP on top of IB using the broadcast multicast group of a **PKey**. Common failure: `ib0` is UP with an address, but `ping` to a peer fails while `ibping` works.
+Scenario: a 32-node job stalls; the scheduler points at `dgx-07`. The SRE already restarted the job twice. You are going to work bottom-up and narrate every decision. All output is illustrative.
 
-Check in this order:
+```bash
+# ---- Step 1: local port state on the suspect node. Always first; it needs no SM and
+#      no fabric, so if it is bad nothing else is worth running yet.
+dgx-07$ ibstat
+CA 'mlx5_0'
+    CA type: MT4129
+    Firmware version: 28.41.1000
+    Node GUID: 0x946dae0300a1b2c0
+    Port 1:
+        State: Active                 # SM has configured this port: layer 3 of our ladder is fine
+        Physical state: LinkUp        # cable, transceiver, port are electrically good: layer 1 fine
+        Rate: 400                     # 4x NDR negotiated. Good so far — but Rate is this port only
+        Base lid: 37                  # non-zero: SM assigned a LID
+        SM lid: 1                     # master SM is LID 1; must match on every other node
+        Port GUID: 0x946dae0300a1b2c0
+        Link layer: InfiniBand        # not Ethernet: LINK_TYPE_P1=1 in mlxconfig
+# Decision: layers 1–3 on mlx5_0 pass. Repeat for mlx5_1..mlx5_7 (8 rails on a DGX).
+dgx-07$ for d in /sys/class/infiniband/mlx5_*; do echo -n "$(basename $d) "; cat $d/ports/1/state; done
+mlx5_0 4: ACTIVE
+mlx5_1 4: ACTIVE
+...
+mlx5_7 4: ACTIVE
+# All eight Active. If one had shown "2: INIT" we would have jumped straight to sminfo.
 
-1. **Port Active?** `ibstat` — IPoIB is dead without a LID.
-2. **Same PKey?** `cat /sys/class/net/ib0/pkey` on both hosts (default `0xffff` = full-member form of the default partition `0x7fff`). A child interface (`ib0.8001`) created with `echo 0x8001 > /sys/class/net/ib0/create_child`) must use a PKey the SM has actually assigned to *both* ports (`saquery -p`, or `smpquery pkeys <lid>`). Mismatched PKey = no multicast group join = no ARP.
-3. **Mode:** `cat /sys/class/net/ib0/mode` — `datagram` (UD, MTU up to 4092 B, works everywhere) vs `connected` (RC, MTU up to 65520 B, higher throughput, both ends must agree or large packets fail while small pings succeed).
-4. **MTU:** `ip link show ib0`; a 65520 connected-mode MTU talking to a 2044 datagram peer fails on large frames (PMTU does not help on the same L2).
-5. **Multicast group join:** `saquery MCMR` shows the IPoIB broadcast groups the SM created; if the SM's `opensm.conf` partitions file omits `ipoib` for that PKey, no group exists.
-6. **Firewall / routing** as on any Linux box.
+# ---- Step 2: confirm the SM is alive and is the SAME master everyone else sees.
+dgx-07$ sudo sminfo
+sminfo: sm lid 1 sm guid 0xb8cef603002a2200, activity count 189231 priority 15 state 3 SMINFO_MASTER
+# state 3 = MASTER, LID 1 matches ibstat's "SM lid". If this had timed out, every port
+# would sit in Initializing and the fix is "start/repair the SM", not "touch cables".
 
-Remember IPoIB performance is not RDMA performance — a 40 Gb/s `iperf` over IPoIB on an NDR link is normal, not a fault.
+# ---- Step 3: fabric-wide link health. We have no evidence yet of WHICH link is bad,
+#      so ask the fabric about every link and grep for downgrades.
+dgx-07$ sudo iblinkinfo -l --switches-only | grep -i "could be"
+0xb8cef603002a1a00 "MF0;leaf-01:MQM9700/U1" 3 2[  ] ==( 2X 106.25 Gbps Active/ LinkUp)==> 38 1[  ] "dgx-07 mlx5_1" ( Could be 4X )
+# There it is. LID 3 (leaf-01) port 2 to dgx-07 mlx5_1 trained at 2X: half the lanes.
+# Per-lane speed is 106.25 Gbps (NDR), so speed is fine; WIDTH is the problem.
+# ibstat on mlx5_1 said Active/LinkUp — state tools cannot see width problems; iblinkinfo can.
+# Decision: this is a layer-1 fault presenting as "slow", and NCCL on a bus of 8 rails runs
+# at the pace of the slowest rail. That is why the job "hangs" (really: crawls).
 
-## 12. Troubleshooting methodology
+# ---- Step 4: counters on that specific switch port. Is the cable marginal (physical
+#      counters rising) or did it just train badly once?
+dgx-07$ sudo perfquery -x 3 2
+# Port extended counters: Lid 3 port 2 (CapMask: 0x5A00)
+PortXmitData:....................8812003346122
+PortRcvData:.....................9122381910023
+SymbolErrorCounter:..............1182      # physical: bit errors on the wire, non-trivial
+LinkErrorRecoveryCounter:........3         # physical: retrained 3 times
+LinkDownedCounter:...............1         # physical: went fully down once
+PortRcvErrors:...................27        # physical: corrupt packets received
+PortXmitDiscards:................0         # congestion: none
+PortXmitWait:....................4421902   # congestion: some credit waits — expected on a 2X link
+#                                            that the SM still routes 4X worth of traffic over
+# Decision: SymbolError + LinkErrorRecovery + LinkDowned all non-zero = cable/transceiver/
+# connector. XmitWait is a CONSEQUENCE of half width, not a separate congestion problem.
+# Measure the rate to be sure it is live, not historical:
+dgx-07$ sudo perfquery -R 3 2 >/dev/null; sleep 60; sudo perfquery -x 3 2 | grep -E 'Symbol|LinkError'
+SymbolErrorCounter:..............94        # 94 symbol errors in 60 s: still happening now
+LinkErrorRecoveryCounter:........0
 
-Work bottom-up; each layer depends on the one below.
+# ---- Step 5: one full ibdiagnet pass for the record and to catch anything else.
+#      NOTE: --pc clears counters. We already captured the evidence above, so that is OK.
+dgx-07$ sudo ibdiagnet --pc --pm_pause_width=30 -P all=1 --extended_speeds all --get_cable_info -r
+...
+-I- Stage                     Warnings   Errors   Comment
+-I- Discovery                        0        0
+-I- Lids Check                       0        0
+-I- Links Check                      1        0    # our 2X link
+-I- Subnet Manager                   0        0
+-I- Port Counters                    1        0    # symbol errors on LID 3 port 2 in the 30 s window
+-I- Speed / Width checks             1        0
+-I- Partition Keys                   0        0
+-I- Routing                          0        0    # no credit loops: routing is not the problem
+-I- Cables                           0        0
+-W- link ... : Unexpected actual link width 2x (expected 4x) ...
+-W- lid=0x0003 ... port=2 : SymbolErrorCounter=61 exceeds threshold
+dgx-07$ grep -A3 "dgx-07 mlx5_1" /var/tmp/ibdiagnet2/ibdiagnet2.cables | head
+# -> Vendor PN, SN, length, temperature of the suspect cable: this goes in the RMA ticket.
+# Decision: exactly one problem in the fabric. Fix it and prove the fix.
 
-```text
-1. Physical/cable  -> ibstat Physical state; mlxlink -m / -c (8.3); perfquery SymbolErrors
-2. Link state      -> ibstat State; iblinkinfo width/speed ("Could be 4X")
-3. SM / LID        -> sminfo; Base lid != 0; SM lid identical everywhere
-4. Partition/QoS   -> saquery -p; /sys/class/net/ib0/pkey; saquery PR for SL
-5. Routing         -> ibtracert; ibroute; ibdiagnet -r (credit loops, AR)
-6. RDMA perf       -> ib_write_bw / ib_write_lat per link; ucx_perftest
-7. Application     -> nccl-tests; NCCL_DEBUG=INFO; GPU/NIC PCIe affinity
+# ---- Step 6: baseline the broken rail BEFORE touching it, so you can show the delta.
+dgx-08$ ib_write_bw -d mlx5_1 -i 1 -F --report_gbits -a            # server on the peer
+dgx-07$ ib_write_bw -d mlx5_1 -i 1 -F --report_gbits -a 10.0.1.8   # client, same rail
+ #bytes     #iterations    BW peak[Gb/sec]    BW average[Gb/sec]   MsgRate[Mpps]
+ 1048576    5000           196.40             196.12               0.023
+# 196 Gb/s on a 400G link: exactly half. Consistent with 2X. (If you saw this number first,
+# with no other context, the right reflex is "go check iblinkinfo for width" — Q6 in the knowledge check.)
+
+# ---- Step 7: remediate. Reseat and clean both ends of the cable (MPO ferrule on optics).
+#      Retrain the port from the host rather than walking to the switch:
+dgx-07$ sudo ibportstate 3 2 reset         # forces a retrain of LID 3 port 2; link drops briefly
+dgx-07$ sleep 15; sudo iblinkinfo -l --switches-only | grep "dgx-07 mlx5_1"
+... ==( 4X 106.25 Gbps Active/ LinkUp)==> 38 1[  ] "dgx-07 mlx5_1" ( )
+# 4X and no "Could be". If it had come back 2X again, the next step is Module 8.3:
+# mlxlink -m for per-lane Rx power, then replace the cable.
+
+# ---- Step 8: prove it with the same test as Step 6.
+dgx-07$ ib_write_bw -d mlx5_1 -i 1 -F --report_gbits -a -q 4 10.0.1.8
+ 1048576    5000           392.11             392.05               0.047
+# ~392 Gb/s: healthy NDR. -q 4 because one QP can under-report on NDR; compare like with like.
+dgx-07$ sudo perfquery -R 3 2 >/dev/null; sleep 300; sudo perfquery -x 3 2 | grep Symbol
+SymbolErrorCounter:..............0         # five minutes clean. Close the ticket; schedule RMA if it recurs.
+```
+
+What "good" looks like: all ports `Active/LinkUp`, `sminfo` state 3, zero lines from `grep "could be"`, physical counters flat over a measured interval, ibdiagnet summary all zeros, `ib_write_bw` within ~3% of line rate.
+
+## 4. Troubleshooting / common gotchas
+
+### 4.1 `ibping` times out although the fabric is healthy
+
+- **Symptom:** `ibping -L 52` prints only `ibwarn: ... ibping ... timeout`, yet `iblinkinfo` shows LID 52 Active.
+- **Why it happens:** ibping has no default responder. Unlike ICMP, nothing answers vendor-specific MADs unless a server process is listening.
+- **How to debug:** on the target run `sudo ibping -S`; retry the client. Confirm with `sudo smpquery nodeinfo 52` that the LID itself is reachable (SMP MADs need no responder).
+- **Fix:** always pair `ibping -S` (target) with `ibping -L <lid>` / `-G <guid>` (source). Do not conclude "fabric broken" from a missing responder.
+
+### 4.2 `ibdiagnet` destroyed the evidence, or refused to run
+
+- **Symptom:** after a nightly `ibdiagnet --pc` the counters you wanted to examine are all zero; or ibdiagnet fails with `umad` / "Failed to open device" errors as a normal user.
+- **Why it happens:** `--pc` clears every port counter at the start of the run. And MAD-based tools need root for `/dev/infiniband/umad*`.
+- **How to debug:** `ls -l /dev/infiniband/umad*`; `id`; check your cron for `--pc`. Look for the previous run's `ibdiagnet2.pm` under `/var/tmp/ibdiagnet2/` (or the `-o` directory) — the pre-clear read is saved there.
+- **Fix:** run with `sudo`. Omit `--pc` when you are preserving evidence; use `--pc --pm_pause_width=30` only for measured-interval runs, and archive `db_csv`/`pm` from every run.
+
+### 4.3 Half-rate `ib_write_bw` blamed on the fabric when it is the test
+
+- **Symptom:** `ib_write_bw` reports ~300 Gb/s on an NDR link; iblinkinfo shows 4X, counters clean.
+- **Why it happens:** a single QP (`-q 1`) with default TX depth often cannot saturate 400G, CPU frequency scaling adds jitter, or on a multi-NIC node you tested the wrong device, or on RoCE you picked the wrong GID index.
+- **How to debug:** rerun with `-q 4 -a --report_gbits`; confirm `-d`/`-i` match the rail under test (`ibdev2netdev`); check `lspci -vv -s <bdf> | grep LnkSta` for PCIe Gen5 x16; on RoCE verify `-x <gid>` against `show_gids` or use `-R`.
+- **Fix:** standardize on `-d <dev> -i 1 -F -a -q 4 --report_gbits` and pin the CPU governor to performance for latency tests (`-F` only hides the warning).
+
+### 4.4 IPoIB "up" but silent
+
+- **Symptom:** `ib0` has an IP, `ibping` to the peer works, ICMP ping fails.
+- **Why it happens:** PKey mismatch (no multicast group join, so no ARP), or connected/datagram mode mismatch with large MTU.
+- **How to debug:** `cat /sys/class/net/ib0/pkey` on both hosts (expect `0xffff` on the default partition); `cat /sys/class/net/ib0/mode`; `ip link show ib0` for MTU; `saquery MCMR` for the broadcast group; `saquery -p` for what the SM actually assigned.
+- **Fix:** align PKeys (provision the partition in `opensm.conf`/UFM on *both* ports), align mode and MTU, then re-test.
+
+## 5. Hands-on assignment: a fabric health script with pass/fail thresholds
+
+**Scenario.** Your team runs a 16-node HDR/NDR cluster without UFM. Every Monday an engineer pastes `iblinkinfo` and `perfquery` output into a ticket by hand. You will replace that with a script.
+
+**Requirements.**
+1. A bash script `ibhealth.sh` runnable as root on any node with `infiniband-diags` installed, taking `-C <ca>` (default `mlx5_0`) and `-n <expected-host-count>`.
+2. Check A — local port: every local `mlx5_*` port must be `Active`/`LinkUp`; print each with PASS/FAIL.
+3. Check B — SM: `sminfo` must return a MASTER within a 2-second timeout.
+4. Check C — inventory: `ibhosts` count must equal `-n`.
+5. Check D — degraded links: zero `Could be` lines from `iblinkinfo -l`; list offenders on FAIL.
+6. Check E — physical counters: for every switch port in `ibqueryerrors` output, SymbolErrorCounter, LinkErrorRecoveryCounter, LinkDownedCounter and PortRcvErrors must be below configurable thresholds (defaults 100/5/1/10), *measured over a 30-second window after a reset* — not since boot.
+7. Check F — congestion flag (warning, not failure): report any port whose PortXmitWait grew by more than a threshold in the window.
+8. Exit 0 if all PASS, 1 if any FAIL; print a one-screen report.
+
+**Deliverables.** `ibhealth.sh`; a sample report from a healthy run and from a run with a deliberately degraded link (you may simulate by editing captured output).
+
+**Acceptance criteria.**
+- AC1: all six checks print a PASS/FAIL (or WARN) line with the measured value and the threshold.
+- AC2: a 2X link, a missing host, or a stopped SM each produce exit code 1 and name the cause.
+- AC3: counters are measured as a *delta over the window*, never since boot.
+- AC4: the script never leaves counters reset without saying so in the report.
+
+### Hint
+- Section 2.3's state table tells you what strings to expect from `ibstat` and from `/sys/class/infiniband/<dev>/ports/1/{state,phys_state}` — the sysfs files are easier to parse.
+- `sminfo` hangs without an SM; wrap it in `timeout 2`.
+- Section 2.4's option table: `iblinkinfo -l` is the machine-friendly form; count lines matching `Could be`.
+- For a delta, Section 2.6: `perfquery -R` resets; `ibqueryerrors -k` resets after reading. Think about reading, waiting, reading again.
+- Keep thresholds in variables at the top; the reviewer will change them.
+
+## Appendix A — Quick command reference
+
+```bash
+# Local state
+ibstat; ibstatus; ibv_devinfo -v
+# Inventory and links
+ibnodes; ibswitches; ibhosts; sminfo
+iblinkinfo --switches-only; iblinkinfo -l | grep -i "could be"; iblinkinfo --down
+# Reachability and routing
+ibping -S                      # responder
+ibping -L <lid> | ibping -G <guid>
+ibtracert <src-lid> <dst-lid>; ibroute <switch-lid>
+saquery NR | saquery -p | saquery PR <slid> <dlid> | saquery MCMR
+# Counters
+perfquery -x <lid> <port>; perfquery -R <lid> <port>; ibqueryerrors -r
+# Port control (careful)
+ibportstate <lid> <port> query|disable|enable|reset
+ibportstate <lid> <port> width 1   # bitmask; 1=1X,2=4X,4=8X,8=12X (verify in current docs)
+# Full diagnostic
+ibdiagnet --pc --pm_pause_width=30 -P all=1 --extended_speeds all --get_cable_info -r
+ls /var/tmp/ibdiagnet2/           # ibdiagnet2.log .db_csv .pm .fdbs .net_dump .cables
+# Performance
+ib_write_bw -d mlx5_0 -i 1 -F -a --report_gbits [-q 4] [-x <gid>] [-R] [--use_cuda=0] [server-ip]
+ib_write_lat -d mlx5_0 -i 1 -F -s 8 -n 10000 [server-ip]
+ib_read_bw / ib_send_bw / ib_send_lat   # same option set
+ucx_perftest -t ucp_put_bw [server]
+mpirun ... all_reduce_perf -b 8 -e 8G -f 2 -g 1
+# IPoIB
+cat /sys/class/net/ib0/{pkey,mode}; echo 0x8001 > /sys/class/net/ib0/create_child
 ```
 
 ### Symptom → tool decision table
@@ -447,63 +426,24 @@ Work bottom-up; each layer depends on the one below.
 | Counters rising fabric-wide after change | ibdiagnet --pc, diff db_csv | ibqueryerrors -r |
 | Need full picture before escalating | ibdiagnet (all flags) + UFM | Collect `/var/tmp/ibdiagnet2`, `ibstat`, `mlxlink` outputs |
 
-## Configuration / command reference
+## Appendix B — Exam traps & key takeaways
 
-```bash
-# Local state
-ibstat; ibstatus; ibv_devinfo -v
-# Inventory and links
-ibnodes; ibswitches; ibhosts; sminfo
-iblinkinfo --switches-only; iblinkinfo -l | grep -i "could be"; iblinkinfo --down
-# Reachability and routing
-ibping -S                      # responder
-ibping -L <lid> | ibping -G <guid>
-ibtracert <src-lid> <dst-lid>; ibroute <switch-lid>
-saquery NR | saquery -p | saquery PR <slid> <dlid> | saquery MCMR
-# Counters
-perfquery -x <lid> <port>; perfquery -R <lid> <port>; ibqueryerrors -r
-# Port control (careful)
-ibportstate <lid> <port> query|disable|enable|reset
-# Full diagnostic
-ibdiagnet --pc --pm_pause_width=30 -P all=1 --extended_speeds all --get_cable_info -r
-ls /var/tmp/ibdiagnet2/           # ibdiagnet2.log .db_csv .pm .fdbs .net_dump .cables
-# Performance
-ib_write_bw -d mlx5_0 -i 1 -F -a --report_gbits [-q 4] [-x <gid>] [-R] [--use_cuda=0] [server-ip]
-ib_write_lat -d mlx5_0 -i 1 -F -s 8 -n 10000 [server-ip]
-ib_read_bw / ib_send_bw / ib_send_lat   # same option set
-ucx_perftest -t ucp_put_bw [server]
-mpirun ... all_reduce_perf -b 8 -e 8G -f 2 -g 1
-# IPoIB
-cat /sys/class/net/ib0/{pkey,mode}; echo 0x8001 > /sys/class/net/ib0/create_child
-```
-
-## Common pitfalls & exam traps
 - `Initializing` + `LinkUp` is an **SM** problem, not a cable problem. `Down` + `Polling` is physical.
+- `ibstat` first: State (SM-driven) and Physical state (layer 1) answer different questions. `sminfo` confirms a master SM; no SM = every port in Initializing with LID 0.
 - `ibping` needs `ibping -S` on the target. It tests IB-layer reachability (LIDs and forwarding), not IP and not RDMA data-path performance.
 - LIDs: `ibstat` prints decimal, `ibstatus`/`saquery` print hex. 0x25 and 37 are the same port.
-- `iblinkinfo` prints "Could be 4X" for a width downgrade — that text, not a counter, is how you spot a degraded cable at fabric scale.
+- `iblinkinfo -l | grep "Could be"` finds degraded links; "Could be 4X" text, not a counter, is how you spot a bad cable at fabric scale. NDR per-lane = 106.25 Gbps.
 - SymbolError/LinkErrorRecovery/LinkDowned/PortRcvErrors = physical. PortXmitWait/PortXmitDiscards = congestion/routing. Do not replace a cable for XmitWait.
-- Use `perfquery -x` for 64-bit counters; the 32-bit data counters wrap within seconds at NDR and look like they "reset".
-- `ibdiagnet --pc` clears counters — do not run it with `--pc` when you are trying to *preserve* evidence of a past event.
-- `-x <gid>` (or `-R`) is needed for perftest on RoCE; on native IB it is unnecessary. Mismatched GID index gives "Couldn't connect" or hangs.
-- A single QP rarely saturates NDR; a "slow" `ib_write_bw` at `-q 1` may be a test artifact. Add `-q 4` before blaming the fabric.
-- `-F` only suppresses the CPU-frequency warning; it does not fix the inaccurate *latency* that frequency scaling causes. Pin governor to performance for latency tests.
-- IPoIB throughput is CPU-bound and far below RDMA line rate by design. Do not "fix" it.
-- Prefer `ibdiagnet` from a host with a rail that reaches the whole subnet; on a multi-rail SuperPOD each rail may be a *separate subnet* and needs a separate run with `-i <ca>`.
-
-## Key takeaways
-- `ibstat` first: State (SM-driven) and Physical state (layer 1) answer different questions.
-- `sminfo` confirms a master SM exists; no SM means every port sits in Initializing with LID 0.
-- `ibhosts`/`ibswitches` give the inventory; `iblinkinfo -l | grep "Could be"` finds degraded links.
-- `ibping -S` on the server, `ibping -L <lid>` on the client; it is a MAD-based test, not ICMP.
-- `ibtracert` shows the programmed path; `ibroute` dumps a switch LFT.
-- `perfquery -x` for 64-bit counters, `-R` to reset; physical counters vs. congestion counters.
-- `ibdiagnet --pc --pm_pause_width=30 -P all=1 --extended_speeds all --get_cable_info -r` writes to `/var/tmp/ibdiagnet2/`; read `ibdiagnet2.log` summary first.
-- perftest is client/server; specify `-d`/`-i`, use `-a`, `-q`, `--report_gbits`, `-x`/`-R` for RoCE, `--use_cuda` for GPUDirect.
-- NDR ≈ 390+ Gb/s and ≈ 1–2 µs latency; half the rate means a 2X or HDR-trained link.
+- Use `perfquery -x` for 64-bit counters; 32-bit data counters wrap within seconds at NDR and look like they "reset".
+- `ibdiagnet --pc` clears counters — do not use it when preserving evidence. Output lives in `/var/tmp/ibdiagnet2/`; read `ibdiagnet2.log` first; `.pm` counters, `.db_csv` database, `.fdbs` routing, `.net_dump` topology, `.cables` EEPROM.
+- `-x <gid>` (or `-R`) is needed for perftest on RoCE; unnecessary on native IB. Wrong GID index = "Couldn't connect" or hang.
+- A single QP rarely saturates NDR; add `-q 4` before blaming the fabric. `-F` only suppresses the CPU-frequency warning; pin the governor for latency tests.
+- NDR ≈ 390+ Gb/s and ≈ 1–2 µs latency; half the rate means a 2X- or HDR-trained link.
+- IPoIB throughput is CPU-bound and far below RDMA line rate by design. `/sys/class/net/ib0/pkey` reads `0xffff` on the default partition.
+- On a multi-rail SuperPOD each rail may be a separate subnet; ibdiagnet needs a run per rail with `-i <ca>`.
 - Bottom-up: cable → link → SM → partition → routing → RDMA perf → application.
 
-## Review questions
+## Appendix C — Knowledge check
 
 1. `ibstat` on a new DGX shows `State: Initializing`, `Physical state: LinkUp`, `Base lid: 0`. What is the most likely cause?  
    A. Faulty cable  
@@ -559,7 +499,7 @@ cat /sys/class/net/ib0/{pkey,mode}; echo 0x8001 > /sys/class/net/ib0/create_chil
 3. A — ibping has no default responder; the target must run `ibping -S`.
 4. B — XmitWait counts credit-starved cycles; with zero physical errors it is congestion, not cable.
 5. B — ibdiagnet writes to `/var/tmp/ibdiagnet2/`; `.pm` holds counters, `.log` the summary.
-6. B — ~196 Gb/s on NDR is exactly a 2X or HDR-trained link; verify the negotiated width before tuning the test.
+6. B — ~196 Gb/s on NDR is exactly a 2X- or HDR-trained link; verify the negotiated width before tuning the test.
 7. C — RoCE needs the GID index (or rdma_cm) to select the RoCEv2 address; IB uses LIDs.
 8. C — ibping proves IB reachability; IPoIB additionally requires matching PKey/multicast group membership.
 
@@ -572,3 +512,159 @@ cat /sys/class/net/ib0/{pkey,mode}; echo 0x8001 > /sys/class/net/ib0/create_chil
 - NCCL Troubleshooting: https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/troubleshooting.html
 - nccl-tests: https://github.com/NVIDIA/nccl-tests
 - Related modules: `../02-infiniband/`, `../03-rdma/03-roce-a-to-z.md`, `02-cable-validation-tool-cvt.md`, `03-mlxlink-and-mlxcables-debug-tools.md`
+
+---
+## Solution guide — Hands-on assignment
+
+The script below meets every requirement. It uses only `infiniband-diags` binaries and sysfs; every external call is wrapped so a hung MAD does not hang the report.
+
+```bash
+#!/usr/bin/env bash
+# ibhealth.sh — InfiniBand fabric health report with pass/fail thresholds (Module 8.1 assignment)
+# Usage: sudo ./ibhealth.sh [-C <ca>] [-n <expected-hosts>] [-w <window-seconds>]
+set -u
+
+# ---------- thresholds (AC1: every check prints value vs threshold; reviewers edit these) ----------
+CA="mlx5_0"            # HCA used for MAD discovery (-C)
+EXPECTED_HOSTS=0       # -n; 0 = skip inventory check
+WINDOW=30              # seconds between counter reads (AC3: delta, never since-boot)
+T_SYMBOL=100           # SymbolErrorCounter delta allowed in window
+T_LINKREC=5            # LinkErrorRecoveryCounter delta allowed
+T_LINKDOWN=1           # LinkDownedCounter delta allowed (>=1 is a FAIL)
+T_RCVERR=10            # PortRcvErrors delta allowed
+T_XMITWAIT=1000000     # PortXmitWait delta that triggers a WARN (congestion, not failure)
+
+while getopts "C:n:w:" opt; do
+  case $opt in
+    C) CA=$OPTARG ;; n) EXPECTED_HOSTS=$OPTARG ;; w) WINDOW=$OPTARG ;;
+    *) echo "usage: $0 [-C ca] [-n hosts] [-w seconds]"; exit 2 ;;
+  esac
+done
+
+[[ $EUID -eq 0 ]] || { echo "FAIL: run as root (MAD tools need /dev/infiniband/umad*)"; exit 1; }
+
+FAIL=0
+pass() { printf "PASS  %-28s %s\n" "$1" "$2"; }
+fail() { printf "FAIL  %-28s %s\n" "$1" "$2"; FAIL=1; }
+warn() { printf "WARN  %-28s %s\n" "$1" "$2"; }
+
+echo "== IB fabric health  $(hostname)  $(date -Is)  via $CA  window=${WINDOW}s =="
+
+# ---------- Check A: local ports (sysfs is simpler to parse than ibstat text) ----------
+for dev in /sys/class/infiniband/mlx5_*; do
+  d=$(basename "$dev")
+  for p in "$dev"/ports/*; do
+    pn=$(basename "$p")
+    state=$(cut -d: -f2 < "$p/state" | tr -d ' ')          # e.g. "ACTIVE", "INIT", "DOWN"
+    phys=$(cut -d: -f2 < "$p/phys_state" | tr -d ' ')      # e.g. "LinkUp", "Polling", "Disabled"
+    lid=$(cat "$p/lid")                                     # hex, 0x0 when no SM
+    rate=$(cat "$p/rate")                                   # e.g. "400 Gb/sec (4X NDR)"
+    if [[ $state == ACTIVE && $phys == LinkUp ]]; then
+      pass "A local $d/$pn" "Active/LinkUp lid=$lid $rate"
+    elif [[ $phys == LinkUp ]]; then
+      fail "A local $d/$pn" "state=$state phys=$phys lid=$lid -> SM problem (Initializing with LinkUp)"
+    else
+      fail "A local $d/$pn" "state=$state phys=$phys -> physical/cable problem"
+    fi
+  done
+done
+
+# ---------- Check B: SM present (sminfo hangs without an SM: bound it) ----------
+if sm=$(timeout 2 sminfo -C "$CA" 2>/dev/null) && grep -q SMINFO_MASTER <<<"$sm"; then
+  pass "B subnet manager" "$(grep -o 'sm lid [0-9]*' <<<"$sm"), state MASTER"
+else
+  fail "B subnet manager" "sminfo timed out or no MASTER -> start/repair SM before anything else"
+fi
+
+# ---------- Check C: inventory ----------
+if (( EXPECTED_HOSTS > 0 )); then
+  hosts=$(timeout 30 ibhosts -C "$CA" 2>/dev/null | grep -c '^Ca')
+  if (( hosts == EXPECTED_HOSTS )); then pass "C host inventory" "$hosts/$EXPECTED_HOSTS HCAs seen"
+  else fail "C host inventory" "$hosts seen, $EXPECTED_HOSTS expected -> ibstat on missing nodes, iblinkinfo --down"; fi
+fi
+
+# ---------- Check D: degraded links ----------
+links=$(timeout 60 iblinkinfo -C "$CA" -l --switches-only 2>/dev/null)
+deg=$(grep -ic "could be" <<<"$links")
+if (( deg == 0 )); then pass "D degraded links" "0 'Could be' lines (threshold 0)"
+else
+  fail "D degraded links" "$deg link(s) trained below capability (threshold 0):"
+  grep -i "could be" <<<"$links" | sed 's/^/        /'
+fi
+
+# ---------- Check E/F: counter deltas over the window ----------
+# Strategy: read all error counters fabric-wide with ibqueryerrors, reset with -k (AC4: say so),
+# wait WINDOW seconds, read again. ibqueryerrors only prints ports over its own thresholds, so
+# for the per-counter delta we use perfquery -x on every switch port it names plus local port.
+echo "NOTE  counters on reported ports were RESET at $(date +%T) for a ${WINDOW}s measurement window"
+declare -A before after
+read_counters() {   # $1 = assoc array name; fills "lid:port:Counter" -> value
+  local -n arr=$1
+  while read -r lid port; do
+    while IFS=: read -r name val; do
+      name=$(tr -d ' .' <<<"$name"); val=$(tr -d ' .' <<<"$val")
+      arr["$lid:$port:$name"]=$val
+    done < <(timeout 5 perfquery -C "$CA" -x "$lid" "$port" 2>/dev/null | grep -E 'SymbolError|LinkErrorRecovery|LinkDowned|PortRcvErrors:|PortXmitWait')
+  done < <(timeout 60 iblinkinfo -C "$CA" -l --switches-only 2>/dev/null | awk '{print $3, $4}' | tr -d '[]' | sort -u)
+}
+# Reset every switch port we are about to measure (perfquery -R), then take the first read.
+while read -r lid port; do timeout 5 perfquery -C "$CA" -R "$lid" "$port" >/dev/null 2>&1; done \
+  < <(timeout 60 iblinkinfo -C "$CA" -l --switches-only 2>/dev/null | awk '{print $3, $4}' | tr -d '[]' | sort -u)
+read_counters before
+sleep "$WINDOW"
+read_counters after
+
+ebad=0; fwarn=0
+for key in "${!after[@]}"; do
+  IFS=: read -r lid port name <<<"$key"
+  delta=$(( ${after[$key]:-0} - ${before[$key]:-0} ))
+  case $name in
+    SymbolErrorCounter)        (( delta > T_SYMBOL ))   && { fail "E lid $lid port $port" "SymbolError +$delta in ${WINDOW}s (>$T_SYMBOL) -> physical"; ebad=1; } ;;
+    LinkErrorRecoveryCounter)  (( delta > T_LINKREC ))  && { fail "E lid $lid port $port" "LinkErrorRecovery +$delta (>$T_LINKREC) -> flapping"; ebad=1; } ;;
+    LinkDownedCounter)         (( delta >= T_LINKDOWN )) && { fail "E lid $lid port $port" "LinkDowned +$delta (>=$T_LINKDOWN) -> link dropped"; ebad=1; } ;;
+    PortRcvErrors)             (( delta > T_RCVERR ))   && { fail "E lid $lid port $port" "PortRcvErrors +$delta (>$T_RCVERR) -> corrupt packets"; ebad=1; } ;;
+    PortXmitWait)              (( delta > T_XMITWAIT )) && { warn "F lid $lid port $port" "PortXmitWait +$delta (>$T_XMITWAIT) -> congestion, not cable"; fwarn=1; } ;;
+  esac
+done
+(( ebad )) || pass "E physical counters" "all switch ports within thresholds over ${WINDOW}s"
+(( fwarn )) || pass "F congestion (XmitWait)" "no port exceeded +$T_XMITWAIT in ${WINDOW}s"
+
+echo "== RESULT: $([[ $FAIL -eq 0 ]] && echo ALL PASS || echo FAILURES PRESENT) =="
+exit $FAIL
+```
+
+**Sample healthy report (illustrative):**
+
+```text
+== IB fabric health  dgx-01  2026-10-19T09:40:12+00:00  via mlx5_0  window=30s ==
+PASS  A local mlx5_0/1             Active/LinkUp lid=0x25 400 Gb/sec (4X NDR)
+...
+PASS  B subnet manager             sm lid 1, state MASTER
+PASS  C host inventory             128/128 HCAs seen
+PASS  D degraded links             0 'Could be' lines (threshold 0)
+NOTE  counters on reported ports were RESET at 09:40:19 for a 30s measurement window
+PASS  E physical counters          all switch ports within thresholds over 30s
+PASS  F congestion (XmitWait)      no port exceeded +1000000 in 30s
+== RESULT: ALL PASS ==
+```
+
+**Sample degraded report (illustrative), exit code 1:**
+
+```text
+FAIL  D degraded links             1 link(s) trained below capability (threshold 0):
+        0xb8cef603002a1a00 "MF0;leaf-01:MQM9700/U1" 3 2[  ] ==( 2X 106.25 Gbps Active/ LinkUp)==> 38 1[  ] "dgx-07 mlx5_1" ( Could be 4X )
+FAIL  E lid 3 port 2               LinkErrorRecovery +7 (>5) -> flapping
+FAIL  E lid 3 port 2               SymbolError +212 in 30s (>100) -> physical
+== RESULT: FAILURES PRESENT ==
+```
+
+(Note that with the default `T_SYMBOL=100`, the 94 symbol errors measured in Section 3 would PASS; lower the threshold or lengthen the window for an NDR production fabric. The point of AC1 is that value and threshold are both visible so the reviewer can make that call.)
+
+**Verifying the acceptance criteria.**
+
+- **AC1** — each `pass`/`fail`/`warn` call prints the measured value and the threshold in the same line (grep the output for `(>` or `threshold`).
+- **AC2** — stop the SM (`systemctl stop opensm` on a test host, or disable the SM on the switch): Check B fails and exit is 1. Power off one node: Check C reports `127 seen, 128 expected`. A 2X link produces the Check D FAIL with the offending iblinkinfo line. `echo $?` after each run shows 1.
+- **AC3** — counters are `after − before` across `sleep $WINDOW`; a port with 1,182 historical symbol errors but none in the window passes, which is correct.
+- **AC4** — the `NOTE ... RESET` line is printed unconditionally before the reset loop runs.
+
+Extension for production: write the report to `/var/log/ibhealth/<date>.txt`, keep the `before`/`after` arrays as CSV for trending, and run `ibdiagnet --pc --pm_pause_width=30 -P all=1 --extended_speeds all --get_cable_info -r -o /var/log/ibhealth/<date>/` once a week for the full record.
