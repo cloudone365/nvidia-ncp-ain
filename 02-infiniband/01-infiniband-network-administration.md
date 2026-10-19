@@ -5,17 +5,24 @@
 > **Source docs:** NVIDIA MLNX-OS User Manual; MLNX_OFED / DOCA-OFED User Manual; OpenSM / MLNXSM Release Notes; NVIDIA Quantum-2 and Quantum-X800 product briefs  
 > **Estimated study time:** 6–8 hours
 
-## Learning objectives
-- Describe the InfiniBand layered architecture and how it differs from the Ethernet/IP model you already know.
-- Identify IB link generations (SDR through XDR), lane counts and per-port bandwidth, and map them to Quantum switch families.
-- Explain the roles of GUID, LID, GID, PKey and QPN and which layer each belongs to.
-- Describe what the **SM** (Subnet Manager) does, where it can run, how master/standby election works, and how to read its state.
-- Select an appropriate routing engine (minhop, updn, ftree, dor, AR-capable engines) for a given topology.
-- Configure partitions (**PKey**) for multi-tenancy, including full vs. limited membership and IPoIB child interfaces.
-- Perform initial MLNX-OS switch provisioning and enable/verify the embedded SM.
-- Verify a host HCA with **ibstat**, **ibstatus**, `ibv_devinfo`, and switch port mode with **mlxconfig**.
+## 1. Learning objectives
 
-## 1. Why InfiniBand exists, and how it is layered
+By the end of this module you will be able to…
+
+- **Describe** the InfiniBand layered architecture and contrast it with the Ethernet/IP model you already know. *(IB Networking: architecture and components)*
+- **Identify** IB link generations SDR→XDR, lane counts and per-port bandwidth, and map them to Quantum switch families. *(IB Networking: hardware and link speeds)*
+- **Explain** the roles of **GUID**, **LID**, **GID**, **PKey** and QPN, who assigns each, and at which layer it lives. *(IB Networking: addressing)*
+- **Describe** what the **SM** does, where it runs, how master/standby election works, and **verify** its state with `sminfo` and `show ib sm`. *(IB Networking: Subnet Manager operation)*
+- **Select** a routing engine (minhop, updn, ftree, dor, AR-capable) for a given topology and justify the choice. *(IB Networking: routing)*
+- **Configure** partitions in `partitions.conf` with full vs. limited membership and bring up IPoIB child interfaces per partition. *(IB Networking: partitioning / multi-tenancy)*
+- **Provision** an MLNX-OS managed switch from the console, enable the embedded SM, and **verify** port states. *(IB Networking: switch administration)*
+- **Troubleshoot** a port stuck in `Initializing`, a PKey mismatch, and an SM election surprise using **ibstat**, `sminfo`, **ibnodes** and **mlxconfig**. *(Troubleshooting Tools)*
+
+## 2. Key technical concepts
+
+### 2.1 Why InfiniBand exists, and how it is layered
+
+**Analogy:** Ethernet is a city where every intersection (switch) decides for itself which way to send traffic. InfiniBand is an airport: one air-traffic controller (the **SM**) assigns every aircraft a gate number (**LID**) and tells every taxiway junction (switch) exactly where each gate is. Nothing moves until the controller has spoken.
 
 InfiniBand (IB) was designed from the start as a lossless, low-latency, RDMA-native fabric for clustered computing. Where Ethernet grew RDMA later (RoCE, see [Module 3.3](../03-rdma/03-roce-a-to-z.md)), IB was built around the idea that the network adapter (the **HCA**, Host Channel Adapter) moves data directly between application memory on two hosts without the host CPU or kernel touching the payload.
 
@@ -32,12 +39,13 @@ The IB specification defines a five-layer model that maps loosely onto OSI:
 Two architectural points matter for everything else in this module:
 
 1. **IB is centrally managed.** There is no spanning tree, no distributed routing protocol, no ARP-style learning. One entity, the **Subnet Manager**, discovers the whole subnet and programs every switch's forwarding table. If the SM is absent, links come up physically but nothing is forwarded and no host can talk.
-2. **IB is lossless by design.** Credit-based flow control at the link layer means a transmitter only sends when the receiver has advertised buffer space. There is no PFC to tune, no ECN to turn on; this is the fundamental contrast with RoCE.
+2. **IB is lossless by design.** Credit-based flow control at the link layer means a transmitter only sends when the receiver has advertised buffer space — like a parking garage that only lets a car through the gate when a space has actually freed up. There is no PFC to tune, no ECN to turn on; this is the fundamental contrast with RoCE.
 
-### Switches and the subnet
 An IB *subnet* is the set of switches and end-ports under one SM, addressed by 16-bit LIDs. Almost every real-world fabric, including multi-thousand-GPU SuperPODs, is a single subnet. Routers exist (for connecting subnets via GIDs) but are a niche topic for the exam; know that they exist and that GIDs are what cross them.
 
-## 2. Link speeds and the Quantum family
+**Why the exam cares:** at least one question will describe a host whose link is physically up but which cannot communicate. If you have internalised "no SM, no forwarding", you answer in five seconds.
+
+### 2.2 Link speeds and the Quantum family
 
 Each generation names the *per-lane* signalling rate; a standard port is 4 lanes (4x). The exam expects you to know the table below, and especially the Quantum-2 and Quantum-X800 numbers.
 
@@ -56,20 +64,20 @@ Notes that come up as exam distractors:
 
 - Quantum-2 physically has 32 OSFP cages; each cage carries two 400G NDR ports, giving 64 ports. Splitting an NDR port further (NDR200, 2x) is possible with breakout cables, which is how 128 × 200G HDR-speed connections to older HCAs are achieved.
 - "HDR100" is a 2-lane HDR port running at 100 Gb/s — same wire rate as EDR but a different protocol generation. Likewise "NDR200" is 2-lane NDR.
-- Quantum-X800 pairs with the ConnectX-8 SuperNIC and Spectrum-X800 on the Ethernet side; it is the first IB generation to integrate SHARPv4 at 800G (see [Module 2.3](03-infiniband-qos-adaptive-routing-sharp.md)).
+- Quantum-X800 pairs with the ConnectX-8 **SuperNIC** and Spectrum-X800 on the Ethernet side; it is the first IB generation to integrate SHARPv4 at 800G (see [Module 2.3](03-infiniband-qos-adaptive-routing-sharp.md)).
 - Link width and speed are negotiated; **ibstat** shows the result as `Rate: 400` with `Active width: 4X` and `Active speed: 100 Gbps` (per lane). If you see `Rate: 200` on an NDR cable, a lane or speed negotiation problem exists; this is a classic troubleshooting scenario covered with **mlxlink** in Module 8.
 
-## 3. Addressing: GUID, LID, GID, PKey, QPN
+### 2.3 Addressing: GUID, LID, GID, PKey, QPN
 
-New IB administrators confuse these constantly. Learn them by *scope* and *who assigns them*.
+**Analogy:** your GUID is your passport number (permanent, issued by the vendor). Your LID is your gate number for today (assigned by the controller, may change tomorrow). Your GID is your passport number prefixed with your country code (globally meaningful). Your PKey is the access badge that opens certain doors. Your QPN is the specific mailbox you are using for one conversation.
 
 | Identifier | Size | Scope | Assigned by | Analogy |
 |---|---|---|---|---|
-| **GUID** (Globally Unique ID) | 64-bit | Permanent; burned in | Vendor (EUI-64) | MAC address |
-| **LID** (Local ID) | 16-bit | One subnet; assigned at discovery, can change | **SM** | A dynamically assigned L2 address used for switching |
+| **GUID** (Globally Unique ID) | 64-bit | Permanent; burned in | Vendor (EUI-64) | MAC address / passport number |
+| **LID** (Local ID) | 16-bit | One subnet; assigned at discovery, can change | **SM** | Gate number — a dynamically assigned L2 address used for switching |
 | **GID** (Global ID) | 128-bit | Global; `subnet prefix (64) + port GUID (64)` | Derived (default prefix `fe80::/64`) | IPv6 link-local address |
-| **PKey** (Partition Key) | 16-bit | Subnet; membership enforced at HCA/switch | SM via partitions.conf | VLAN tag |
-| **QPN** (Queue Pair Number) | 24-bit | Per HCA port | HCA at QP creation | TCP/UDP port number |
+| **PKey** (Partition Key) | 16-bit | Subnet; membership enforced at HCA/switch | SM via partitions.conf | VLAN tag / access badge |
+| **QPN** (Queue Pair Number) | 24-bit | Per HCA port | HCA at QP creation | TCP/UDP port number / mailbox |
 
 Details worth knowing:
 
@@ -78,21 +86,23 @@ Details worth knowing:
 - A packet carries LRH (with source/destination LID) always, and GRH (with GIDs) only when it leaves the subnet or when the application chose to include it. RoCE always uses the GRH since there are no LIDs on Ethernet; this is why `show_gids` matters so much in Module 3.3.
 - The PKey is in the Base Transport Header and is validated on every packet by the HCA and optionally by switch ports. A mismatch is dropped silently and counted in `PortRcvConstraintErrors`-style counters.
 
-## 4. The Subnet Manager
+**Why the exam cares:** "which identifier is permanent" and "which identifier can change after an SM restart" are near-certain questions. Scripts, partitions and topology files key on GUIDs for exactly this reason.
 
-### 4.1 What the SM does
-The **SM** is the brain of the subnet. On start-up and on every topology change (a trap from a switch when a port goes up or down), it runs a sweep:
+### 2.4 The Subnet Manager
+
+**Analogy:** the SM is the air-traffic controller. It surveys the airfield (discovery), hands out gate numbers (LIDs), writes the taxi instructions for every junction (LFTs), sets the rules for each lane (SL→VL, VL arbitration, PKey tables), and answers pilots' questions about how to reach a gate (SA path records).
+
+On start-up and on every topology change (a trap from a switch when a port goes up or down), the SM runs a sweep:
 
 1. **Discovery** — walks the fabric using directed-route SMPs (Subnet Management Packets, sent on the permissive LID over VL15 with the QP0 management queue pair) and builds a database of all nodes, ports and links.
 2. **LID assignment** — gives every end-port and switch a LID (persistent across restarts if `guid2lid` caching is used).
 3. **Routing table computation** — runs the selected routing engine and writes a **Linear Forwarding Table (LFT)** into every switch: for each destination LID, which output port to use. Multicast forwarding tables (MFT) are also programmed for IPoIB broadcast/multicast groups.
 4. **Port configuration** — sets MTU, link operational VLs, **SL→VL mapping** tables, VL arbitration tables, PKey tables on switch/HCA ports.
-5. **Subnet Administration (SA)** — the SM also runs the SA, a database service hosts query (via QP1 / GSI) to resolve paths: "I want to talk to GID X, give me a path record (DLID, SL, MTU, rate)". `ibping`, IPoIB neighbour resolution and RDMA CM all rely on SA queries.
+5. **Subnet Administration (SA)** — the SM also runs the SA, a database service hosts query (via QP1 / GSI) to resolve paths: "I want to talk to GID X, give me a path record (DLID, SL, MTU, rate)". **ibping**, IPoIB neighbour resolution and RDMA CM all rely on SA queries.
 
 Heavy sweeps are the source of the common complaint "the fabric stalled for a few seconds when a node rebooted"; large fabrics tune sweep behaviour and use `ibdiagnet` rather than making the SM poll constantly.
 
-### 4.2 Where the SM runs
-Three options, in order of what you will meet in production:
+**Where the SM runs** — three options, in order of what you will meet in production:
 
 | Location | Product | When used |
 |---|---|---|
@@ -102,16 +112,14 @@ Three options, in order of what you will meet in production:
 
 A fabric must have exactly one *master* SM. You may (and should) run several SMs for redundancy; the others sit in standby.
 
-### 4.3 Priority and master election
-Every SM has a **priority** 0–15 (15 is highest). When multiple SMs are present:
+**Priority and master election.** Every SM has a **priority** 0–15 (15 is highest). When multiple SMs are present:
 
 - They discover each other via SMInfo attributes during sweeps.
 - The SM with the **highest priority** becomes master. On a tie, the **lowest port GUID** wins.
 - The master periodically polls standbys; standbys poll the master. If the master disappears (polling times out), the next-best standby runs a discovery and takes over. Because LIDs are cached (`guid2lid` file / `lid_matrix` on MLNX-OS), the takeover is normally hitless for existing connections.
 - Some implementations support a *master_sm_priority* behaviour so a recovered high-priority SM does not immediately pre-empt a running master (the "sticky master" or `master_sm_priority` option in opensm.conf; check the current doc).
 
-### 4.4 SM states
-You will read these in `show ib sm` on MLNX-OS, in `sminfo` on a host, or in UFM:
+**SM states** you will read in `show ib sm` on MLNX-OS, in `sminfo` on a host, or in UFM:
 
 | State | Meaning |
 |---|---|
@@ -120,9 +128,11 @@ You will read these in `show ib sm` on MLNX-OS, in `sminfo` on a host, or in UFM
 | **STANDBY** | Another SM with higher priority is master; this one is ready to take over |
 | **NOT ACTIVE** | SM process is up but does not participate (e.g. configured not to run or lost its port) |
 
-`sminfo` from any host prints the master SM's LID, GUID, priority and state, which is the fastest way to confirm "do we have a master, and who is it?"
+**Why the exam cares:** election rules (highest priority, lowest GUID on tie) and the meaning of `Initializing` are both high-frequency test items.
 
-## 5. Routing engines
+### 2.5 Routing engines
+
+**Analogy:** the routing engine is the controller's taxi-plan algorithm. `minhop` says "shortest path, spread the load". `ftree` knows the airfield is a tree and plans accordingly so no two aircraft can ever block each other in a loop. The `ar_*` engines allow junctions to pick a less-busy taxiway in real time.
 
 The SM's routing engine turns topology into LFTs. The choice is set with `routing_engine` in `opensm.conf` (comma-separated list; the first one that succeeds is used).
 
@@ -154,7 +164,9 @@ partition_config_file /etc/opensm/partitions.conf
 qos TRUE
 ```
 
-## 6. Partitions (PKeys) for multi-tenancy
+### 2.6 Partitions (PKeys) for multi-tenancy
+
+**Analogy:** a PKey is an access badge. A *full-membership* badge opens the door to everyone else holding any badge for that room. A *limited-membership* badge only opens the door to full-membership holders — two limited badges standing face to face cannot see each other.
 
 Partitions are IB's VLAN equivalent, enforced per packet at the transport layer. The 16-bit field is split: the low 15 bits are the partition number, the high bit is the **membership** bit.
 
@@ -173,8 +185,7 @@ Membership rules, which the exam loves:
 
 Use case: put a shared storage server as a *full* member and tenants' compute nodes as *limited* members of the same PKey. Each tenant reaches storage, but tenants cannot see each other — without needing N separate partitions.
 
-### 6.1 partitions.conf syntax
-On a host-based SM the file is `/etc/opensm/partitions.conf` (path set by `partition_config_file`). On MLNX-OS, partitions are configured with `ib partition` CLI commands; on UFM through the web UI/REST, which writes the same file under `/opt/ufm/files/conf/opensm/partitions.conf`.
+**partitions.conf syntax.** On a host-based SM the file is `/etc/opensm/partitions.conf` (path set by `partition_config_file`). On MLNX-OS, partitions are configured with `ib partition` CLI commands; on UFM through the web UI/REST, which writes the same file under `/opt/ufm/files/conf/opensm/partitions.conf`.
 
 ```text
 # name=pkey[,flags...] : port-guid=membership, ... ;
@@ -201,31 +212,85 @@ Flags you should recognise:
 
 A port may be a member of up to the size of its PKey table (typically 128 entries on ConnectX; `ibv_devinfo -v` shows `pkey_tbl_len`). After editing the file, send `SIGHUP` to opensm (`kill -HUP $(pidof opensm)`) or restart it; the SM reprograms PKey tables on the next sweep.
 
-### 6.2 IPoIB over a PKey: child interfaces
-Each HCA port's IPoIB device (e.g. `ib0`) runs in the default partition. To carry IP traffic in another partition you create a *child* interface whose name is `<parent>.<pkey-hex>` and whose PKey has the full-membership bit set:
-
-```bash
-# Create child interface for PKey 0x0a01 (full member form 0x8a01)
-echo 0x8a01 > /sys/class/net/ib0/create_child
-ip link set ib0.8a01 up
-ip addr add 10.10.1.21/24 dev ib0.8a01
-
-# or persistently with NetworkManager / netplan; MLNX_OFED also supports
-# /etc/infiniband/openib.conf-style child definitions on some distros.
-```
+**IPoIB child interfaces.** Each HCA port's IPoIB device (e.g. `ib0`) runs in the default partition. To carry IP traffic in another partition you create a *child* interface whose name is `<parent>.<pkey-hex>` and whose PKey has the full-membership bit set — you write the badge number with the high bit on, because the host asserts "I am a full member", and the SM decides whether to honour that.
 
 If the SM did not grant this port membership (or granted only limited and the peer is also limited), the child interface will stay in `NO-CARRIER` or ping will fail with no counter increments on the switch — the classic "PKey mismatch" symptom.
 
-## 7. MLNX-OS switch provisioning
+### 2.7 MLNX-OS managed switches and HA
 
 Managed Quantum switches (QM87xx, QM97xx, Q3400 managed variants) run **MLNX-OS**, a Cisco-flavoured CLI with `enable` / `configure terminal` modes. Unmanaged variants (e.g. QM9790) have no CPU running an OS and are fully dependent on an external SM/UFM.
 
-### 7.1 Initial setup
-On first boot, connect to the console (115200 8N1) and log in as `admin/admin`. A configuration **wizard** runs:
+Port states to recognise: **Physical** `Polling` (no partner/cable), `Disabled`, `LinkUp`; **Logical** `Down`, `Initialize` (link is up but SM has not yet configured it — a tell-tale sign *there is no master SM*), `Armed`, `Active`.
+
+MLNX-OS images bundle the switch ASIC firmware; a separate firmware step is not normally needed on managed switches. Unmanaged switches get firmware via **mlxfwmanager**/**flint** from a host or via UFM. Switch-to-SM compatibility and "upgrade standbys first, master last" ordering should be checked in the release notes for each hop.
+
+**What "HA" means in IB management.** Two unrelated things get called HA, and the exam may test that you can tell them apart:
+
+- **SM HA** — simply running **multiple SMs with different priorities** (e.g. two spines with `ib sm` enabled at priorities 13 and 12, or a UFM HA pair). Failover is handled by the master/standby protocol in §2.4. There is no shared state beyond the cached LIDs.
+- **MLNX-OS management HA / UFM HA** — redundancy of the *management application* itself: UFM uses an active/standby pair with replicated storage (see Module 2.2). This protects the management plane, not the data plane; the data plane keeps forwarding on its programmed LFTs even when every SM is down — but no new links or hosts will be configured until an SM returns.
+
+### 2.8 Host side: OFED, HCA verification, port type
+
+NVIDIA's host driver stack has historically shipped as **MLNX_OFED** (`mlnxofedinstall` script, `.iso`/`.tgz`). Since 2024 the stack is distributed as part of **DOCA** (`doca-ofed` / `doca-all` meta-packages, installed via the distro package manager after adding NVIDIA's repo), and MLNX_OFED standalone is end-of-life as of the 23.10 / 24.x branches. Functionally the same kernel modules (`mlx5_core`, `mlx5_ib`, `ib_ipoib`, `ib_umad`, `rdma_cm`) and user tools arrive either way.
+
+Inbox (distro) `rdma-core` works for basic IB, but NVIDIA features such as SHARP, DOCA libraries, and the latest firmware tools need the NVIDIA stack. The **MFT** (Mellanox Firmware Tools: `mst`, **mlxconfig**, **mlxlink**, `flint`, `mlxfwmanager`) comes with it.
+
+ConnectX VPI adapters can run each port as IB or Ethernet. The setting is in firmware (`LINK_TYPE_P1`, `LINK_TYPE_P2`: 1 = IB, 2 = ETH, 3 = VPI/auto where supported) and takes effect after a reboot/driver reload. On BlueField and some ConnectX-7/8 SKUs the port mode is fixed or set differently; `mlxconfig -d <dev> query` shows what is tunable. **mlxconfig** also controls `NUM_OF_VFS`, `SRIOV_EN`, `ADVANCED_PCI_SETTINGS`, and ATS/relaxed-ordering knobs relevant to GPUDirect.
+
+When UFM is used, do **not** also run `opensm` on hosts — UFM's SM must be the only master.
+
+### 2.9 IPoIB: datagram vs connected mode
+
+IPoIB encapsulates IP in IB packets so legacy TCP/UDP applications (and SSH, NFS, Slurm control traffic) work over the fabric. It is *not* RDMA and is slow relative to verbs, but every cluster uses it for management.
+
+| Mode | Transport | Max MTU | Pros / cons |
+|---|---|---|---|
+| **Datagram (UD)** | Unreliable Datagram QP, one QP per interface | Limited to IB link MTU minus 4-byte IPoIB header: **2044** at 2K IB MTU, **4092** at 4K IB MTU | Supports multicast (so ARP/ND works natively), lower memory, works with SR-IOV VFs and many offloads; default and recommended on modern stacks |
+| **Connected (CM)** | Reliable Connected QP per peer | Up to **65520** | Segmentation done in hardware per connection; good single-stream TCP throughput, but one RC QP per neighbour, no multicast (falls back to UD for broadcast), poor scaling to thousands of peers |
+
+The IB link MTU itself (2048 or 4096 bytes, set by the SM as `partition mtu=` and limited by HCA/switch capability) caps datagram IPoIB. RDMA applications negotiate the *path MTU* separately (Module 3.1). Choosing 4096 fabric MTU is standard in GPU clusters.
+
+## 3. Live-style walkthrough: bringing up a 2-switch / 4-host subnet from power-on
+
+Here is the lab. Two managed Quantum-2 switches (`ib-sw-01`, `ib-sw-02`) connected to each other with two inter-switch links, and four hosts (`gpu01`–`gpu04`), two per switch. Everything is cabled, nothing is configured. Watch what happens to the LID as we go.
+
+```text
+      gpu01 ──┐                       ┌── gpu03
+              ├── ib-sw-01 ═══════ ib-sw-02 ──┤
+      gpu02 ──┘   (SM pri 13)       (SM pri 12)  └── gpu04
+```
+
+### Step 1 — Power on, look at a host before any SM exists
+
+```bash
+gpu01$ ibstat
+# Shows every HCA ('CA') and its ports. Watch the two state lines.
+CA 'mlx5_0'
+    CA type: MT4129
+    Number of ports: 1
+    Firmware version: 28.41.1000
+    Node GUID: 0xb83fd203001a2b3c
+    Port 1:
+        State: Initializing          # <-- logical state. "Initializing" = link trained, NO SM has configured me
+        Physical state: LinkUp       # <-- physical layer is fine: cable, optics, lane training all good
+        Rate: 400                    # NDR 4x negotiated at full rate
+        Base lid: 0                  # <-- no LID yet. The SM has not handed me a gate number
+        LMC: 0
+        SM lid: 0                    # <-- and I have never heard from an SM
+        Port GUID: 0xb83fd203001a2b3c
+        Link layer: InfiniBand       # port is in IB mode (not Ethernet)
+
+gpu01$ sminfo
+# Asks the SA "who is the master SM?". Expect a timeout/failure when no SM exists.
+ibwarn: [12345] sminfo: query failed
+# Good: this confirms the symptom is "no SM", not a cable. Do NOT reach for mlxlink here.
+```
+
+### Step 2 — Initial switch provisioning (console, 115200 8N1, admin/admin)
 
 ```text
 Do you want to use the wizard for initial configuration? yes
-Step 1: Hostname? ib-spine-01
+Step 1: Hostname? ib-sw-01
 Step 2: Use DHCP on mgmt0 interface? no
 Step 3: Use zeroconf on mgmt0 interface? no
 Step 4: Primary IPv4 address and masklen? 10.0.100.11/24
@@ -236,172 +301,246 @@ Step 8: Enable IPv6? no
 Step 9: Admin password? ********
 ```
 
-After the wizard you can SSH to the management IP and use the CLI or the web UI (HTTPS). Same settings by hand:
+The same settings by hand (and what you will type on `ib-sw-02` with `.12`):
 
 ```text
-switch > enable
-switch # configure terminal
-switch (config) # hostname ib-spine-01
-ib-spine-01 (config) # interface mgmt0 ip address 10.0.100.11 /24
-ib-spine-01 (config) # ip default-gateway 10.0.100.1
-ib-spine-01 (config) # ntp server 10.0.0.123
-ib-spine-01 (config) # configuration write
+switch > enable                                        # privileged mode
+switch # configure terminal                            # config mode
+switch (config) # hostname ib-sw-01                    # prompt changes immediately
+ib-sw-01 (config) # interface mgmt0 ip address 10.0.100.11 /24   # out-of-band mgmt IP
+ib-sw-01 (config) # ip default-gateway 10.0.100.1
+ib-sw-01 (config) # ntp server 10.0.0.123              # SM logs are useless without good time
+ib-sw-01 (config) # configuration write                # persist; otherwise lost on reload
 ```
 
-### 7.2 Enabling and checking the embedded SM
+### Step 3 — Check the switch's view of its ports (still no SM)
 
 ```text
-ib-spine-01 (config) # ib sm                      # enable SM on this switch
-ib-spine-01 (config) # ib sm sm-priority 13       # 0-15; higher wins
-ib-spine-01 (config) # ib sm routing-engines ftree
-ib-spine-01 (config) # no ib sm                   # disable it
+ib-sw-01 # show interfaces ib status
+Interface   Description   Speed   Width   Current line rate   Logical port state   Physical port state
+----------  ------------  ------  ------  ------------------  -------------------  -------------------
+IB1/1                     NDR     4X      400 Gbps            Initialize           LinkUp     # gpu01 — same story as the host
+IB1/2                     NDR     4X      400 Gbps            Initialize           LinkUp     # gpu02
+IB1/3                     --      --      --                  Down                 Polling    # empty port: "Polling" = waiting for a partner
+IB1/31                    NDR     4X      400 Gbps            Initialize           LinkUp     # ISL to ib-sw-02
+IB1/32                    NDR     4X      400 Gbps            Initialize           LinkUp     # ISL to ib-sw-02
+# Every connected port is physically LinkUp and logically Initialize. Textbook "no master SM".
+```
 
-ib-spine-01 # show ib sm
+### Step 4 — Enable the embedded SM on ib-sw-01 (priority 13) and ib-sw-02 (priority 12)
+
+```text
+ib-sw-01 (config) # ib sm                              # start the embedded SM on this switch
+ib-sw-01 (config) # ib sm sm-priority 13               # 0-15; higher wins election. 13 on the intended master
+ib-sw-01 (config) # ib sm routing-engines ftree        # fat-tree engine; falls back to minhop if topology is not a valid tree
+ib-sw-01 (config) # configuration write
+
+# On the second switch, same commands but LOWER priority so it becomes standby:
+ib-sw-02 (config) # ib sm
+ib-sw-02 (config) # ib sm sm-priority 12
+ib-sw-02 (config) # ib sm routing-engines ftree
+ib-sw-02 (config) # configuration write
+```
+
+```text
+ib-sw-01 # show ib sm
 SM Configuration
   SM enabled:            yes
-  SM state:              master
+  SM state:              master          # <-- after a few seconds of "discovering". This is what we want on sw-01
   SM priority:           13
   Routing engine:        ftree
   ...
-ib-spine-01 # show ib sm log                      # recent SM events
-ib-spine-01 # show ib smnodes                     # all SMs seen in the subnet and their states
+ib-sw-02 # show ib sm
+  SM state:              standby         # <-- lower priority lost the election, ready to take over
+ib-sw-01 # show ib smnodes                             # every SM the master knows about and its state
+ib-sw-01 # show ib sm log                              # look for the sweep completing: "SUBNET UP"
 ```
 
-Exact sub-command names vary slightly by MLNX-OS release (e.g. `ib sm virt enable`, `ib sm sharp enable`); use `ib sm ?` on the box and verify in the user manual for the release.
-
-### 7.3 Interfaces and inventory
-
-```text
-ib-spine-01 # show interfaces ib status
-Interface   Description   Speed      Width   Current line rate   Logical port state   Physical port state
-----------  ------------  ---------  ------  ------------------  -------------------  -------------------
-IB1/1                     NDR        4X      400 Gbps            Active               LinkUp
-IB1/2                     NDR        4X      400 Gbps            Active               LinkUp
-IB1/3                     --         --      --                  Down                 Polling
-...
-ib-spine-01 # show interfaces ib 1/1 counters      # link-level error counters
-ib-spine-01 # show ib fabric                        # SM's view of discovered nodes (when SM is local)
-ib-spine-01 # show inventory
-ib-spine-01 # show version
-ib-spine-01 (config) # interface ib 1/3 shutdown    # administratively disable a port
-ib-spine-01 (config) # interface ib 1/3 description "to leaf-07 port 33"
-```
-
-Port states to recognise: **Physical** `Polling` (no partner/cable), `Disabled`, `LinkUp`; **Logical** `Down`, `Initialize` (link is up but SM has not yet configured it — a tell-tale sign *there is no master SM*), `Armed`, `Active`.
-
-### 7.4 Firmware and image upgrade
-
-```text
-ib-spine-01 (config) # image fetch scp://admin@10.0.0.50/images/image-X86_64-3.12.xxxx.img
-ib-spine-01 (config) # show images
-ib-spine-01 (config) # image install image-X86_64-3.12.xxxx.img
-ib-spine-01 (config) # image boot next
-ib-spine-01 (config) # configuration write
-ib-spine-01 (config) # reload
-```
-
-MLNX-OS images bundle the switch ASIC firmware; a separate firmware step is not normally needed on managed switches. Unmanaged switches get firmware via **mlxfwmanager**/**flint** from a host or via UFM. Switch-to-SM compatibility and "upgrade standbys first, master last" ordering should be checked in the release notes for each hop.
-
-### 7.5 What "HA" means in IB management
-Two unrelated things get called HA, and the exam may test that you can tell them apart:
-
-- **SM HA** — simply running **multiple SMs with different priorities** (e.g. two spines with `ib sm` enabled at priorities 13 and 12, or a UFM HA pair). Failover is handled by the master/standby protocol described in §4.3. There is no shared state beyond the cached LIDs.
-- **MLNX-OS management HA / UFM HA** — redundancy of the *management application* itself: UFM uses an active/standby pair with replicated storage (see Module 2.2). Some MLNX-OS modular systems also replicate the management module. This protects the management plane, not the data plane; the data plane keeps forwarding on its programmed LFTs even when every SM is down — but no new links or hosts will be configured until an SM returns.
-
-## 8. Host side: OFED, tools and port configuration
-
-### 8.1 MLNX_OFED and DOCA-OFED
-NVIDIA's host driver stack has historically shipped as **MLNX_OFED** (`mlnxofedinstall` script, `.iso`/`.tgz`). Since 2024 the stack is distributed as part of **DOCA** (`doca-ofed` / `doca-all` meta-packages, installed via the distro package manager after adding NVIDIA's repo), and MLNX_OFED standalone is end-of-life as of the 23.10 / 24.x branches. Functionally the same kernel modules (`mlx5_core`, `mlx5_ib`, `ib_ipoib`, `ib_umad`, `rdma_cm`) and user tools arrive either way.
+### Step 5 — Watch the host transition Initializing → Active
 
 ```bash
-# DOCA-OFED on Ubuntu (repo set-up omitted; follow the DOCA installation guide)
-sudo apt install doca-ofed
-sudo /etc/init.d/openibd restart          # or reboot
-# Legacy MLNX_OFED
-sudo ./mlnxofedinstall --with-nfsrdma --without-fw-update
+gpu01$ watch -n1 'ibstat mlx5_0 | grep -E "State|lid"'
+# Within one sweep (seconds) you should see:
+        State: Active                # <-- SM programmed the port
+        Base lid: 3                  # <-- gate number assigned. Yours will differ; it is SM-chosen, not yours
+        SM lid: 1                    # <-- LID of the master SM port (switch port 0 of ib-sw-01)
+
+gpu01$ sminfo
+# Now the SA answers. Format: SM LID, GUID, activity count, priority, state.
+sminfo: sm lid 1 sm guid 0x0c42a10300e4f3a0, activity count 1421 priority 13 state 3 SMINFO_MASTER
+# "priority 13 ... SMINFO_MASTER" — matches ib-sw-01. If this showed a different GUID, someone else won the election.
 ```
 
-Inbox (distro) `rdma-core` works for basic IB, but NVIDIA features such as SHARP, DOCA libraries, and the latest firmware tools need the NVIDIA stack. The **MFT** (Mellanox Firmware Tools: `mst`, `mlxconfig`, `mlxlink`, `flint`, `mlxfwmanager`) comes with it.
-
-### 8.2 Verifying the HCA
+### Step 6 — Discover the fabric from a host
 
 ```bash
-$ ibstat
-CA 'mlx5_0'
-    CA type: MT4129
-    Number of ports: 1
-    Firmware version: 28.41.1000
-    Hardware version: 0
-    Node GUID: 0xb83fd203001a2b3c
-    System image GUID: 0xb83fd203001a2b3c
-    Port 1:
-        State: Active
-        Physical state: LinkUp
-        Rate: 400
-        Base lid: 37
-        LMC: 0
-        SM lid: 1
-        Capability mask: 0xa651e848
-        Port GUID: 0xb83fd203001a2b3c
-        Link layer: InfiniBand
+gpu01$ ibnodes
+# Lists every node (switches and CAs) by GUID, LID and description. Expect 2 switches + 4 CAs.
+Ca   : 0xb83fd203001a2b3c ports 1 "gpu01 mlx5_0"
+Ca   : 0xb83fd203001a2b40 ports 1 "gpu02 mlx5_0"
+Ca   : 0xb83fd203001a2b44 ports 1 "gpu03 mlx5_0"
+Ca   : 0xb83fd203001a2b48 ports 1 "gpu04 mlx5_0"
+Switch : 0x0c42a10300e4f3a0 ports 64 "MF0;ib-sw-01:MQM9700/U1" enhanced port 0 lid 1 lmc 0
+Switch : 0x0c42a10300e4f3b0 ports 64 "MF0;ib-sw-02:MQM9700/U1" enhanced port 0 lid 2 lmc 0
+# Count the nodes. Fewer than expected = a port that never left Initialize or a PKey/cable problem.
+
+gpu01$ ibswitches ; ibhosts                            # the same list filtered by node type
+gpu01$ iblinkinfo | head -20
+# Every link with both ends, width and speed. Scan for "2X" or "200" where you expect "4X"/"400":
+#   that is a degraded link to hand to mlxlink in Module 8.
+gpu01$ ibping -S &                                     # start an ibping responder on gpu01 (uses SA + MADs, not IP)
+gpu04$ ibping -c 3 -L 3                                # from gpu04, ping gpu01 by its LID 3. Proves routing tables are programmed
 ```
 
-Reading it: `State: Active` means the SM has configured the port; `Initializing` with `Physical state: LinkUp` means *link is fine but no SM*. `SM lid` tells you where the master is. `Link layer: InfiniBand` vs `Ethernet` tells you the port mode.
+### Step 7 — Add a partition on the host-side SM config and reload
+
+The embedded switch SM uses `ib partition` CLI commands; to show the file format (used identically by host-based opensm and by UFM), we switch the lab to a host-based SM on `gpu01` for this step. In production you would do one or the other, never both unless you intend an election.
 
 ```bash
-$ ibstatus                         # terse per-port summary incl. rate and link_layer
-$ ibv_devices                      # list device names and node GUIDs
-$ ibv_devinfo -d mlx5_0 -v         # verbose capabilities: max QPs, MRs, pkey_tbl_len, GIDs, MTU
-$ sminfo                           # who is master SM, priority, state
-$ ibnodes ; ibswitches ; ibhosts   # discovery from this host (needs SM-managed fabric)
-$ iblinkinfo                       # every link, width/speed, both ends
-$ ibdiagnet                        # full fabric health report (Module 8)
+gpu01$ sudo opensm --create-config /etc/opensm/opensm.conf    # dump the defaults; edit afterwards
+gpu01$ sudo sed -i 's/^sm_priority .*/sm_priority 14/' /etc/opensm/opensm.conf   # 14 > 13 so this SM wins mastership
+gpu01$ sudo sed -i 's|^partition_config_file .*|partition_config_file /etc/opensm/partitions.conf|' /etc/opensm/opensm.conf
+
+gpu01$ sudo tee /etc/opensm/partitions.conf <<'EOF'
+# Default partition: everyone a full member, IPoIB group with 4K MTU
+Default=0x7fff, ipoib, mtu=5, rate=17, sl=0, defmember=full : ALL, SELF=full ;
+# Lab partition 0x0002: gpu01 and gpu04 full members
+lab=0x0002, ipoib, mtu=5, rate=17, sl=0 : 0xb83fd203001a2b3c=full, 0xb83fd203001a2b48=full ;
+EOF
+# mtu=5 -> 4096 bytes; rate=17 -> 200G encoding (16 = 100G). These are multicast-group parameters.
+
+gpu01$ sudo systemctl enable --now opensm             # start it; it will win the election at priority 14
+gpu01$ sudo journalctl -u opensm -f                   # watch for "SUBNET UP" after the sweep completes
+gpu01$ sminfo                                         # priority 14, GUID of gpu01's port: the host SM is now master
+# The switch SMs drop to standby. Confirm: ib-sw-01 # show ib sm  -> "standby"
+
+# Later, after editing partitions.conf, you do NOT need a restart:
+gpu01$ sudo kill -HUP $(pidof opensm)                 # SIGHUP = re-read partitions and resweep
 ```
 
-### 8.3 opensm.conf essentials for a host-based SM
+### Step 8 — Create the IPoIB child interface and ping across the partition
 
 ```bash
-sudo opensm --create-config /etc/opensm/opensm.conf   # dump defaults, then edit
-sudo systemctl enable --now opensm                     # or opensmd on older distros
-sudo journalctl -u opensm -f                           # watch "SUBNET UP" after sweep
+gpu01$ echo 0x8002 > /sys/class/net/ib0/create_child # 0x0002 with the full-membership bit (0x8000) set = 0x8002
+# The kernel names it <parent>.<pkey-hex-without-0x>:
+gpu01$ ip link set ib0.8002 up
+gpu01$ ip addr add 10.2.0.1/24 dev ib0.8002
+gpu01$ ip -br link show ib0.8002
+ib0.8002   UP   80:00:02:...                            # "UP" with carrier. NO-CARRIER here = SM did not grant membership
+
+gpu04$ echo 0x8002 > /sys/class/net/ib0/create_child
+gpu04$ ip link set ib0.8002 up && ip addr add 10.2.0.4/24 dev ib0.8002
+gpu04$ ping -c 3 10.2.0.1                              # ARP works because the partition has the 'ipoib' flag (multicast group)
+64 bytes from 10.2.0.1: icmp_seq=1 ttl=64 time=0.089 ms
+
+gpu02$ echo 0x8002 > /sys/class/net/ib0/create_child   # gpu02 is NOT in the partition...
+gpu02$ ip link set ib0.8002 up && ip addr add 10.2.0.2/24 dev ib0.8002
+gpu02$ ping -c 3 10.2.0.1                              # ...so this must fail: the SM never put 0x8002 in gpu02's PKey table
+# 100% packet loss. That is isolation working, not a bug.
 ```
 
-Key parameters already shown in §5; also: `guid` (bind SM to a specific port GUID on multi-port hosts), `log_file`, `log_flags`, `sminfo_polling_timeout`, `polling_retry_number` (how fast standby detects master loss), `qos_*` (Module 2.3), `ipoib_mtu`/`max_op_vls`. When UFM is used, do **not** also run `opensm` on hosts — UFM's SM must be the only master.
-
-### 8.4 Setting port type with mlxconfig
-ConnectX VPI adapters can run each port as IB or Ethernet. The setting is in firmware and takes effect after a reboot/driver reload:
+### Step 9 — Confirm port type and IPoIB mode while we are here
 
 ```bash
-sudo mst start
-sudo mlxconfig -d /dev/mst/mt4129_pciconf0 query | grep LINK_TYPE
-         LINK_TYPE_P1                        IB(1)
-         LINK_TYPE_P2                        ETH(2)
-sudo mlxconfig -d /dev/mst/mt4129_pciconf0 set LINK_TYPE_P1=1 LINK_TYPE_P2=1   # 1 = IB, 2 = ETH, 3 = VPI/auto (where supported)
-sudo reboot
+gpu01$ sudo mst start                                 # load the MFT access driver
+gpu01$ sudo mlxconfig -d /dev/mst/mt4129_pciconf0 query | grep LINK_TYPE
+         LINK_TYPE_P1                        IB(1)     # 1 = IB, 2 = ETH. Reboot required after a change
+gpu01$ cat /sys/class/net/ib0/mode                    # datagram (default); expect MTU 4092 on a 4K fabric
 ```
 
-Note: on BlueField and some ConnectX-7/8 SKUs the port mode is fixed or set differently; `mlxconfig -d <dev> query` shows what is tunable. **mlxconfig** also controls `NUM_OF_VFS`, `SRIOV_EN`, `ADVANCED_PCI_SETTINGS`, and ATS/relaxed-ordering knobs relevant to GPUDirect.
+What "good" looks like at the end: `ibstat` → `Active`, `sminfo` → one MASTER at the priority you intended, `ibnodes` → every node present, `ibping` by LID works, the child interface has carrier and pings only between members.
 
-## 9. IPoIB: datagram vs connected mode
+## 4. Troubleshooting / common gotchas
 
-IPoIB encapsulates IP in IB packets so legacy TCP/UDP applications (and SSH, NFS, Slurm control traffic) work over the fabric. It is *not* RDMA and is slow relative to verbs, but every cluster uses it for management.
+### 4.1 Port stuck in `Initializing` with `LinkUp`
 
-| Mode | Transport | Max MTU | Pros / cons |
-|---|---|---|---|
-| **Datagram (UD)** | Unreliable Datagram QP, one QP per interface | Limited to IB link MTU minus 4-byte IPoIB header: **2044** at 2K IB MTU, **4092** at 4K IB MTU | Supports multicast (so ARP/ND works natively), lower memory, works with SR-IOV VFs and many offloads; default and recommended on modern stacks |
-| **Connected (CM)** | Reliable Connected QP per peer | Up to **65520** | Segmentation done in hardware per connection; good single-stream TCP throughput, but one RC QP per neighbour, no multicast (falls back to UD for broadcast), poor scaling to thousands of peers |
+**Symptom:** `ibstat` shows `State: Initializing`, `Physical state: LinkUp`, `Rate: 400`, `Base lid: 0`. The switch shows `Initialize / LinkUp` for that port. The customer says "the cable must be bad".
+
+**Why it happens:** the physical layer is fine. The *logical* state cannot advance past Initialize until a master SM programs the port (LID, MTU, PKey table). Either no SM is enabled anywhere, every SM is in standby/NOT ACTIVE, or the SM is running but bound to a port on a different subnet.
+
+**How to debug:**
 
 ```bash
-cat /sys/class/net/ib0/mode             # datagram | connected
-echo connected > /sys/class/net/ib0/mode
-ip link set ib0 mtu 65520
-# Return to datagram with the IB-MTU-limited size
-echo datagram > /sys/class/net/ib0/mode && ip link set ib0 mtu 4092
+sminfo                                   # fails/times out -> no master reachable from here
+ib-sw-01 # show ib sm                    # "SM enabled: no" or "SM state: standby" on every switch?
+ib-sw-01 # show ib smnodes               # lists all SMs seen; is any one of them master?
+systemctl status opensm                  # host SM: is it running, and which port GUID did it bind ('guid' in opensm.conf)?
+journalctl -u opensm | tail              # look for "SUBNET UP" vs errors such as "No ports available"
 ```
 
-The IB link MTU itself (2048 or 4096 bytes, set by the SM as `partition mtu=` and limited by HCA/switch capability) caps datagram IPoIB. RDMA applications negotiate the *path MTU* separately (Module 3.1). Choosing 4096 fabric MTU is standard in GPU clusters.
+**Fix:** enable an SM (`ib sm` on a managed switch, `systemctl enable --now opensm` on a host, or UFM). Within one sweep the port goes `Active` and gets a LID. Only after `sminfo` succeeds and the port is *still* not Active do you look at cables with **mlxlink**.
 
-## Configuration / command reference
+### 4.2 Child interface has NO-CARRIER or pings fail inside a partition
+
+**Symptom:** `ib0.8a01` exists but `ip link` shows `NO-CARRIER`, or it is UP yet `ping` gets 100% loss with no error counters moving anywhere.
+
+**Why it happens:** the SM did not place that PKey in the port's PKey table (GUID missing from the partition, typo in the GUID, or the file was edited but never re-read), or both ends are *limited* members, or the partition lacks the `ipoib` flag so there is no broadcast multicast group for ARP.
+
+**How to debug:**
+
+```bash
+cat /sys/class/infiniband/mlx5_0/ports/1/pkeys/*  | grep -v 0x0000   # which PKeys did the SM program? Look for 0x8a01 (full) or 0x0a01 (limited)
+ibstat mlx5_0 | grep "Port GUID"                   # copy THIS value into partitions.conf, not the node GUID
+grep -n tenantA /etc/opensm/partitions.conf        # is the GUID really there? Is 'ipoib' present?
+journalctl -u opensm | grep -i -E "partition|pkey"  # parser errors are logged at startup/SIGHUP
+perfquery -x <switch-lid> <port>  | grep Constraint # PortRcvConstraintErrors rising = packets arriving with a PKey the port rejects
+```
+
+**Fix:** correct the GUID / membership / `ipoib` flag, then `kill -HUP $(pidof opensm)` (or UFM save). Re-check the `pkeys/` sysfs directory; the child interface gains carrier on the next sweep. Remember: limited↔limited never talks — make at least one side full.
+
+### 4.3 "Wrong" SM became master after a reboot
+
+**Symptom:** you intended `ib-sw-01` (priority 13) to be master. After power-cycling the rack, `sminfo` reports a different GUID as master, and LIDs changed, upsetting a hard-coded monitoring script.
+
+**Why it happens:** either another SM has an *equal or higher* priority (a host someone left running `opensm` at the default priority, or UFM at 15), or priorities tied and the **lowest GUID** won. LIDs changed because the new master had no `guid2lid` cache for the fabric.
+
+**How to debug:**
+
+```bash
+sminfo                                             # master GUID + priority
+ib-sw-01 # show ib smnodes                         # every SM, priority, state — find the interloper
+ibnodes | grep -i <master-guid>                    # which node is that GUID? a host? which one?
+ssh <host> systemctl status opensm                 # kill the stray if it was not meant to run
+```
+
+**Fix:** disable the unintended SM (`no ib sm` / `systemctl disable --now opensm`), set distinct priorities so no tie exists, and enable LID caching (`guid2lid_file` on hosts; MLNX-OS keeps `lid_matrix`) so a legitimate failover does not renumber the fabric. Fix the script to key on GUIDs.
+
+## 5. Hands-on assignment: multi-tenant InfiniBand subnet
+
+**Scenario.** You are the fabric engineer for a shared AI research cluster. Two internal tenants, *Vision* and *NLP*, each have two GPU hosts on a 2-switch Quantum-2 subnet. A single storage server must be reachable by both tenants, but the tenants must never be able to reach each other, and the cluster must survive the loss of one SM without renumbering the fabric.
+
+**Requirements** (numbered, verifiable):
+
+1. Two SMs run in the subnet with distinct priorities; `ib-sw-01` is the intended master. Document which GUID holds mastership.
+2. Partition `vision=0x0a01` contains both Vision hosts; partition `nlp=0x0a02` contains both NLP hosts. Hosts within a tenant communicate over IPoIB on their own partition.
+3. A third partition `storage=0x0a10` contains the storage server as a **full** member and all four compute hosts as **limited** members. Every compute host can reach storage over IPoIB on that partition.
+4. A Vision host and an NLP host cannot ping each other on *any* partition, including `storage`.
+5. The storage partition carries SL 2 and a 4096-byte MTU multicast group so it can be given its own QoS class in Module 2.3.
+6. Simulate failure of the master SM; the standby takes over and existing LIDs are preserved.
+
+**Deliverables:**
+
+- `partitions.conf` (or the equivalent MLNX-OS `ib partition` commands), fully commented.
+- The relevant `opensm.conf` lines (priorities, `guid2lid_file`, `partition_config_file`) or `ib sm` commands for each SM.
+- A verification transcript: `sminfo` before/after failover, `cat .../pkeys/*` on one host of each type, and the ping matrix.
+
+**Acceptance criteria:**
+
+- A. `sminfo` shows exactly one MASTER at the intended priority; `show ib smnodes` shows the other SM as STANDBY.
+- B. Vision↔Vision and NLP↔NLP pings succeed on `ib0.8a01` / `ib0.8a02`.
+- C. Every compute host pings storage on `ib0.<storage-pkey>`; compute↔compute pings on the storage partition fail.
+- D. Vision↔NLP pings fail on every child interface.
+- E. After the master SM is stopped, `sminfo` reports the standby as MASTER within 60 s and `ibstat` on every host shows the *same* `Base lid` as before.
+
+### Hint
+
+- Re-read §2.6: which membership bit does the *host* set in `create_child`, and which membership does the *SM* grant? They are not the same thing.
+- The storage isolation requirement is solved by one partition with mixed membership, not by three partitions. Think about who is full and who is limited.
+- For requirement 6, look at `guid2lid_file` (host SM) and what MLNX-OS caches. Test failover with `no ib sm` or `systemctl stop opensm`, then watch `sminfo` and `ibstat`.
+- `ibstat` → `Port GUID` is the value that belongs in `partitions.conf`. The node GUID is a distractor.
+- For the ping matrix, remember the `ipoib` flag — no multicast group, no ARP, no ping, even if membership is correct.
+
+## Appendix A — Quick command / config reference
 
 | Task | Command |
 |---|---|
@@ -414,37 +553,69 @@ The IB link MTU itself (2048 or 4096 bytes, set by the SM as `partition mtu=` an
 | Start host SM | `systemctl enable --now opensm`; config `/etc/opensm/opensm.conf` |
 | Reload partitions | edit `partitions.conf`, `kill -HUP $(pidof opensm)` |
 | IPoIB child interface | `echo 0x8<pkey> > /sys/class/net/ib0/create_child` |
+| PKeys programmed on a port | `cat /sys/class/infiniband/mlx5_0/ports/1/pkeys/*` |
 | Port type IB/ETH | `mlxconfig -d <mst dev> set LINK_TYPE_P1=1` (1=IB, 2=ETH) |
-| IPoIB mode | `echo connected|datagram > /sys/class/net/ib0/mode` |
+| IPoIB mode | `echo connected\|datagram > /sys/class/net/ib0/mode` |
 | Fabric discovery from host | `ibnodes`, `ibswitches`, `ibhosts`, `iblinkinfo`, `ibdiagnet` |
+| Reachability by LID | `ibping -S` (responder), `ibping -L <lid>` |
 
-## Common pitfalls & exam traps
-- **Port `Initialize`/`Initializing` with `LinkUp`** = no master SM, not a cable problem. Candidates reach for mlxlink when they should run `sminfo`.
+```text
+# MLNX-OS: enable/verify embedded SM
+ib sm
+ib sm sm-priority 13
+ib sm routing-engines ftree
+show ib sm ; show ib sm log ; show ib smnodes
+show ib fabric ; show inventory ; show version
+interface ib 1/3 shutdown ; interface ib 1/3 description "to leaf-07 port 33"
+
+# MLNX-OS: image upgrade
+image fetch scp://admin@10.0.0.50/images/image-X86_64-3.12.xxxx.img
+show images
+image install image-X86_64-3.12.xxxx.img
+image boot next
+configuration write
+reload
+```
+
+```bash
+# DOCA-OFED on Ubuntu (repo set-up omitted; follow the DOCA installation guide)
+sudo apt install doca-ofed
+sudo /etc/init.d/openibd restart          # or reboot
+# Legacy MLNX_OFED
+sudo ./mlnxofedinstall --with-nfsrdma --without-fw-update
+
+# Host SM essentials
+sudo opensm --create-config /etc/opensm/opensm.conf
+sudo systemctl enable --now opensm
+sudo journalctl -u opensm -f              # "SUBNET UP"
+
+# IPoIB mode / MTU
+cat /sys/class/net/ib0/mode               # datagram | connected
+echo connected > /sys/class/net/ib0/mode && ip link set ib0 mtu 65520
+echo datagram  > /sys/class/net/ib0/mode && ip link set ib0 mtu 4092
+```
+
+Other `opensm.conf` keys to recognise: `guid` (bind SM to a specific port GUID on multi-port hosts), `log_file`, `log_flags`, `sminfo_polling_timeout`, `polling_retry_number` (how fast standby detects master loss), `qos_*` (Module 2.3), `ipoib_mtu`/`max_op_vls`.
+
+## Appendix B — Exam traps & key takeaways
+
+- **Port `Initialize`/`Initializing` with `LinkUp`** = no master SM, not a cable problem. Run `sminfo` before `mlxlink`.
 - **GUID vs LID**: GUIDs are permanent and vendor-assigned; LIDs are SM-assigned and can change. Scripts and partitions key on GUIDs.
-- **PKey membership**: limited-to-limited cannot talk; `0x7fff` is the default partition and `0x8000` is the full-membership bit, so `0xffff` is "default, full". A child interface must be created with the full-membership form (`0x8xxx`) of the key.
+- **PKey membership**: limited↔limited cannot talk; `0x7fff` is the default partition and `0x8000` is the full-membership bit, so `0xffff` is "default, full". A child interface must be created with the full-membership form (`0x8xxx`) of the key.
 - **Highest priority wins**, tie → *lowest* GUID. Priority 15 is maximum.
-- **ftree** is the standard engine for Clos fabrics; `updn` requires root GUIDs and is for irregular trees; `dor`/torus engines are for meshes.
+- **SM states**: DISCOVERING / MASTER / STANDBY / NOT ACTIVE.
+- **ftree** is the standard engine for Clos fabrics; `updn` requires root GUIDs and is for irregular trees; `dor`/torus engines are for meshes; `ar_*` variants add adaptive routing (MLNXSM only).
 - **Quantum-2 = 64 × NDR 400G in 32 OSFP cages**; **Quantum-X800 = 144 × XDR 800G**. Do not confuse port count with cage count.
+- **Speed ladder**: SDR 10 → DDR 20 → QDR 40 → FDR 56 → EDR 100 → HDR 200 → NDR 400 → XDR 800 Gb/s per 4x port.
 - **IPoIB MTU**: datagram is capped by IB MTU (2044/4092); connected mode allows 65520 but does not support multicast and scales poorly.
 - **Unmanaged switches** (e.g. QM9790) cannot run an SM; they need a host SM or UFM. Managed ones (QM9700) can.
 - Running `opensm` on a host *and* UFM/switch SM simultaneously is allowed in principle (election sorts it out) but is a configuration smell; UFM docs tell you to disable every other SM.
+- **SM HA** (priorities) ≠ **UFM/management HA** (Pacemaker/DRBD). Data plane keeps forwarding without any SM; nothing *new* gets configured.
 - MLNX_OFED is superseded by DOCA-OFED; the tool names are unchanged.
+- `mlxconfig LINK_TYPE_P1=1` → IB, `=2` → Ethernet; firmware setting, needs reboot.
+- partitions.conf: `name=pkey,ipoib,defmember=... : guid=full, ... ;` — `rate=16` is 100G, `17` is 200G; `mtu=5` is 4096.
 
-## Key takeaways
-- IB is centrally managed: no SM, no forwarding. The SM discovers, assigns LIDs, computes LFTs, programs SL2VL/VLArb/PKey tables and answers SA path queries.
-- GUID = permanent (like MAC); LID = SM-assigned 16-bit subnet address; GID = prefix + GUID (like IPv6 LL); PKey = VLAN-like partition; QPN = like a port number.
-- SDR 10 → DDR 20 → QDR 40 → FDR 56 → EDR 100 → HDR 200 → NDR 400 → XDR 800 Gb/s per 4x port.
-- Quantum-2: NDR, 64 × 400G; Quantum-X800: XDR, 144 × 800G.
-- SM election: highest priority wins, ties broken by lowest GUID; states are DISCOVERING / MASTER / STANDBY / NOT ACTIVE.
-- SM can run on a host (opensm/MLNXSM), in MLNX-OS (`ib sm`), or in UFM.
-- `routing_engine ftree` for Clos; AR variants add adaptive routing.
-- PKey 0x7fff is default; bit 0x8000 = full membership; limited↔limited blocked.
-- partitions.conf: `name=pkey,ipoib,defmember=... : guid=full, ... ;`
-- `ibstat` state `Active` requires an SM; `Initializing` means link up, no SM.
-- `mlxconfig LINK_TYPE_P1=1` → IB, `=2` → Ethernet.
-- IPoIB datagram MTU 2044/4092; connected mode up to 65520.
-
-## Review questions
+## Appendix C — Knowledge check
 
 1. A new node's HCA shows `State: Initializing`, `Physical state: LinkUp`, `Rate: 400` in `ibstat`. What is the most likely cause?
    A. A bad transceiver on the switch side
@@ -512,3 +683,156 @@ The IB link MTU itself (2048 or 4096 bytes, set by the SM as `partition mtu=` an
 - NVIDIA Quantum-2 QM9700/QM9790 and Quantum-X800 Q3400 product briefs — https://www.nvidia.com/en-us/networking/infiniband-switching/
 - OpenSM man pages: `opensm(8)`, `partitions.conf` section
 - Related modules: [2.2 UFM](02-ufm-dc-management.md), [2.3 QoS/AR/SHARP](03-infiniband-qos-adaptive-routing-sharp.md), [3.1 RDMA fundamentals](../03-rdma/01-rdma-fundamentals.md)
+
+---
+## Solution guide — Hands-on assignment
+
+This solution uses a host-based MLNXSM/opensm pair for the two SMs so the full `partitions.conf` syntax is visible; the same partitions can be entered on MLNX-OS with `ib partition` commands and the same priorities with `ib sm sm-priority`. Host GUIDs below are illustrative — substitute the `Port GUID` from `ibstat` on each node.
+
+| Host | Role | Port GUID |
+|---|---|---|
+| vis01, vis02 | Vision tenant | 0xb83fd203001a2b3c, 0xb83fd203001a2b40 |
+| nlp01, nlp02 | NLP tenant | 0xb83fd203001a2b44, 0xb83fd203001a2b48 |
+| stor01 | Storage | 0x0c42a10300a1b2c0 |
+| sm-a (on ib-sw-01 or mgmt host A) | intended master | — |
+| sm-b (on ib-sw-02 or mgmt host B) | standby | — |
+
+### Step 1 — SM configuration (requirements 1 and 6)
+
+```bash
+# On sm-a (intended master)
+sudo opensm --create-config /etc/opensm/opensm.conf
+sudo sed -i -e 's/^sm_priority .*/sm_priority 14/' \
+            -e 's|^guid2lid_file .*|guid2lid_file /var/cache/opensm/guid2lid|' \
+            -e 's|^partition_config_file .*|partition_config_file /etc/opensm/partitions.conf|' \
+            -e 's/^routing_engine .*/routing_engine ftree,minhop/' /etc/opensm/opensm.conf
+# sm_priority 14 > standby's 12 -> deterministic master. guid2lid_file persists LID assignments across restarts
+# and is also read by the standby on takeover when the cache is shared/copied, which is what keeps LIDs stable.
+
+# On sm-b (standby): identical except priority
+sudo sed -i 's/^sm_priority .*/sm_priority 12/' /etc/opensm/opensm.conf
+# Copy the SAME partitions.conf to both SMs. A standby with different partitions would re-program PKeys on failover.
+```
+
+If the SMs are the switches instead:
+
+```text
+ib-sw-01 (config) # ib sm ; ib sm sm-priority 14 ; ib sm routing-engines ftree
+ib-sw-02 (config) # ib sm ; ib sm sm-priority 12 ; ib sm routing-engines ftree
+# MLNX-OS caches LIDs internally (lid_matrix); no extra setting needed.
+```
+
+### Step 2 — partitions.conf (requirements 2–5)
+
+```text
+# /etc/opensm/partitions.conf  — identical on both SMs
+# Default partition: everyone full, IPoIB group, 4K MTU, NDR-class rate encoding
+Default=0x7fff, ipoib, mtu=5, rate=17, sl=0, defmember=full : ALL, SELF=full ;
+
+# Vision tenant: both hosts full members so they can talk to each other
+vision=0x0a01, ipoib, mtu=5, rate=17, sl=0, defmember=full :
+    0xb83fd203001a2b3c,                 # vis01 (inherits defmember=full)
+    0xb83fd203001a2b40 ;                # vis02
+
+# NLP tenant: same pattern
+nlp=0x0a02, ipoib, mtu=5, rate=17, sl=0, defmember=full :
+    0xb83fd203001a2b44,                 # nlp01
+    0xb83fd203001a2b48 ;                # nlp02
+
+# Storage: ONE partition. Storage is FULL, every compute host is LIMITED.
+# full<->limited works (compute reaches storage); limited<->limited is blocked (compute cannot reach compute).
+# sl=2 gives it its own service level for Module 2.3 QoS; mtu=5 = 4096-byte multicast group.
+storage=0x0a10, ipoib, mtu=5, rate=17, sl=2, defmember=limited :
+    0x0c42a10300a1b2c0=full,            # stor01 — the only full member
+    0xb83fd203001a2b3c,                 # vis01 (limited)
+    0xb83fd203001a2b40,                 # vis02 (limited)
+    0xb83fd203001a2b44,                 # nlp01 (limited)
+    0xb83fd203001a2b48 ;                # nlp02 (limited)
+```
+
+```bash
+sudo systemctl enable --now opensm        # on sm-a first, then sm-b
+sudo kill -HUP $(pidof opensm)            # on any later edit — no restart, no LID churn
+journalctl -u opensm | grep -iE "partition|SUBNET UP"   # confirm the parser accepted the file
+```
+
+### Step 3 — IPoIB child interfaces on every host
+
+```bash
+# Vision hosts: tenant + storage children. Always the 0x8000-bit form in create_child.
+for p in 8a01 8a10; do echo 0x$p > /sys/class/net/ib0/create_child; done
+ip link set ib0.8a01 up ; ip addr add 10.1.0.X/24 dev ib0.8a01    # X = 1 (vis01), 2 (vis02)
+ip link set ib0.8a10 up ; ip addr add 10.16.0.X/24 dev ib0.8a10   # X = 11 (vis01), 12 (vis02), 21 (nlp01), 22 (nlp02)
+
+# NLP hosts
+for p in 8a02 8a10; do echo 0x$p > /sys/class/net/ib0/create_child; done
+ip link set ib0.8a02 up ; ip addr add 10.2.0.X/24 dev ib0.8a02
+ip link set ib0.8a10 up ; ip addr add 10.16.0.X/24 dev ib0.8a10
+
+# Storage
+echo 0x8a10 > /sys/class/net/ib0/create_child
+ip link set ib0.8a10 up ; ip addr add 10.16.0.100/24 dev ib0.8a10
+```
+
+Note: a limited member's child interface is still created with `0x8a10`; the HCA's PKey table will show `0x0a10` (limited) because that is what the SM granted — and the interface still comes up. The kernel matches on the low 15 bits.
+
+### Step 4 — Verification against each acceptance criterion
+
+**A. One MASTER, one STANDBY**
+
+```bash
+vis01$ sminfo
+sminfo: sm lid 1 sm guid 0x<sm-a-guid>, activity count 2210 priority 14 state 3 SMINFO_MASTER
+# On MLNX-OS: show ib smnodes -> sm-a MASTER (14), sm-b STANDBY (12)
+```
+
+**B. Intra-tenant pings succeed**
+
+```bash
+vis01$ ping -c 2 10.1.0.2        # vis02 over ib0.8a01  -> replies
+nlp01$ ping -c 2 10.2.0.2        # nlp02 over ib0.8a02  -> replies
+vis01$ cat /sys/class/infiniband/mlx5_0/ports/1/pkeys/* | grep -vE "^0x0000$"
+0xffff
+0x8a01                           # full member of vision
+0x0a10                           # LIMITED member of storage — high bit clear, as designed
+```
+
+**C. Compute→storage works; compute↔compute on storage fails**
+
+```bash
+vis01$ ping -c 2 10.16.0.100     # stor01 -> replies (full<->limited)
+vis01$ ping -c 2 10.16.0.12      # vis02 on the STORAGE partition -> 100% loss (limited<->limited)
+stor01$ cat /sys/class/infiniband/mlx5_0/ports/1/pkeys/* | grep 8a10
+0x8a10                           # storage is the full member
+```
+
+**D. Cross-tenant isolation**
+
+```bash
+vis01$ ping -c 2 10.2.0.1        # nlp01 — vis01 has no ib0.8a02 and no 0x?a02 in its PKey table -> no route / loss
+vis01$ ping -c 2 10.16.0.21      # nlp01 on storage partition -> loss (both limited)
+# Switch side confirmation that nothing leaks: PortRcvConstraintErrors on the leaf ports should stay flat
+# (no stray traffic is even being emitted because the IP stack has no path); if someone forged a child
+# interface with a PKey they were not granted, that counter would rise on the HCA.
+```
+
+**E. SM failover preserves LIDs**
+
+```bash
+# Record LIDs before
+for h in vis01 vis02 nlp01 nlp02 stor01; do ssh $h "ibstat mlx5_0 | grep 'Base lid'"; done > /tmp/lids.before
+
+sm-a$ sudo systemctl stop opensm              # or: ib-sw-01 (config) # no ib sm
+# Watch takeover (polling_retry_number x sminfo_polling_timeout, typically well under 60 s)
+vis01$ watch -n2 sminfo                       # state goes ... priority 12 SMINFO_MASTER (sm-b)
+
+for h in vis01 vis02 nlp01 nlp02 stor01; do ssh $h "ibstat mlx5_0 | grep 'Base lid'"; done > /tmp/lids.after
+diff /tmp/lids.before /tmp/lids.after && echo "LIDs preserved"
+# Expected: no diff. The standby reads the fabric's existing LIDs during discovery (and its guid2lid cache)
+# and keeps them rather than renumbering; existing QPs keep working through the transition.
+
+sm-a$ sudo systemctl start opensm             # restore. With priority 14 it reclaims mastership
+# (unless master_sm_priority / sticky-master is configured — verify in current docs for your release).
+```
+
+Deliverables are the two config files above, the `ib sm` equivalents if switch SMs were used, and the five transcripts. All six requirements and all five acceptance criteria are covered.

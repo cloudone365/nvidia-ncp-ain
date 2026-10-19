@@ -5,21 +5,29 @@
 > **Source docs:** NVIDIA DGX SuperPOD Reference Architecture — Scalable Infrastructure with DGX H100 / H200 / B200 / GB200; NVIDIA DGX BasePOD Reference Architecture; NVIDIA Base Command Manager documentation  
 > **Estimated study time:** 3 hours
 
-## Learning objectives
-- Describe the network layout of a DGX H100/H200/B200 node: which NIC serves which fabric and how many ports face each network.
-- Distinguish a DGX BasePOD from a DGX SuperPOD in scale, fabric choice, and management.
-- Explain the Scalable Unit (SU) concept and derive leaf, spine, and cable counts for a given number of SUs.
-- Draw and explain a **rail-optimized** topology and state why it gives one-hop GPU-to-GPU paths on the same rail.
-- Calculate oversubscription for a leaf-spine (Clos/fat-tree) fabric and recognize a non-blocking design.
-- Compare the InfiniBand Quantum-2 and Spectrum-X compute-fabric options and the storage/management fabric choices.
-- Identify cable and transceiver types (OSFP, twin-port, DAC, AOC) used in the RA and the distance constraints that drive them.
-- Describe the role of **Base Command Manager (BCM)** in a SuperPOD.
+## 1. Learning objectives
 
-## 1. The DGX node as a network endpoint
+By the end of this module you will be able to…
+
+- **Describe** the network layout of a DGX H100/H200/B200 node: which NIC serves which fabric and how many ports face each network. *(Exam objective: AI DC Design — node network components)*
+- **Distinguish** a DGX BasePOD from a DGX SuperPOD in scale, fabric choice, and management. *(AI DC Design — reference architectures)*
+- **Explain** the Scalable Unit (SU) concept and derive leaf, spine, and cable counts for a given number of SUs. *(AI DC Design — topology sizing)*
+- **Draw** and explain a **rail-optimized** topology and state why it gives one-hop GPU-to-GPU paths on the same rail. *(AI DC Design / InfiniBand — rail-optimized design)*
+- **Calculate** oversubscription for a leaf-spine (Clos/fat-tree) fabric and recognize a non-blocking design. *(AI DC Design — fat-tree math)*
+- **Compare** the InfiniBand Quantum-2 and Spectrum-X compute-fabric options and the storage/management fabric choices. *(AI DC Design / Spectrum — fabric selection)*
+- **Identify** cable and transceiver types (OSFP, twin-port, DAC, AOC) used in the RA and the distance constraints that drive them. *(Troubleshooting Tools — mlxcables/mlxlink context)*
+- **Describe** the role of **Base Command Manager (BCM)** in a SuperPOD and separate it from **UFM**. *(AI DC Design — management roles)*
+
+## 2. Key technical concepts
+
+### 2.1 The DGX node as a network endpoint
+
+*Analogy:* think of the node as an apartment building with eight tenants (GPUs). Each tenant gets a private front door to the street (a compute NIC); the building shares two service entrances (BlueField-3 for storage and in-band) and one caretaker's phone line (the BMC).
 
 Every reference architecture starts from the node. Learn the H100 layout cold; later generations follow the same pattern.
 
-### 1.1 DGX H100 / H200
+**DGX H100 / H200**
+
 | Component | Count | Fabric | Port type |
 |---|---|---|---|
 | H100/H200 GPU | 8 | NVLink/NVSwitch (internal) | — |
@@ -30,13 +38,17 @@ Every reference architecture starts from the node. Learn the H100 layout cold; l
 
 The key design intent: **one compute NIC per GPU, physically adjacent on the PCIe topology** so GPUDirect RDMA traffic never crosses a CPU socket or PCIe switch unnecessarily. `nvidia-smi topo -m` shows this as `PIX` or `PXB` affinity between GPU *n* and `mlx5_n`.
 
-### 1.2 DGX B200 and GB200
+**DGX B200 and GB200**
 - **DGX B200**: same 8-GPU air-cooled form factor; 8 × ConnectX-7 400G compute NICs and 2 × BlueField-3 for storage/in-band in the first B200 SuperPOD RA (verify — later revisions move to ConnectX-8).
 - **DGX GB200 NVL72**: a liquid-cooled rack of 18 compute trays (each 2 Grace CPUs + 4 Blackwell GPUs), all 72 GPUs in one NVLink domain via NVLink Switch trays. Each compute tray has 4 × **ConnectX-7** or **ConnectX-8** compute ports (one per GPU) and BlueField-3 for storage/in-band. The *rack* becomes the scale-up domain, and the compute fabric (Quantum-X800 XDR 800G or Spectrum-X800) connects racks. Verify exact per-tray NIC model and rate in the current GB200 RA.
 
-Whatever the generation, the invariant for the network engineer is: **number of compute fabric ports = number of GPUs**, and the fabric is designed around that count.
+Whatever the generation, the invariant for you is: **number of compute fabric ports = number of GPUs**, and the fabric is designed around that count.
 
-## 2. BasePOD vs SuperPOD
+**Why the exam cares:** "which component carries storage traffic" and "how many compute ports per node" are direct questions.
+
+### 2.2 BasePOD versus SuperPOD
+
+*Analogy:* BasePOD is a house plan you adapt to your lot; SuperPOD is a prefabricated module you replicate exactly.
 
 | | DGX BasePOD | DGX SuperPOD |
 |---|---|---|
@@ -47,19 +59,19 @@ Whatever the generation, the invariant for the network engineer is: **number of 
 | Management | BCM | BCM; UFM for IB fabrics |
 | Delivery | Reference design, partner-built | NVIDIA-validated design with strict component list and cabling plan |
 
-Think of BasePOD as the design you adapt and SuperPOD as the design you replicate. Many SuperPOD exam questions are really SU-arithmetic questions.
+**Why the exam cares:** many SuperPOD questions are really SU-arithmetic questions in disguise.
 
-## 3. The Scalable Unit (SU)
+### 2.3 The Scalable Unit (SU)
 
 A **Scalable Unit** is the smallest repeatable block: a fixed number of nodes, their leaf switches, and the cabling between them. In the H100 SuperPOD RA, **an SU is 32 DGX H100 nodes (256 GPUs)**. The RA notes that in practice one node slot per SU is given up to connect the UFM appliances, so the tables show 31 nodes per SU (248 GPUs) and 127 nodes for 4 SUs. If an exam question says "32-node SU", that is the design figure; "31 nodes" is the as-built figure after UFM.
 
-### 3.1 Why build by SU?
+Why build by SU?
 - The leaf layer is fully populated and symmetric, so adaptive routing and the SM's routing algorithms produce balanced paths.
 - Cable schedules, rack elevations, and switch configurations are templated and reused.
 - Validation (CVT, nccl-tests) is done per SU, then across SUs.
 - NVIDIA guidance: build the fabric for a complete SU even if you deploy fewer nodes initially; adding nodes later then needs no re-cabling of the spine.
 
-### 3.2 H100 SuperPOD compute fabric scaling table (from the RA)
+**H100 SuperPOD compute fabric scaling table (from the RA)**
 
 | SUs | Nodes (as built) | GPUs | Leaf switches | Spine switches | Node→leaf cables (incl. UFM) | Leaf→spine cables |
 |---|---|---|---|---|---|---|
@@ -75,68 +87,44 @@ Observe the formulas behind the table rather than memorizing it:
 - **Leaf→spine cables per SU = leaf count × uplinks per leaf = 8 × 32 = 256**.
 - Spine count grows to keep the fabric non-blocking: each spine must have enough ports to take one uplink from every leaf. With 32 leaves at 4 SUs and 64 ports per spine, 16 spines × 64 ports = 1,024 = the 1,024 leaf→spine cables.
 
-## 4. The switches
+### 2.4 The switches
 
-### 4.1 Quantum-2 QM9700 / QM9790
-The H100-era compute fabric uses the **NVIDIA Quantum-2 QM9700** (managed) or QM9790 (unmanaged) switch:
+**Quantum-2 QM9700 / QM9790.** The H100-era compute fabric uses the **NVIDIA Quantum-2 QM9700** (managed) or QM9790 (unmanaged) switch:
 - 64 × NDR 400G ports delivered through **32 OSFP cages**, each cage carrying a **twin-port** transceiver (2 × 400G).
 - 51.2 Tb/s aggregate (verify), SHARPv3 in-network computing, adaptive routing.
 - Also configurable as 128 × 200G (NDR200) by splitting each 400G port — common for connecting ConnectX-7 at 200G in BasePOD or storage designs.
 
 In an SU, each leaf QM9700 uses **32 ports down** (one per node on its rail) and **32 ports up** to spines — a 1:1 split, hence non-blocking.
 
-### 4.2 Spectrum-X alternative
-A Spectrum-X SuperPOD replaces Quantum-2 with **Spectrum-4 SN5600** (64 × 800G OSFP, or 128 × 400G) leaf/spine switches running Cumulus Linux or SONiC, and ConnectX-7 with **BlueField-3 SuperNICs** in the nodes. The topology math is identical; the difference is the control plane (BGP EVPN/VXLAN or plain L3 underlay), congestion control (RoCE with **PFC**/**ECN** + SuperNIC-side DCQCN) and adaptive routing done by the Spectrum-4 ASIC with reordering in the SuperNIC. See [`../04-spectrum-ethernet/01-spectrum-x.md`](../04-spectrum-ethernet/01-spectrum-x.md).
+**Spectrum-X alternative.** A Spectrum-X SuperPOD replaces Quantum-2 with **Spectrum-4 SN5600** (64 × 800G OSFP, or 128 × 400G) leaf/spine switches running Cumulus Linux or SONiC, and ConnectX-7 with **BlueField-3 SuperNICs** in the nodes. The topology math is identical; the difference is the control plane (BGP EVPN/VXLAN or plain L3 underlay), congestion control (RoCE with **PFC**/**ECN** + SuperNIC-side DCQCN) and **adaptive routing** done by the Spectrum-4 ASIC with reordering in the SuperNIC. See [`../04-spectrum-ethernet/01-spectrum-x.md`](../04-spectrum-ethernet/01-spectrum-x.md).
 
-### 4.3 Storage, in-band, OOB
+**Storage, in-band, OOB**
+
 | Fabric | H100 RA switch | Notes |
 |---|---|---|
 | Storage | **QM9700 (MQM9700-NS2F)** InfiniBand in the classic H100 RA; Spectrum SN4600/SN5600 Ethernet (RoCE) in Ethernet-storage variants | Per-node storage I/O target > 40 GB/s; storage side 1:1, DGX side approximately 4:3 oversubscribed per the RA |
 | In-band management | **Spectrum SN4600C** (64 × 100G) | Cluster services, home directories, Slurm/K8s, BCM |
 | OOB management | **Spectrum SN2201** (48 × 1G RJ45 + 4 × 100G) | BMCs, switch mgmt ports, PDUs, storage controllers |
 
-## 5. Rail-optimized topology
+### 2.5 Rail-optimized topology
+
+*Analogy:* in a conventional ToR design, a leaf is the mail room for one floor of the building (one rack). In a rail-optimized design, a leaf is the mail room for *everyone named "tenant 3"* across every building in the city — so tenant 3 writing to tenant 3 next door never has to go through the central post office (the spine).
 
 This is the single most-asked design concept in the domain. Read it twice.
 
-### 5.1 The idea
 In a conventional leaf-spine, every NIC in a *rack* connects to the rack's leaf (top-of-rack). In a **rail-optimized** design, every NIC of the *same index* across all nodes in the SU connects to the *same* leaf. GPU 0 of every node → leaf 0; GPU 1 of every node → leaf 1; … GPU 7 → leaf 7. Each such set is a **rail**.
 
-```text
-                         Spine 0      Spine 1      Spine 2      Spine 3
-                        ┌──────┐     ┌──────┐     ┌──────┐     ┌──────┐
-                        └──┬┬┬─┘     └──┬┬┬─┘     └──┬┬┬─┘     └──┬┬┬─┘
-      (every leaf has 32 uplinks spread evenly across the spines)
-   ┌───────────┬───────────┬───────────┬── ... ──┬───────────┐
-┌──┴───┐   ┌───┴──┐   ┌────┴─┐   ┌────┴─┐       ┌────┴─┐
-│Leaf 0│   │Leaf 1│   │Leaf 2│   │Leaf 3│  ...  │Leaf 7│      <- one leaf per RAIL
-│rail 0│   │rail 1│   │rail 2│   │rail 3│       │rail 7│
-└┬┬┬┬┬─┘   └┬┬┬┬┬─┘   └┬┬┬┬┬─┘   └┬┬┬┬┬─┘       └┬┬┬┬┬─┘
- │││││      │││││      │││││      │││││          │││││
- 32 cables  32 cables  32 cables  32 cables      32 cables     <- one from each node
- │││││      │││││      │││││      │││││          │││││
- ┌─────────────────────────────────────────────────────────────┐
- │ Node 00:  GPU0-NIC0  GPU1-NIC1  GPU2-NIC2  GPU3-NIC3 ... GPU7-NIC7 │
- │ Node 01:  GPU0-NIC0  GPU1-NIC1  GPU2-NIC2  GPU3-NIC3 ... GPU7-NIC7 │
- │   ...                                                          │
- │ Node 31:  GPU0-NIC0  GPU1-NIC1  GPU2-NIC2  GPU3-NIC3 ... GPU7-NIC7 │
- └─────────────────────────────────────────────────────────────┘
-       │          │          │          │                 │
-     rail 0     rail 1     rail 2     rail 3    ...     rail 7
-   (all NIC0s  (all NIC1s
-    → Leaf 0)   → Leaf 1)
-```
-
-### 5.2 Why it works
+Why it works:
 - **Same-rail traffic is one hop.** GPU 3 on node 5 talking to GPU 3 on node 20 enters Leaf 3 and exits Leaf 3 — never touches a spine. With 32 nodes per SU, each GPU can reach the same-rank GPU on 31 other nodes in one switch hop.
 - **NCCL exploits it.** NCCL's ring and tree algorithms, combined with **PXN** (PCI × NVLink), arrange that inter-node traffic is sent from GPU *n* to GPU *n* on the peer node — same rail. Traffic that must change rail is first moved over NVLink inside the node (to the GPU that owns the correct rail), then sent. Spine traffic is thereby minimized. See [Module 1.3](03-gpu-to-gpu-communication-nccl-gpudirect.md).
 - **Spine bandwidth is still full.** The design remains a non-blocking fat-tree, so cross-rail traffic (which does traverse spines) is not penalized; rail optimization is an optimization *on top of* non-blocking, not a substitute for it.
 - **Failure domains line up with rails.** Losing Leaf 2 removes rail 2 from the whole SU, which NCCL can route around via NVLink to other rails, rather than removing all 8 NICs of four racks of nodes.
 
-### 5.3 Physical consequence
-Because every node has a cable to each of eight leaves, nodes and leaves cannot be in the same rack in a neat ToR fashion; leaf switches sit in a central network rack per SU and the node→leaf cables are 10–50 m. That is why the RA specifies **active optical cables or transceivers + fiber**, not DAC, for compute links.
+Physical consequence: because every node has a cable to each of eight leaves, nodes and leaves cannot be in the same rack in a neat ToR fashion; leaf switches sit in a central network rack per SU and the node→leaf cables are 10–50 m. That is why the RA specifies **active optical cables or transceivers + fiber**, not DAC, for compute links.
 
-## 6. Fat-tree / Clos math
+**Why the exam cares:** expect a path-tracing question ("GPU 5 on node 12 to GPU 5 on node 27 — which switches?") and a trap about rail optimization "saving spines" (it does not).
+
+### 2.6 Fat-tree / Clos math
 
 A **fat-tree** (folded Clos) is non-blocking when, at every switch, the bandwidth facing down equals the bandwidth facing up.
 
@@ -155,7 +143,7 @@ Two-tier (leaf-spine) limit with *P*-port switches: maximum non-blocking endpoin
 
 Three-tier rule of thumb: leaf↔spine inside a pod/SU-group stays as designed; each spine then splits its uplinks to core switches, and the number of core switches = (spine uplinks per spine × number of spines) / ports per core.
 
-## 7. Compute fabric choice: InfiniBand vs Spectrum-X
+### 2.7 Compute fabric choice: InfiniBand versus Spectrum-X
 
 | Criterion | Quantum-2 InfiniBand | Spectrum-X Ethernet |
 |---|---|---|
@@ -169,7 +157,7 @@ Three-tier rule of thumb: leaf↔spine inside a pod/SU-group stays as designed; 
 
 Both fabrics use the same topology (rail-optimized, non-blocking fat-tree) and the same port count per node; the choice does not change the cable math.
 
-## 8. Storage fabric
+### 2.8 Storage fabric
 
 Training nodes read datasets and write checkpoints. Checkpoints of large models are hundreds of GB and are written by every node near-simultaneously, so storage I/O is bursty and high-bandwidth. The RA sets a per-node target of **> 40 GB/s** for the H100 SuperPOD.
 
@@ -178,13 +166,13 @@ Training nodes read datasets and write checkpoints. Checkpoints of large models 
 - Fabric: a separate leaf-spine (not rail-optimized; conventional). Storage-side 1:1, compute-side modest oversubscription acceptable because storage I/O is not bulk-synchronous in the same way as collectives.
 - Why a separate fabric: a checkpoint storm must not share buffers with an all-reduce.
 
-## 9. Management networks
+### 2.9 Management networks
 
 - **In-band**: Ethernet on the BlueField-3 (or host 1/10/25G NIC in BasePOD). Carries BCM provisioning (PXE, image deploy), Slurm/Kubernetes control, monitoring, user SSH/Jupyter, container registry pulls. Routed to the corporate network.
 - **OOB**: 1G Ethernet from every BMC, switch management port, PDU, storage controller to SN2201 switches. Isolated; used by BCM for power control (IPMI/Redfish) and console.
 - **UFM appliances** attach to the compute IB fabric (hence the "31 of 32" node slot) and to in-band Ethernet for their web UI/API.
 
-## 10. Cabling
+### 2.10 Cabling
 
 | Item | Detail |
 |---|---|
@@ -198,7 +186,7 @@ Training nodes read datasets and write checkpoints. Checkpoints of large models 
 
 Cabling validation with **mlxcables** (read transceiver EEPROM, type, length) and **mlxlink** (link state, BER, eye margins) is covered in the Troubleshooting modules.
 
-## 11. Base Command Manager
+### 2.11 Base Command Manager
 
 **NVIDIA Base Command Manager (BCM)** is the cluster management software for BasePOD and SuperPOD (derived from Bright Cluster Manager). Its role:
 
@@ -208,9 +196,179 @@ Cabling validation with **mlxcables** (read transceiver EEPROM, type, length) an
 - Monitoring and health checks; power control via the OOB network.
 - `cmsh` CLI and Base View GUI; head node is highly available (two head nodes).
 
-BCM is *not* the InfiniBand fabric manager — that is **UFM** (or opensm). The exam likes to separate these roles.
+BCM is *not* the InfiniBand fabric manager — that is **UFM** (or opensm). **Why the exam cares:** it likes to separate these two roles.
 
-## Configuration / command reference
+## 3. Live-style walkthrough — building a 32-node SU rail by rail
+
+Let's build one H100 Scalable Unit on paper and count every port and cable as we go. Follow the arithmetic with a pencil; the exam asks exactly these numbers.
+
+**Step 1 — inventory the nodes.** 32 DGX H100 nodes, 8 GPUs each → 256 GPUs → **256 compute ports** (one ConnectX-7 per GPU). On the rear of each node those 8 ports come out of 4 twin-port OSFP cages, so physically you will see 4 cages per node, but you cable 8 logical 400G ports.
+
+**Step 2 — place the leaves, one per rail.** We need 8 leaves because there are 8 NIC indices (rails). Each leaf is a QM9700: 64 × 400G ports in 32 OSFP cages.
+
+```text
+                     SU-01 network rack(s)
+   ┌──────────────────────────────────────────────────────────┐
+   │ Leaf 0   Leaf 1   Leaf 2   Leaf 3   Leaf 4   Leaf 5   Leaf 6   Leaf 7 │   8 × QM9700
+   │ 32↓/32↑  32↓/32↑  32↓/32↑  32↓/32↑  32↓/32↑  32↓/32↑  32↓/32↑  32↓/32↑ │   each: 32 down, 32 up
+   └──────────────────────────────────────────────────────────┘
+       ▲        ▲        ▲        ▲        ▲        ▲        ▲        ▲
+       │        │        │        │        │        │        │        │
+     NIC0     NIC1     NIC2     NIC3     NIC4     NIC5     NIC6     NIC7      ← from EVERY node
+    (mlx5_0) (mlx5_1) (mlx5_2) (mlx5_3) (mlx5_4) (mlx5_5) (mlx5_6) (mlx5_7)
+```
+
+**Step 3 — cable rail 0.** Take NIC 0 (`mlx5_0`) of node 01 and run it to Leaf 0 port 1. NIC 0 of node 02 → Leaf 0 port 2. Continue to node 32 → Leaf 0 port 32. That is **32 node→leaf cables for rail 0**, consuming 32 of Leaf 0's 64 ports. Notice what we did *not* do: we did not connect any other NIC of node 01 to Leaf 0. Leaf 0 knows only about NIC 0s.
+
+Now repeat for rails 1–7. **Total node→leaf cables = 32 nodes × 8 rails = 256.** Each leaf has exactly 32 downlinks populated.
+
+```bash
+# After cabling rail 3, verify it from any IB-attached host. Every remote port on Leaf 3
+# must be an mlx5_3 (the HCA whose port GUID matches GPU 3's NIC) on a DIFFERENT node.
+iblinkinfo -S 0x1070fd0300a1b2c3        # -S = show links of one switch by its node GUID (Leaf 3's GUID).
+                                        # EXPECT: 32 lines "... Active/LinkUp ... 4X 100.0 Gbps ..." (NDR)
+                                        # EXPECT: remote descriptions like "dgx01 mlx5_3", "dgx02 mlx5_3", ...
+                                        # A line reading "dgx09 mlx5_5" means a NIC landed on the wrong rail.
+```
+
+Illustrative output for a correctly cabled Leaf 3:
+
+```text
+Switch 0x1070fd0300a1b2c3 "MF0;leaf03:MQM9700/U1":
+   7   1[  ]  ==( 4X 100.0 Gbps Active/ LinkUp)==>   21    1[  ] "dgx01 mlx5_3" ( )
+   7   2[  ]  ==( 4X 100.0 Gbps Active/ LinkUp)==>   29    1[  ] "dgx02 mlx5_3" ( )
+   7   3[  ]  ==( 4X 100.0 Gbps Active/ LinkUp)==>   37    1[  ] "dgx03 mlx5_3" ( )
+   ...
+   7  32[  ]  ==( 4X 100.0 Gbps Active/ LinkUp)==>  269    1[  ] "dgx32 mlx5_3" ( )
+   7  33[  ]  ==( 4X 100.0 Gbps Active/ LinkUp)==>    3    1[  ] "spine01:MQM9700/U1" ( )
+   ...
+```
+
+Watch two things. First, `4X 100.0 Gbps` — NDR is 4 lanes at 100 Gb/s each; `4X 50.0 Gbps` would be a link that trained at HDR, i.e. a bad optic. Second, every remote on ports 1–32 is `mlx5_3`. That column is your rail check. The second number on each line is the far-end **LID**, assigned by the SM; it changes if the SM restarts, so never key your cable plan to LIDs — key it to port GUIDs.
+
+**Step 4 — the UFM slot.** The RA gives up one node slot for the two UFM appliances. In the as-built table that becomes 31 nodes and 31 × 8 + 4 = 252 node→leaf cables. Design figure 32/256; as-built 31/252. Both can appear in a question.
+
+**Step 5 — size the spines.** Each leaf has 32 ports left for uplinks → **8 leaves × 32 = 256 leaf→spine cables.** A spine is also a 64-port QM9700, so 256 / 64 = **4 spines** for one SU. Each leaf sends 8 uplinks to each of the 4 spines (32 ÷ 4 = 8), so every leaf sees every spine with equal bandwidth — that symmetry is what lets adaptive routing spray evenly.
+
+```text
+                 Spine 0        Spine 1        Spine 2        Spine 3        4 × QM9700
+                ┌────────┐     ┌────────┐     ┌────────┐     ┌────────┐      64 ports each, all facing down
+                │64 ports│     │64 ports│     │64 ports│     │64 ports│      4 × 64 = 256 = leaf uplinks ✓
+                └──┬┬┬┬──┘     └──┬┬┬┬──┘     └──┬┬┬┬──┘     └──┬┬┬┬──┘
+                   8 uplinks from EACH of the 8 leaves to EACH spine (8 × 8 = 64 per spine)
+   ┌──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┐
+   Leaf0  Leaf1  Leaf2  Leaf3  Leaf4  Leaf5  Leaf6  Leaf7          32 up / 32 down each → 1:1
+```
+
+Oversubscription check for a leaf: 32 × 400G down ÷ 32 × 400G up = 1:1. Non-blocking. Good.
+
+**Step 6 — count cages and transceivers, not just ports.** Here is where learners get tripped up. The 256 node→leaf *ports* on the leaf side are 128 twin-port OSFP *cages*. Each twin-port switch transceiver fans out over a 2-way breakout fiber to two single-port transceivers on two different nodes. So for one SU, node→leaf optics = 128 twin-port (switch) + 256 single-port (node), plus 128 breakout fiber assemblies (verify LinkX part numbers). The leaf→spine side is twin-port to twin-port: 256 ports = 128 cables, 256 twin-port transceivers.
+
+```bash
+# Verify the optic on a leaf port is the twin-port finned OSFP the RA calls for, and on a node port the flat OSFP.
+mlxcables                               # Enumerate every cable the MST tool can see: vendor, PN, SN, length, type.
+                                        # EXPECT: PN prefixed MMA4Z00-NS (twin-port NDR) on switch cages,
+                                        #         MMA4Z00-NS400 (single-port) on node cages — verify current PNs.
+mlxlink -d mlx5_3 -m -e                 # -m module info (vendor, PN, temp, rx/tx power), -e eye/BER on this HCA.
+                                        # EXPECT: "Speed: NDR", "Width: 4x", Effective Physical Errors: 0.
+```
+
+**Step 7 — scale to 2 SUs and watch what changes.** Double everything at the leaf layer: 16 leaves, 512 node→leaf cables (508 as built), 512 leaf→spine cables. Spines: 512 / 64 = **8 spines**. Now each leaf's 32 uplinks spread over 8 spines → 4 per spine. At 3 and 4 SUs the RA jumps to 16 spines (768 and 1,024 uplinks respectively; 1,024 / 64 = 16 exactly at 4 SUs, with 3 SUs under-filling them). Beyond 4 SUs, spine ports run out at two tiers and the RA adds a core layer.
+
+**Step 8 — the other three fabrics, briefly.** Storage: BlueField-3 port per node → storage leaf (QM9700 or SN5600), conventional leaf-spine, ≈4:3 on the DGX side. In-band: BlueField-3 port → SN4600C. OOB: BMC → SN2201 (48 ports, so one SN2201 per ~40 devices once you add switch mgmt ports and PDUs).
+
+```bash
+# Confirm the node side matches the plan before you plug a single compute cable.
+ibdev2netdev -v                         # -v adds PCI address: mlx5_0..7 = ConnectX-7 (mt4129), mlx5_8+ = BlueField-3.
+nvidia-smi topo -m                      # GPU n <-> mlx5_n must be PIX/PXB; if GPU3 pairs with mlx5_5 your rail plan is off by node.
+```
+
+What "good" looks like at the end: 8 leaves each with 32 `mlx5_n`-homogeneous downlinks, 4 spines each with 64 uplinks from 8 leaves, every link `4X 100.0 Gbps Active`, `ibdiagnet` clean, and `ibnetdiscover` output matching the RA topology file.
+
+## 4. Troubleshooting / common gotchas
+
+### 4.1 "Leaf 5 shows a mix of mlx5_5 and mlx5_2 remotes"
+
+**Symptom.** `iblinkinfo -S <leaf5-GUID>` shows 30 remotes named `mlx5_5` and 2 named `mlx5_2`. Links are all `Active`. NCCL busbw is below acceptance and spine utilization is higher than the baseline SU.
+
+**Why it happens.** Two node→leaf cables were swapped during install (node 17's NIC 2 and NIC 5 cables crossed). Same-rail traffic that should be one hop now crosses a spine for those nodes, and **PXN** on the peer nodes assumes the rail is where the RA says it is.
+
+**How to debug.**
+```bash
+iblinkinfo -S <leaf5-GUID> | grep -v mlx5_5          # Any line that is not mlx5_5 is a wrong-rail cable.
+ssh dgx17 "ibdev2netdev -v"                           # Confirm mlx5_2 and mlx5_5 PCI addresses to identify the physical cages.
+ibdiagnet --topo_file su01.topo                        # Compare live topology to the RA reference (verify flag name).
+```
+
+**Fix.** Swap the two cables at the node end (the node's cage-to-NIC mapping is fixed by PCIe; the cable goes to the wrong leaf). Re-run `iblinkinfo -S` for both Leaf 2 and Leaf 5 and confirm homogeneous remotes.
+
+### 4.2 "I ordered 64 transceivers for a leaf and have 32 empty cages"
+
+**Symptom.** The BOM for a QM9700 leaf listed 64 ports and 64 transceivers; on install, half the cages have no module to accept, and the fiber plant does not match.
+
+**Why it happens.** Ports and cages were conflated. A QM9700 has 64 ports in **32 cages**; each cage takes one **twin-port** OSFP that carries two 400G ports. On the node side each ConnectX-7 port is a single-port OSFP. The leaf-side optic count is 32 twin-port, not 64 single-port, and the node→leaf fiber is a 2-way breakout.
+
+**How to debug.**
+```bash
+mlxcables                                             # On a populated cage: PN shows a twin-port NDR module; one SN serves two ports.
+mlxlink -d <leaf-port> -m                             # Module info reports both lanes groups for a twin-port device.
+```
+
+**Fix.** Re-issue the BOM in cages for switch ends (32 twin-port per QM9700) and ports for node ends (8 single-port per node), with breakout fibers equal to the twin-port count. The Appendix A formulas give the counts.
+
+### 4.3 "Spine count came out as 32 for 4 SUs"
+
+**Symptom.** A design proposal shows 32 spines for a 4-SU H100 SuperPOD; the RA says 16.
+
+**Why it happens.** The designer counted leaves (32) and assumed one spine per leaf, or used 32-port switches in the formula. Spines are sized by *uplink ports / spine port count*, not by leaf count.
+
+**How to debug.** Do the arithmetic aloud: 32 leaves × 32 uplinks = 1,024 uplinks; 1,024 / 64 ports per QM9700 = 16 spines.
+
+**Fix.** Use `spines_needed = (total_leaves × uplinks_per_leaf) / ports_per_spine`. Check against the RA table: 4, 8, 16, 16 for 1–4 SUs.
+
+### 4.4 "DAC cables arrived for node→leaf links; nothing trains"
+
+**Symptom.** Compute links show `Polling` or `Down` in `ibstat`; the cables are 400G DAC, 3 m, but the run from the node rack to the SU network rack is 15 m.
+
+**Why it happens.** Rail-optimized cabling means every node reaches eight leaves in a central rack; runs of 10–50 m exceed passive copper reach (~2–3 m at NDR). Someone applied ToR assumptions to a rail design.
+
+**How to debug.**
+```bash
+ibstat | grep -E 'State|Physical'                     # "Polling" with Physical state "Disabled" or "PortConfigurationTraining".
+mlxcables                                             # Cable type "Passive copper"; length 3 m; identifies the wrong media.
+```
+
+**Fix.** Replace with transceivers + structured MMF (SuperPOD default) or AOC; keep DAC only for in-rack leaf↔spine if those are adjacent and within reach.
+
+## 5. Hands-on assignment — network BOM for a 2-SU SuperPOD with a Spectrum-X alternative
+
+**Scenario.** A customer has approved a 2-SU DGX H100 SuperPOD (64 nodes design, 63 as built with UFM) with an InfiniBand Quantum-2 compute fabric. Their procurement team wants a complete network BOM. Separately, their networking lead wants to see what a Spectrum-X alternative would look like if they accepted a 2:1 oversubscribed spine to reduce cost, and what they would give up.
+
+**Requirements.**
+1. Produce the **InfiniBand compute fabric BOM**: leaf count, spine count, node→leaf cable count (design and as-built), leaf→spine cable count, and a transceiver list broken into switch-side twin-port, node-side single-port, and breakout fiber assemblies.
+2. Produce a **port map** for one leaf (Leaf 4 of SU-01): which node and which `mlx5_N` lands on each of ports 1–32, and how the 32 uplinks are distributed across the 8 spines.
+3. Produce the **Spectrum-X alternative** using SN5600 (64 × 800G, breakout to 128 × 400G) leaves with a **2:1 oversubscribed** spine: leaf count, spine count, leaf→spine cable count, and the resulting per-leaf down/up port split.
+4. Write a **half-page technical assessment** of the 2:1 alternative: which traffic patterns are unaffected, which are degraded, and what the RA position is.
+5. List the **storage, in-band and OOB** switch counts and node-side cable counts for the 63 nodes, using the RA switch models.
+
+**Deliverables.** One Markdown document with the five items above, including a cable list table with columns: From, To, Media, Count.
+
+**Acceptance criteria.**
+- Compute leaf count = 16, spine count = 8, leaf→spine cables = 512, node→leaf cables = 512 (design) / 508 (as built).
+- Transceiver counts are in cages for switch ends and ports for node ends, and the breakout-fiber count equals the switch-side twin-port count on the node→leaf side.
+- The Leaf 4 port map shows only `mlx5_4` on ports 1–32 and exactly 4 uplinks to each of 8 spines.
+- The Spectrum-X alternative's leaf split is derivable from 2:1 and uses real SN5600 port counts; the spine count follows from the formula in Appendix A.
+- The assessment states that same-rail traffic is unaffected, cross-rail/all-to-all/multi-SU traffic is degraded, and that the RA specifies non-blocking for compute.
+- Storage fabric is shown as a separate conventional leaf-spine (not rail-optimized) using BlueField-3 ports; OOB uses SN2201 and accounts for BMCs plus switch management ports.
+
+### Hint
+- Section 2.3's table gives you the 2-SU row directly; your job is to show the formulas that produce it.
+- For transceivers, re-read Step 6 of the walkthrough: switch cages take twin-port modules (2 ports each); node ports take single-port modules; one breakout fiber per switch twin-port.
+- For the Leaf 4 port map, Step 3 of the walkthrough shows the pattern; for uplinks, divide 32 by the spine count.
+- For the Spectrum-X 2:1 design, start with 128 × 400G per SN5600 (after breakout) and decide how many face down vs. up so that down/up = 2.
+- Section 2.5 "Spine bandwidth is still full" and Appendix B's trap about "rail optimization saving spines" are the core of your assessment.
+
+## Appendix A — Quick command / config reference
 
 ```bash
 # Verify the node's compute NICs and their GPU affinity before cabling to rails
@@ -248,32 +406,25 @@ leaf_to_spine_cables  = leaves × uplinks_per_leaf         (per SU: 8 × 32 = 25
 spines_needed         = (total_leaves × uplinks_per_leaf) / ports_per_spine
 oversubscription      = downlink_bw / uplink_bw           (1:1 = non-blocking)
 max 2-tier endpoints  = P² / 2   for P-port switches
+switch_cages          = switch_ports / 2                  (twin-port OSFP)
 ```
 
-## Common pitfalls & exam traps
-- Confusing *rail-optimized* with *rack-based ToR*. In rail-optimized designs a leaf serves one NIC index across all nodes, not all NICs of one rack.
-- Saying rail optimization makes the fabric cheaper by reducing spines. It does not; the fabric stays non-blocking. It reduces spine *traffic* (and latency), not spine *count*.
-- 32 vs 31 nodes per SU: 32 is the design, 31 is as-built after reserving a slot for UFM connectivity in the H100 RA.
-- Twin-port OSFP: one switch cage = two 400G ports. A 64-port QM9700 has 32 cages. Questions about "ports" and "cages" are not the same question.
-- Assuming compute and storage share the BlueField-3. Compute uses ConnectX-7; BlueField-3 is storage/in-band.
-- BCM vs UFM: BCM manages nodes and software; UFM manages the IB fabric (SM, telemetry).
-- Non-blocking vs oversubscribed storage: the RA tolerates ≈4:3 on the storage fabric DGX side but never on the compute fabric.
-- DAC for compute links: at 400G NDR, DAC reach is only a few meters; rail-optimized cabling distances require optics.
-- Forgetting the GB200 shift: the NVLink domain becomes the rack (72 GPUs), so the scale-out fabric connects racks, with one compute port per GPU still.
+## Appendix B — Exam traps & key takeaways
 
-## Key takeaways
-- DGX H100: 8 GPUs, 8 × ConnectX-7 400G compute (4 twin-port OSFP cages), 2 × BlueField-3 for storage/in-band, 1 BMC.
-- SU (H100 RA) = 32 nodes design / 31 as built, 8 leaf switches, 256 node→leaf and 256 leaf→spine cables.
+- DGX H100: 8 GPUs, 8 × ConnectX-7 400G compute (4 twin-port OSFP cages), 2 × BlueField-3 for storage/in-band, 1 BMC. Compute and storage do **not** share the BlueField-3.
+- SU (H100 RA) = 32 nodes design / 31 as built (one slot reserved for UFM connectivity), 8 leaf switches, 256 node→leaf and 256 leaf→spine cables.
 - Spines: 4 (1 SU), 8 (2 SUs), 16 (3–4 SUs) with QM9700 64-port switches.
-- Rail-optimized = GPU *n* of every node → leaf *n*; same-rail inter-node traffic is one hop.
-- Compute fabric is a non-blocking fat-tree: 32 down / 32 up per leaf.
-- Oversubscription = downlink bandwidth / uplink bandwidth; 1:1 is non-blocking.
-- Spectrum-X uses the same topology with SN5600 + BlueField-3 SuperNIC, RoCE, PFC/ECN, AR.
-- Storage fabric is separate (RoCE or IB via BlueField-3), > 40 GB/s per node target, may be ≈4:3 on the node side.
-- In-band = SN4600C class Ethernet; OOB = SN2201 1G for BMC/switch mgmt/PDU.
-- BCM provisions and manages nodes; UFM manages the IB fabric.
+- Rail-optimized = GPU *n* of every node → leaf *n*; same-rail inter-node traffic is one hop. Do not confuse with rack-based ToR, where a leaf serves all NICs of one rack.
+- Rail optimization reduces spine *traffic* (and latency), not spine *count*. The fabric stays non-blocking 1:1 (32 down / 32 up per leaf).
+- Oversubscription = downlink bandwidth / uplink bandwidth; 1:1 is non-blocking. The RA tolerates ≈4:3 on the storage fabric DGX side but never on compute.
+- Twin-port OSFP: one switch cage = two 400G ports. A 64-port QM9700 has 32 cages. "Ports" and "cages" are different questions.
+- DAC at 400G NDR reaches only a few meters; rail-optimized cabling distances require optics.
+- Spectrum-X uses the same topology with SN5600 + BlueField-3 SuperNIC, RoCE, PFC/ECN, AR. Fabric choice does not change the cable math.
+- Storage fabric is separate (RoCE or IB via BlueField-3), > 40 GB/s per node target; in-band = SN4600C class; OOB = SN2201 1G for BMC/switch mgmt/PDU.
+- BCM provisions and manages nodes and software; UFM manages the IB fabric (SM, telemetry). Not the same product.
+- GB200 shift: the NVLink domain becomes the rack (72 GPUs), so the scale-out fabric connects racks — still one compute port per GPU.
 
-## Review questions
+## Appendix C — Knowledge check
 
 1. A customer is building a 2-SU DGX H100 SuperPOD. How many compute leaf switches and how many leaf→spine cables are required?  
    A. 8 leaves, 256 cables  
@@ -343,3 +494,111 @@ max 2-tier endpoints  = P² / 2   for P-port switches
 - NVIDIA Base Command Manager documentation — https://docs.nvidia.com/base-command-manager/
 - NVIDIA LinkX cables and transceivers (OSFP, twin-port) — https://docs.nvidia.com/networking/display/linkx
 - Related modules: [1.1 AI Infrastructure Fundamentals](01-ai-infrastructure-and-operations-fundamentals.md), [1.3 NCCL and GPUDirect](03-gpu-to-gpu-communication-nccl-gpudirect.md), [InfiniBand administration](../02-infiniband/), [Spectrum-X](../04-spectrum-ethernet/)
+
+---
+## Solution guide — Hands-on assignment
+
+### Requirement 1 — InfiniBand compute fabric BOM (2 SUs)
+
+```text
+# Apply the formulas from Appendix A with nodes = 64 (design) / 63 (as built), GPUs_per_node = 8.
+leaves            = 8 per SU × 2 SUs                      = 16 × QM9700
+node_to_leaf      = 64 × 8                                = 512 cables (design)
+                  = 63 × 8 + 4 (UFM)                      = 508 cables (as built)
+leaf_to_spine     = 16 leaves × 32 uplinks                = 512 cables
+spines            = 512 / 64 ports per QM9700             = 8 × QM9700
+leaf down/up      = 32 / 32                               = 1:1 non-blocking
+```
+
+Transceiver list (verify exact LinkX part numbers in the current RA):
+
+| Item | Where | Count | Derivation |
+|---|---|---|---|
+| Twin-port NDR OSFP (finned) | Leaf downlink cages | 256 | 512 node→leaf ports ÷ 2 ports per cage |
+| Single-port NDR OSFP (flat) | Node ConnectX-7 ports | 512 (508 populated + UFM ports) | one per compute port |
+| 2-way breakout fiber (MPO-12/APC) | Leaf twin-port → 2 nodes | 256 | one per leaf downlink twin-port |
+| Twin-port NDR OSFP | Leaf uplink cages | 256 | 512 leaf→spine ports ÷ 2 |
+| Twin-port NDR OSFP | Spine cages | 256 | 8 spines × 32 cages |
+| Straight MPO fiber (twin-port to twin-port) | Leaf ↔ spine | 256 | 512 ports ÷ 2 per cable |
+
+*Criterion check:* 16 leaves, 8 spines, 512 leaf→spine, 512/508 node→leaf. Switch ends in cages (256 + 256 + 256), node ends in ports (512), breakout fibers (256) = leaf downlink twin-ports (256).
+
+### Requirement 2 — Leaf 4 (SU-01) port map
+
+```text
+# Downlinks: ports 1–32, one node each, always mlx5_4 (GPU 4's HCA).
+Port  1  ← dgx01 mlx5_4        Port 17 ← dgx17 mlx5_4
+Port  2  ← dgx02 mlx5_4        Port 18 ← dgx18 mlx5_4
+...                            ...
+Port 16  ← dgx16 mlx5_4        Port 31 ← dgx31 mlx5_4
+                               Port 32 ← UFM-01 (the reserved node slot; UFM uses 4 ports across 4 leaves — verify which leaves)
+
+# Uplinks: ports 33–64, 32 uplinks spread over 8 spines = 4 per spine.
+Ports 33–36 → Spine 1          Ports 49–52 → Spine 5
+Ports 37–40 → Spine 2          Ports 53–56 → Spine 6
+Ports 41–44 → Spine 3          Ports 57–60 → Spine 7
+Ports 45–48 → Spine 4          Ports 61–64 → Spine 8
+```
+
+Verification command once built:
+
+```bash
+iblinkinfo -S <leaf4-GUID> | awk 'NR<=33' | grep -vc 'mlx5_4'   # EXPECT: 0 (or 1 if the UFM port lands here) — no foreign rails.
+iblinkinfo -S <leaf4-GUID> | grep -c 'spine'                     # EXPECT: 32 uplinks.
+```
+
+*Criterion check:* only `mlx5_4` on downlinks, exactly 4 uplinks to each of 8 spines.
+
+### Requirement 3 — Spectrum-X alternative with a 2:1 spine
+
+Start from the SN5600: 64 × 800G OSFP, broken out to **128 × 400G** logical ports. Keep rail-optimization (16 leaves, one per rail per SU) so the node side is unchanged: 32 downlinks per leaf per SU at 400G to BlueField-3 SuperNICs.
+
+```text
+# Per leaf, 2:1 means down/up = 2. With 32 × 400G downlinks:
+uplinks_per_leaf  = 32 / 2                                = 16 × 400G (8 × 800G twin ports after breakout)
+leaf_to_spine     = 16 leaves × 16 uplinks                = 256 × 400G links
+spines            = 256 / 128 (400G ports per SN5600)     = 2 × SN5600
+                    (use 4 spines at half-populated if you want N+1 fault tolerance — state the trade-off)
+leaf ports used   = 32 down + 16 up = 48 of 128           → the leaf is heavily under-utilized; a 2:1 design
+                                                             would normally pack 2 rails per leaf (64 down / 32 up)
+                                                             and halve the leaf count to 8. Either answer is acceptable
+                                                             if the ratio and arithmetic are shown.
+```
+
+NVUE sketch for one leaf (verify breakout syntax on your Cumulus release):
+
+```bash
+nv set interface swp1-16 link breakout 2x400G     # 16 cages → 32 × 400G downlinks for the rail
+nv set interface swp17-24 link breakout 2x400G    # 8 cages → 16 × 400G uplinks
+nv set qos roce enable on                         # lossless RoCE: PFC + ECN per the Spectrum-X profile
+nv config apply
+```
+
+*Criterion check:* split derived from 2:1 (32/16), real SN5600 port counts (128 × 400G), spine count from `uplinks / ports_per_spine`.
+
+### Requirement 4 — Technical assessment (model answer)
+
+Rail optimization guarantees that same-rail traffic — GPU *n* to GPU *n* on another node in the same SU — never leaves the leaf. With **PXN**, NCCL routes most ring and tree traffic onto the destination rail, so a 2:1 spine leaves same-rail, single-SU collectives unaffected. What degrades: (1) cross-rail traffic when a rail or NVLink path is unavailable, (2) **AllToAll** patterns from expert parallelism, which are inherently many-to-many and not rail-friendly, and (3) all inter-SU traffic, which always crosses spines. Under 2:1 these paths get half the bandwidth and, because collectives are bulk-synchronous, the entire job slows to that path's pace regardless of how well the same-rail flows did. The RA position is unambiguous: the compute fabric is a non-blocking fat-tree; rail optimization reduces spine *traffic*, not spine *count*. Modest oversubscription (≈4:3) is tolerated only on the storage fabric's DGX side. Recommend 1:1 on compute; if cost is binding, reduce SU count rather than oversubscribe the spine.
+
+*Criterion check:* same-rail unaffected, cross-rail/all-to-all/multi-SU degraded, RA says non-blocking.
+
+### Requirement 5 — Storage, in-band, OOB for 63 nodes
+
+| Fabric | Node-side cables | Switches | Notes |
+|---|---|---|---|
+| Storage (RoCE or IB via BlueField-3) | 63 (1 BF3 port per node; 126 if both ports — verify RA) | Conventional leaf-spine, e.g. 2–4 × QM9700 or SN5600 leaves + spines sized for storage targets | Not rail-optimized; ≈4:3 on DGX side acceptable; must also carry storage-controller ports |
+| In-band (SN4600C, 64 × 100G) | 63 (1 BF3 port per node) + head nodes, UFM, storage mgmt | 2 × SN4600C (HA pair) | Routed to corporate network |
+| OOB (SN2201, 48 × 1G) | 63 BMCs + 16 leaf + 8 spine + storage/in-band switch mgmt ports + PDUs ≈ 110+ | 3 × SN2201 (verify count against your PDU and storage-controller totals) | Isolated management network |
+
+Cable list (compute summary rows; extend for the other fabrics):
+
+| From | To | Media | Count |
+|---|---|---|---|
+| DGX ConnectX-7 (single-port OSFP) | Leaf twin-port OSFP | 2-way breakout MMF | 256 breakouts (512 node ends) |
+| Leaf twin-port OSFP | Spine twin-port OSFP | MPO MMF | 256 |
+| DGX BlueField-3 | Storage leaf | 400G optical or DAC if in-rack | 63 |
+| DGX BlueField-3 | SN4600C | 100/200G optical or DAC | 63 |
+| DGX BMC | SN2201 | Cat6 RJ45 | 63 |
+| Switch mgmt ports (compute, storage, in-band) | SN2201 | Cat6 RJ45 | ~30 |
+
+*Criterion check:* storage is a separate conventional leaf-spine on BlueField-3; OOB on SN2201 counts BMCs plus switch management ports.
