@@ -1,0 +1,192 @@
+# NCP-AIN Flashcards
+
+Front / back pairs, grouped by domain. Import into Anki by splitting on ` — `. Review the heavy domains (Spectrum, InfiniBand, Troubleshooting) daily in the last two weeks.
+
+## Numbers you must know
+- NDR InfiniBand per-port rate — 400 Gb/s (4 lanes × 100G). HDR = 200, EDR = 100, XDR = 800
+- Quantum-2 switch ports — 64 × 400G NDR (or 128 × 200G with splitters)
+- Quantum-X800 — 144 × 800G XDR (verify)
+- Spectrum-4 SN5600 — 64 × 800G OSFP, 51.2 Tb/s
+- Default IB PKey — 0x7fff
+- PKey full-membership bit — MSB (0x8000); 0x8001 full, 0x0001 limited
+- RoCE v2 UDP port — 4791
+- RoCE data DSCP / traffic class (NVIDIA default) — DSCP 26 → TC/priority 3
+- CNP DSCP / traffic class (NVIDIA default) — DSCP 48 → TC 6
+- PFC priority for RoCE (default) — 3
+- IPoIB datagram-mode MTU — ≤ 2044 bytes (4x IB MTU) ; connected mode up to 65520
+- NVUE REST port — 8765
+- NetQ agent server port — 31980
+- DGX H100 node — 8 GPUs, 8 ConnectX-7 compute NICs (400G), 2 BlueField-3 for storage/in-band
+- ib_write_bw expected on NDR — ~390 Gb/s with `--report_gbits`
+- ib_write_lat expected (host memory, same leaf) — ~1–2 µs
+
+## AI DC Design
+- AI factory — a data center built as a single system to produce intelligence (train/infer) with compute, network, storage and software co-designed
+- Scale-up vs scale-out — NVLink/NVSwitch inside node or rack vs InfiniBand/Spectrum-X across nodes
+- Rail-optimized topology — NIC N of every node in an SU connects to leaf (rail) N; same-rail GPU pairs are one hop
+- Why AI traffic breaks ECMP — few, huge, long-lived flows (low entropy) collide on the same hash buckets
+- Scalable Unit (SU) — the repeatable building block of a SuperPOD (e.g. 32 DGX H100 nodes in the H100-era RA)
+- Four fabrics in a SuperPOD — compute (IB or Spectrum-X), storage (Ethernet/RoCE), in-band management, out-of-band management
+- Base Command Manager (BCM) — cluster provisioning/management software for DGX pods
+- NCCL — NVIDIA Collective Communications Library; implements all-reduce etc. over NVLink/PCIe/IB/RoCE
+- All-reduce — reduce across all ranks then distribute the result; used for gradient sync in data parallelism
+- All-to-all — each rank sends distinct data to every other rank; used in expert (MoE) parallelism
+- Ring vs tree all-reduce — ring: bandwidth-optimal, latency grows with N; tree: lower latency at large N
+- NCCL_DEBUG=INFO — print transport/topology decisions and errors
+- NCCL_IB_HCA — restrict which HCAs/ports NCCL uses (e.g. `mlx5_0:1,mlx5_1:1`)
+- NCCL_IB_GID_INDEX — GID index for RoCE (pick the v2 IPv4 GID)
+- NCCL_IB_TC — traffic class for RoCE (DSCP << 2, e.g. 104 for DSCP 26)
+- NCCL_IB_SL — IB service level
+- NCCL_NET_GDR_LEVEL — how far (PCIe distance) GPUDirect RDMA is allowed
+- NCCL_SOCKET_IFNAME — interface for bootstrap/OOB
+- NCCL_COLLNET_ENABLE=1 — enable SHARP (CollNet) collectives
+- NCCL_ALGO / NCCL_PROTO — force algorithm (Ring/Tree/CollNet) / protocol (Simple/LL/LL128)
+- GPUDirect RDMA — NIC DMAs directly to/from GPU memory (nvidia-peermem or dmabuf)
+- GPUDirect Storage — storage/NIC DMA directly to GPU memory, bypassing CPU bounce buffer
+- PXN — NCCL uses NVLink to route to the GPU closest to the right NIC before sending over the network
+- nccl-tests "busbw" — bus bandwidth normalized for the collective; compare against link rate
+
+## InfiniBand
+- Subnet Manager roles — discovers topology, assigns LIDs, computes routes, programs LFTs, SL2VL, PKeys
+- Where the SM can run — switch (MLNX-OS embedded), host (opensm), UFM server
+- SM election — highest priority wins, lowest GUID tie-break; states MASTER/STANDBY
+- LID — 16-bit local address assigned by SM, subnet-scoped
+- GUID — 64-bit burned-in identifier (node, port, system)
+- GID — 128-bit global address = subnet prefix + GUID
+- LMC — LID mask control; gives a port 2^LMC LIDs for multipathing
+- QP types — RC (reliable connected), UC, UD (datagram), XRC, DC
+- opensm routing engines — minhop, updn, ftree (fat-tree), dor, torus-2QoS, AR-capable
+- ftree — routing engine for Clos/fat-tree, default choice for SuperPOD
+- partitions.conf format — `Name=0xPKEY,ipoib: ALL=full;` or per-GUID membership
+- PKey limited vs full — limited members can only talk to full members
+- IPoIB child interface for PKey — `ib0.8002` style (hex PKey suffix)
+- Credit-based flow control — receiver advertises credits; sender transmits only with credits → lossless by design
+- VL — virtual lane; separate buffers/queues per lane on a link
+- SL — service level carried in the packet header (0–15); mapped to VL per hop
+- VL arbitration — high/low priority tables with weights determine VL scheduling
+- IB QoS where configured — opensm/UFM SM (qos_* params, SL2VL, VLArb) and app selects SL
+- Adaptive routing (IB) — switch picks among AR-group output ports per packet based on load; configured in SM
+- AR out-of-order — HCA tolerates reordering for RC when AR enabled (NCCL_IB_AR_THRESHOLD)
+- SHARP — in-network reduction (switch ASIC does the math), reduces traffic and latency for all-reduce
+- sharp_am — aggregation manager that builds SHARP trees; runs with SM/UFM
+- SHIELD — Self-Healing Interconnect; fast local rerouting around failed links
+- MLNX-OS SM commands — `ib sm`, `show ib sm`, `ib sm priority <n>`
+- mlxconfig LINK_TYPE_P1 — 1 = InfiniBand, 2 = Ethernet
+- UFM editions — Telemetry (metrics only), Enterprise (full mgmt + SM), Cyber-AI (adds anomaly detection)
+- UFM HA — two servers active/standby with replication (ufm_ha); SM fails over with UFM
+- UFM REST base path — `/ufmRest/`
+- UFM key UI areas — Network Map, Managed Elements, Events & Alarms, Telemetry, Logical Elements, PKeys
+- UFM system dump — bundle logs/config for support (`ufm_log_collect` / UI "System Dump")
+
+## RDMA / RoCE
+- RDMA three properties — kernel bypass, zero copy, CPU offload
+- Verbs objects — Device → PD → MR (lkey/rkey), QP, CQ, SRQ, AH
+- QP states — RESET → INIT → RTR → RTS (→ SQD/SQE/ERR)
+- One-sided vs two-sided — READ/WRITE (no receiver CPU) vs SEND/RECV (receiver posts buffer)
+- RNR NAK — receiver not ready (no posted receive buffer)
+- RDMA CM — librdmacm; IP-style connection setup (rdma_resolve_addr/route, rdma_connect)
+- RoCE v1 — L2 only, EtherType 0x8915, not routable
+- RoCE v2 — UDP/IP port 4791, routable, uses DSCP/ECN
+- DCQCN — ECN marking + CNP + sender rate control
+- PFC — 802.1Qbb per-priority pause; needed for lossless RoCE
+- PFC watchdog — detects stuck pause (storm) and drops/restarts the queue
+- Lossless vs lossy RoCE — PFC+ECN vs ECN-only with drops and retransmit
+- mlnx_qos — host QoS tool: `mlnx_qos -i eth0 --trust dscp --pfc 0,0,0,1,0,0,0,0`
+- show_gids — list GID table with index/type (v1/v2) for `-x`
+- cma_roce_mode / cma_roce_tos — set default RoCE version / ToS for RDMA CM
+- ethtool -S counters for RoCE — rx_prio3_pause, tx_prio3_pause, rx_prio3_discards, ecn marked
+- NVUE lossless RoCE — `nv set qos roce mode lossless` (+ `nv show qos roce`)
+- perftest GID flag — `-x <gid_index>` (RoCE)
+- perftest SL flag — `-S <sl>`
+- perftest rdma_cm — `-R`
+- perftest GPU memory — `--use_cuda=<gpu_id>`
+
+## Spectrum / Cumulus / SONiC / NetQ
+- Spectrum-X = — Spectrum-4 switch + BlueField-3 SuperNIC + software (AR, CC, telemetry, isolation)
+- Spectrum-X RoCE AR — packet spraying at switch, reorder (DDP) at SuperNIC
+- NVUE apply workflow — `nv set` → `nv config diff` → `nv config apply` → `nv config save`
+- NVUE startup config file — `/etc/nvue.d/startup.yaml`
+- NVUE show pending vs applied — `nv config diff`
+- NVUE revision history — `nv config history` / `nv config show --rev`
+- NVUE replace vs patch — replace = whole config from file; patch = merge
+- Breakout — `nv set interface swp1 link breakout 2x` (or 4x)
+- VLAN-aware bridge — `nv set bridge domain br_default vlan 10,20`; access: `nv set interface swp1 bridge domain br_default access 10`
+- SVI — `nv set interface vlan10 ip address 10.1.10.1/24`
+- BGP unnumbered — `nv set vrf default router bgp neighbor swp1 remote-as external`
+- EVPN enable — `nv set evpn enable on`; `nv set nve vxlan enable on`
+- EVPN route types — 1 ES, 2 MAC/IP, 3 IMET, 4 ES, 5 IP prefix
+- Tenant VRF with L3VNI — `nv set vrf TENANT1 evpn vni 104001`
+- Management VRF — `mgmt`; eth0 lives in it
+- cl-resource-query — ASIC table utilization (routes, hosts, MACs, ACLs, ECMP)
+- cl-support — Cumulus support bundle
+- smonctl / nv show platform environment — hardware sensors
+- WJH enable — `nv set system wjh enable on` (+ channels/triggers)
+- WJH categories — L1, L2, router, tunnel, ACL, buffer
+- NetQ check vs show — check = validation suite with pass/fail; show = state
+- NetQ agent config — `netq config add server <ip> vrf mgmt` then `netq config restart agent`
+- NetQ RoCE commands — `netq show roce-config`, `netq show roce-counters`
+- NetQ WJH — `netq show wjh-drop [l1|l2|router|tunnel|acl|buffer]`
+- NetQ trace — `netq trace <dst> from <src>`
+- SONiC config file — `/etc/sonic/config_db.json`
+- SONiC save/load — `config save -y`, `config reload -y`, `config load`
+- SONiC architecture — containers (swss, syncd, bgp, lldp, pmon…) around Redis DBs; SAI to ASIC
+- SONiC PFC watchdog — `pfcwd`
+- NVIDIA Air — cloud digital twin for Cumulus/SONiC topologies
+
+## BlueField / DOCA
+- BlueField-3 — Arm cores + ConnectX-7 NIC + DPA; 400G
+- DPU vs NIC mode — DPU mode: Arm owns data path (OVS offload etc.); NIC mode: plain NIC
+- SuperNIC — BlueField-3 variant optimized for Spectrum-X RoCE AR/CC
+- rshim — host-side interface to BlueField (console, BFB push, tmfifo network 192.168.100.x)
+- BFB install — `bfb-install --bfb <image.bfb> --rshim rshim0`
+- Representors — `pf0hpf` (host PF), `pf0vfN` (VFs) on the Arm side; OVS bridges them to `p0`
+- OVS hardware offload — `ovs-vsctl set Open_vSwitch . other_config:hw-offload=true`
+- DOCA — SDK + runtime + drivers for BlueField/ConnectX; DOCA-OFED replaces MLNX_OFED
+- DOCA profiles — doca-all, doca-networking, doca-ofed (verify names for your version)
+- DOCA HBN — Host-Based Networking: Cumulus-style routing/EVPN running on the DPU
+- DOCA Telemetry Service — DTS; exports NIC/DPU counters
+- mlxfwmanager — query/update NIC firmware
+- mst start / mst status -v — load MFT and list device paths
+
+## Troubleshooting
+- ibstat states — Down / Initializing / Armed / Active; Physical: Polling / Disabled / LinkUp
+- ibstat Initializing + LID 0 — link up, no SM
+- ibstatus — compact per-port state/rate
+- ibnodes / ibswitches / ibhosts — fabric inventory from SM data
+- iblinkinfo — every link's width/speed/state; find degraded links
+- ibping — IB-layer ping to LID/GUID; needs `ibping -S` server
+- ibtracert — path between two LIDs hop by hop
+- ibroute — dump a switch's LFT
+- sminfo — show master SM LID/GUID/priority/state
+- saquery — query the Subnet Administrator (nodes, paths, PKeys)
+- ibportstate — enable/disable/reset remote port, set speed/width
+- perfquery — port counters; `-x` 64-bit; `-R` reset
+- ibqueryerrors — scan fabric for ports with error counters above threshold
+- ibdiagnet — full fabric diag; output in /var/tmp/ibdiagnet2/; `--pc` clear counters, `-P all=1` thresholds, `--get_cable_info`
+- ib_write_bw / ib_write_lat — RDMA write bandwidth / latency; server then client
+- ib_read_bw / ib_send_bw — RDMA read / send variants
+- mlxlink -d <dev> -p <port> — link state, speed, FEC, troubleshooting opcode
+- mlxlink -m — module/cable EEPROM, temps, Tx/Rx power
+- mlxlink -c — counters: raw & effective BER, symbol errors, FEC corrected/uncorrected
+- mlxlink -e — eye opening / signal quality
+- Healthy NDR link — raw BER ≲ 1e-5 pre-FEC, effective BER ≈ 0
+- mlxcables — read/dump/upgrade cable & transceiver EEPROM/firmware
+- mlxconfig -d <dev> q / s — query / set NIC firmware parameters (reset required)
+- mlxfwreset — reset NIC to apply mlxconfig changes without reboot
+- CVT — validates physical cabling vs planned topology (rails, ports, speeds)
+- Bottom-up method — physical → link → SM/LID (IB) or L2/L3 (Eth) → QoS → RDMA perf → app (NCCL)
+
+## Automation / Kubernetes
+- nvidia.nvue collection — Ansible modules for NVUE objects + `config_apply`
+- NVUE YAML root — `- set:` (and `- unset:`)
+- NVUE REST — `https://<switch>:8765/nvue_v1/…` (GET state, PATCH to stage, POST revision apply)
+- Jinja2 + NVUE — template per role (leaf/spine) with host_vars for loopbacks/ASNs/breakouts
+- Ansible check mode — `--check --diff` to preview
+- NicClusterPolicy — Network Operator CR: ofedDriver, rdmaSharedDevicePlugin, sriovDevicePlugin, secondaryNetwork (multus, ipoib, ipam)
+- RDMA shared device plugin resource — `rdma/<name>` e.g. `rdma/rdma_shared_device_a`
+- SR-IOV host device resource — `nvidia.com/hostdev` (as configured)
+- NetworkAttachmentDefinition — Multus CR describing the secondary network (CNI + IPAM)
+- Pod annotation for secondary net — `k8s.v1.cni.cncf.io/networks: <nad-name>`
+- Network Operator + GPU Operator — both needed for GPUDirect RDMA in pods
+- RDMA netns mode for shared devices — `rdma system set netns shared` (exclusive for SR-IOV isolation)
+- Verify Network Operator — `kubectl get nicclusterpolicy -o yaml` (state Ready), pods in nvidia-network-operator ns, `ibstat` in pod, `ib_write_bw` pod-to-pod
