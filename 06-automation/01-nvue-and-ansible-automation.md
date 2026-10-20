@@ -5,6 +5,8 @@
 > **Source docs:** NVUE CLI and Command Reference; NVUE Cheat Sheet; NVUE API (REST) documentation; Data Center Network Automation — Ansible Deployment Guide (NVUE Automation with Ansible); `nvidia.nvue` Ansible Collection; Cumulus Linux Upgrade Guide  
 > **Estimated study time:** 5 hours
 
+> **How to study this module:** read §1–§2, work through the §3 walkthrough on real gear or NVIDIA Air, then attempt the §5 hands-on assignment using only the Hint section. Open the Solution guide (last section) only after you have a working attempt. Finish with the Appendix C knowledge check closed-book.
+
 ## 1. Learning objectives
 
 By the end of this module you will be able to…

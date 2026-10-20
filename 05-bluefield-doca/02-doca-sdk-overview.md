@@ -5,6 +5,8 @@
 > **Source docs:** NVIDIA DOCA SDK Documentation; DOCA Installation Guide for Linux; DOCA Profiles; DOCA Release Notes (compatibility matrix); DOCA HBN Service Guide; DOCA Telemetry Service Guide; Spectrum-X RoCE configuration guides  
 > **Estimated study time:** 4 hours
 
+> **How to study this module:** read §1–§2, work through the §3 walkthrough on real gear or NVIDIA Air, then attempt the §5 hands-on assignment using only the Hint section. Open the Solution guide (last section) only after you have a working attempt. Finish with the Appendix C knowledge check closed-book.
+
 ## 1. Learning objectives
 
 By the end of this module you will be able to…

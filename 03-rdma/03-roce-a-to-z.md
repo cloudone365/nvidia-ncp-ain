@@ -5,6 +5,8 @@
 > **Source docs:** Cumulus Linux User Guide — "RDMA over Converged Ethernet (RoCE)" (QoS chapter); MLNX_OFED/DOCA-OFED User Manual — RoCE, QoS and "RoCE Lossless/Lossy" sections; NVIDIA RoCE Configuration community guides (`mlnx_qos`, DCQCN); Spectrum-X Reference Architecture  
 > **Estimated study time:** 6–8 hours
 
+> **How to study this module:** read §1–§2, work through the §3 walkthrough on real gear or NVIDIA Air, then attempt the §5 hands-on assignment using only the Hint section. Open the Solution guide (last section) only after you have a working attempt. Finish with the Appendix C knowledge check closed-book.
+
 ## 1. Learning objectives
 
 By the end of this module you will be able to…

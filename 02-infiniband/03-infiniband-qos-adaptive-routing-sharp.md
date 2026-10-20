@@ -5,6 +5,8 @@
 > **Source docs:** NVIDIA Adaptive Routing Configuration Guide (MLNXSM); InfiniBand QoS chapter of the OpenSM/MLNXSM documentation; NVIDIA SHARP (Scalable Hierarchical Aggregation and Reduction Protocol) Deployment Guide; NCCL environment variable reference; Quantum-2 product documentation  
 > **Estimated study time:** 5–7 hours
 
+> **How to study this module:** read §1–§2, work through the §3 walkthrough on real gear or NVIDIA Air, then attempt the §5 hands-on assignment using only the Hint section. Open the Solution guide (last section) only after you have a working attempt. Finish with the Appendix C knowledge check closed-book.
+
 ## 1. Learning objectives
 
 By the end of this module you will be able to…

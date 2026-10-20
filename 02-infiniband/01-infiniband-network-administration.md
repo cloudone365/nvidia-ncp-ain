@@ -5,6 +5,8 @@
 > **Source docs:** NVIDIA MLNX-OS User Manual; MLNX_OFED / DOCA-OFED User Manual; OpenSM / MLNXSM Release Notes; NVIDIA Quantum-2 and Quantum-X800 product briefs  
 > **Estimated study time:** 6–8 hours
 
+> **How to study this module:** read §1–§2, work through the §3 walkthrough on real gear or NVIDIA Air, then attempt the §5 hands-on assignment using only the Hint section. Open the Solution guide (last section) only after you have a working attempt. Finish with the Appendix C knowledge check closed-book.
+
 ## 1. Learning objectives
 
 By the end of this module you will be able to…

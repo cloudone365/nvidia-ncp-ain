@@ -5,6 +5,8 @@
 > **Source docs:** NVIDIA UFM Cable Validation Tool User Manual (v1.4–v1.8); ibdiagnet User Manual ("Rail Optimized Topology Validation"); NVIDIA DGX SuperPOD Reference Architecture (cabling / rail design)  
 > **Estimated study time:** 2.5 hours
 
+> **How to study this module:** read §1–§2, work through the §3 walkthrough on real gear or NVIDIA Air, then attempt the §5 hands-on assignment using only the Hint section. Open the Solution guide (last section) only after you have a working attempt. Finish with the Appendix C knowledge check closed-book.
+
 > **Scope note.** CVT documentation is thinner and less public than the rest of the NVIDIA networking stack, and the tool has changed packaging between releases (standalone appliance → "UFM Cable Validation Tool" Docker-based collector with agents). This module is precise about *what* CVT validates and the *workflow* — which is what the exam tests — and explicitly hedges on exact binary names, flags, and file-format details. Where you see "verify in current CVT docs", do exactly that before relying on a command in production.
 
 ## 1. Learning objectives

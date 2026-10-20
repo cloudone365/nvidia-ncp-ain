@@ -5,6 +5,8 @@
 > **Source docs:** RDMA Aware Networks Programming User Manual; `libibverbs` and `librdmacm` man pages (`ibv_create_qp(3)`, `ibv_modify_qp(3)`, `ibv_post_send(3)`, `rdma_cm(7)`); rdma-core `examples/` (rping, rc_pingpong)  
 > **Estimated study time:** 5–6 hours
 
+> **How to study this module:** read §1–§2, work through the §3 walkthrough on real gear or NVIDIA Air, then attempt the §5 hands-on assignment using only the Hint section. Open the Solution guide (last section) only after you have a working attempt. Finish with the Appendix C knowledge check closed-book.
+
 ## 1. Learning objectives
 
 By the end of this module you will be able to…

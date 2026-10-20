@@ -5,6 +5,8 @@
 > **Source docs:** NVIDIA NCCL User Guide (Environment Variables, Troubleshooting); NCCL Tests README; GPUDirect RDMA documentation; GPUDirect Storage documentation; NVIDIA SHARP documentation  
 > **Estimated study time:** 3 hours
 
+> **How to study this module:** read §1–§2, work through the §3 walkthrough on real gear or NVIDIA Air, then attempt the §5 hands-on assignment using only the Hint section. Open the Solution guide (last section) only after you have a working attempt. Finish with the Appendix C knowledge check closed-book.
+
 ## 1. Learning objectives
 
 By the end of this module you will be able to…
