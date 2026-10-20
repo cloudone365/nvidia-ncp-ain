@@ -707,14 +707,9 @@ nv action upgrade system packages to-version <ver> use-vrf mgmt    # verify synt
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `nv config apply` hangs or Ansible times out | Apply triggers `switchd` reload/restart (breakout, AR, forwarding profile) or many objects | `async`/`poll`, longer `wait` in `nvidia.nvue.config`, `serial`, windows |
-| "Another user has pending changes" | Detached revision from a previous session or another operator | `nv config detach` first; REST `force: true` (coordinate) |
-| Revision locked / `409 Conflict` | Two revisions applying or a stuck revision | Wait for `GET /nvue_v1/revision` to show `applied`/`failed`; re-create |
 | Apply fails with validation error | Attribute invalid for this release or dependent object missing (VLAN not on bridge before SVI) | Fix template; `nv config diff`; test in Air |
-| Playbook always reports changed | `command: nv set ...` without diff logic | `replace`/`patch` + `nv config diff` with `changed_when` |
-| Config reverted after reboot | Missing `nv config save` | End with save |
 | REST certificate errors | Self-signed cert | `validate_certs: false` in lab; `nv set system api certificate` in production |
-| `nv` not found in Ansible | PATH/non-login shell or `become: true` | Full path `/usr/bin/nv`, do not `become` |
+| Apply hangs / 409 / always changed / lost on reboot / `nv` not found | See §4 Gotchas 1–4 | `async`+`serial`; `detach`/wait; `nv config diff` + `changed_when`; `save`; no `become` |
 
 ## Appendix B — Exam traps & key takeaways
 
