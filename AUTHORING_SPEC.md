@@ -49,15 +49,32 @@ README.md
 
 ## 2. Key technical concepts
 Structured, beginner-friendly explanation of the core mechanics. Subsections (### 2.1, 2.2 …).
-Lead each concept with a one-line analogy where it genuinely helps, then the precise mechanism,
-then "why the exam cares". Tables for comparisons. Bold every exam-named tool/term on first use.
+EVERY subsection is written in an explicit **What / Why / How** structure:
+- **What it is** — precise definition, where it sits in the stack, the exact names/fields/units involved.
+- **Why it exists** — the problem it solves, what breaks without it, the trade-off it makes
+  (include the quantitative reasoning: bandwidth math, latency budget, buffer sizing, failure modes).
+- **How it works** — the mechanism step by step: packet/field level, state machines, timers,
+  who sends what to whom and in what order; then how you configure/observe it (CLI).
+Lead with a one-line analogy where it genuinely helps, and close with "why the exam cares".
+Tables for comparisons. Bold every exam-named tool/term on first use.
+Wherever a mechanism involves a topology, a flow, a sequence of messages, or an integration
+between components, include an SVG diagram (see DIAGRAM_STYLE.md) — NEVER an ASCII drawing.
 
 ## 3. Live-style walkthrough
 A step-by-step, heavily commented walkthrough showing the concept in action — either a
 command/config session (every line commented with `#` explaining what it does and what you
-expect to see) or an annotated architectural walk (packet/flow traced hop by hop with an
-ASCII diagram). Include realistic illustrative output and call out what "good" looks like.
-Narrate as an instructor: "Watch what happens to the LID when…".
+expect to see) or an annotated architectural walk (packet/flow traced hop by hop against an
+SVG diagram whose numbered steps the prose references). Include realistic illustrative output
+and call out what "good" looks like. Narrate as an instructor: "Watch what happens to the LID when…".
+
+## Diagrams (mandatory)
+- No ASCII/box-drawing diagrams anywhere in the course. Every diagram is an SVG file under
+  `<section>/diagrams/` following DIAGRAM_STYLE.md, embedded with `![alt](diagrams/x.svg)` + caption.
+- Each module has at minimum: one architecture/topology diagram, one traffic- or message-flow
+  diagram (numbered steps), and one integration/connection diagram where components interact
+  (e.g. SM↔switch↔HCA; NCCL→verbs→HCA→fabric; Ansible→NVUE REST→switchd→ASIC; Operator→CRDs→plugins→pod).
+  Troubleshooting modules add a decision-flow diagram. Typically 3–6 diagrams per module.
+- Run `python3 tools/render_diagrams.py --check` before finishing; it must pass.
 
 ## 4. Troubleshooting / common gotchas
 2–3 (max 4) errors learners actually hit at this stage. For each:
