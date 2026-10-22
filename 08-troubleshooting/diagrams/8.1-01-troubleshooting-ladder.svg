@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>Bottom-up InfiniBand troubleshooting ladder</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Bottom-up InfiniBand troubleshooting ladder</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Every layer depends on the one below it: start at the cable and climb only when the rung below passes</text><g><title>Step 1</title><circle cx="96" cy="779.0" r="16" fill="#1f2937"/><text x="96" y="785.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<g><title>Physical / cable</title><rect x="130" y="738" width="560" height="82" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="146" y="768" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Physical / cable</text>
+<text x="146" y="802" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Physical state LinkUp? lanes lit? module hot?</text>
+</g>
+<g><title>Tools for layer 1</title><rect x="720" y="738" width="760" height="82" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="736" y="762" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ibstat (Physical state)</text>
+<text x="736" y="783" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxlink -m / -c  (Module 8.3)</text>
+<text x="736" y="804" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">perfquery SymbolErrorCounter, LinkDowned</text>
+</g>
+<g><title>Step 2</title><circle cx="96" cy="681.0" r="16" fill="#1f2937"/><text x="96" y="687.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<g><title>Link training</title><rect x="130" y="640" width="560" height="82" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="146" y="670" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Link training</text>
+<text x="146" y="704" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Width 4X? lane speed 106.25 Gbps (NDR)?</text>
+</g>
+<g><title>Tools for layer 2</title><rect x="720" y="640" width="760" height="82" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="736" y="664" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">iblinkinfo -l | grep 'Could be'</text>
+<text x="736" y="685" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ibstat Rate</text>
+<text x="736" y="706" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxlink (Width / Speed / FEC)</text>
+</g>
+<g><title>Step 3</title><circle cx="96" cy="583.0" r="16" fill="#1f2937"/><text x="96" y="589.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><title>Subnet Manager / LID</title><rect x="130" y="542" width="560" height="82" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="146" y="572" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Subnet Manager / LID</text>
+<text x="146" y="606" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">State Active? Base lid != 0? one master SM?</text>
+</g>
+<g><title>Tools for layer 3</title><rect x="720" y="542" width="760" height="82" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="736" y="566" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">sminfo  (state 3 = SMINFO_MASTER)</text>
+<text x="736" y="587" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ibstat (State, Base lid, SM lid)</text>
+<text x="736" y="608" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">opensm log / UFM SM status</text>
+</g>
+<g><title>Step 4</title><circle cx="96" cy="485.0" r="16" fill="#1f2937"/><text x="96" y="491.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<g><title>Partition / QoS</title><rect x="130" y="444" width="560" height="82" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="146" y="474" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Partition / QoS</text>
+<text x="146" y="508" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PKey on both ports? SL -&gt; VL mapping?</text>
+</g>
+<g><title>Tools for layer 4</title><rect x="720" y="444" width="760" height="82" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="736" y="468" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">saquery -p ; smpquery pkeys &lt;lid&gt;</text>
+<text x="736" y="489" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">/sys/class/net/ib0/pkey</text>
+<text x="736" y="510" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">saquery PR &lt;slid&gt; &lt;dlid&gt;  (SL, MTU, rate)</text>
+</g>
+<g><title>Step 5</title><circle cx="96" cy="387.0" r="16" fill="#1f2937"/><text x="96" y="393.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<g><title>Routing</title><rect x="130" y="346" width="560" height="82" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="146" y="376" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Routing</text>
+<text x="146" y="410" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">LFT has a path? no credit loop? AR groups sane?</text>
+</g>
+<g><title>Tools for layer 5</title><rect x="720" y="346" width="760" height="82" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="736" y="370" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ibtracert &lt;src&gt; &lt;dst&gt; ; ibroute &lt;lid&gt;</text>
+<text x="736" y="391" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet -r  (dead-ends, credit loops)</text>
+<text x="736" y="412" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ibping -L / -G (needs ibping -S)</text>
+</g>
+<g><title>Step 6</title><circle cx="96" cy="289.0" r="16" fill="#1f2937"/><text x="96" y="295.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<g><title>RDMA performance</title><rect x="130" y="248" width="560" height="82" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="146" y="278" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">RDMA performance</text>
+<text x="146" y="312" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">~97% of line rate per rail? 1-2 us latency?</text>
+</g>
+<g><title>Tools for layer 6</title><rect x="720" y="248" width="760" height="82" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="736" y="272" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ib_write_bw / ib_write_lat -d &lt;dev&gt; -q 4</text>
+<text x="736" y="293" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">perfquery PortXmitWait (congestion)</text>
+<text x="736" y="314" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ucx_perftest</text>
+</g>
+<g><title>Step 7</title><circle cx="96" cy="191.0" r="16" fill="#1f2937"/><text x="96" y="197.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<g><title>Application</title><rect x="130" y="150" width="560" height="82" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="146" y="180" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Application</text>
+<text x="146" y="214" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">busbw near NIC rate on all_reduce?</text>
+</g>
+<g><title>Tools for layer 7</title><rect x="720" y="150" width="760" height="82" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="736" y="174" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nccl-tests all_reduce_perf</text>
+<text x="736" y="195" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">NCCL_DEBUG=INFO, NCCL_IB_HCA, NCCL_NET_GDR_LEVEL</text>
+<text x="736" y="216" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nvidia-smi topo -m  (PCIe affinity)</text>
+</g>
+<line x1="1530" y1="820" x2="1530" y2="158" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<text x="1545" y="464" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">climb</text>
+<text x="130" y="880" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="start" xml:space="preserve">Rule: a rung-2 fault (2X-trained link) surfaces at rung 7 as a slow collective.</text>
+<text x="130" y="908" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="start" xml:space="preserve">Diagnose where it originates, not where it hurts.</text>
+<g><title>Legend</title><rect x="1100" y="840" width="380" height="144" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<rect x="1116" y="856" width="54" height="20" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2"/>
+<text x="1184" y="871" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Fabric / link layer</text>
+<rect x="1116" y="886" width="54" height="20" rx="5" fill="#eeeeee" stroke="#6b7280" stroke-width="2"/>
+<text x="1184" y="901" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SM-managed state</text>
+<rect x="1116" y="916" width="54" height="20" rx="5" fill="#fff5cc" stroke="#c9a400" stroke-width="2"/>
+<text x="1184" y="931" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Verbs / perftest layer</text>
+<rect x="1116" y="946" width="54" height="20" rx="5" fill="#e4f1cc" stroke="#76b900" stroke-width="2"/>
+<text x="1184" y="961" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Application layer</text>
+</g></svg>

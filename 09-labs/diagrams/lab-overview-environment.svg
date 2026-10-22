@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1060" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>Course lab environment overview</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="1060" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Course lab environment overview</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Three environments cover six labs: NVIDIA Air (free), two Linux hosts with ConnectX or Soft-RoCE, and a Kubernetes cluster</text><rect x="48" y="140" width="760" height="560" rx="12" fill="none" stroke="#e07b00" stroke-width="2" stroke-dasharray="6 6"/>
+<text x="62" y="164" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#e07b00" text-anchor="start" xml:space="preserve">NVIDIA Air simulation  -  Labs 1, 4, 5</text>
+<g><title>spine01</title><rect x="90" y="200" width="180" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="180.0" y="226" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">spine01</text>
+<text x="180.0" y="254" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x</text>
+</g>
+<g><title>spine02</title><rect x="300" y="200" width="180" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="390.0" y="226" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">spine02</text>
+<text x="390.0" y="254" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x</text>
+</g>
+<g><title>leaf01</title><rect x="90" y="340" width="180" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="180.0" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">leaf01</text>
+<text x="180.0" y="394" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x</text>
+</g>
+<g><title>leaf02</title><rect x="300" y="340" width="180" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="390.0" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">leaf02</text>
+<text x="390.0" y="394" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x</text>
+</g>
+<line x1="180" y1="340" x2="180" y2="270" stroke="#e07b00" stroke-width="2" fill="none"/>
+<line x1="180" y1="340" x2="390" y2="270" stroke="#e07b00" stroke-width="2" fill="none"/>
+<line x1="390" y1="340" x2="180" y2="270" stroke="#e07b00" stroke-width="2" fill="none"/>
+<line x1="390" y1="340" x2="390" y2="270" stroke="#e07b00" stroke-width="2" fill="none"/>
+<g><title>server01</title><rect x="90" y="470" width="180" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="180.0" y="496" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">server01</text>
+</g>
+<line x1="180" y1="470" x2="180" y2="410" stroke="#e07b00" stroke-width="2" fill="none"/>
+<g><title>server02</title><rect x="300" y="470" width="180" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="390.0" y="496" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">server02</text>
+</g>
+<line x1="390" y1="470" x2="390" y2="410" stroke="#e07b00" stroke-width="2" fill="none"/>
+<g><title>oob-mgmt-server</title><rect x="540" y="200" width="240" height="110" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="660.0" y="226" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">oob-mgmt-server</text>
+<text x="660.0" y="254" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Ansible control node (Lab 4)</text>
+<text x="660.0" y="272" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">SSH jump host</text>
+<text x="660.0" y="290" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">eth0 mgmt to every node</text>
+</g>
+<g><title>NetQ server (Lab 5)</title><rect x="540" y="340" width="240" height="110" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="660.0" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">NetQ server (Lab 5)</text>
+<text x="660.0" y="394" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">demo topology or OVA</text>
+<text x="660.0" y="412" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">netq CLI; agents on all</text>
+<text x="660.0" y="430" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">four switches (mgmt VRF)</text>
+</g>
+<g><title>oob-mgmt-switch</title><rect x="540" y="480" width="240" height="110" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="660.0" y="506" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">oob-mgmt-switch</text>
+<text x="660.0" y="534" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Air auto-generated</text>
+<text x="660.0" y="552" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">management network</text>
+</g>
+<path d="M540,255 L500,255 L500,560 L540,560" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M540,395 L500,395" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" fill="none"/>
+<text x="70" y="640" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">Simulated fully: NVUE, BGP unnumbered, EVPN, QoS config state, NetQ check/show/trace, Ansible.</text>
+<text x="70" y="664" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">Not simulated: Spectrum ASIC datapath (real PFC/ECN behaviour, WJH hardware drop records), InfiniBand.</text>
+<rect x="850" y="140" width="700" height="330" rx="12" fill="none" stroke="#2f6fdb" stroke-width="2" stroke-dasharray="6 6"/>
+<text x="864" y="164" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#2f6fdb" text-anchor="start" xml:space="preserve">Two Linux hosts  -  Labs 2, 3</text>
+<g><title>hostA</title><rect x="880" y="200" width="300" height="110" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1030.0" y="226" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">hostA</text>
+<text x="1030.0" y="254" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ConnectX-6/7 mlx5_0 (IB or RoCE)</text>
+<text x="1030.0" y="272" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">or Soft-RoCE rxe0 over eth0</text>
+<text x="1030.0" y="290" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">opensm (Lab 2), perftest server</text>
+</g>
+<g><title>hostB</title><rect x="1220" y="200" width="300" height="110" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1370.0" y="226" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">hostB</text>
+<text x="1370.0" y="254" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ConnectX-6/7 mlx5_0</text>
+<text x="1370.0" y="272" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">or rxe0</text>
+<text x="1370.0" y="290" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">perftest client, ibping -S</text>
+</g>
+<line x1="1180" y1="255" x2="1220" y2="255" stroke="#2f6fdb" stroke-width="4" fill="none"/>
+<text x="1200" y="335" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#2f6fdb" text-anchor="middle" xml:space="preserve">Option A: back-to-back</text>
+<g><title>optional: Quantum switch (Option B)</title><rect x="1010" y="350" width="380" height="90" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" stroke-dasharray="6 4"/>
+<text x="1200.0" y="375" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">optional: Quantum switch (Option B)</text>
+<text x="1200.0" y="402" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">QM87xx / QM97xx managed; switch SM,</text>
+<text x="1200.0" y="420" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">iblinkinfo per link, ibroute / ibtracert</text>
+</g>
+<line x1="1030" y1="310" x2="1120" y2="350" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="1370" y1="310" x2="1280" y2="350" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<rect x="850" y="500" width="700" height="200" rx="12" fill="none" stroke="#6b7280" stroke-width="2" stroke-dasharray="6 6"/>
+<text x="864" y="524" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#6b7280" text-anchor="start" xml:space="preserve">Kubernetes cluster  -  Lab 6</text>
+<g><title>control plane</title><rect x="880" y="550" width="200" height="120" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="980.0" y="576" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">control plane</text>
+<text x="980.0" y="604" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">kind / minikube OK</text>
+<text x="980.0" y="622" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">for CRD mechanics</text>
+</g>
+<g><title>node-a</title><rect x="1110" y="550" width="200" height="120" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1210.0" y="576" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">node-a</text>
+<text x="1210.0" y="604" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ConnectX for the</text>
+<text x="1210.0" y="622" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">full RDMA path</text>
+</g>
+<g><title>node-b</title><rect x="1340" y="550" width="200" height="120" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1440.0" y="576" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">node-b</text>
+<text x="1440.0" y="604" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ConnectX</text>
+<text x="1440.0" y="622" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">perftest pod peer</text>
+</g>
+<line x1="1310" y1="630" x2="1340" y2="630" stroke="#2f6fdb" stroke-width="4" fill="none"/>
+<g><title>Which lab uses what</title><rect x="48" y="830" width="1500" height="200" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="64" y="858" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Which lab uses what</text>
+<text x="64" y="889" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Lab 1  Air leaf-spine: NVUE hostnames, loopbacks, BGP unnumbered, server ports, nv set qos roce (lossless profile)</text>
+<text x="64" y="909" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Lab 2  Hosts (+ switch): ibstat states, opensm, LIDs, ibhosts / iblinkinfo, ibping, ibdiagnet, PKey 0x8001 + IPoIB child</text>
+<text x="64" y="929" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Lab 3  Hosts: ib_write_bw / ib_write_lat / ib_read_bw / ib_send_bw, -R / -x on RoCE, --use_cuda, nccl-tests</text>
+<text x="64" y="949" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Lab 4  Air: Ansible from oob-mgmt-server -&gt; NVUE REST (TCP 8765) or nv CLI over SSH, idempotent, nv config diff</text>
+<text x="64" y="969" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Lab 5  Air (+ hardware for WJH records): netq check / show / trace, roce-config, nv set system wjh, nv-wjh-cli, cl-resource-query</text>
+<text x="64" y="989" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Lab 6  Kubernetes: Helm install Network Operator, NicClusterPolicy, MacvlanNetwork -&gt; NAD, rdma/rdma_shared_device_a pods</text>
+</g>
+<g><title>Legend</title><rect x="1190" y="705" width="350" height="114" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="1206" y1="731" x2="1260" y2="731" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1274" y="736" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Ethernet data link</text>
+<line x1="1206" y1="761" x2="1260" y2="761" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="1274" y="766" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">InfiniBand / RDMA link</text>
+<line x1="1206" y1="791" x2="1260" y2="791" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1274" y="796" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Out-of-band management</text>
+</g></svg>

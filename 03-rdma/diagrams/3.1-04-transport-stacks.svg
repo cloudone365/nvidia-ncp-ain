@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img" aria-label="Four columns of protocol stacks from physical layer to verbs showing InfiniBand, RoCE v1, RoCE v2 with UDP 4791 and iWARP over TCP"><title>Encapsulation stacks: InfiniBand vs RoCE v1 vs RoCE v2 vs iWARP</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="900" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Encapsulation stacks: InfiniBand vs RoCE v1 vs RoCE v2 vs iWARP</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Same verbs API and the same BTH + payload on top; what differs is the network underneath and therefore what you must configure</text>
+<g><title>InfiniBand</title><rect x="40" y="150" width="360" height="690" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="56" y="180" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#1f2937" text-anchor="start">InfiniBand</text>
+<g><title>verbs (libibverbs)</title><rect x="60" y="200" width="320" height="50" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="220.0" y="229.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">verbs (libibverbs)</text>
+<g><title>payload + ICRC</title><rect x="60" y="260" width="320" height="50" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="220.0" y="289.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">payload + ICRC</text>
+<g><title>BTH + RETH/AETH</title><rect x="60" y="320" width="320" height="50" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="220.0" y="349.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">BTH + RETH/AETH</text>
+<g><title>GRH (optional)</title><rect x="60" y="380" width="320" height="50" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="220.0" y="409.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">GRH (optional)</text>
+<g><title>IB Link: LRH, VLs, credits</title><rect x="60" y="440" width="320" height="50" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="220.0" y="469.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">IB Link: LRH, VLs, credits</text>
+<g><title>IB Physical (NDR 400G)</title><rect x="60" y="500" width="320" height="50" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="220.0" y="529.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">IB Physical (NDR 400G)</text>
+<text x="64" y="600" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">needs: SM (LIDs, LFTs, PKeys)</text>
+<text x="64" y="626" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">lossless: credit FC built in</text>
+<text x="64" y="652" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">CC: IB CC / PCC</text>
+<text x="64" y="678" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">addr: LID (+GID)</text>
+<text x="64" y="704" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">tools: sminfo, ibdiagnet</text>
+<g><title>RoCE v1</title><rect x="420" y="150" width="360" height="690" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="436" y="180" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#1f2937" text-anchor="start">RoCE v1</text>
+<g><title>verbs (libibverbs)</title><rect x="440" y="200" width="320" height="50" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="600.0" y="229.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">verbs (libibverbs)</text>
+<g><title>payload + ICRC</title><rect x="440" y="260" width="320" height="50" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="600.0" y="289.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">payload + ICRC</text>
+<g><title>BTH + RETH/AETH</title><rect x="440" y="320" width="320" height="50" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="600.0" y="349.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">BTH + RETH/AETH</text>
+<g><title>GRH (mandatory)</title><rect x="440" y="380" width="320" height="50" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="600.0" y="409.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">GRH (mandatory)</text>
+<g><title>Ethernet MAC, EtherType 0x8915</title><rect x="440" y="440" width="320" height="50" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="600.0" y="469.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">Ethernet MAC, EtherType 0x8915</text>
+<g><title>Ethernet PHY</title><rect x="440" y="500" width="320" height="50" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="600.0" y="529.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">Ethernet PHY</text>
+<text x="444" y="600" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">L2 only: NOT routable</text>
+<text x="444" y="626" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">needs: PFC (VLAN-bounded)</text>
+<text x="444" y="652" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">no ECN carrier</text>
+<text x="444" y="678" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">addr: GID from MAC</text>
+<text x="444" y="704" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">status: legacy / disabled</text>
+<g><title>RoCE v2</title><rect x="800" y="150" width="360" height="690" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="816" y="180" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#1f2937" text-anchor="start">RoCE v2</text>
+<g><title>verbs (libibverbs)</title><rect x="820" y="200" width="320" height="50" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="980.0" y="229.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">verbs (libibverbs)</text>
+<g><title>BTH + RETH + payload + ICRC</title><rect x="820" y="260" width="320" height="50" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="980.0" y="289.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">BTH + RETH + payload + ICRC</text>
+<g><title>UDP src=flow hash, dst 4791</title><rect x="820" y="320" width="320" height="50" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="980.0" y="349.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">UDP src=flow hash, dst 4791</text>
+<g><title>IPv4/IPv6 (DSCP, ECN bits)</title><rect x="820" y="380" width="320" height="50" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="980.0" y="409.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">IPv4/IPv6 (DSCP, ECN bits)</text>
+<g><title>Ethernet MAC (+802.1Q PCP)</title><rect x="820" y="440" width="320" height="50" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="980.0" y="469.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">Ethernet MAC (+802.1Q PCP)</text>
+<g><title>Ethernet PHY</title><rect x="820" y="500" width="320" height="50" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="980.0" y="529.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">Ethernet PHY</text>
+<text x="824" y="600" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">routable, ECMP by UDP src port</text>
+<text x="824" y="626" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">needs: PFC + ECN/DCQCN per hop</text>
+<text x="824" y="652" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">addr: GID = IP (v2 index)</text>
+<text x="824" y="678" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">tools: mlnx_qos, nv show qos roce</text>
+<text x="824" y="704" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">default on ConnectX-4+</text>
+<g><title>iWARP</title><rect x="1180" y="150" width="360" height="690" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="1196" y="180" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#1f2937" text-anchor="start">iWARP</text>
+<g><title>verbs (libibverbs)</title><rect x="1200" y="200" width="320" height="50" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1360.0" y="229.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">verbs (libibverbs)</text>
+<g><title>MPA / DDP / RDMAP</title><rect x="1200" y="260" width="320" height="50" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1360.0" y="289.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">MPA / DDP / RDMAP</text>
+<g><title>TCP</title><rect x="1200" y="320" width="320" height="50" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1360.0" y="349.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">TCP</text>
+<g><title>IP</title><rect x="1200" y="380" width="320" height="50" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1360.0" y="409.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">IP</text>
+<g><title>Ethernet MAC</title><rect x="1200" y="440" width="320" height="50" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1360.0" y="469.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">Ethernet MAC</text>
+<g><title>Ethernet PHY</title><rect x="1200" y="500" width="320" height="50" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1360.0" y="529.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">Ethernet PHY</text>
+<text x="1204" y="600" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">TCP handles loss/CC</text>
+<text x="1204" y="626" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">higher latency, TOE-based</text>
+<text x="1204" y="652" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">no NVIDIA ConnectX support</text>
+<text x="1204" y="678" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">routable</text>
+<text x="1204" y="704" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">know it exists</text>
+<text x="800" y="870" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">IB, RoCE v1 and RoCE v2 carry the identical BTH/RETH/payload -&gt; same QPs, MRs, SEND/WRITE/READ; only addressing, losslessness and tooling change. iWARP re-implements RDMA over TCP.</text>
+</svg>

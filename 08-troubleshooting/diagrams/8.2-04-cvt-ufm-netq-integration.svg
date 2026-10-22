@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>CVT, ibdiagnet, UFM and NetQ: who owns which phase and what they share</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="900" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">CVT, ibdiagnet, UFM and NetQ: who owns which phase and what they share</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">CVT validates the plan at bring-up; ibdiagnet is the scripted second opinion; UFM (IB) and NetQ (Ethernet) own day-2</text><text x="60" y="160" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#d93025" text-anchor="start" xml:space="preserve">Bring-up (fabric dumb, no SM / routing)</text>
+<text x="900" y="160" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#2f6fdb" text-anchor="start" xml:space="preserve">Day-2 operations (control plane up)</text>
+<line x1="820" y1="140" x2="820" y2="860" stroke="#6b7280" stroke-width="2" fill="none"/>
+<g><title>CVT collector + agents</title><rect x="60" y="190" width="340" height="230" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="76" y="218" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">CVT collector + agents</text>
+<text x="76" y="249" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">input: plan (P2P / .topo / DOT)</text>
+<text x="76" y="269" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">input: agent link state, BER,</text>
+<text x="76" y="289" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  power, temperature (TCP 8251)</text>
+<text x="76" y="309" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">output: mismatch report, CSV,</text>
+<text x="76" y="329" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  REST gate</text>
+<text x="76" y="349" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">IB, NVOS and Spectrum fabrics</text>
+</g>
+<g><title>ibdiagnet (ibutils2)</title><rect x="440" y="190" width="340" height="230" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="456" y="218" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet (ibutils2)</text>
+<text x="456" y="249" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">needs an Active port -&gt; temporary</text>
+<text x="456" y="269" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  opensm on the bring-up host</text>
+<text x="456" y="289" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">--get_cable_info --extended_speeds</text>
+<text x="456" y="309" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-&gt; net_dump, db_csv, cables</text>
+<text x="456" y="329" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">rail-optimized topology validation</text>
+<text x="456" y="349" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">stage (topology file option)</text>
+</g>
+<g><title>Shared artifacts</title><rect x="60" y="470" width="340" height="200" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="76" y="498" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Shared artifacts</text>
+<text x="76" y="529" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">su1-plan.p2p   (authoritative plan)</text>
+<text x="76" y="549" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">discovered.p2p (from net_dump)</text>
+<text x="76" y="569" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">cable inventory: vendor / PN / SN /</text>
+<text x="76" y="589" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  length / FW per link</text>
+<text x="76" y="609" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">final validated topology = plan</text>
+<text x="76" y="629" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  for the next SU</text>
+</g>
+<g><title>Gate to the next phase</title><rect x="440" y="470" width="340" height="200" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="456" y="498" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Gate to the next phase</text>
+<text x="456" y="529" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">zero connectivity findings</text>
+<text x="456" y="549" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">zero integrity / state /</text>
+<text x="456" y="569" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  underperforming after soak</text>
+<text x="456" y="589" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ONLY THEN: enable SM / UFM (IB)</text>
+<text x="456" y="609" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  or BGP / EVPN (Ethernet)</text>
+</g>
+<g><title>UFM (InfiniBand)</title><rect x="860" y="190" width="330" height="300" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="876" y="218" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">UFM (InfiniBand)</text>
+<text x="876" y="249" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">runs the SM + SA</text>
+<text x="876" y="269" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Fabric Health = scheduled</text>
+<text x="876" y="289" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  ibdiagnet runs</text>
+<text x="876" y="309" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">topology compare vs snapshot</text>
+<text x="876" y="329" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">cable inventory per port</text>
+<text x="876" y="349" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">High BER / link-down events</text>
+<text x="876" y="369" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">port isolation</text>
+<text x="876" y="389" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-&gt; the audited day-2 tool</text>
+</g>
+<g><title>NetQ (Ethernet / Spectrum)</title><rect x="1210" y="190" width="340" height="300" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1226" y="218" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">NetQ (Ethernet / Spectrum)</text>
+<text x="1226" y="249" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">LLDP-based topology:</text>
+<text x="1226" y="269" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  netq show lldp</text>
+<text x="1226" y="289" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">netq check interfaces / mtu /</text>
+<text x="1226" y="309" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  bgp / evpn / roce</text>
+<text x="1226" y="329" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">link-flap and WJH events</text>
+<text x="1226" y="349" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">netq trace for paths</text>
+<text x="1226" y="369" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-&gt; Ethernet day-2 (Module 8.4)</text>
+</g>
+<g><title>NVIDIA Air</title><rect x="1060" y="530" width="490" height="150" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1076" y="558" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">NVIDIA Air</text>
+<text x="1076" y="589" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">simulates the planned Cumulus / Spectrum topology</text>
+<text x="1076" y="609" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">before hardware arrives; its topology description</text>
+<text x="1076" y="629" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">seeds the cabling plan. Air does not simulate IB or</text>
+<text x="1076" y="649" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">cabling faults: CVT itself is a hardware tool.</text>
+</g>
+<line x1="440" y1="300" x2="400" y2="300" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<text x="405" y="290" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" xml:space="preserve">net_dump</text>
+<line x1="230" y1="420" x2="230" y2="470" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<line x1="610" y1="420" x2="610" y2="470" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<line x1="400" y1="570" x2="440" y2="570" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<path d="M780,570 L820,570 L820,340 L860,340" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<text x="800" y="560" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#d93025" text-anchor="middle" xml:space="preserve">hand-over</text>
+<path d="M400,640 L420,640 L420,690 L1025,690 L1025,490" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<text x="640" y="715" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#7a3fd1" text-anchor="start" xml:space="preserve">validated plan + cable inventory become UFM's reference topology / snapshot</text>
+<path d="M860,440 L740,440 L740,420" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<text x="700" y="462" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">UFM Fabric Health re-runs ibdiagnet on schedule</text>
+<g><title>Legend</title><rect x="60" y="700" width="560" height="144" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="76" y1="726" x2="130" y2="726" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="144" y="731" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Bring-up data flow</text>
+<line x1="76" y1="756" x2="130" y2="756" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="144" y="761" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Discovery / validation feed</text>
+<line x1="76" y1="786" x2="130" y2="786" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)"/>
+<text x="144" y="791" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Gate: cabling clean before control plane</text>
+<line x1="76" y1="816" x2="130" y2="816" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="144" y="821" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Reference data handed to day-2</text>
+</g></svg>

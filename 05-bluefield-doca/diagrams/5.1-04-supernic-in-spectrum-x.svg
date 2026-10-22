@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
+<title>The SuperNIC's role in Spectrum-X: the NIC half of a cooperating pair</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">The SuperNIC's role in Spectrum-X: the NIC half of a cooperating pair</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Switch sprays (AR) and stamps telemetry; SuperNIC reorders (DDP) and throttles (DPA CC). Same silicon as the DPU, NIC-mode personality, 8 per node</text>
+<g><title>DGX node — 8× BlueField-3 SuperNIC NIC mode · 400G each · rail n → leaf n</title><rect x="60" y="170" width="460" height="130" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="290.0" y="211.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">DGX node — 8× BlueField-3 SuperNIC</text>
+<text x="290.0" y="232.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">NIC mode · 400G each · rail n → leaf n</text>
+<text x="290.0" y="257.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlxconfig: INTERNAL_CPU_OFFLOAD_ENGINE=1, LINK_TYPE_P1=2</text>
+<text x="290.0" y="273.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">CNP_DSCP_P1=48 CNP_802P_PRIO_P1=6 · AR/CC params per Spectrum-X guide</text>
+</g>
+<g><title>SN5600 leaf / spine (Spectrum-4) Cumulus Linux 5.x</title><rect x="1080" y="170" width="460" height="130" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1310.0" y="211.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">SN5600 leaf / spine (Spectrum-4)</text>
+<text x="1310.0" y="232.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Cumulus Linux 5.x</text>
+<text x="1310.0" y="257.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set qos roce mode lossless|lossy</text>
+<text x="1310.0" y="273.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set router adaptive-routing enable on (+ per uplink, threshold 70)</text>
+</g>
+<line x1="520" y1="215" x2="1080" y2="215" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<rect x="549" y="183" width="503" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="800" y="200" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">RoCE v2 (UDP 4791), DSCP 26 → SP3, packets carry VA offsets</text>
+<g><title>Step 1</title><circle cx="545" cy="190" r="16" fill="#1f2937"/><text x="545" y="196" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<line x1="1080" y1="255" x2="520" y2="255" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<rect x="520" y="273" width="560" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="800" y="290" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">AR: packets of one flow return over different spines, out of order</text>
+<g><title>Step 2</title><circle cx="1055" cy="285" r="16" fill="#1f2937"/><text x="1055" y="291" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<g><title>Direct Data Placement</title><rect x="60" y="360" width="350" height="120" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="235.0" y="406.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Direct Data Placement</text>
+<text x="235.0" y="431.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">each packet written to its final GPU/host</text>
+<text x="235.0" y="447.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">address; no reorder buffer, no go-back-N</text>
+</g>
+<g><title>DPA congestion control</title><rect x="435" y="360" width="350" height="120" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="610.0" y="406.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">DPA congestion control</text>
+<text x="610.0" y="431.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">Spectrum-X CC algorithm on 16 datapath cores;</text>
+<text x="610.0" y="447.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">per-flow rate from in-band telemetry</text>
+</g>
+<g><title>Performance isolation</title><rect x="810" y="360" width="350" height="120" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="985.0" y="406.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Performance isolation</text>
+<text x="985.0" y="431.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">per-QP/flow rate limits hit the misbehaving</text>
+<text x="985.0" y="447.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">tenant flow, not the shared port</text>
+</g>
+<g><title>GPUDirect RDMA</title><rect x="1185" y="360" width="350" height="120" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1360.0" y="406.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">GPUDirect RDMA</text>
+<text x="1360.0" y="431.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">NIC DMA straight into GPU memory (peermem);</text>
+<text x="1360.0" y="447.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">NCCL_IB_TC=106 marks the class</text>
+</g>
+<g><title>Step 3</title><circle cx="80" cy="345" r="16" fill="#1f2937"/><text x="80" y="351" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><title>Step 4</title><circle cx="455" cy="345" r="16" fill="#1f2937"/><text x="455" y="351" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<g><title>Without a SuperNIC (ConnectX-6 / third-party NIC) </title><rect x="60" y="540" width="700" height="130" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="410.0" y="581.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Without a SuperNIC (ConnectX-6 / third-party NIC)</text>
+<text x="410.0" y="627.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">AR reordering → treated as loss → go-back-N retransmits; ethtool -S out_of_sequence climbs</text>
+<text x="410.0" y="643.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">fix: disable AR on uplinks serving those hosts, or replace the NICs — AR is a pair feature</text>
+</g>
+<g><title>With the SuperNIC (Spectrum-X) </title><rect x="840" y="540" width="700" height="130" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5"/>
+<text x="1190.0" y="581.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">With the SuperNIC (Spectrum-X)</text>
+<text x="1190.0" y="627.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">out_of_sequence rises WITHOUT throughput loss; PFC rarely fires; ib_write_bw ≈ 390 Gb/s at 400G</text>
+<text x="1190.0" y="643.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">verify: nv show router adaptive-routing · ethtool -S | grep -E 'cnp|ecn|out_of_sequence'</text>
+</g>
+<g><title>Note</title><rect x="60" y="720" width="1000" height="110" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="72" y="742" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Deployment facts the exam tests: SuperNICs ship/operate in NIC mode; DPUs on the same servers handle north-south / storage (OVS, HBN, SNAP);</text>
+<text x="72" y="760" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">host side needs doca-ofed + mlnx_qos (trust dscp, PFC 3) + ECN sysfs + CNP firmware params; switch side needs the RoCE profile + AR.</text>
+<text x="72" y="778" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Telemetry on both ends: DTS on the card, NetQ/WJH on the switch.</text>
+<g><title>Legend</title><rect x="1110" y="720" width="430" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1124" y1="746" x2="1184" y2="746" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1198" y="752" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
+<rect x="1124" y="766" width="60" height="20" rx="4" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2"/>
+<text x="1198" y="782" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">SuperNIC feature</text>
+<rect x="1124" y="796" width="60" height="20" rx="4" fill="#ffd9d9" stroke="#d93025" stroke-width="2"/>
+<text x="1198" y="812" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">mismatched pair</text>
+</g>
+</svg>

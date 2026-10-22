@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
+<title>Cumulus Linux vs NVIDIA SONiC on the same Spectrum switch</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Cumulus Linux vs NVIDIA SONiC on the same Spectrum switch</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Both NVIDIA-supported. Cumulus: integrated, transactional NVUE, one-line RoCE. SONiC: containerised, open, immediate config, assembled RoCE</text>
+<g><title>Cumulus Linux (SN5600)</title><rect x="60" y="140" width="720" height="640" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
+<text x="74" y="168" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">Cumulus Linux (SN5600)</text>
+<g><title>NVIDIA SONiC (SN5600)</title><rect x="820" y="140" width="720" height="640" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
+<text x="834" y="168" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">NVIDIA SONiC (SN5600)</text>
+<g><title>Config model</title><rect x="90" y="185" width="660" height="84" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="420.0" y="221.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Config model</text>
+<text x="420.0" y="245.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">NVUE: nv set → pending → apply → save; revisions, rollback, replace/patch, REST :8765</text>
+</g>
+<g><title>Config model</title><rect x="850" y="185" width="660" height="84" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1180.0" y="221.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Config model</text>
+<text x="1180.0" y="245.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">config CLI / config_db.json → CONFIG_DB immediately; config save to persist; load (merge) vs reload (restart)</text>
+</g>
+<g><title>Where state lives</title><rect x="90" y="283" width="660" height="84" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="420.0" y="319.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Where state lives</text>
+<text x="420.0" y="343.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">Linux kernel + FRR files; switchd mirrors kernel → ASIC via SDK</text>
+</g>
+<g><title>Where state lives</title><rect x="850" y="283" width="660" height="84" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1180.0" y="319.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Where state lives</text>
+<text x="1180.0" y="343.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">Redis: CONFIG_DB(4) → APPL_DB(0) → ASIC_DB(1); orchagent + syncd/SAI; STATE_DB(6), COUNTERS_DB(2)</text>
+</g>
+<g><title>RoCE</title><rect x="90" y="381" width="660" height="84" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="420.0" y="417.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">RoCE</text>
+<text x="420.0" y="441.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set qos roce mode lossless (one profile: DSCP map, PFC SP3, ECN, buffers, ETS, CNP)</text>
+</g>
+<g><title>RoCE</title><rect x="850" y="381" width="660" height="84" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1180.0" y="417.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">RoCE</text>
+<text x="1180.0" y="441.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">assemble DSCP_TO_TC, TC_TO_PG, PORT_QOS_MAP pfc_enable, BUFFER_PG/PROFILE, WRED, SCHEDULER, PFC_WD</text>
+</g>
+<g><title>Adaptive routing / EVPN-MH / MLAG</title><rect x="90" y="479" width="660" height="84" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="420.0" y="515.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Adaptive routing / EVPN-MH / MLAG</text>
+<text x="420.0" y="539.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">full: nv set router adaptive-routing, EVPN multihoming, MLAG, VRR</text>
+</g>
+<g><title>Adaptive routing / EVPN-MH / MLAG</title><rect x="850" y="479" width="660" height="84" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1180.0" y="515.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Adaptive routing / EVPN-MH / MLAG</text>
+<text x="1180.0" y="539.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">EVPN VXLAN yes; AR platform/release dependent; MC-LAG community; MH limited — verify</text>
+</g>
+<g><title>Images</title><rect x="90" y="577" width="660" height="84" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="420.0" y="613.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Images</text>
+<text x="420.0" y="637.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">single partition; ONIE reinstall or apt; NetQ LCM</text>
+</g>
+<g><title>Images</title><rect x="850" y="577" width="660" height="84" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1180.0" y="613.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Images</text>
+<text x="1180.0" y="637.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">multi-image GRUB via sonic-installer; warm/fast reboot</text>
+</g>
+<g><title>Resources / support</title><rect x="90" y="675" width="660" height="84" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="420.0" y="711.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Resources / support</text>
+<text x="420.0" y="735.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">cl-resource-query · cl-support · NetQ + WJH · nvidia.nvue Ansible</text>
+</g>
+<g><title>Resources / support</title><rect x="850" y="675" width="660" height="84" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1180.0" y="711.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Resources / support</text>
+<text x="1180.0" y="735.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">crm show resources all · show techsupport · NetQ agent, WJH (NVIDIA builds) · gNMI</text>
+</g>
+<g><title>Best fit: NVIDIA-centric AI fabric following the Spectrum-X reference architecture</title><rect x="90" y="790" width="660" height="60" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5"/>
+<text x="420.0" y="824.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">Best fit: NVIDIA-centric AI fabric following the Spectrum-X reference architecture</text>
+</g>
+<g><title>Best fit: multi-vendor / hyperscaler operations, orchestrator writes config_db.json</title><rect x="850" y="790" width="660" height="60" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5"/>
+<text x="1180.0" y="824.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">Best fit: multi-vendor / hyperscaler operations, orchestrator writes config_db.json</text>
+</g>
+</svg>

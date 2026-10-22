@@ -27,18 +27,18 @@ By the end of this module you will be able to:
 
 **Analogy.** An electrician wires a new building. Every light switch works — but the switch in room 3 controls the lights in room 4. Flipping switches (link-state checks) will never find that. Only comparing the *wiring diagram* to what the electrician *actually did* will. CVT is that comparison.
 
-**Mechanism.** A DGX SuperPOD scalable unit has 32 nodes × 8 compute rails, plus storage and in-band management fabrics — thousands of cables, each with an exact intended source and destination. `ibstat` and `iblinkinfo` can report every link `Active / LinkUp / 4X NDR` and the fabric can *still be wrong*: GPU3's NIC on node 17 plugged into the leaf that serves rail 2 instead of rail 3 comes up perfectly and silently costs performance on every collective, because **rail-optimized** traffic that should stay on one leaf now crosses a spine. Two uplinks swapped between spines produce an asymmetric topology the routing engine routes around — until load reveals the hot spot.
+**What it is.** **CVT** (the UFM Cable Validation Tool) is a plan-versus-actual comparison engine for physical cabling plus a layer-1 health monitor, built to run during bring-up before any control plane exists. Its unit of work is one cable: a planned pair `(node-A, port-A) ↔ (node-B, port-B)` and the discovered pair for the same physical ports. It supports InfiniBand (Quantum), NVOS switches, and Ethernet (Spectrum) fabrics, so the same workflow applies to a Spectrum-X compute fabric as to an IB one.
 
-Link-state tools answer "is this link up?". CVT answers "is this link **the one the design said should be here**, and is it healthy enough to trust?"
+**Why it exists.** A DGX SuperPOD scalable unit has 32 nodes × 8 compute rails, plus storage and in-band management fabrics — thousands of cables, each with an exact intended source and destination. `ibstat` and `iblinkinfo` can report every link `Active / LinkUp / 4X NDR` and the fabric can *still be wrong*: GPU3's NIC on node 17 plugged into the leaf that serves rail 2 instead of rail 3 comes up perfectly and silently costs performance on every collective, because **rail-optimized** traffic that should stay on one leaf now crosses a spine. The arithmetic is unforgiving: a rail-optimized SU is designed so that GPU-n ↔ GPU-n traffic (the dominant NCCL ring/tree pattern) is a one-hop, non-blocking path on the rail-n leaf; a single swapped rail turns 2 of 256 host links into three-hop paths through a spine port that was budgeted for other traffic, and because a collective waits for its slowest member, the whole SU runs at the speed of that detour. Two uplinks swapped between spines produce an asymmetric topology the routing engine routes around — until load reveals the hot spot. Link-state tools answer "is this link up?". CVT answers "is this link **the one the design said should be here**, and is it healthy enough to trust?"
 
-What CVT checks:
+**How it works.** CVT performs four checks per cable:
 
-1. **Connectivity correctness** — each discovered link (local node/port ↔ remote node/port) is compared with the planned cabling, cable by cable.
-2. **Link integrity (layer 1)** — bit error rate, per-lane optical power, transceiver temperature, against thresholds.
-3. **Link state stability** — down links, flapping links, ports in error-disable, negotiation failures.
-4. **Speed/width** — a link planned as 4x NDR that trained at 2x or HDR is flagged as underperforming (overlapping `iblinkinfo`'s "Could be 4X", but against the *plan*).
+1. **Connectivity correctness** — each discovered link (local node/port ↔ remote node/port) is compared with the planned cabling, cable by cable, keyed on the endpoint names and port numbers.
+2. **Link integrity (layer 1)** — bit error rate, per-lane optical power, transceiver temperature, against thresholds (the same DOM and BER data `mlxlink -m -c` reads, Module 8.3).
+3. **Link state stability** — down links, flapping links, ports in error-disable, negotiation failures, observed continuously by the agents.
+4. **Speed/width** — a link planned as 4x NDR that trained at 2x or HDR is flagged as underperforming (overlapping `iblinkinfo`'s "Could be 4X", but against the *plan*, so it also catches a cable that is the wrong *type* for its position).
 
-CVT supports InfiniBand (Quantum), NVOS switches, and Ethernet (Spectrum) fabrics, so the same workflow applies to a Spectrum-X compute fabric as to an IB one.
+The outputs are categorized findings (§2.5) in a web UI, a CSV export for the cabling crew, and a REST API that automation can poll for "zero miswires" before enabling the SM.
 
 **Why the exam cares.** The classic question: "all 256 links Active/4X NDR, nccl-tests 15% below reference — which tool?" Answer: CVT.
 
@@ -46,7 +46,7 @@ CVT supports InfiniBand (Quantum), NVOS switches, and Ethernet (Spectrum) fabric
 
 **Analogy.** You cannot grade an exam without the answer key. The planned topology is the answer key; the discovered fabric is the student's paper.
 
-**Mechanism — the plan.** CVT needs an authoritative description of how the fabric *should* be wired. The user manual accepts topology files in **P2P (point-to-point) format, `.topo` format, or DOT (Graphviz) format**. Conceptually all three enumerate links as:
+**What it is — the plan.** CVT needs an authoritative description of how the fabric *should* be wired. The user manual accepts topology files in **P2P (point-to-point) format, `.topo` format, or DOT (Graphviz) format**. Conceptually all three enumerate links as:
 
 ```text
 <node-A> <port-A>  <->  <node-B> <port-B>
@@ -59,11 +59,11 @@ CVT supports InfiniBand (Quantum), NVOS switches, and Ethernet (Spectrum) fabric
 | Spreadsheet from the cabling contractor | Convert with a script; this is the common real-world case |
 | `ibdiagnet` `net_dump` of a known-good reference fabric | When replicating an SU, the first validated SU becomes the plan for the next ones |
 
-The plan must use the same node naming the switches and hosts actually report (switch hostname / node description, host hostname + HCA). Naming mismatches are the number one source of false "unknown neighbor" findings — set switch hostnames before you validate.
+**What it is — the reality.** CVT's current architecture collects reality through **agents** installed on the switches (and optionally servers). Agents monitor node and link state every ~10 seconds and push updates to the **collector** on change (plus a periodic full report). Agents require TCP **8251** open on the switches' management interface (verify in current docs). For devices that cannot run an agent, CVT supports *external/unmanaged* agents the collector only monitors, and in InfiniBand environments the fabric view can be reconciled against SM / **ibdiagnet** discovery data.
 
-**Mechanism — the reality.** CVT's current architecture collects reality through **agents** installed on the switches (and optionally servers). Agents monitor node and link state every ~10 seconds and push updates to the **collector** on change (plus a periodic full report). Agents require TCP **8251** open on the switches' management interface (verify in current docs). For devices that cannot run an agent, CVT supports *external/unmanaged* agents the collector only monitors, and in InfiniBand environments the fabric view can be reconciled against SM / **ibdiagnet** discovery data.
+**Why it exists.** Two independent sources are the whole point: the plan is what humans intended, the agents report what the silicon sees, and neither can be derived from the other. The plan must use the same node naming the switches and hosts actually report (switch hostname / node description, host hostname + HCA). Naming mismatches are the number one source of false "unknown neighbor" findings — set switch hostnames before you validate. With **no plan loaded** CVT still runs the integrity, state and speed checks (they need only the agents) but cannot produce a single connectivity finding — a distinction the exam tests.
 
-Without the appliance: run `ibdiagnet` with `--get_cable_info` and `--extended_speeds all`, then compare `ibdiagnet2.net_dump` / `ibdiagnet2.db_csv` with the plan (Section 3 does exactly this).
+**How it works.** The agent on a switch reads its own port table: for each port, admin and operational state, negotiated width and speed, the neighbor's identity (**LLDP** chassis ID and port ID on Ethernet; on InfiniBand the neighbor node GUID, port number and node description learned at the link layer, the same data `iblinkinfo` prints), and the module's DOM fields (temperature, Vcc, per-lane Rx/Tx power) plus raw and effective BER from the PHY. It serializes a snapshot and sends it to the collector; thereafter it sends a delta whenever a value crosses a threshold or a state changes, and a full snapshot on a timer. The collector normalizes names (hostname, node description, GUID) to the plan's naming and stores the result as the discovered topology. Without the appliance: run `ibdiagnet` with `--get_cable_info` and `--extended_speeds all`, then compare `ibdiagnet2.net_dump` / `ibdiagnet2.db_csv` with the plan (Section 3 does exactly this).
 
 **Why the exam cares.** It asks which formats are valid (P2P/topo/DOT — not YANG, not YAML) and what "no plan loaded" means (no connectivity validation; integrity monitoring still works).
 
@@ -71,31 +71,26 @@ Without the appliance: run `ibdiagnet` with `--get_cable_info` and `--extended_s
 
 **Analogy.** A site foreman (collector) with a radio to every floor (agents), a whiteboard everyone reads (web UI), and a phone line to head office (REST API).
 
-```text
-             +------------------------------------------+
-             |  CVT Collector ("bring-up server")       |
-             |  Docker container                        |
-             |  - reads topology file (P2P/topo/DOT)    |
-             |  - deploys & monitors agents             |
-             |  - compares plan vs discovered           |
-             |  - web UI (filter/sort/CSV) + REST API   |
-             +------+------------------+----------------+
-                    | mgmt network      | :8251
-     +--------------+------+   +--------+-------------+
-     | Agent on leaf-01    |   | Agent on spine-01    |    ... agents on every switch
-     | link state / BER /  |   |                      |        (and optionally hosts)
-     | neighbor every 10 s |   |                      |
-     +---------------------+   +----------------------+
-```
+**What it is.** Figure 8.2-1 shows the four components and the two data feeds into the collector.
 
-- **Collector / bring-up server** — the only component you interact with. Runs anywhere with reachability to the switch management network. Holds the plan, receives agent reports, runs the comparison, serves the web UI and REST API.
+![CVT collector as a Docker container with plan parser, discovered database, compare engine, web UI and REST API; switch agents on leaves, spines and hosts stream link state over TCP 8251; an ibdiagnet net_dump feed provides the InfiniBand fallback](diagrams/8.2-01-cvt-architecture.svg)
+*Figure 8.2-1 — CVT architecture: plan in, agent telemetry in, categorized report out.*
+
+- **Collector / bring-up server** — the only component you interact with. A Docker container that runs anywhere with reachability to the switch management network. Holds the plan, receives agent reports, runs the comparison, serves the web UI and REST API.
 - **Agents** — lightweight processes on switches (and servers) that report local port state, neighbor identity (LLDP on Ethernet; IB link-layer neighbor information on IB), and layer-1 metrics (BER, lane power, temperature — the same data `mlxlink -m -c` shows, Module 8.3). They start reporting after the collector sends `start_validation`.
 - **Web UI** — per-link status, filterable by switch, rack, issue type; CSV export for the cabling crew.
 - **REST API** — gate the next bring-up step on "zero miswires" from deployment automation.
 
-Exact install commands (container image, `docker run` parameters, agent push mechanism, port) differ by release — **verify in the current CVT Installation Notes**. For the exam, know the roles, not the flags.
+**Why it exists.** Bring-up happens before the fabric has any management plane of its own: no SM, no UFM, no BGP, no NetQ. The collector/agent design needs only IP reachability on the out-of-band management network, which exists from the moment the switches boot, so validation can start the hour the last cable is plugged. Pushing from agents rather than polling from the collector is what makes the UI *live*: a technician moves a cable and watches the row flip within seconds (§2.4), which is the practical difference between CVT and "run ibdiagnet, email a diff, wait a day".
+
+**How it works.** You load the plan file; the collector parses it into a set of planned links and the set of device names it expects. You trigger agent deployment (the collector pushes the agent package to each switch's management address) and `start_validation`; agents connect back on TCP 8251. For every device the collector tracks a status (`reporting`, `no-report`, `unreachable-device`) and, for every reported port, the discovered neighbor and layer-1 values. The compare engine joins planned and discovered links on the planned endpoint and classifies every row (§2.5). The UI reads the live result; the REST API exposes the same rows and counts so a bring-up pipeline can block until `miswiring == 0`. Exact install commands (container image, `docker run` parameters, agent push mechanism, port) differ by release — **verify in the current CVT Installation Notes**. For the exam, know the roles, not the flags.
 
 ### 2.4 The workflow and where it sits in bring-up
+
+**What it is.** A five-phase loop — plan, discover, compare, report, remediate — repeated until the connectivity finding list is empty, followed by a layer-1 soak, and scheduled *before* the SM or routing is enabled (Figure 8.2-2).
+
+![Five numbered phases plan, discover, compare, report, remediate with a re-run loop back to discover, above a bring-up timeline that places CVT after racks are powered and hostnames set and before SM/UFM or BGP/EVPN](diagrams/8.2-02-cvt-workflow.svg)
+*Figure 8.2-2 — The CVT workflow (steps 1–6) and where it sits in SuperPOD bring-up.*
 
 | Phase | What happens | Exit criterion |
 |---|---|---|
@@ -105,9 +100,9 @@ Exact install commands (container image, `docker run` parameters, agent push mec
 | **4. Report** | Categorized findings in UI/CSV: wrong-neighbor, wrong-port, extra cable, missing/no-transceiver, high BER, low power, flapping, speed/width below plan. | Cabling crew has a per-rack punch list |
 | **5. Remediate** | Re-seat/move/replace cables; re-validate. Agents report changes within seconds. | Zero connectivity mismatches, zero integrity failures, documented exceptions |
 
-Because agents stream changes, a technician moves a cable and watches the row flip from `wrong-port` to `OK` while still at the rack — CVT's practical advantage over "run ibdiagnet, email a diff, wait a day".
+**Why it exists.** Order is a cost decision. A miswire found at phase 2 costs one cable move. The same miswire found after the SM is up presents as an `ibdiagnet -r` routing warning, an `ibtracert` path with an extra hop, or a 15 % nccl-tests shortfall, and is debugged by a network engineer as a routing problem for days before anyone looks at a cable. Layer-1 marginality has the same shape: a transceiver that will fail at 70 °C under load passes a five-minute check, which is why the soak runs overnight with the agents watching BER drift, flaps and power. Doing both while the fabric is still "dumb" means every later symptom can be attributed to configuration, not cabling.
 
-Bring-up order:
+**How it works.** Bring-up order:
 
 1. Racks powered, switches with management IP and hostnames, **no SM / no production config yet**.
 2. CVT connectivity validation → fix all miswires. Doing this *before* SM/routing configuration avoids chasing routing anomalies that are really cabling errors.
@@ -115,9 +110,13 @@ Bring-up order:
 4. Enable SM / UFM (IB) or BGP/EVPN (Ethernet); ibdiagnet / NetQ validation.
 5. perftest per link, nccl-tests per SU (Module 8.1).
 
+Because agents stream changes, a technician moves a cable and watches the row flip from `wrong-port` to `OK` while still at the rack (step 6 in the figure is simply "discover and compare again", which the agents do for you).
+
 **Why the exam cares.** "When should the first full CVT run happen?" — after cabling and hostnames, before SM/routing.
 
 ### 2.5 Report categories: learn the vocabulary
+
+**What it is.** Every finding falls into one of five categories, each with a fixed set of finding names:
 
 | Category | Findings | Typical cause | Fix |
 |---|---|---|---|
@@ -127,7 +126,9 @@ Bring-up order:
 | **Underperforming** | Negotiated speed/width below plan (2x not 4x; HDR not NDR) | Damaged lane in cable, wrong cable type, breakout mismatch | Replace cable; confirm cable PN matches design |
 | **Provisioning / CVT** | AdminDown, negotiation fail, no-report (agent silent), unreachable-device | Port administratively down; firmware mismatch; agent not installed/port 8251 blocked | Enable port; fix mgmt reachability; install agent |
 
-A mismatch pair (illustrative):
+**Why it exists.** The category decides *who* fixes it. Miswiring and underperforming go to the cabling crew with a rack and port number; link integrity goes to whoever owns transceivers and cleaning kits; provisioning goes to the network engineer and never to the rack, because no cable move will make a silent agent report. Treating a `no-report` as "32 missing cables" is the most expensive mistake in this module (§4.2).
+
+**How it works.** The compare engine keys on the planned endpoint that identifies the cable (for host links the `dgx-NN mlx5_R` side; for uplinks the leaf side). If the discovered far end has the same switch and port, the link is `OK`; same switch but a different port → *wrong-port*; a different switch → *wrong-neighbor*; a far end whose name is not in the plan → *unknown-neighbor*; a discovered link whose near end has no planned counterpart → *extra cable*; a planned port with nothing discovered → *missing* / *no transceiver*. Integrity, state and speed findings are threshold comparisons on the agent telemetry and can coexist with an `OK` connectivity status. A mismatch pair (illustrative):
 
 ```text
 Status         Planned                              Discovered
@@ -137,31 +138,45 @@ WRONG-NEIGHBOR leaf-r2-01:swp17 <-> dgx-17:mlx5_2   leaf-r3-01:swp12 <-> dgx-17:
 
 Together these are a classic **swapped rail**: node 17's rail-2 and rail-3 cables were crossed. Each link is Active and 4x NDR — nothing else would have caught it.
 
+**Why the exam cares.** *Wrong-port* versus *wrong-neighbor* versus *extra cable* versus *no-report* appear as answer options to the same question; the category names are the exam's vocabulary.
+
 ### 2.6 Rail validation in a SuperPOD
 
 **Analogy.** Eight parallel express trains, one per GPU index. Every "GPU 3" passenger boards train 3. Put one passenger on train 2 and they need a transfer at the hub (spine) — slower for them and congesting the hub for everyone.
 
-**Mechanism.** A rail-optimized compute fabric places GPU *n*'s NIC on every node onto the same leaf (the rail-*n* leaf) so the dominant NCCL pattern (GPU *n* ↔ GPU *n* across nodes) is one leaf hop:
+**What it is.** A rail-optimized compute fabric places GPU *n*'s NIC on every node onto the same leaf (the rail-*n* leaf) so the dominant NCCL pattern (GPU *n* ↔ GPU *n* across nodes) is one leaf hop. Figure 8.2-3 draws the rule and what a swapped rail looks like against it.
 
-```text
-dgx-XX  mlx5_0 (GPU0 rail)  ->  rail-0 leaf
-dgx-XX  mlx5_1 (GPU1 rail)  ->  rail-1 leaf
-...
-dgx-XX  mlx5_7 (GPU7 rail)  ->  rail-7 leaf
-```
+![Four rail leaves and two spines above three DGX nodes; blue cables follow the rule mlx5_R to leaf-rR-01, two red cables on dgx-17 cross rails 2 and 3, and a dotted red detour shows rail-2 traffic now crossing a spine](diagrams/8.2-03-rail-swap.svg)
+*Figure 8.2-3 — Rail-optimized SU cabling with one swapped rail on dgx-17. Both red links are Active / 4X NDR; only the plan comparison (or the rail count) reveals them.*
+
+| Node port | GPU | Planned leaf | Leaf port |
+|---|---|---|---|
+| `dgx-NN mlx5_0` | GPU0 | `leaf-r0-01` | `NN` |
+| `dgx-NN mlx5_1` | GPU1 | `leaf-r1-01` | `NN` |
+| … | … | … | … |
+| `dgx-NN mlx5_7` | GPU7 | `leaf-r7-01` | `NN` |
 
 Plus: each leaf's uplinks spread evenly over all spines, and port numbering within a leaf follows the node index so the plan is predictable. See `../01-ai-datacenter-design/`.
 
-Without CVT: `ibdiagnet` has a dedicated **rail-optimized topology validation** stage (ibdiagnet User Manual, "Rail Optimized Topology Validation") — enable it with the topology option and verify the flag name in your version. Manually, every port of a rail-N leaf should carry the same `mlx5_N`:
+**Why it exists.** NCCL's ring and tree algorithms pair GPU *n* on one node with GPU *n* on the next, and each GPU has one PCIe-local NIC; rail design turns that into a one-switch-hop path for 7/8 of all inter-node bytes, which is what lets a 64-port leaf serve 32 nodes with a 1:1 uplink ratio. A swapped rail breaks two of those paths into three-hop paths through a spine, and because the spine ports are shared, it also adds load to every other node's cross-rail traffic. The performance loss is small per cable and invisible to link-state tools, which is exactly the kind of fault a plan comparison exists to catch.
+
+**How it works.** Without CVT: `ibdiagnet` has a dedicated **rail-optimized topology validation** stage (ibdiagnet User Manual, "Rail Optimized Topology Validation") — enable it with the topology option and verify the flag name in your version. Manually, every host-facing port of a rail-N leaf should carry the same `mlx5_N`:
 
 ```bash
 sudo iblinkinfo -l --switches-only | grep "rail-3-leaf" | grep -o 'mlx5_[0-9]' | sort | uniq -c
      32 mlx5_3
 ```
 
-Any second `mlx5_` value on a rail leaf is a miswire.
+Any second `mlx5_` value on a rail leaf is a miswire. The one-line rule generalizes to a script (Section 5): for each rail leaf, count distinct `mlx5_N` values among host-facing ports; exactly one value with count = node count is clean.
+
+**Why the exam cares.** "31 × mlx5_3 and 1 × mlx5_2 on a rail-3 leaf" is a miswire, not a routing or PKey problem.
 
 ### 2.7 CVT vs. UFM vs. ibdiagnet vs. NetQ vs. Air
+
+**What it is.** Five tools touch cabling; each owns a phase (Figure 8.2-4).
+
+![Bring-up side with CVT collector, ibdiagnet, shared artifacts and the gate to the next phase; day-2 side with UFM and NetQ; arrows show the net_dump feed, the hand-over gate and the validated plan becoming UFM's reference topology](diagrams/8.2-04-cvt-ufm-netq-integration.svg)
+*Figure 8.2-4 — Who owns which phase: CVT at bring-up, ibdiagnet as the scripted second opinion, UFM (IB) and NetQ (Ethernet) on day 2.*
 
 | Tool | Role in cabling validation |
 |---|---|
@@ -171,12 +186,18 @@ Any second `mlx5_` value on a rail leaf is a miswire.
 | **NetQ** | Ethernet equivalent for day-2: LLDP-based topology, `netq check` validations, link-flap events (Module 8.4) |
 | **NVIDIA Air** | Cloud simulation to build the *planned* Cumulus/Spectrum topology before hardware arrives; its topology description seeds the cabling plan. Air does not simulate IB cabling faults, so CVT itself is a hardware tool |
 
+**Why it exists.** Each tool needs something the others do not have. CVT needs only management IP and works with no SM; ibdiagnet needs an Active port and therefore a (temporary) SM; UFM needs to *be* the SM and is therefore a day-2 tool; NetQ needs its agents and LLDP, which exist only on a configured Ethernet switch. The hand-over in Figure 8.2-4 is deliberate: the validated `discovered.p2p` and the cable inventory CVT collected become UFM's reference topology snapshot, so UFM's later "topology changed" events are measured against a cabling plan that was proven correct.
+
+**How it works.** Bring-up: plan → CVT agents → zero findings → optional ibdiagnet diff with a temporary `opensm` on the bring-up host → gate. Day 2: UFM's Fabric Health runs ibdiagnet on a schedule and compares against the saved topology; a cable moved during maintenance surfaces as a topology-compare difference and a `Link down` / `Link up` event pair, not as a CVT finding, because CVT's agents are normally removed once the fabric is handed over. On Ethernet, `netq show lldp` and `netq check interfaces` play the same day-2 role.
+
+**Why the exam cares.** "Before SM is enabled, racks just cabled" → CVT. "Production fabric, cable moved last night" → UFM topology compare / events.
+
 ## 3. Live-style walkthrough: plan → discover → compare → re-cable → re-run
 
-Scenario: SU-1 of a SuperPOD has just been cabled. Switch hostnames are set, management IPs are up, no SM is enabled. You are the bring-up engineer. Because CVT's exact CLI varies by release, the walkthrough shows the collector steps as *what you do and what you see*, and shows the ibdiagnet-based fallback with real commands so you can reproduce it anywhere.
+Scenario: SU-1 of a SuperPOD has just been cabled. Switch hostnames are set, management IPs are up, no SM is enabled. You are the bring-up engineer. Because CVT's exact CLI varies by release, the walkthrough shows the collector steps as *what you do and what you see*, and shows the ibdiagnet-based fallback with real commands so you can reproduce it anywhere. The steps follow the numbered phases of Figure 8.2-2 (1 plan, 2 discover, 3 compare, 4 report, 5 remediate, 6 re-run) and the fault we find is the one drawn in Figure 8.2-3.
 
 ```bash
-# ---- Step 1: PLAN. Produce the golden P2P file from the RA cabling table. One line per cable.
+# ---- Step 1 (Figure 8.2-2 phase 1, PLAN). Produce the golden P2P file from the RA cabling table. One line per cable.
 #      Naming rule: use the exact hostname each device reports, or every link becomes "unknown-neighbor".
 bringup$ head -4 su1-plan.p2p
 dgx-01 mlx5_0  leaf-r0-01 1
@@ -186,13 +207,13 @@ dgx-01 mlx5_3  leaf-r3-01 1
 bringup$ wc -l su1-plan.p2p
 320 su1-plan.p2p          # 32 nodes x 8 rails = 256 host links + 64 leaf->spine uplinks. Matches the BoM: plan is complete.
 
-# ---- Step 2: confirm the devices call themselves what the plan calls them. Fix BEFORE loading.
+# ---- Step 2 (still phase 1): confirm the devices call themselves what the plan calls them. Fix BEFORE loading.
 leaf-r3-01$ nv show system hostname          # Cumulus / NVOS (NVUE)
 leaf-r3-01
 # (MLNX-OS IB switch: 'show hosts' / 'hostname leaf-r3-01' in config mode.)
 # If a switch still says "switch-5a3f", set it now: nv set system hostname leaf-r3-01 ; nv config apply
 
-# ---- Step 3: DISCOVER. On the CVT collector: load su1-plan.p2p, confirm 40 devices (32 hosts + 8 leaves
+# ---- Step 3 (phase 2, DISCOVER; Figure 8.2-1 agent feed). On the CVT collector: load su1-plan.p2p, confirm 40 devices (32 hosts + 8 leaves
 #      + spines) are listed, deploy agents, start validation. Watch the device list: every device must
 #      go to "reporting". One that stays "no-report" is a PROVISIONING finding, not a cabling one:
 #      check TCP 8251 from collector to switch mgmt IP before you blame a cable.
@@ -208,7 +229,7 @@ dgx-01$ awk '/^"?dgx-|^"?leaf-|^"?spine-/{node=$1} /: *[0-9]+ *: .*->/{...}' ibd
 dgx-01$ sort -u discovered.p2p | wc -l
 320                      # same count as the plan: no missing or extra cables. Good first sign.
 
-# ---- Step 4: COMPARE. CVT does this live in the UI. The fallback is a sorted diff:
+# ---- Step 4 (phase 3, COMPARE). CVT does this live in the UI. The fallback is a sorted diff:
 dgx-01$ diff <(sort su1-plan.p2p) <(sort discovered.p2p)
 < dgx-17 mlx5_2  leaf-r2-01 17          # planned, not found
 < dgx-17 mlx5_3  leaf-r3-01 17          # planned, not found
@@ -223,7 +244,7 @@ dgx-01$ sudo iblinkinfo -l --switches-only | grep "leaf-r3-01" | grep -o 'mlx5_[
 dgx-01$ sudo iblinkinfo -l --switches-only | grep "leaf-r3-01" | grep mlx5_2
 ... ==( 4X 106.25 Gbps Active/ LinkUp)==> 73 1[  ] "dgx-17 mlx5_2" ( )     # perfectly healthy, perfectly wrong
 
-# ---- Step 5: READ THE REPORT the way the cabling crew will. In the CVT UI, filter on dgx-17:
+# ---- Step 5 (phase 4, REPORT). READ THE REPORT the way the cabling crew will. In the CVT UI, filter on dgx-17:
 #      Status          Planned                              Discovered
 #      WRONG-NEIGHBOR  leaf-r2-01:17 <-> dgx-17:mlx5_2      leaf-r3-01:17 <-> dgx-17:mlx5_2
 #      WRONG-NEIGHBOR  leaf-r3-01:17 <-> dgx-17:mlx5_3      leaf-r2-01:17 <-> dgx-17:mlx5_3
@@ -235,11 +256,11 @@ dgx-01$ sudo iblinkinfo -l --switches-only | grep "leaf-r3-01" | grep mlx5_2
 #        Provisioning   : 0 no-report
 #      Decision: exactly one miswire in 320 cables. Fix it; keep CVT running for the overnight soak.
 
-# ---- Step 6: RE-CABLE. Technician swaps the two OSFP cables at dgx-17 (the node end is easier than
+# ---- Step 6 (phase 5, REMEDIATE). RE-CABLE. Technician swaps the two OSFP cables at dgx-17 (the node end is easier than
 #      the leaf end: both offending cables terminate on the same server). Because agents push on change,
 #      both rows flip to OK in the UI within ~10 s, while they are still standing there.
 
-# ---- Step 7: RE-RUN the comparison. Trust but verify with the fallback too:
+# ---- Step 7 (phase 6, RE-RUN). RE-RUN the comparison. Trust but verify with the fallback too:
 dgx-01$ sudo ibdiagnet --extended_speeds all --get_cable_info -o /var/tmp/ibdiagnet2 >/dev/null
 dgx-01$ diff <(sort su1-plan.p2p) <(sort discovered.p2p) && echo "PLAN == ACTUAL"
 PLAN == ACTUAL

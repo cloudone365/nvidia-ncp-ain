@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img" aria-label="Packet with SL field entering a switch, looked up in the SL2VL table, queued into one of eight VL buffers with credits, and scheduled by the high and low VL arbitration tables onto the output link"><title>IB QoS pipeline at one output port: SL -&gt; SL2VL table -&gt; VL buffer -&gt; VL arbitration</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="900" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">IB QoS pipeline at one output port: SL -&gt; SL2VL table -&gt; VL buffer -&gt; VL arbitration</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">The SL is end-to-end (set by the application); the VL is per link (chosen by the table the SM wrote). No drop stage anywhere</text>
+<g><title>Incoming packet</title><rect x="40" y="300" width="230" height="150" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="155.0" y="350.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">Incoming packet</text>
+<text x="155.0" y="373.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">LRH: SL=1, VL=1 (prev hop)</text>
+<text x="155.0" y="393.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">BTH: PKey, DestQP</text>
+<text x="155.0" y="413.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">NCCL_IB_SL=1 set this</text>
+<line x1="270" y1="375" x2="360" y2="375" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<circle cx="315" cy="350" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="315" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<g><title>SL2VL table (this output port)</title><rect x="360" y="240" width="280" height="270" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="500.0" y="320.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">SL2VL table (this output port)</text>
+<text x="500.0" y="343.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SL0-&gt;VL0  SL1-&gt;VL1  SL2-&gt;VL2</text>
+<text x="500.0" y="363.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SL3-&gt;VL3  SL4-&gt;VL4  SL5-&gt;VL5</text>
+<text x="500.0" y="383.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SL6-&gt;VL6  SL7-&gt;VL7</text>
+<text x="500.0" y="403.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SL8-15 -&gt; VL0-7 (wrap)</text>
+<text x="500.0" y="423.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">16 entries x 4 bits</text>
+<text x="500.0" y="443.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">written by SM (qos_sl2vl)</text>
+<line x1="640" y1="375" x2="720" y2="375" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<circle cx="680" cy="350" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="680" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<g><title>VL buffers + credits (per link)</title><rect x="720" y="170" width="360" height="420" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="736" y="200" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">VL buffers + credits (per link)</text>
+<g><title>VL7 SHARP   credits</title><rect x="740" y="215" width="320" height="36" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="900.0" y="237.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">VL7 SHARP   credits</text>
+<g><title>VL6 unused</title><rect x="740" y="259" width="320" height="36" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="900.0" y="281.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">VL6 unused</text>
+<g><title>VL5 unused</title><rect x="740" y="303" width="320" height="36" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="900.0" y="325.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">VL5 unused</text>
+<g><title>VL4 unused</title><rect x="740" y="347" width="320" height="36" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="900.0" y="369.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">VL4 unused</text>
+<g><title>VL3 unused</title><rect x="740" y="391" width="320" height="36" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="900.0" y="413.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">VL3 unused</text>
+<g><title>VL2 storage credits</title><rect x="740" y="435" width="320" height="36" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="900.0" y="457.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">VL2 storage credits</text>
+<g><title>VL1 NCCL    credits</title><rect x="740" y="479" width="320" height="36" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="900.0" y="501.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">VL1 NCCL    credits</text>
+<g><title>VL0 IPoIB   credits</title><rect x="740" y="523" width="320" height="36" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="900.0" y="545.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">VL0 IPoIB   credits</text>
+<text x="900" y="575" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">VL15 = SMPs, never flow-controlled</text>
+<line x1="1080" y1="375" x2="1160" y2="375" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<circle cx="1120" cy="350" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1120" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<g><title>VL arbitration (this port)</title><rect x="1160" y="200" width="400" height="350" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1360.0" y="310.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">VL arbitration (this port)</text>
+<text x="1360.0" y="332.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">HIGH table: 7:64</text>
+<text x="1360.0" y="352.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">   served first; high_limit 8 =</text>
+<text x="1360.0" y="372.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">   8 x 4 KiB before low gets a turn</text>
+<text x="1360.0" y="392.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">LOW table: 0:16, 1:128, 2:64</text>
+<text x="1360.0" y="412.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">   weighted round robin,</text>
+<text x="1360.0" y="432.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">   weight x 64 B per visit</text>
+<text x="1360.0" y="452.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">qos_vlarb_high / qos_vlarb_low</text>
+<line x1="1360" y1="550" x2="1360" y2="640" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<circle cx="1395" cy="595" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1395" y="601" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<g><title>Output link 400G NDR</title><rect x="1160" y="640" width="400" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1360.0" y="670.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">Output link 400G NDR</text>
+<text x="1360.0" y="693.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">credit-gated per VL by the next hop</text>
+<g><rect x="40" y="640" width="1040" height="200" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="52" y="664" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">1 Application chose SL (NCCL_IB_SL, UCX_IB_SL, ib_write_bw -S, partition sl=). SL rides in the LRH end to end.</text>
+<text x="52" y="684" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">2 SL2VL maps SL -&gt; VL for THIS output port; different ports may map differently (torus engines do), fat-trees are uniform.</text>
+<text x="52" y="704" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">3 Each VL is a separate buffer and credit pool: VL1 can stall on back-pressure without blocking VL2 (no HoL across classes).</text>
+<text x="52" y="724" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">4 Arbiter: high table strict-ish (bounded by high_limit, 255 = unlimited), low table WRR by weight. 0 weight = never served.</text>
+<text x="52" y="744" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Verify: smpquery SL2VL -L &lt;lid&gt; &lt;port&gt;   |   smpquery VLArb -L &lt;lid&gt; &lt;port&gt;   |   ibv_devinfo: max_vl_num</text>
+<g><rect x="1160" y="740" width="400" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="1174" y="760" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
+<line x1="1174" y1="782" x2="1234" y2="782" stroke="#2f6fdb" stroke-width="4"/>
+<text x="1246" y="788" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (IB / RDMA payload)</text>
+<rect x="1174" y="801" width="60" height="22" rx="5" fill="#fff5cc" stroke="#c9a400" stroke-width="2"/>
+<text x="1246" y="818" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">class under test</text>
+</svg>

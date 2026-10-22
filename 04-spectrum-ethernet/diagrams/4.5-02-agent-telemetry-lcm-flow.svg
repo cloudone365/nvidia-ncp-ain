@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" role="img">
+<title>NetQ agent → server telemetry flow (port 31980) and a Lifecycle Management upgrade job</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">NetQ agent → server telemetry flow (port 31980) and a Lifecycle Management upgrade job</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">The agent reads NVUE/FRR/Linux state and streams changes; LCM uses SSH credentials, backs up config, upgrades, snapshots before/after, restores on failure</text>
+<g><title>leaf01 Cumulus Linux</title><rect x="80" y="150" width="280" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="220.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
+<text x="220.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Cumulus Linux</text>
+</g>
+<g><title>netq-agent (on leaf01) netq config add server …</title><rect x="430" y="150" width="260" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="560.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">netq-agent (on leaf01)</text>
+<text x="560.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">netq config add server …</text>
+</g>
+<g><title>NetQ server 10.10.0.100 Kafka → Cassandra</title><rect x="810" y="150" width="300" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="960.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">NetQ server 10.10.0.100</text>
+<text x="960.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Kafka → Cassandra</text>
+</g>
+<g><title>Operator netq CLI / UI</title><rect x="1240" y="150" width="240" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1360.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Operator</text>
+<text x="1360.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">netq CLI / UI</text>
+</g>
+<line x1="220" y1="220" x2="220" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="560" y1="220" x2="560" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="960" y1="220" x2="960" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="1360" y1="220" x2="1360" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="220" y1="280" x2="560" y2="280" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="390.0" y="302.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">hooks: nv show, FRR, ip/bridge, sensors, RoCE counters, WJH records</text>
+<g><title>Step 1</title><circle cx="250" cy="256" r="16" fill="#1f2937"/><text x="250" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<line x1="560" y1="350" x2="960" y2="350" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="760.0" y="372.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">TCP 31980 (vrf mgmt): heartbeat + state deltas every collection interval</text>
+<g><title>Step 2</title><circle cx="590" cy="326" r="16" fill="#1f2937"/><text x="590" y="332" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<g><title>agent status Fresh; data indexed by hostname/time</title><rect x="790" y="396" width="340" height="48" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="960.0" y="424.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle">agent status Fresh; data indexed by hostname/time</text>
+</g>
+<g><title>Step 3</title><circle cx="765" cy="420" r="16" fill="#1f2937"/><text x="765" y="426" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<line x1="1360" y1="490" x2="960" y2="490" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1160.0" y="512.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">netq check bgp · netq show roce-counters leaf01 swp1 · around 1h</text>
+<g><title>Step 4</title><circle cx="1330" cy="466" r="16" fill="#1f2937"/><text x="1330" y="472" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<line x1="960" y1="560" x2="1360" y2="560" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1160.0" y="582.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">validation result / time-series answer (json available)</text>
+<g><title>Step 5</title><circle cx="990" cy="536" r="16" fill="#1f2937"/><text x="990" y="542" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<g><title>LCM job: netq lcm upgrade cl-image name Upgrade-Leafs cl-version 5.11.0 hostnames leaf01,leaf02 order leaf01,leaf02 run-restore-on-failure run-snapshot-before-after</title><rect x="60" y="620" width="1480" height="300" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
+<text x="74" y="643" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#5f6b7a" text-anchor="start">LCM job: netq lcm upgrade cl-image name Upgrade-Leafs cl-version 5.11.0 hostnames leaf01,leaf02 order leaf01,leaf02 run-restore-on-failure run-snapshot-before-after</text>
+<line x1="1360" y1="690" x2="960" y2="690" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1160.0" y="712.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">netq lcm add credentials · add cl-image · upgrade</text>
+<g><title>Step 6</title><circle cx="1330" cy="666" r="16" fill="#1f2937"/><text x="1330" y="672" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<line x1="960" y1="750" x2="220" y2="750" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="590.0" y="772.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">SSH: nv config show -o yaml backup · snapshot 'before' · copy image · install · reboot</text>
+<g><title>Step 7</title><circle cx="930" cy="726" r="16" fill="#1f2937"/><text x="930" y="732" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<line x1="220" y1="820" x2="960" y2="820" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="590.0" y="842.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">agent reconnects → snapshot 'after' → compare BGP/EVPN/interfaces; mismatch + restore flag → roll back</text>
+<g><title>Step 8</title><circle cx="250" cy="796" r="16" fill="#1f2937"/><text x="250" y="802" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text></g>
+<g><title>next host in 'order' (protects MLAG pairs) · netq lcm show upgrade-jobs cl-image</title><rect x="760" y="866" width="400" height="48" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="960.0" y="893.7" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1f2937" text-anchor="middle">next host in 'order' (protects MLAG pairs) · netq lcm show upgrade-jobs cl-image</text>
+</g>
+<g><title>Step 9</title><circle cx="735" cy="890" r="16" fill="#1f2937"/><text x="735" y="896" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">9</text></g>
+<g><title>Legend</title><rect x="1110" y="935" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1124" y1="961" x2="1184" y2="961" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1198" y="967" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<line x1="1124" y1="991" x2="1184" y2="991" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1198" y="997" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
+</g>
+<text x="60" y="960" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start">Rotten agent = steps 2–3 broken (usually missing 'vrf mgmt'); every later result is stale.</text>
+</svg>

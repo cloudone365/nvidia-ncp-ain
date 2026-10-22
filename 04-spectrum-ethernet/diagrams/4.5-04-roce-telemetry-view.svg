@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
+<title>RoCE telemetry in NetQ: PFC / ECN counters, roce-config, WJH buffer drops</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">RoCE telemetry in NetQ: PFC / ECN counters, roce-config, WJH buffer drops</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Where congestion shows up: PFC tx on a leaf downlink = host is slow; PFC rx on an uplink = spine pausing the leaf; WJH tail drop on UDP 4791 = incast</text>
+<g><title>spine02 (SN5600) RoCE lossless</title><rect x="620" y="160" width="360" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="800.0" y="189.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">spine02 (SN5600)</text>
+<text x="800.0" y="210.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">RoCE lossless</text>
+</g>
+<g><title>leaf01 (SN5600) — netq show roce-counters leaf01 &lt;port&gt; </title><rect x="500" y="360" width="600" height="110" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="800.0" y="389.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01 (SN5600) — netq show roce-counters leaf01 &lt;port&gt;</text>
+<text x="800.0" y="435.3" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp61 (uplink):   PFC rx pause ↑ 1 842   ECN marked 9 310   drops 0</text>
+<text x="800.0" y="453.3" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp12 (downlink): PFC tx pause ↑ 311     ECN marked 0        tail drops 1 204 (WJH)</text>
+</g>
+<line x1="760" y1="230" x2="760" y2="360" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<rect x="606" y="284" width="309" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="760" y="300" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">PFC pause (prio 3) → leaf01 swp61 'rx'</text>
+<line x1="840" y1="360" x2="840" y2="230" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<g><title>dgx01 SuperNIC (swp12) congested receiver</title><rect x="260" y="620" width="340" height="80" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="430.0" y="644.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">dgx01 SuperNIC (swp12)</text>
+<text x="430.0" y="664.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">congested receiver</text>
+<text x="430.0" y="688.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">host ethtool -S: rx_prio3_pause ↑</text>
+</g>
+<line x1="560" y1="470" x2="460" y2="620" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="400.0" y="545.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">PFC 'tx' toward host</text>
+<line x1="620" y1="620" x2="640" y2="470" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<g><title>many senders (incast) all-reduce step</title><rect x="1000" y="620" width="340" height="80" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1170.0" y="644.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">many senders (incast)</text>
+<text x="1170.0" y="664.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">all-reduce step</text>
+<text x="1170.0" y="688.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">UDP 4791 → 10.1.3.22</text>
+</g>
+<line x1="1100" y1="620" x2="1000" y2="470" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<line x1="1140" y1="620" x2="1040" y2="470" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<g><title>NetQ views</title><rect x="1120" y="150" width="420" height="440" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
+<text x="1134" y="178" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">NetQ views</text>
+<g><title>netq show roce-config mode · PFC prio · ECN min/max · trust, per switch</title><rect x="1140" y="195" width="380" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1330.0" y="225.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">netq show roce-config</text>
+<text x="1330.0" y="243.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">mode · PFC prio · ECN min/max · trust, per switch</text>
+</g>
+<g><title>netq check roce flags the one leaf left 'lossy'</title><rect x="1140" y="280" width="380" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1330.0" y="310.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">netq check roce</text>
+<text x="1330.0" y="328.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">flags the one leaf left 'lossy'</text>
+</g>
+<g><title>netq show roce-counters &lt;host&gt; &lt;port&gt; [ingress|egress|pool]: PFC rx/tx, ECN, drops, pool</title><rect x="1140" y="365" width="380" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1330.0" y="395.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">netq show roce-counters &lt;host&gt; &lt;port&gt;</text>
+<text x="1330.0" y="413.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">[ingress|egress|pool]: PFC rx/tx, ECN, drops, pool</text>
+</g>
+<g><title>netq show wjh-drop buffer … Tail drop · WRED · PFC-WD, with 5-tuple + count</title><rect x="1140" y="450" width="380" height="70" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1330.0" y="480.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">netq show wjh-drop buffer …</text>
+<text x="1330.0" y="498.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Tail drop · WRED · PFC-WD, with 5-tuple + count</text>
+</g>
+<g><title>netq add tca event_id TCA_RoCE_PFC_RX_PAUSE_UPPER …</title><rect x="1140" y="535" width="380" height="45" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1330.0" y="561.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1f2937" text-anchor="middle">netq add tca event_id TCA_RoCE_PFC_RX_PAUSE_UPPER …</text>
+</g>
+<g><title>Note</title><rect x="60" y="150" width="400" height="180" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="72" y="172" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Reading the counters</text>
+<text x="72" y="190" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">PFC tx on downlink swp12 → host NIC is the</text>
+<text x="72" y="208" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">bottleneck (dgx01 cannot drain).</text>
+<text x="72" y="226" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">PFC rx on uplink swp61 → spine02 is pausing</text>
+<text x="72" y="244" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">leaf01; congestion is upstream.</text>
+<text x="72" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">ECN marked with no PFC → CC working.</text>
+<g><title>Note</title><rect x="60" y="360" width="400" height="120" rx="6" fill="#ffd9d9" stroke="#d93025" stroke-width="1.5"/></g>
+<text x="72" y="382" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">WJH record: leaf01 swp12 'Tail drop' 1 204 pkts</text>
+<text x="72" y="400" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">10.1.3.7 → 10.1.3.22 udp 4791, 7 s window.</text>
+<text x="72" y="418" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">That is the incast the job felt — and the</text>
+<text x="72" y="436" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">buffer category means PFC did not save it.</text>
+<g><title>Legend</title><rect x="1110" y="780" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1124" y1="806" x2="1184" y2="806" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1198" y="812" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
+<line x1="1124" y1="836" x2="1184" y2="836" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="1198" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Congestion signal (ECN / CNP / PFC)</text>
+</g>
+<text x="60" y="760" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Workflow for 'job X is slow': netq check roce → netq show roce-counters on the suspect leaf's host ports (tx pause) and uplinks (rx pause)</text>
+<text x="60" y="786" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">→ correlate timestamps with netq show events type roce and netq show wjh-drop buffer → fix the slow host or the ECN thresholds, not PFC.</text>
+</svg>

@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>ibdiagnet: stages, flags and the files under /var/tmp/ibdiagnet2/</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="900" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">ibdiagnet: stages, flags and the files under /var/tmp/ibdiagnet2/</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Read ibdiagnet2.log first; every other file is the raw data behind one line of its summary table</text><g><title>Command</title><rect x="48" y="140" width="470" height="250" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="64" y="170" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Command</text>
+<text x="64" y="204" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">sudo ibdiagnet \</text>
+<text x="64" y="225" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  --pc --pm_pause_width=30 \</text>
+<text x="64" y="246" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  -P all=1 \</text>
+<text x="64" y="267" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  --extended_speeds all \</text>
+<text x="64" y="288" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  --get_cable_info -r [--sharp] \</text>
+<text x="64" y="309" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  -i mlx5_0 -p 1  -o /var/tmp/ibdiagnet2</text>
+</g>
+<g><title>Discovery</title><rect x="600" y="150" width="440" height="62" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="616" y="177" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Discovery</text>
+<text x="616" y="206" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SMP sweep of every node/port</text>
+</g>
+<g><title>Step 1</title><circle cx="575" cy="181" r="16" fill="#1f2937"/><text x="575" y="187" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<g><title>Lids / dup GUIDs</title><rect x="600" y="222" width="440" height="62" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="616" y="249" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Lids / dup GUIDs</text>
+<text x="616" y="278" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">LID range, duplicate GUIDs</text>
+</g>
+<g><title>Step 2</title><circle cx="575" cy="253" r="16" fill="#1f2937"/><text x="575" y="259" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<g><title>Links Check</title><rect x="600" y="294" width="440" height="62" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="616" y="321" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Links Check</text>
+<text x="616" y="350" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">width/speed vs capability</text>
+</g>
+<g><title>Step 3</title><circle cx="575" cy="325" r="16" fill="#1f2937"/><text x="575" y="331" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><title>Subnet Manager</title><rect x="600" y="366" width="440" height="62" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="616" y="393" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Subnet Manager</text>
+<text x="616" y="422" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">master SM, SMInfo</text>
+</g>
+<g><title>Step 4</title><circle cx="575" cy="397" r="16" fill="#1f2937"/><text x="575" y="403" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<g><title>Port Counters</title><rect x="600" y="438" width="440" height="62" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="616" y="465" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Port Counters</text>
+<text x="616" y="494" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">--pc clears, pause, re-read; -P thresholds</text>
+</g>
+<g><title>Step 5</title><circle cx="575" cy="469" r="16" fill="#1f2937"/><text x="575" y="475" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<g><title>Partition Keys</title><rect x="600" y="510" width="440" height="62" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="616" y="537" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Partition Keys</text>
+<text x="616" y="566" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PKey tables vs SM</text>
+</g>
+<g><title>Step 6</title><circle cx="575" cy="541" r="16" fill="#1f2937"/><text x="575" y="547" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<g><title>Routing  (-r)</title><rect x="600" y="582" width="440" height="62" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="616" y="609" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Routing  (-r)</text>
+<text x="616" y="638" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">LFT dead-ends, credit loops, AR/pLFT</text>
+</g>
+<g><title>Step 7</title><circle cx="575" cy="613" r="16" fill="#1f2937"/><text x="575" y="619" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<g><title>Cables  (--get_cable_info)</title><rect x="600" y="654" width="440" height="62" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="616" y="681" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Cables  (--get_cable_info)</text>
+<text x="616" y="710" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">module EEPROM: PN/SN/temp/power</text>
+</g>
+<g><title>Step 8</title><circle cx="575" cy="685" r="16" fill="#1f2937"/><text x="575" y="691" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">8</text></g>
+<g><title>SHARP  (--sharp)</title><rect x="600" y="726" width="440" height="62" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="616" y="753" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">SHARP  (--sharp)</text>
+<text x="616" y="782" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">aggregation trees</text>
+</g>
+<g><title>Step 9</title><circle cx="575" cy="757" r="16" fill="#1f2937"/><text x="575" y="763" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">9</text></g>
+<g><title>ibdiagnet2.log</title><rect x="1180" y="150" width="372" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1196" y="176" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet2.log</text>
+<text x="1196" y="204" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">stage log + summary table (read first)</text>
+</g>
+<path d="M1040,181 L1110,181 L1110,181 L1180,181" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,253 L1110,253 L1110,181 L1180,181" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,325 L1110,325 L1110,181 L1180,181" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,397 L1110,397 L1110,181 L1180,181" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,469 L1110,469 L1110,181 L1180,181" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,541 L1110,541 L1110,181 L1180,181" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,613 L1110,613 L1110,181 L1180,181" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,685 L1110,685 L1110,181 L1180,181" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,757 L1110,757 L1110,181 L1180,181" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<g><title>ibdiagnet2.db_csv</title><rect x="1180" y="230" width="372" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1196" y="256" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet2.db_csv</text>
+<text x="1196" y="284" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">whole database; UFM / CVT / scripts parse it</text>
+</g>
+<path d="M1040,181 L1110,181 L1110,261 L1180,261" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,325 L1110,325 L1110,261 L1180,261" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,469 L1110,469 L1110,261 L1180,261" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,613 L1110,613 L1110,261 L1180,261" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M1040,685 L1110,685 L1110,261 L1180,261" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<g><title>ibdiagnet2.net_dump</title><rect x="1180" y="310" width="372" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1196" y="336" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet2.net_dump</text>
+<text x="1196" y="364" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">node / port / neighbor listing (plan diff, 8.2)</text>
+</g>
+<path d="M1040,181 L1110,181 L1110,341 L1180,341" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<g><title>ibdiagnet2.sm</title><rect x="1180" y="390" width="372" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1196" y="416" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet2.sm</text>
+<text x="1196" y="444" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SM records</text>
+</g>
+<path d="M1040,397 L1110,397 L1110,421 L1180,421" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<g><title>ibdiagnet2.pm</title><rect x="1180" y="470" width="372" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1196" y="496" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet2.pm</text>
+<text x="1196" y="524" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">port counters for every port</text>
+</g>
+<path d="M1040,469 L1110,469 L1110,501 L1180,501" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<g><title>ibdiagnet2.fdbs / .ar / .plft</title><rect x="1180" y="550" width="372" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1196" y="576" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet2.fdbs / .ar / .plft</text>
+<text x="1196" y="604" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">LFTs, AR groups, private LFTs</text>
+</g>
+<path d="M1040,613 L1110,613 L1110,581 L1180,581" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<g><title>ibdiagnet2.cables</title><rect x="1180" y="630" width="372" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1196" y="656" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet2.cables</text>
+<text x="1196" y="684" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">cable EEPROM data per link</text>
+</g>
+<path d="M1040,685 L1110,685 L1110,661 L1180,661" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<g><title>ibdiagnet2.sharp</title><rect x="1180" y="710" width="372" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1196" y="736" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet2.sharp</text>
+<text x="1196" y="764" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SHARP tree info</text>
+</g>
+<path d="M1040,757 L1110,757 L1110,741 L1180,741" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<line x1="518" y1="265" x2="600" y2="181" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>Reading the summary</title><rect x="48" y="430" width="470" height="300" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="64" y="460" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Reading the summary</text>
+<text x="64" y="493" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-I- Stage            Warnings  Errors</text>
+<text x="64" y="513" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-I- Discovery              0       0</text>
+<text x="64" y="533" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-I- Links Check            1       0   &lt;- 2X link</text>
+<text x="64" y="553" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-I- Port Counters          1       0   &lt;- in window</text>
+<text x="64" y="573" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-I- Routing                0       0   &lt;- no loops</text>
+<text x="64" y="593" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve"></text>
+<text x="64" y="613" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Errors = act now. Warnings = investigate.</text>
+<text x="64" y="633" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">--pc destroys evidence: capture perfquery first.</text>
+</g>
+<g><title>Consumers</title><rect x="48" y="760" width="470" height="90" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="64" y="790" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Consumers</text>
+<text x="64" y="823" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">UFM Fabric Health = scheduled ibdiagnet</text>
+<text x="64" y="843" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">CVT / your diff scripts read net_dump + db_csv</text>
+</g>
+<g><title>Legend</title><rect x="1180" y="800" width="372" height="54" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="1196" y1="826" x2="1250" y2="826" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1264" y="831" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">stage writes this file</text>
+</g></svg>

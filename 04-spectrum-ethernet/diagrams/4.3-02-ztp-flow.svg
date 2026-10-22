@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" role="img">
+<title>Zero Touch Provisioning: DHCP option 239 → script → NVUE YAML → NetQ agent</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Zero Touch Provisioning: DHCP option 239 → script → NVUE YAML → NetQ agent</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">First boot (or ztp -e with no saved config). Discovery order: USB → DHCP on eth0 → DNS default URL. The script must carry the marker comment</text>
+<g><title>New switch (leaf07) Cumulus, factory default</title><rect x="110" y="150" width="300" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="260.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">New switch (leaf07)</text>
+<text x="260.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Cumulus, factory default</text>
+</g>
+<g><title>DHCP server OOB network</title><rect x="530" y="150" width="260" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="660.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">DHCP server</text>
+<text x="660.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">OOB network</text>
+</g>
+<g><title>Provisioning server http://10.10.0.50</title><rect x="910" y="150" width="300" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1060.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Provisioning server</text>
+<text x="1060.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">http://10.10.0.50</text>
+</g>
+<g><title>NetQ server 10.10.0.100:31980</title><rect x="1280" y="150" width="240" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1400.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">NetQ server</text>
+<text x="1400.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">10.10.0.100:31980</text>
+</g>
+<line x1="260" y1="220" x2="260" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="660" y1="220" x2="660" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="1060" y1="220" x2="1060" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="1400" y1="220" x2="1400" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<g><title>boot → ztp service: no USB cumulus-ztp.sh found</title><rect x="100" y="246" width="400" height="48" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="300.0" y="274.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle">boot → ztp service: no USB cumulus-ztp.sh found</text>
+</g>
+<g><title>Step 1</title><circle cx="75" cy="270" r="16" fill="#1f2937"/><text x="75" y="276" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<line x1="260" y1="340" x2="660" y2="340" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="460.0" y="364.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">DHCPDISCOVER on eth0 (vrf mgmt), vendor-class 'cumulus-linux'</text>
+<g><title>Step 2</title><circle cx="290" cy="316" r="16" fill="#1f2937"/><text x="290" y="322" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<line x1="660" y1="410" x2="260" y2="410" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="460.0" y="434.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">DHCPOFFER: ip, router, dns + option 239 cumulus-provision-url = http://10.10.0.50/ztp.sh</text>
+<g><title>Step 3</title><circle cx="630" cy="386" r="16" fill="#1f2937"/><text x="630" y="392" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<line x1="260" y1="480" x2="1060" y2="480" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="660.0" y="504.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">GET /ztp.sh</text>
+<g><title>Step 4</title><circle cx="290" cy="456" r="16" fill="#1f2937"/><text x="290" y="462" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<line x1="1060" y1="540" x2="260" y2="540" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="660.0" y="564.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">200 OK — line 2 must be '# CUMULUS-AUTOPROVISIONING' or ztp refuses to run it</text>
+<g><title>Step 5</title><circle cx="1030" cy="516" r="16" fill="#1f2937"/><text x="1030" y="522" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<g><title>script runs (set -e): chpasswd, SERIAL=$(decode-syseeprom -e)</title><rect x="100" y="586" width="400" height="48" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="300.0" y="614.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle">script runs (set -e): chpasswd, SERIAL=$(decode-syseeprom -e)</text>
+</g>
+<g><title>Step 6</title><circle cx="75" cy="610" r="16" fill="#1f2937"/><text x="75" y="616" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<line x1="260" y1="680" x2="1060" y2="680" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="660.0" y="704.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">GET /nvue/&lt;serial&gt;.yaml   (optionally: onie-install -i &lt;image&gt; &amp;&amp; reboot first; ZTP re-runs)</text>
+<g><title>Step 7</title><circle cx="290" cy="656" r="16" fill="#1f2937"/><text x="290" y="662" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<g><title>nv config replace → apply -y → save</title><rect x="100" y="726" width="400" height="48" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="300.0" y="754.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">nv config replace → apply -y → save</text>
+</g>
+<g><title>Step 8</title><circle cx="75" cy="750" r="16" fill="#1f2937"/><text x="75" y="756" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text></g>
+<line x1="260" y1="820" x2="1400" y2="820" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="830.0" y="844.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">netq config add server 10.10.0.100 port 31980 vrf mgmt · netq config restart agent → agent Fresh</text>
+<g><title>Step 9</title><circle cx="290" cy="796" r="16" fill="#1f2937"/><text x="290" y="802" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">9</text></g>
+<g><title>exit 0 → ZTP marks success (ztp -i); non-zero = retry</title><rect x="100" y="856" width="400" height="48" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="300.0" y="884.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle">exit 0 → ZTP marks success (ztp -i); non-zero = retry</text>
+</g>
+<g><title>Step 10</title><circle cx="75" cy="880" r="16" fill="#1f2937"/><text x="75" y="886" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">10</text></g>
+<g><title>Note</title><rect x="60" y="925" width="1000" height="60" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="72" y="948" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Debug: ztp -i (state, last URL) · /var/log/ztp.log · ztp -R then ztp -s &lt;url&gt; to re-run · option 114 is ONIE's installer URL, NOT ZTP.</text>
+<g><title>Legend</title><rect x="1110" y="925" width="430" height="52" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1124" y1="951" x2="1184" y2="951" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1198" y="957" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
+</g>
+</svg>

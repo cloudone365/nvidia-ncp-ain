@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>Lab 5 topology: NetQ server, agents on every switch, WJH on leaf01</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="960" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Lab 5 topology: NetQ server, agents on every switch, WJH on leaf01</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Agents report over the management VRF; WJH records exist only on Spectrum hardware, the commands and output shapes are the same in Air</text><g><title>spine01</title><rect x="420" y="200" width="300" height="100" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="570.0" y="228" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">spine01</text>
+<text x="570.0" y="258" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x, ASN 65100</text>
+<text x="570.0" y="276" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">lo 10.10.10.101/32</text>
+</g>
+<g><title>spine02</title><rect x="860" y="200" width="300" height="100" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1010.0" y="228" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">spine02</text>
+<text x="1010.0" y="258" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x, ASN 65100</text>
+<text x="1010.0" y="276" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">lo 10.10.10.102/32</text>
+</g>
+<g><title>leaf01</title><rect x="420" y="420" width="300" height="100" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="570.0" y="448" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">leaf01</text>
+<text x="570.0" y="478" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x, ASN 65101</text>
+<text x="570.0" y="496" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">lo 10.10.10.1/32</text>
+</g>
+<g><title>leaf02</title><rect x="860" y="420" width="300" height="100" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1010.0" y="448" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">leaf02</text>
+<text x="1010.0" y="478" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x, ASN 65102</text>
+<text x="1010.0" y="496" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">lo 10.10.10.2/32</text>
+</g>
+<line x1="530" y1="420" x2="530" y2="300" stroke="#e07b00" stroke-width="3" fill="none"/>
+<line x1="610" y1="420" x2="970" y2="300" stroke="#e07b00" stroke-width="3" fill="none"/>
+<line x1="970" y1="420" x2="610" y2="300" stroke="#e07b00" stroke-width="3" fill="none"/>
+<line x1="1050" y1="420" x2="1050" y2="300" stroke="#e07b00" stroke-width="3" fill="none"/>
+<text x="540" y="405" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp51</text>
+<text x="620" y="405" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp52</text>
+<text x="980" y="405" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp51</text>
+<text x="1060" y="405" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp52</text>
+<text x="540" y="318" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp1</text>
+<text x="620" y="318" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp2</text>
+<text x="980" y="318" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp1</text>
+<text x="1060" y="318" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp2</text>
+<g><title>server01</title><rect x="420" y="640" width="300" height="90" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="570.0" y="668" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">server01</text>
+<text x="570.0" y="698" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Ubuntu 22.04</text>
+<text x="570.0" y="716" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">eth1 10.1.1.11/24</text>
+</g>
+<line x1="570" y1="640" x2="570" y2="520" stroke="#e07b00" stroke-width="3" fill="none"/>
+<text x="580" y="545" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">swp1</text>
+<text x="580" y="632" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">eth1</text>
+<g><title>server02</title><rect x="860" y="640" width="300" height="90" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1010.0" y="668" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">server02</text>
+<text x="1010.0" y="698" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Ubuntu 22.04</text>
+<text x="1010.0" y="716" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">eth1 10.1.2.11/24</text>
+</g>
+<line x1="1010" y1="640" x2="1010" y2="520" stroke="#e07b00" stroke-width="3" fill="none"/>
+<text x="1020" y="545" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">swp1</text>
+<text x="1020" y="632" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">eth1</text>
+<g><title>NetQ server  (netq-ts)</title><rect x="48" y="160" width="330" height="300" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="64" y="187" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">NetQ server  (netq-ts)</text>
+<text x="64" y="216" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Air NetQ demo VM or OVA /</text>
+<text x="64" y="234" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">OPTA appliance on hardware</text>
+<text x="64" y="252" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">netq CLI + UI</text>
+<text x="64" y="270" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">netq show agents  (Fresh / Rotten)</text>
+<text x="64" y="288" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">netq check interfaces|mtu|bgp|</text>
+<text x="64" y="306" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  ntp|roce</text>
+<text x="64" y="324" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">netq show events / lldp /</text>
+<text x="64" y="342" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  roce-config / wjh-drop</text>
+<text x="64" y="360" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">netq trace 10.1.2.11 from 10.1.1.11</text>
+</g>
+<path d="M420,250 L400,250 L400,320 L378,320" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M420,470 L400,470 L400,320" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" fill="none"/>
+<path d="M1010,200 L1010,140 L400,140 L400,320" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" fill="none"/>
+<path d="M1010,520 L1010,560 L400,560 L400,320" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" fill="none"/>
+<text x="410" y="160" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#7a3fd1" text-anchor="start" xml:space="preserve">netq-agent -&gt; server, VRF mgmt (TCP 31980, verify)</text>
+<g><title>WJH on leaf01 (Task 5-6)</title><rect x="1200" y="160" width="350" height="260" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1216" y="187" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">WJH on leaf01 (Task 5-6)</text>
+<text x="1216" y="216" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv set system wjh state enabled</text>
+<text x="1216" y="234" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv set system wjh channel</text>
+<text x="1216" y="252" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  forwarding trigger l2|l3|tunnel</text>
+<text x="1216" y="270" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv show system wjh packet-buffer</text>
+<text x="1216" y="288" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv-wjh-cli poll --data drops</text>
+<text x="1216" y="306" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">[HW] hand to NetQ:</text>
+<text x="1216" y="324" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  nv set system wjh state disabled</text>
+<text x="1216" y="342" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  netq config add agent wjh</text>
+</g>
+<path d="M720,460 L800,460 L800,390 L1200,330" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<g><title>Trigger a drop (Task 5)</title><rect x="1200" y="460" width="350" height="160" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1216" y="486" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Trigger a drop (Task 5)</text>
+<text x="1216" y="514" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">server01: ping an address with</text>
+<text x="1216" y="532" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">no route -&gt; Router 'routing table</text>
+<text x="1216" y="550" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">unicast miss' on leaf01 (hardware</text>
+<text x="1216" y="568" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">records; Air shows the commands)</text>
+</g>
+<path d="M720,660 L800,660 L800,600 L1200,560" stroke="#d93025" stroke-width="2" marker-end="url(#arrow-red)" fill="none"/>
+<g><title>Break / fix faults you will inject</title><rect x="48" y="770" width="1500" height="110" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="64" y="797" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Break / fix faults you will inject</text>
+<text x="64" y="826" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">1 shut a fabric link (netq check interfaces, events type link)   2 MTU mismatch on one side (netq check mtu)   3 roce mode lossy on leaf02 (netq show roce-config drift)</text>
+<text x="64" y="844" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Local toolbox when NetQ is absent: nv show interface swp51 counters, nv show qos roce, cl-resource-query, sudo cl-support, /var/log/switchd.log</text>
+</g>
+<g><title>Legend</title><rect x="1200" y="640" width="350" height="144" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="1216" y1="666" x2="1270" y2="666" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1284" y="671" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Agent telemetry (mgmt VRF)</text>
+<line x1="1216" y1="696" x2="1270" y2="696" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1284" y="701" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">WJH records / local CLI</text>
+<line x1="1216" y1="726" x2="1270" y2="726" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)"/>
+<text x="1284" y="731" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Traffic that triggers a drop</text>
+<line x1="1216" y1="756" x2="1270" y2="756" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1284" y="761" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Fabric link</text>
+</g></svg>

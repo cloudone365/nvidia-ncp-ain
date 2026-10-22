@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img" aria-label="Pipeline from PM MAD counter collection through threshold evaluation, event creation, alarm persistence and northbound notifications including SNMP syslog email script and port isolation"><title>From a counter to a page: UFM event, alarm and notification pipeline</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="900" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">From a counter to a page: UFM event, alarm and notification pipeline</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Telemetry samples feed threshold policies; events become alarms; the Events Policy decides who gets told and whether UFM acts</text>
+<g><title>Fabric ports</title><rect x="40" y="240" width="250" height="150" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="165.0" y="278.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">Fabric ports</text>
+<text x="165.0" y="303.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">QM9700 IB1/2 -&gt; gpu04</text>
+<text x="165.0" y="324.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">SymbolErrorCounter</text>
+<text x="165.0" y="345.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">LinkDownedCounter</text>
+<text x="165.0" y="366.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">PortXmitWait, temp</text>
+<g><title>UFM Telemetry</title><rect x="360" y="240" width="250" height="150" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="485.0" y="278.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">UFM Telemetry</text>
+<text x="485.0" y="303.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">PM MADs every N s</text>
+<text x="485.0" y="324.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">(PortCounters,</text>
+<text x="485.0" y="345.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">PortExtendedCounters)</text>
+<text x="485.0" y="366.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">history ring buffer</text>
+<g><title>Threshold engine</title><rect x="680" y="240" width="250" height="150" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="805.0" y="289.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">Threshold engine</text>
+<text x="805.0" y="314.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">Settings -&gt; Events Policy</text>
+<text x="805.0" y="335.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">value &gt; threshold</text>
+<text x="805.0" y="356.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">for &#x27;period&#x27; samples?</text>
+<g><title>Event</title><rect x="1000" y="240" width="250" height="150" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1125.0" y="278.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">Event</text>
+<text x="1125.0" y="303.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">severity Info/Minor/</text>
+<text x="1125.0" y="324.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">Warning/Critical</text>
+<text x="1125.0" y="345.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">category Hardware/</text>
+<text x="1125.0" y="366.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">Fabric Topology/...</text>
+<g><title>Alarm</title><rect x="1320" y="240" width="240" height="150" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1440.0" y="289.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">Alarm</text>
+<text x="1440.0" y="314.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">persistent condition</text>
+<text x="1440.0" y="335.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">open until cleared</text>
+<text x="1440.0" y="356.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">or acknowledged</text>
+<line x1="290" y1="315" x2="360" y2="315" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<circle cx="325" cy="290" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="325" y="296" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<line x1="610" y1="315" x2="680" y2="315" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<circle cx="645" cy="290" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="645" y="296" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<line x1="930" y1="315" x2="1000" y2="315" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<circle cx="965" cy="290" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="965" y="296" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<line x1="1250" y1="315" x2="1320" y2="315" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<circle cx="1285" cy="290" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1285" y="296" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<text x="1125" y="450" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Actions chosen per event type in the policy</text>
+<g><title>SNMP trap v2c/v3</title><rect x="400" y="500" width="180" height="90" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="490.0" y="539.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">SNMP trap v2c/v3</text>
+<text x="490.0" y="560.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">NMS / NOC</text>
+<line x1="1125" y1="390" x2="490" y2="500" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>remote syslog</title><rect x="600" y="500" width="180" height="90" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="690.0" y="539.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">remote syslog</text>
+<text x="690.0" y="560.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SIEM</text>
+<line x1="1125" y1="390" x2="690" y2="500" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>email via SMTP relay</title><rect x="800" y="500" width="180" height="90" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="890.0" y="539.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">email via SMTP relay</text>
+<text x="890.0" y="560.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">on-call</text>
+<line x1="1125" y1="390" x2="890" y2="500" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>script hook</title><rect x="1000" y="500" width="180" height="90" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1090.0" y="539.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">script hook</text>
+<text x="1090.0" y="560.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ticketing / Slack</text>
+<line x1="1125" y1="390" x2="1090" y2="500" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>isolate port</title><rect x="1200" y="500" width="180" height="90" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1290.0" y="539.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">isolate port</text>
+<text x="1290.0" y="560.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">UFM disables the link</text>
+<line x1="1125" y1="390" x2="1290" y2="500" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<circle cx="1125" cy="420" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1125" y="426" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<path d="M1290,590 L1290,630 L165,630 L165,392" fill="none" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="200" y="665" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#d93025" text-anchor="start">step 5 &#x27;isolate port&#x27; = SubnSet(PortInfo) PortState Down on IB1/2 -&gt; link goes down, NCCL job on gpu04 loses its path (deliberately)</text>
+<g><rect x="40" y="700" width="1000" height="150" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="52" y="724" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Pull side (no push needed): GET /ufmRest/app/events?severity=Critical, GET /ufmRest/app/alarms,</text>
+<text x="52" y="744" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Prometheus scraping http://&lt;ufm&gt;:9001/csv/... or the Prometheus endpoint (release-specific).</text>
+<text x="52" y="764" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Example policy: &#x27;Symbol error rate exceeded threshold&#x27; -&gt; Critical, threshold N/period, actions: alarm + SNMP + isolate.</text>
+<text x="52" y="784" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Resetting counters hides evidence; the event history survives a reset — read app/events, not the live counter.</text>
+<g><rect x="1130" y="700" width="420" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="1144" y="720" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
+<line x1="1144" y1="742" x2="1204" y2="742" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6"/>
+<text x="1216" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Congestion / flow-control signal</text>
+<line x1="1144" y1="772" x2="1204" y2="772" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5"/>
+<text x="1216" y="778" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
+<line x1="1144" y1="802" x2="1204" y2="802" stroke="#1f2937" stroke-width="3"/>
+<text x="1216" y="808" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Local call / state change</text>
+</svg>

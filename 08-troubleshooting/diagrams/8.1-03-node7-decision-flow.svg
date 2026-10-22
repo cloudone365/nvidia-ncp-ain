@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1580" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>Decision flow: "the training job hangs on dgx-07"</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="1580" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Decision flow: "the training job hangs on dgx-07"</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Bottom-up: each diamond is one tool; a No branch exits to a fix, a Yes branch climbs one rung</text><g><title>Symptom: 32-node job stalls; scheduler blames dgx-07</title><rect x="230" y="150" width="580" height="70" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="520.0" y="178" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Symptom: 32-node job stalls; scheduler blames dgx-07</text>
+</g>
+<line x1="520" y1="220" x2="520" y2="240.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>ibstat on all 8 rails: Physical state = LinkUp ?</title><polygon points="520,240.0 770.0,300 520,360.0 270.0,300" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="294.6666666666667" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ibstat on all 8 rails:</text>
+<text x="520" y="316.6666666666667" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Physical state = LinkUp ?</text>
+</g>
+<g><title>Step 1</title><circle cx="230.0" cy="300" r="16" fill="#1f2937"/><text x="230.0" y="306" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<g><title>Exit 1</title><rect x="960" y="245" width="580" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="269" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Layer 1: Down/Polling = no signal.</text>
+<text x="976" y="290" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Reseat/replace cable, mlxlink -m for</text>
+<text x="976" y="311" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">lane power and module temp (8.3)</text>
+</g>
+<line x1="770.0" y1="300" x2="960" y2="300" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="816.4" y="276" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="830.0" y="290" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="360.0" x2="520" y2="410.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="376.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="390.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>State = Active and Base lid != 0 on every rail ?</title><polygon points="520,410.0 770.0,470 520,530.0 270.0,470" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="464.6666666666667" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">State = Active and</text>
+<text x="520" y="486.6666666666667" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Base lid != 0 on every rail ?</text>
+</g>
+<g><title>Step 2</title><circle cx="230.0" cy="470" r="16" fill="#1f2937"/><text x="230.0" y="476" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<g><title>Exit 2</title><rect x="960" y="415" width="580" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="439" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Init + LinkUp + LID 0 = no SM.</text>
+<text x="976" y="460" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">sminfo times out -&gt; start/repair</text>
+<text x="976" y="481" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">opensm / switch SM / UFM</text>
+</g>
+<line x1="770.0" y1="470" x2="960" y2="470" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="816.4" y="446" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="830.0" y="460" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="530.0" x2="520" y2="580.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="546.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="560.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>iblinkinfo -l | grep 'Could be' returns nothing ?</title><polygon points="520,580.0 770.0,640 520,700.0 270.0,640" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="634.6666666666666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">iblinkinfo -l | grep 'Could be'</text>
+<text x="520" y="656.6666666666666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">returns nothing ?</text>
+</g>
+<g><title>Step 3</title><circle cx="230.0" cy="640" r="16" fill="#1f2937"/><text x="230.0" y="646" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><title>Exit 3</title><rect x="960" y="585" width="580" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="609" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Width/speed downgrade (2X, HDR).</text>
+<text x="976" y="630" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">perfquery SymbolErrors on that port,</text>
+<text x="976" y="651" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ibportstate reset, then 8.3 / replace</text>
+</g>
+<line x1="770.0" y1="640" x2="960" y2="640" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="816.4" y="616" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="830.0" y="630" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="700.0" x2="520" y2="750.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="716.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="730.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>perfquery -x over a 60 s window: Symbol/LinkErrRec/LinkDowned flat ?</title><polygon points="520,750.0 770.0,810 520,870.0 270.0,810" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="804.6666666666666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">perfquery -x over a 60 s window:</text>
+<text x="520" y="826.6666666666666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Symbol/LinkErrRec/LinkDowned flat ?</text>
+</g>
+<g><title>Step 4</title><circle cx="230.0" cy="810" r="16" fill="#1f2937"/><text x="230.0" y="816" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<g><title>Exit 4</title><rect x="960" y="755" width="580" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="779" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Marginal link: rate, not total, matters.</text>
+<text x="976" y="800" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxlink -c -m, --rx_fec_histogram,</text>
+<text x="976" y="821" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">clean/reseat -&gt; swap module -&gt; RMA</text>
+</g>
+<line x1="770.0" y1="810" x2="960" y2="810" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="816.4" y="786" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="830.0" y="800" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="870.0" x2="520" y2="920.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="886.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="900.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>PortXmitWait / XmitDiscards flat (no credit starvation) ?</title><polygon points="520,920.0 770.0,980 520,1040.0 270.0,980" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="974.6666666666666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">PortXmitWait / XmitDiscards</text>
+<text x="520" y="996.6666666666666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">flat (no credit starvation) ?</text>
+</g>
+<g><title>Step 5</title><circle cx="230.0" cy="980" r="16" fill="#1f2937"/><text x="230.0" y="986" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<g><title>Exit 5</title><rect x="960" y="925" width="580" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="949" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Congestion or routing, not cable.</text>
+<text x="976" y="970" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet -r (credit loops, AR), check</text>
+<text x="976" y="991" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">traffic pattern, SL/VL, hot spines</text>
+</g>
+<line x1="770.0" y1="980" x2="960" y2="980" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="816.4" y="956" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="830.0" y="970" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="1040.0" x2="520" y2="1090.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="1056.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="1070.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>ibdiagnet summary: all stages 0 errors ?</title><polygon points="520,1090.0 770.0,1150 520,1210.0 270.0,1150" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="1144.6666666666667" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ibdiagnet summary:</text>
+<text x="520" y="1166.6666666666667" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">all stages 0 errors ?</text>
+</g>
+<g><title>Step 6</title><circle cx="230.0" cy="1150" r="16" fill="#1f2937"/><text x="230.0" y="1156" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<g><title>Exit 6</title><rect x="960" y="1095" width="580" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="1119" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Fix the flagged stage: dup GUIDs,</text>
+<text x="976" y="1140" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PKeys, routing, cables, SM.</text>
+<text x="976" y="1161" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Read ibdiagnet2.log first</text>
+</g>
+<line x1="770.0" y1="1150" x2="960" y2="1150" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="816.4" y="1126" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="830.0" y="1140" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="1210.0" x2="520" y2="1260.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="1226.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="1240.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>ib_write_bw -q 4 per rail pair &gt;= ~97% of line rate ?</title><polygon points="520,1260.0 770.0,1320 520,1380.0 270.0,1320" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="1314.6666666666667" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ib_write_bw -q 4 per rail pair</text>
+<text x="520" y="1336.6666666666667" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">&gt;= ~97% of line rate ?</text>
+</g>
+<g><title>Step 7</title><circle cx="230.0" cy="1320" r="16" fill="#1f2937"/><text x="230.0" y="1326" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<g><title>Exit 7</title><rect x="960" y="1265" width="580" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="1289" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">~196 Gb/s on NDR = width (go to 3).</text>
+<text x="976" y="1310" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">~350 with --use_cuda = PCIe topo.</text>
+<text x="976" y="1331" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">else more QPs, CPU governor, -d/-i</text>
+</g>
+<line x1="770.0" y1="1320" x2="960" y2="1320" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="816.4" y="1296" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="830.0" y="1310" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="1380.0" x2="520" y2="1455" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="1396.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="1410.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>Fabric is healthy: climb to the application</title><rect x="220" y="1455" width="600" height="90" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="520.0" y="1483" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Fabric is healthy: climb to the application</text>
+<text x="520.0" y="1515" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">nccl-tests, NCCL_DEBUG=INFO, NCCL_IB_HCA, nvidia-smi topo -m</text>
+</g>
+<g><title>Legend</title><rect x="1120" y="1455" width="420" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="1136" y1="1481" x2="1190" y2="1481" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="1204" y="1486" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Yes: climb one rung</text>
+<line x1="1136" y1="1511" x2="1190" y2="1511" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)"/>
+<text x="1204" y="1516" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">No: exit to the fix</text>
+</g></svg>

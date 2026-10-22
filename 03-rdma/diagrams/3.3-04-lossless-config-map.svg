@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" role="img" aria-label="Configuration map of two hosts and three Spectrum switches with the matching DSCP priority traffic class PFC ECN and MTU settings on each hop"><title>End-to-end lossless RoCE: every hop must agree on the same classes</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">End-to-end lossless RoCE: every hop must agree on the same classes</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Host NIC (mlnx_qos, ECN sysfs, cma_roce_tos) &lt;-&gt; Cumulus leaf/spine (nv set qos roce mode lossless) &lt;-&gt; host NIC. One mismatch = silent drops</text>
+<g><title>hostA mlx5_2 / ens1f0np0</title><rect x="40" y="160" width="380" height="520" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="56" y="190" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="21" font-weight="700" fill="#1f2937" text-anchor="start">hostA mlx5_2 / ens1f0np0</text>
+<g><title>ip link set $IF mtu 9000</title><rect x="60" y="210" width="340" height="60" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="230.0" y="244.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ip link set $IF mtu 9000</text>
+<g><title>mlnx_qos -i $IF --trust dscp</title><rect x="60" y="280" width="340" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="230.0" y="314.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">mlnx_qos -i $IF --trust dscp</text>
+<g><title>mlnx_qos -i $IF --pfc 0,0,0,1,0,0,0,0</title><rect x="60" y="350" width="340" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="230.0" y="384.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">mlnx_qos -i $IF --pfc 0,0,0,1,0,0,0,0</text>
+<g><title>dscp2prio 26-&gt;3, 48-&gt;6 (defaults)</title><rect x="60" y="420" width="340" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="230.0" y="454.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">dscp2prio 26-&gt;3, 48-&gt;6 (defaults)</text>
+<g><title>ecn/roce_np|rp/enable/3 = 1, cnp_dscp 48</title><rect x="60" y="490" width="340" height="60" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="230.0" y="524.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ecn/roce_np|rp/enable/3 = 1, cnp_dscp 48</text>
+<g><title>cma_roce_mode -m 2 ; cma_roce_tos -t 106</title><rect x="60" y="560" width="340" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="230.0" y="594.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">cma_roce_mode -m 2 ; cma_roce_tos -t 106</text>
+<g><title>NCCL_IB_TC=106, NCCL_IB_GID_INDEX=v2</title><rect x="60" y="630" width="340" height="36" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="230.0" y="652.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">NCCL_IB_TC=106, NCCL_IB_GID_INDEX=v2</text>
+<g><title>hostB mlx5_2 / ens1f0np0</title><rect x="1180" y="160" width="380" height="520" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="1196" y="190" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="21" font-weight="700" fill="#1f2937" text-anchor="start">hostB mlx5_2 / ens1f0np0</text>
+<g><title>ip link set $IF mtu 9000</title><rect x="1200" y="210" width="340" height="60" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1370.0" y="244.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ip link set $IF mtu 9000</text>
+<g><title>mlnx_qos -i $IF --trust dscp</title><rect x="1200" y="280" width="340" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1370.0" y="314.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">mlnx_qos -i $IF --trust dscp</text>
+<g><title>mlnx_qos -i $IF --pfc 0,0,0,1,0,0,0,0</title><rect x="1200" y="350" width="340" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1370.0" y="384.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">mlnx_qos -i $IF --pfc 0,0,0,1,0,0,0,0</text>
+<g><title>dscp2prio 26-&gt;3, 48-&gt;6 (defaults)</title><rect x="1200" y="420" width="340" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1370.0" y="454.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">dscp2prio 26-&gt;3, 48-&gt;6 (defaults)</text>
+<g><title>ecn/roce_np|rp/enable/3 = 1, cnp_dscp 48</title><rect x="1200" y="490" width="340" height="60" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1370.0" y="524.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ecn/roce_np|rp/enable/3 = 1, cnp_dscp 48</text>
+<g><title>cma_roce_mode -m 2 ; cma_roce_tos -t 106</title><rect x="1200" y="560" width="340" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1370.0" y="594.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">cma_roce_mode -m 2 ; cma_roce_tos -t 106</text>
+<g><title>NCCL_IB_TC=106, NCCL_IB_GID_INDEX=v2</title><rect x="1200" y="630" width="340" height="36" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1370.0" y="652.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">NCCL_IB_TC=106, NCCL_IB_GID_INDEX=v2</text>
+<g><title>leaf01</title><rect x="460" y="160" width="220" height="520" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="476" y="190" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="start">leaf01</text>
+<g><title>link mtu 9216</title><rect x="475" y="210" width="190" height="60" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="570.0" y="234.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">link mtu 9216</text>
+<text x="570.0" y="252.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1 host, swp49 up</text>
+<g><title>nv set qos roce</title><rect x="475" y="280" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="570.0" y="304.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">nv set qos roce</text>
+<text x="570.0" y="322.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">mode lossless</text>
+<g><title>trust l3 (DSCP)</title><rect x="475" y="350" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="570.0" y="374.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">trust l3 (DSCP)</text>
+<text x="570.0" y="392.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">26-&gt;SP3, 48-&gt;SP6</text>
+<g><title>PFC on SP3</title><rect x="475" y="420" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="570.0" y="444.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">PFC on SP3</text>
+<text x="570.0" y="462.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">headroom by cable-length</text>
+<g><title>ECN on TC3</title><rect x="475" y="490" width="190" height="60" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="570.0" y="514.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ECN on TC3</text>
+<text x="570.0" y="532.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">150 KB / 1.5 MB</text>
+<g><title>ETS: TC6 strict</title><rect x="475" y="560" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="570.0" y="584.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ETS: TC6 strict</text>
+<text x="570.0" y="602.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">TC3/TC0 DWRR</text>
+<g><title>pfc-watchdog</title><rect x="475" y="630" width="190" height="36" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="570.0" y="652.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">pfc-watchdog</text>
+<g><title>spine01</title><rect x="700" y="160" width="220" height="520" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="716" y="190" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="start">spine01</text>
+<g><title>link mtu 9216</title><rect x="715" y="210" width="190" height="60" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="810.0" y="234.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">link mtu 9216</text>
+<text x="810.0" y="252.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1-32</text>
+<g><title>nv set qos roce</title><rect x="715" y="280" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="810.0" y="304.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">nv set qos roce</text>
+<text x="810.0" y="322.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">mode lossless</text>
+<g><title>trust l3 (DSCP)</title><rect x="715" y="350" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="810.0" y="374.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">trust l3 (DSCP)</text>
+<text x="810.0" y="392.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">26-&gt;SP3, 48-&gt;SP6</text>
+<g><title>PFC on SP3</title><rect x="715" y="420" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="810.0" y="444.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">PFC on SP3</text>
+<text x="810.0" y="462.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">headroom by cable-length</text>
+<g><title>ECN on TC3</title><rect x="715" y="490" width="190" height="60" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="810.0" y="514.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ECN on TC3</text>
+<text x="810.0" y="532.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">150 KB / 1.5 MB</text>
+<g><title>ETS: TC6 strict</title><rect x="715" y="560" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="810.0" y="584.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ETS: TC6 strict</text>
+<text x="810.0" y="602.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">TC3/TC0 DWRR</text>
+<g><title>pfc-watchdog</title><rect x="715" y="630" width="190" height="36" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="810.0" y="652.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">pfc-watchdog</text>
+<g><title>leaf02</title><rect x="940" y="160" width="220" height="520" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="956" y="190" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="start">leaf02</text>
+<g><title>link mtu 9216</title><rect x="955" y="210" width="190" height="60" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1050.0" y="234.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">link mtu 9216</text>
+<text x="1050.0" y="252.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1 host, swp49 up</text>
+<g><title>nv set qos roce</title><rect x="955" y="280" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1050.0" y="304.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">nv set qos roce</text>
+<text x="1050.0" y="322.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">mode lossless</text>
+<g><title>trust l3 (DSCP)</title><rect x="955" y="350" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1050.0" y="374.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">trust l3 (DSCP)</text>
+<text x="1050.0" y="392.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">26-&gt;SP3, 48-&gt;SP6</text>
+<g><title>PFC on SP3</title><rect x="955" y="420" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1050.0" y="444.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">PFC on SP3</text>
+<text x="1050.0" y="462.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">headroom by cable-length</text>
+<g><title>ECN on TC3</title><rect x="955" y="490" width="190" height="60" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1050.0" y="514.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ECN on TC3</text>
+<text x="1050.0" y="532.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">150 KB / 1.5 MB</text>
+<g><title>ETS: TC6 strict</title><rect x="955" y="560" width="190" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1050.0" y="584.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ETS: TC6 strict</text>
+<text x="1050.0" y="602.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">TC3/TC0 DWRR</text>
+<g><title>pfc-watchdog</title><rect x="955" y="630" width="190" height="36" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1050.0" y="652.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">pfc-watchdog</text>
+<line x1="410" y1="150" x2="470" y2="150" stroke="#e07b00" stroke-width="4"/>
+<text x="440.0" y="140" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">3 m DAC</text>
+<line x1="670" y1="150" x2="710" y2="150" stroke="#e07b00" stroke-width="4"/>
+<text x="690.0" y="140" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">100 m</text>
+<line x1="910" y1="150" x2="950" y2="150" stroke="#e07b00" stroke-width="4"/>
+<text x="930.0" y="140" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">100 m</text>
+<line x1="1150" y1="150" x2="1190" y2="150" stroke="#e07b00" stroke-width="4"/>
+<text x="1170.0" y="140" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">3 m DAC</text>
+<text x="800" y="128" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">400G links; PFC/ECN/DSCP must match on both ends of every one of them</text>
+<g><rect x="40" y="710" width="1040" height="150" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="52" y="734" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Rows: MTU | trust | PFC | DSCP map | ECN | scheduling + marking | watchdog. Read across: same class on every box. Common breaks:</text>
+<text x="52" y="753" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start"> - host trusts DSCP, switch trusts PCP (untagged frames -&gt; priority 0 on the switch, no PFC, drops)</text>
+<text x="52" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start"> - app unmarked (no --tclass / NCCL_IB_TC) -&gt; priority 0 everywhere, &#x27;lossless&#x27; never applies</text>
+<text x="52" y="791" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start"> - one spine left in mode lossy -&gt; rx_prio3_discards on hosts while leaf shows pfc 0/0</text>
+<text x="52" y="810" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start"> - MTU 1500 somewhere -&gt; active_mtu 1024 or silent drops (IB transport has no PMTU discovery)</text>
+<g><rect x="1130" y="710" width="430" height="150" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="1142" y="734" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Verify per hop:</text>
+<text x="1142" y="753" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">mlnx_qos -i $IF</text>
+<text x="1142" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">nv show qos roce</text>
+<text x="1142" y="791" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">nv show interface swpN qos roce status</text>
+<text x="1142" y="810" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">ibv_devinfo | grep active_mtu</text>
+<text x="1142" y="829" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">ethtool -S | grep prio3</text>
+</svg>

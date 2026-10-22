@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img" aria-label="Horizontal layout of a RoCE v2 frame with each header, its size and the key fields including the IPv4 ToS byte split into DSCP and ECN bits and the UDP destination port 4791"><title>RoCE v2 packet on the wire, and where DSCP, ECN and the UDP ports sit</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="900" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">RoCE v2 packet on the wire, and where DSCP, ECN and the UDP ports sit</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Ethernet 14 B + IPv4 20 B + UDP 8 B + BTH 12 B (+ RETH 16 B) + payload &lt;= 4096 B + ICRC 4 B + FCS 4 B</text>
+<g><title>Ethernet</title><rect x="48" y="180" width="184" height="150" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="140.0" y="218.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">Ethernet</text>
+<text x="140.0" y="243.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">14 B</text>
+<text x="140.0" y="264.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">dst/src MAC</text>
+<text x="140.0" y="285.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">EtherType 0x0800</text>
+<text x="140.0" y="306.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">+4 B 802.1Q (PCP)</text>
+<g><title>IPv4</title><rect x="238" y="180" width="224" height="150" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="350.0" y="218.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">IPv4</text>
+<text x="350.0" y="243.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">20 B</text>
+<text x="350.0" y="264.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">ToS = DSCP:ECN</text>
+<text x="350.0" y="285.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">TTL = hop_limit</text>
+<text x="350.0" y="306.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">proto 17 (UDP)</text>
+<g><title>UDP</title><rect x="468" y="180" width="184" height="150" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="560.0" y="218.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">UDP</text>
+<text x="560.0" y="243.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 B</text>
+<text x="560.0" y="264.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">src port = per-QP</text>
+<text x="560.0" y="285.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">hash (ECMP entropy)</text>
+<text x="560.0" y="306.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">dst port 4791</text>
+<g><title>BTH</title><rect x="658" y="180" width="204" height="150" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="760.0" y="218.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">BTH</text>
+<text x="760.0" y="243.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">12 B</text>
+<text x="760.0" y="264.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">OpCode, PKey, DestQP</text>
+<text x="760.0" y="285.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">PSN 24b, A bit</text>
+<text x="760.0" y="306.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">same as InfiniBand</text>
+<g><title>RETH</title><rect x="868" y="180" width="164" height="150" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="950.0" y="218.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">RETH</text>
+<text x="950.0" y="243.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">16 B (WRITE/READ)</text>
+<text x="950.0" y="264.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">VA 64b</text>
+<text x="950.0" y="285.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">R_Key 32b</text>
+<text x="950.0" y="306.5" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">DMALen 32b</text>
+<g><title>Payload</title><rect x="1038" y="180" width="274" height="150" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1175.0" y="229.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">Payload</text>
+<text x="1175.0" y="254.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">&lt;= path MTU 4096 B</text>
+<text x="1175.0" y="275.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">IB MTU set {256..4096}</text>
+<text x="1175.0" y="296.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">needs 9000 B Eth MTU</text>
+<g><title>ICRC</title><rect x="1318" y="180" width="134" height="150" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1385.0" y="229.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">ICRC</text>
+<text x="1385.0" y="254.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">4 B</text>
+<text x="1385.0" y="275.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">IB-side CRC</text>
+<text x="1385.0" y="296.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">rx_icrc_encaps</text>
+<g><title>FCS</title><rect x="1458" y="180" width="88" height="150" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1502.0" y="229.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">FCS</text>
+<text x="1502.0" y="254.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">4 B</text>
+<text x="1502.0" y="275.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">Ethernet</text>
+<text x="1502.0" y="296.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">CRC</text>
+<g><rect x="300" y="400" width="1000" height="190" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="320" y="430" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">IPv4 ToS byte (8 bits) — set by traffic_class / --tclass / NCCL_IB_TC / cma_roce_tos</text>
+<g><title>DSCP b5</title><rect x="320" y="450" width="110" height="44" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="375.0" y="476.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">DSCP b5</text>
+<g><title>DSCP b4</title><rect x="438" y="450" width="110" height="44" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="493.0" y="476.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">DSCP b4</text>
+<g><title>DSCP b3</title><rect x="556" y="450" width="110" height="44" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="611.0" y="476.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">DSCP b3</text>
+<g><title>DSCP b2</title><rect x="674" y="450" width="110" height="44" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="729.0" y="476.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">DSCP b2</text>
+<g><title>DSCP b1</title><rect x="792" y="450" width="110" height="44" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="847.0" y="476.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">DSCP b1</text>
+<g><title>DSCP b0</title><rect x="910" y="450" width="110" height="44" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="965.0" y="476.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">DSCP b0</text>
+<g><title>ECN b1</title><rect x="1028" y="450" width="110" height="44" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1083.0" y="476.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ECN b1</text>
+<g><title>ECN b0</title><rect x="1146" y="450" width="110" height="44" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1201.0" y="476.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">ECN b0</text>
+<text x="320" y="530" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">DSCP 26 = 011010  -&gt;  ToS = 26 &lt;&lt; 2 = 104;  + ECT(0) = 10 -&gt; 106 = 0x6a   (data, priority 3)</text>
+<text x="320" y="556" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">DSCP 48 = 110000  -&gt;  ToS = 0xc0 (CNP, priority 6)      CE mark = ECN bits 11 -&gt; 0x6b on marked data</text>
+<path d="M650,330 L700,400" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="640" y="380" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">zoom</text>
+<g><rect x="48" y="640" width="1000" height="200" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="60" y="664" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">RoCE v1 for contrast: Ethernet (EtherType 0x8915) -&gt; GRH 40 B -&gt; BTH -&gt; payload -&gt; ICRC.</text>
+<text x="60" y="684" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">No IP header: not routable, no ECN field, no DSCP. v2: IP = routable; UDP src port = ECMP</text>
+<text x="60" y="704" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">entropy per QP; ToS = DSCP (PFC/ETS class) + ECN bits (DCQCN). GRH hop_limit -&gt; IP TTL.</text>
+<text x="60" y="724" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">tcpdump: udp port 4791; tos 0x6a = marked data, 0x6b = CE-marked data, 0xc0 = CNP.</text>
+<text x="60" y="744" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Overhead at 4096 B payload: 78 B of headers -&gt; ~98 % efficiency; at 1024 B (1500 MTU) ~93 % and 4x pps.</text>
+<g><rect x="1130" y="640" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="1144" y="660" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
+<rect x="1144" y="671" width="60" height="22" rx="5" fill="#ffe9cc" stroke="#e07b00" stroke-width="2"/>
+<text x="1216" y="688" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Ethernet / IP / UDP (switch sees)</text>
+<rect x="1144" y="701" width="60" height="22" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2"/>
+<text x="1216" y="718" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">InfiniBand transport (HCA sees)</text>
+</svg>

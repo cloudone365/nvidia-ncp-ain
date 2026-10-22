@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1060" width="100%" role="img" aria-label="Sequence diagram of ib_write_bw: server listens on TCP, client connects, both exchange LID GID QPN PSN rkey and virtual address, transition QPs to RTS, then RDMA WRITEs flow and the results table is printed"><title>perftest (ib_write_bw) client/server exchange: TCP for parameters, RDMA for data</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="1060" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">perftest (ib_write_bw) client/server exchange: TCP for parameters, RDMA for data</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">The &#x27;server IP&#x27; argument is only used for a tiny TCP exchange of {LID/GID, QPN, PSN, rkey, VAddr}; every byte of the benchmark is RDMA WRITE</text>
+<g><title>hostA client</title><rect x="120.0" y="140" width="560" height="64" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="400.0" y="167.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">hostA client</text>
+<text x="400.0" y="192.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">ib_write_bw -d mlx5_0 -q 4 -F --report_gbits 10.10.1.21</text>
+<g><title>hostB server</title><rect x="970.0" y="140" width="460" height="64" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1200.0" y="167.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">hostB server</text>
+<text x="1200.0" y="192.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">ib_write_bw -d mlx5_0 -q 4 -F --report_gbits</text>
+<line x1="400" y1="204" x2="400" y2="940" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="1200" y1="204" x2="1200" y2="940" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<g><rect x="900" y="238" width="580" height="44" rx="6" fill="#eeeeee" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="912" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">ibv_open_device, alloc PD, reg_mr(64 KiB..8 MiB), create 4 RC QPs, TCP listen :18515</text>
+<circle cx="870" cy="260" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="870" y="266" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<line x1="400" y1="310" x2="1200" y2="310" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="414" y="301" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">TCP connect 10.10.1.21:18515  (&#x27;Data ex. method : Ethernet&#x27; in the header)</text>
+<circle cx="370" cy="310" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="370" y="316" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<line x1="400" y1="354" x2="1200" y2="354" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="414" y="345" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">local address: LID 0x25 QPN 0x00b2 PSN 0x1a2b3c RKey 0x1f00 VAddr 0x7f1c40000000 (+GID on RoCE)</text>
+<circle cx="370" cy="354" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="370" y="360" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<line x1="1200" y1="398" x2="400" y2="398" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="414" y="389" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">remote address: LID 0x26 QPN 0x00c4 PSN 0x4d5e6f RKey 0x2300 VAddr 0x7f2e80000000</text>
+<g><rect x="100" y="442" width="580" height="44" rx="6" fill="#eeeeee" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="112" y="466" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">modify_qp INIT -&gt; RTR(dest QPN/PSN/LID or GID, MTU 4096) -&gt; RTS</text>
+<circle cx="70" cy="464" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="70" y="470" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<g><rect x="1000" y="442" width="460" height="44" rx="6" fill="#eeeeee" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="1012" y="466" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">same on the server; path MTU = min(active_mtu)</text>
+<line x1="400" y1="524" x2="1200" y2="524" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="414" y="515" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">TCP: &#x27;ready&#x27; barrier (both sides in RTS before the first WRITE)</text>
+<line x1="400" y1="580" x2="1200" y2="580" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="414" y="571" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">RDMA WRITE 64 KiB x tx-depth 128 per QP, 4 QPs  (BTH + RETH, 16 packets of 4096 B each)</text>
+<circle cx="370" cy="580" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="370" y="586" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<line x1="400" y1="610" x2="1200" y2="610" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="414" y="601" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">RDMA WRITE 64 KiB x tx-depth 128 per QP, 4 QPs  (BTH + RETH, 16 packets of 4096 B each)</text>
+<line x1="400" y1="640" x2="1200" y2="640" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="414" y="631" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">RDMA WRITE 64 KiB x tx-depth 128 per QP, 4 QPs  (BTH + RETH, 16 packets of 4096 B each)</text>
+<line x1="1200" y1="690" x2="400" y2="690" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="414" y="681" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">ACKs (coalesced); server CPU idle — one-sided</text>
+<g><rect x="100" y="734" width="580" height="44" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="112" y="758" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">poll CQ: count completed bytes per interval -&gt; BW peak / average, MsgRate</text>
+<circle cx="70" cy="756" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="70" y="762" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
+<line x1="400" y1="816" x2="1200" y2="816" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="414" y="807" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">TCP: &#x27;done&#x27; + results exchange, then teardown (destroy QP/CQ, dereg MR)</text>
+<circle cx="370" cy="816" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="370" y="822" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text>
+<g><rect x="60" y="876" width="1040" height="110" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="72" y="900" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Header decode: &#x27;Transport type: IB&#x27; vs ETH (RoCE) | &#x27;Mtu : 4096[B]&#x27; = negotiated path MTU</text>
+<text x="72" y="919" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">&#x27;rdma_cm QPs : OFF&#x27; = out-of-band TCP exchange (-R turns RDMA CM on and picks the GID index)</text>
+<text x="72" y="938" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">On RoCE the exchange carries GIDs: -x &lt;v2 index&gt; on BOTH ends or step 4 fails.</text>
+<text x="72" y="957" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">-a sweeps 2 B..8 MiB; -D &lt;sec&gt; runs for a duration instead of -n iterations.</text>
+<text x="60" y="1035" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">1 server allocates resources and listens  2 client TCP connect  3 parameter swap  4 QPs to RTS  5 RDMA WRITE stream  6 client measures from CQEs  7 teardown</text>
+<g><rect x="1130" y="876" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="1144" y="896" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
+<line x1="1144" y1="918" x2="1204" y2="918" stroke="#2f6fdb" stroke-width="4"/>
+<text x="1216" y="924" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (IB / RDMA payload)</text>
+<line x1="1144" y1="948" x2="1204" y2="948" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
+<text x="1216" y="954" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (SM MADs, REST, CM)</text>
+</svg>

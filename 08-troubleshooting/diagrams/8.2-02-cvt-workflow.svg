@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>CVT workflow and where it sits in SuperPOD bring-up</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">CVT workflow and where it sits in SuperPOD bring-up</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Plan, discover, compare, remediate, re-run: agents stream changes, so a technician sees a row flip to OK while still at the rack</text><g><title>Plan</title><rect x="60" y="170" width="270" height="150" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="195.0" y="200" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Plan</text>
+<text x="195.0" y="233" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">load P2P / .topo / DOT</text>
+<text x="195.0" y="253" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">fix names to match devices</text>
+<text x="195.0" y="273" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">exit: parses; count = BoM</text>
+</g>
+<g><title>Step 1</title><circle cx="84" cy="170" r="16" fill="#1f2937"/><text x="84" y="176" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<line x1="330" y1="245" x2="366" y2="245" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>Discover</title><rect x="366" y="170" width="270" height="150" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="501.0" y="200" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Discover</text>
+<text x="501.0" y="233" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">deploy agents, start_validation</text>
+<text x="501.0" y="253" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">every device 'reporting'</text>
+<text x="501.0" y="273" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">exit: zero no-report</text>
+</g>
+<g><title>Step 2</title><circle cx="390" cy="170" r="16" fill="#1f2937"/><text x="390" y="176" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<line x1="636" y1="245" x2="672" y2="245" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>Compare</title><rect x="672" y="170" width="270" height="150" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="807.0" y="200" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Compare</text>
+<text x="807.0" y="233" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">match each discovered link</text>
+<text x="807.0" y="253" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">to a planned link</text>
+<text x="807.0" y="273" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">exit: mismatch list</text>
+</g>
+<g><title>Step 3</title><circle cx="696" cy="170" r="16" fill="#1f2937"/><text x="696" y="176" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<line x1="942" y1="245" x2="978" y2="245" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>Report</title><rect x="978" y="170" width="270" height="150" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1113.0" y="200" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Report</text>
+<text x="1113.0" y="233" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">wrong-port / wrong-neighbor /</text>
+<text x="1113.0" y="253" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">extra / missing / integrity /</text>
+<text x="1113.0" y="273" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">state / underperforming</text>
+</g>
+<g><title>Step 4</title><circle cx="1002" cy="170" r="16" fill="#1f2937"/><text x="1002" y="176" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<line x1="1248" y1="245" x2="1284" y2="245" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>Remediate</title><rect x="1284" y="170" width="270" height="150" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1419.0" y="200" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Remediate</text>
+<text x="1419.0" y="233" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">crew moves / cleans / swaps</text>
+<text x="1419.0" y="253" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">cables; rows flip live</text>
+<text x="1419.0" y="273" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">exit: zero connectivity findings</text>
+</g>
+<g><title>Step 5</title><circle cx="1308" cy="170" r="16" fill="#1f2937"/><text x="1308" y="176" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<path d="M1419.0,320 L1419.0,370 L501.0,370 L501.0,324" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<g><title>Step 6</title><circle cx="800" cy="370" r="16" fill="#1f2937"/><text x="800" y="376" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<text x="830" y="376" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">Re-run discover + compare until the connectivity list is empty, then soak overnight</text>
+<text x="60" y="450" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Bring-up timeline</text>
+<g><title>Racks powered</title><rect x="60" y="480" width="270" height="150" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="195.0" y="508" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Racks powered</text>
+<text x="195.0" y="539" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">switch mgmt IPs</text>
+<text x="195.0" y="559" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">hostnames set</text>
+<text x="195.0" y="579" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">NO SM, no routing</text>
+</g>
+<line x1="330" y1="555" x2="366" y2="555" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>CVT connectivity</title><rect x="366" y="480" width="270" height="150" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="501.0" y="508" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">CVT connectivity</text>
+<text x="501.0" y="539" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">steps 1-6 above</text>
+<text x="501.0" y="559" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">zero miswires</text>
+<text x="501.0" y="579" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">before SM!</text>
+</g>
+<line x1="636" y1="555" x2="672" y2="555" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>Layer-1 soak</title><rect x="672" y="480" width="270" height="150" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="807.0" y="508" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Layer-1 soak</text>
+<text x="807.0" y="539" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">agents run overnight</text>
+<text x="807.0" y="559" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">fix rising BER,</text>
+<text x="807.0" y="579" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">flaps, low power</text>
+</g>
+<line x1="942" y1="555" x2="978" y2="555" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>SM / UFM  or  BGP / EVPN</title><rect x="978" y="480" width="270" height="150" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="1113.0" y="508" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">SM / UFM  or  BGP / EVPN</text>
+<text x="1113.0" y="539" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">enable control plane</text>
+<text x="1113.0" y="559" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ibdiagnet -r / netq check</text>
+<text x="1113.0" y="579" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">routing on a correct fabric</text>
+</g>
+<line x1="1248" y1="555" x2="1284" y2="555" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>perftest + nccl-tests</title><rect x="1284" y="480" width="270" height="150" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1419.0" y="508" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">perftest + nccl-tests</text>
+<text x="1419.0" y="539" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ib_write_bw per link</text>
+<text x="1419.0" y="559" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">all_reduce_perf per SU</text>
+<text x="1419.0" y="579" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">(Module 8.1)</text>
+</g>
+<line x1="501.0" y1="480" x2="501.0" y2="400" stroke="#6b7280" stroke-width="2" fill="none"/>
+<g><title>Why the order matters</title><rect x="60" y="680" width="1480" height="180" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="76" y="710" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Why the order matters</text>
+<text x="76" y="743" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">A cable swapped between rail leaves comes up Active / 4X NDR: no link-state tool sees it. If the SM and routing are enabled first, the fault</text>
+<text x="76" y="763" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">appears a week later as 'asymmetric routing', 'extra hop in ibtracert', or 'nccl-tests 15% below reference' and gets debugged as a routing problem.</text>
+<text x="76" y="783" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Validate cabling while the fabric is still dumb, let the agents soak for layer-1 drift, then layer the control plane on a fabric you can trust.</text>
+<text x="76" y="803" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Exit criteria: zero connectivity findings; zero integrity / state / underperforming findings after soak; exceptions documented and signed off.</text>
+</g>
+<g><title>Legend</title><rect x="1140" y="880" width="400" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="1156" y1="906" x2="1210" y2="906" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="1224" y="911" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Sequence</text>
+<line x1="1156" y1="936" x2="1210" y2="936" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1224" y="941" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Re-run loop</text>
+</g></svg>

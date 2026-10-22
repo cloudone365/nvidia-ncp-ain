@@ -1,0 +1,677 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img" aria-label="4-SU DGX SuperPOD compute fabric: 32 leaves, 16 spines (+ core beyond 4 SUs)">
+<title>4-SU DGX SuperPOD compute fabric: 32 leaves, 16 spines (+ core beyond 4 SUs)</title>
+<defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a9c8a"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">4-SU DGX SuperPOD compute fabric: 32 leaves, 16 spines (+ core beyond 4 SUs)</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">H100 RA: 127 nodes as built (31 per SU + UFM), 1,016 GPUs, 1,020 node→leaf and 1,024 leaf→spine cables</text>
+<g><title>Core layer (3rd tier) — only when spine ports run out beyond 4 SUs</title><rect x="400" y="150" width="800" height="56" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" stroke-dasharray="8 6"/><text x="800.0" y="182.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Core layer (3rd tier) — only when spine ports run out beyond 4 SUs</text></g>
+<g><title>Sp 0</title><rect x="70" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="110.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 0</text><text x="110.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<path d="M110.0,260.0 L800.0,206.0" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 4" opacity="0.4"/>
+<g><title>Sp 1</title><rect x="162" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="202.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 1</text><text x="202.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<g><title>Sp 2</title><rect x="254" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="294.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 2</text><text x="294.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<g><title>Sp 3</title><rect x="346" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="386.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 3</text><text x="386.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<g><title>Sp 4</title><rect x="438" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="478.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 4</text><text x="478.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<path d="M478.0,260.0 L800.0,206.0" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 4" opacity="0.4"/>
+<g><title>Sp 5</title><rect x="530" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="570.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 5</text><text x="570.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<g><title>Sp 6</title><rect x="622" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="662.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 6</text><text x="662.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<g><title>Sp 7</title><rect x="714" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="754.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 7</text><text x="754.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<g><title>Sp 8</title><rect x="806" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="846.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 8</text><text x="846.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<path d="M846.0,260.0 L800.0,206.0" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 4" opacity="0.4"/>
+<g><title>Sp 9</title><rect x="898" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="938.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 9</text><text x="938.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<g><title>Sp 10</title><rect x="990" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1030.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 10</text><text x="1030.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<g><title>Sp 11</title><rect x="1082" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1122.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 11</text><text x="1122.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<g><title>Sp 12</title><rect x="1174" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1214.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 12</text><text x="1214.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<path d="M1214.0,260.0 L800.0,206.0" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 4" opacity="0.4"/>
+<g><title>Sp 13</title><rect x="1266" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1306.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 13</text><text x="1306.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<g><title>Sp 14</title><rect x="1358" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1398.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 14</text><text x="1398.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<g><title>Sp 15</title><rect x="1450" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1490.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 15</text><text x="1490.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<text x="800.0" y="240.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="500" fill="#2f6fdb" text-anchor="middle">16 × QM9700 spines — each leaf sends 2 uplinks to every spine (32 ÷ 16)</text>
+<g><title>SU 1</title><rect x="70" y="430" width="350" height="330" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
+<text x="84.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#76b900" text-anchor="start">SU 1</text>
+<g><rect x="82" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="100.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L0</text>
+<path d="M100.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M100.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="123" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="141.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L1</text>
+<path d="M141.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M141.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="164" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="182.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L2</text>
+<path d="M182.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M182.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="205" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="223.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L3</text>
+<path d="M223.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M223.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="246" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="264.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L4</text>
+<path d="M264.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M264.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="287" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="305.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L5</text>
+<path d="M305.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M305.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="328" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="346.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L6</text>
+<path d="M346.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M346.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="369" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="387.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L7</text>
+<path d="M387.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M387.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<text x="245.0" y="554.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves (rails 0–7), 32↓/32↑ each</text>
+<g><title>32 DGX H100 (31 + UFM slot)</title><rect x="82" y="580" width="326" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/><text x="245.0" y="610.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">32 DGX H100 (31 + UFM slot)</text><text x="245.0" y="630.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">256 compute ports · 252 cables as built</text></g>
+<path d="M100.0,580.0 L100.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M141.0,580.0 L141.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M182.0,580.0 L182.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M223.0,580.0 L223.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M264.0,580.0 L264.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M305.0,580.0 L305.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M346.0,580.0 L346.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M387.0,580.0 L387.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<text x="245.0" y="680.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">each leaf: 2 uplinks × 16 spines = 32 ↑</text>
+<text x="245.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves × 32 = 256 leaf→spine ports per SU</text>
+<text x="245.0" y="730.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" font-style="italic">every leaf reaches every spine (full mesh)</text>
+<g><title>SU 2</title><rect x="442" y="430" width="350" height="330" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
+<text x="456.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#76b900" text-anchor="start">SU 2</text>
+<g><rect x="454" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="472.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L0</text>
+<path d="M472.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M472.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="495" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="513.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L1</text>
+<path d="M513.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M513.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="536" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="554.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L2</text>
+<path d="M554.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M554.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="577" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="595.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L3</text>
+<path d="M595.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M595.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="618" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="636.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L4</text>
+<path d="M636.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M636.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="659" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="677.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L5</text>
+<path d="M677.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M677.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="700" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="718.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L6</text>
+<path d="M718.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M718.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="741" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="759.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L7</text>
+<path d="M759.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M759.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<text x="617.0" y="554.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves (rails 0–7), 32↓/32↑ each</text>
+<g><title>32 DGX H100 (31 + UFM slot)</title><rect x="454" y="580" width="326" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/><text x="617.0" y="610.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">32 DGX H100 (31 + UFM slot)</text><text x="617.0" y="630.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">256 compute ports · 252 cables as built</text></g>
+<path d="M472.0,580.0 L472.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M513.0,580.0 L513.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M554.0,580.0 L554.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M595.0,580.0 L595.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M636.0,580.0 L636.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M677.0,580.0 L677.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M718.0,580.0 L718.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M759.0,580.0 L759.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<text x="617.0" y="680.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">each leaf: 2 uplinks × 16 spines = 32 ↑</text>
+<text x="617.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves × 32 = 256 leaf→spine ports per SU</text>
+<text x="617.0" y="730.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" font-style="italic">every leaf reaches every spine (full mesh)</text>
+<g><title>SU 3</title><rect x="814" y="430" width="350" height="330" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
+<text x="828.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#76b900" text-anchor="start">SU 3</text>
+<g><rect x="826" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="844.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L0</text>
+<path d="M844.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M844.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="867" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="885.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L1</text>
+<path d="M885.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M885.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="908" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="926.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L2</text>
+<path d="M926.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M926.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="949" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="967.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L3</text>
+<path d="M967.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M967.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="990" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1008.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L4</text>
+<path d="M1008.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1008.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="1031" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1049.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L5</text>
+<path d="M1049.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1049.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="1072" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1090.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L6</text>
+<path d="M1090.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1090.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="1113" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1131.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L7</text>
+<path d="M1131.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1131.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<text x="989.0" y="554.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves (rails 0–7), 32↓/32↑ each</text>
+<g><title>32 DGX H100 (31 + UFM slot)</title><rect x="826" y="580" width="326" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/><text x="989.0" y="610.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">32 DGX H100 (31 + UFM slot)</text><text x="989.0" y="630.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">256 compute ports · 252 cables as built</text></g>
+<path d="M844.0,580.0 L844.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M885.0,580.0 L885.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M926.0,580.0 L926.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M967.0,580.0 L967.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M1008.0,580.0 L1008.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M1049.0,580.0 L1049.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M1090.0,580.0 L1090.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M1131.0,580.0 L1131.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<text x="989.0" y="680.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">each leaf: 2 uplinks × 16 spines = 32 ↑</text>
+<text x="989.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves × 32 = 256 leaf→spine ports per SU</text>
+<text x="989.0" y="730.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" font-style="italic">every leaf reaches every spine (full mesh)</text>
+<g><title>SU 4</title><rect x="1186" y="430" width="350" height="330" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
+<text x="1200.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#76b900" text-anchor="start">SU 4</text>
+<g><rect x="1198" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1216.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L0</text>
+<path d="M1216.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1216.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="1239" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1257.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L1</text>
+<path d="M1257.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1257.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="1280" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1298.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L2</text>
+<path d="M1298.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1298.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="1321" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1339.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L3</text>
+<path d="M1339.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1339.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="1362" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1380.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L4</text>
+<path d="M1380.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1380.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="1403" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1421.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L5</text>
+<path d="M1421.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1421.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="1444" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1462.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L6</text>
+<path d="M1462.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1462.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<g><rect x="1485" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
+<text x="1503.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L7</text>
+<path d="M1503.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L202.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L294.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L386.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L478.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L570.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L662.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L754.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L846.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L938.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L1030.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L1122.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L1214.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<path d="M1503.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
+<text x="1361.0" y="554.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves (rails 0–7), 32↓/32↑ each</text>
+<g><title>32 DGX H100 (31 + UFM slot)</title><rect x="1198" y="580" width="326" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/><text x="1361.0" y="610.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">32 DGX H100 (31 + UFM slot)</text><text x="1361.0" y="630.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">256 compute ports · 252 cables as built</text></g>
+<path d="M1216.0,580.0 L1216.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M1257.0,580.0 L1257.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M1298.0,580.0 L1298.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M1339.0,580.0 L1339.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M1380.0,580.0 L1380.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M1421.0,580.0 L1421.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M1462.0,580.0 L1462.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<path d="M1503.0,580.0 L1503.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+<text x="1361.0" y="680.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">each leaf: 2 uplinks × 16 spines = 32 ↑</text>
+<text x="1361.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves × 32 = 256 leaf→spine ports per SU</text>
+<text x="1361.0" y="730.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" font-style="italic">every leaf reaches every spine (full mesh)</text>
+<g><title>Spines = (total leaves × 32 uplinks) ÷ 64 ports:  1 SU → 4,  2 SUs → 8,  3 SUs → 12 (RA deploys 16),  4 SUs → 1,024 ÷ 64 = 16.</title><rect x="48" y="790" width="1010" height="81" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/></g>
+<text x="60.0" y="817.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Spines = (total leaves × 32 uplinks) ÷ 64 ports:  1 SU → 4,  2 SUs → 8,  3 SUs → 12 (RA deploys 16),  4 SUs → 1,024 ÷ 64 = 16.</text>
+<text x="60.0" y="836.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Inter-SU traffic always crosses a spine; rail optimization keeps same-rail, same-SU traffic on the leaf.</text>
+<text x="60.0" y="855.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Storage, in-band and OOB are separate fabrics with their own switches (see Figure 1.2-6).</text>
+<rect x="1100" y="778" width="452" height="110" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<text x="1116.0" y="806.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">Legend</text>
+<path d="M1116,833.0 L1162,833.0" fill="none" stroke="#2f6fdb" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
+<text x="1176.0" y="839.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">400G NDR (all links)</text>
+<rect x="1116" y="844.0" width="46" height="22" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2"/>
+<text x="1176.0" y="861.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">QM9700 switch</text>
+<rect x="1116" y="866.0" width="46" height="22" rx="5" fill="#e4f1cc" stroke="#76b900" stroke-width="2"/>
+<text x="1176.0" y="883.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">DGX nodes</text>
+</svg>

@@ -25,19 +25,30 @@ By the end of this module you will be able to…
 
 *Analogy:* a Formula 1 car is not just an engine. Spectrum-X is the engine (Spectrum-4 ASIC), the tyres that keep it on the track (BlueField-3 SuperNIC) and the pit wall watching every lap (NetQ/WJH). Take any one away and you have a fast road car.
 
-Spectrum-X is NVIDIA's name for an *end-to-end* Ethernet platform tuned for AI training and inference clusters — not a single product. Three pieces must be present together:
+![Spectrum-X platform: SN5600 leaf/spine with BlueField-3 SuperNICs on rail-optimized DGX nodes and the software stack beneath](diagrams/4.1-01-spectrum-x-platform.svg)
+*Figure 4.1-1 — The three cooperating halves of Spectrum-X: Spectrum-4 switches, BlueField-3 SuperNICs, and the software (Cumulus/SONiC, DOCA, NetQ/WJH, Air, Ansible) that configures and observes them.*
+
+**What it is.** Spectrum-X is NVIDIA's name for an *end-to-end* Ethernet platform tuned for AI training and inference clusters — not a single product and not a single switch. It is the combination shown in Figure 4.1-1:
 
 | Layer | Component | Role |
 |---|---|---|
-| Switch | **Spectrum-4** ASIC in the **SN5600** (51.2 Tb/s, 64×800G OSFP) and **SN5400** (25.6 Tb/s, 400G) | Lossless RoCE, adaptive routing (packet spraying), telemetry-driven congestion signalling, deep shared buffer |
-| Endpoint | **BlueField-3 SuperNIC** (400G) | Reorders sprayed packets in hardware (Direct Data Placement), runs congestion control, enforces per-tenant rate limits |
-| Software | Cumulus Linux or NVIDIA SONiC; DOCA on the SuperNIC; **NetQ**/**WJH** telemetry; NVIDIA Air digital twin | Configuration, verification, observability |
+| Switch | **Spectrum-4** ASIC in the **SN5600** (51.2 Tb/s, 64×800G OSFP) and **SN5400** (25.6 Tb/s, 400G) | Lossless RoCE, **adaptive routing** (packet spraying), telemetry-driven congestion signalling, deep fully-shared buffer |
+| Endpoint | **BlueField-3 SuperNIC** (400G) | Reorders sprayed packets in hardware (Direct Data Placement), runs congestion control on its DPA cores, enforces per-tenant rate limits |
+| Software | Cumulus Linux or NVIDIA SONiC; **DOCA** on the SuperNIC; **NetQ**/**WJH** telemetry; NVIDIA Air digital twin | Configuration, verification, observability |
 
-The key insight for the exam: a Spectrum switch alone running standard RoCE is "good Ethernet". Spectrum-X exists because the switch and the NIC *cooperate* — the switch sprays and marks, the NIC reorders and throttles. Remove either half and you fall back to classic ECMP + DCQCN behaviour. See [`../05-bluefield-doca/01-bluefield-dpu-administration.md`](../05-bluefield-doca/01-bluefield-dpu-administration.md) for the SuperNIC side.
+The exact stack terms the exam uses: *Spectrum-4 switch + BlueField-3 SuperNIC + NVIDIA networking software (Cumulus/SONiC + DOCA) + NetQ*. A Spectrum switch running standard RoCE with ConnectX-6 hosts is "good Ethernet"; it is not Spectrum-X.
 
-InfiniBand (Module 2.x) remains the reference fabric for the largest single-tenant clusters. Spectrum-X targets *AI clouds*: many tenants, existing Ethernet tooling (BGP, EVPN, Ansible, syslog), near-IB effective bandwidth. NVIDIA claims ~1.6× traditional Ethernet for collectives; the number is marketing, the *reason* is testable.
+**Why it exists.** Classic data-center Ethernet optimises for many short, uncorrelated flows, where statistical multiplexing hides bad hashing and the occasional drop. AI collectives are the opposite: a handful of very large, perfectly synchronised flows whose job finishes only when the *slowest* one finishes. Measured against InfiniBand, a plain Ethernet fabric running NCCL all-reduce typically delivers around 60 % of its nominal bandwidth on the collective because of ECMP hash collisions and incast; NVIDIA's claim for Spectrum-X is roughly 1.6× that — i.e. back to near-IB effective bandwidth — while keeping Ethernet operations (BGP, EVPN, Ansible, syslog) and true multi-tenancy. The number is marketing; the *reason* (switch and NIC cooperating per packet) is testable. Spectrum-X targets AI clouds; InfiniBand (Module 2.x) remains the reference for the largest single-tenant clusters.
 
-**Why the exam cares:** a mixed fleet (SN5600 + ConnectX-6 hosts) underperforming on "Spectrum-X features" always means one half of the cooperating pair is missing.
+**How it works.** The switch half and the NIC half divide the work:
+
+1. The **switch** forwards RoCE *per packet* across all equal-cost uplinks (§2.3), marks or stamps congestion state as queues build (§2.4) and keeps the RoCE traffic class lossless or ECN-controlled (§2.5) while isolating tenants by VRF and traffic class (§2.6, §2.8). It also exports *why* every drop happened (**WJH**) and buffer-occupancy histograms (§2.7).
+2. The **SuperNIC** accepts packets out of order and places each directly at its final memory address (Direct Data Placement), terminates the switch's telemetry and adjusts its injection rate per flow in microseconds on its Data Path Accelerator (DPA), and rate-limits a misbehaving tenant flow instead of the whole port.
+3. The **software** turns this into something operable: `nv set qos roce` and `nv set router adaptive-routing` on the switch, `mlxconfig`/`mlnx_qos`/DOCA on the host, `netq check roce` to prove both ends agree, and NVIDIA Air to rehearse the configuration before hardware arrives.
+
+Remove either hardware half and you fall back to classic flow-ECMP + DCQCN behaviour; remove the software and you cannot prove it is working. See [`../05-bluefield-doca/01-bluefield-dpu-administration.md`](../05-bluefield-doca/01-bluefield-dpu-administration.md) for the SuperNIC side.
+
+**Why the exam cares:** a mixed fleet (SN5600 + ConnectX-6 hosts) underperforming on "Spectrum-X features" always means one half of the cooperating pair is missing. Learn to spot which half.
 
 #### Hardware quick reference
 
@@ -47,39 +58,73 @@ InfiniBand (Module 2.x) remains the reference fabric for the largest single-tena
 | SN5400 | Spectrum-4 | 25.6 Tb/s | 64 × 400G QSFP-DD (+ 2 × SFP28) | Leaf, storage, or smaller fabrics |
 | SN4600/SN4700 | Spectrum-3 | 12.8 Tb/s | 64 × 200G / 32 × 400G | Prior generation; supports AR but not the full Spectrum-X feature set — verify against the support matrix |
 
-Breakout is standard NVUE (Module 4.2): `nv set interface swp1 link breakout 2x` yields `swp1s0`/`swp1s1` — how 400G SuperNICs attach to an 800G SN5600 leaf port.
+Inside Spectrum-4 the packet pipeline is, in order: parser → tunnel termination (VXLAN decap) → ingress ACL → L2 lookup (FDB) / L3 lookup (host table, then LPM) → next-hop selection (ECMP hash *or* adaptive-routing engine) → ingress buffer admission (shared pool, per-priority-group accounting, PFC xoff watermark) → egress queue per traffic class → WRED/ECN marking → scheduler (strict / DWRR, shaper) → egress ACL and rewrite (DSCP remark, VXLAN encap) → transmit. Every §2 subsection below maps to one or two of these stages; the buffer is a single fully-shared pool (on the order of 100 MB+ on Spectrum-4 — verify the datasheet for the exact figure) rather than per-port slices, which is what lets one port absorb a burst without starving the others. Breakout is standard NVUE (Module 4.2): `nv set interface swp1 link breakout 2x` yields `swp1s0`/`swp1s1` — how 400G SuperNICs attach to an 800G SN5600 leaf port.
 
 ### 2.2 The AI Ethernet problem — four failure modes
 
-Classic data-center Ethernet was designed for many short, uncorrelated flows. AI training traffic is the opposite: a few very large, highly synchronized flows from **NCCL** collectives (all-reduce, all-to-all, reduce-scatter). Four problems follow.
+*Analogy:* four trucks reach a four-lane toll plaza, every driver reads the same sign and picks the same lane; three lanes sit empty while one backs up.
 
-**ECMP hash collisions.** *Analogy:* four trucks reach a four-lane toll plaza, every driver reads the same sign and picks the same lane; three lanes sit empty while one backs up. A standard switch picks one equal-cost path per *flow* by hashing the 5-tuple. With few flows per GPU pair and few uplinks, two elephant flows routinely hash to the same spine link while another sits idle: non-blocking on paper, 50–60% utilized in practice.
+**What it is.** Four distinct ways a non-blocking Ethernet fabric under-delivers for **NCCL** collectives (all-reduce, all-to-all, reduce-scatter): ECMP hash collisions, elephant flows, incast, and tail latency. They are separate mechanisms with separate fixes, and the exam tests that you match each to its mechanism.
 
-**Elephant flows.** A multi-gigabyte RDMA write is one flow. Flow-level load balancing cannot split it; resilient hashing and flowlet switching help marginally but still bind a flow to one path at a time.
+**Why it exists.** NCCL traffic is few flows, each huge, all starting at the same microsecond. On a 32-node rail with 8 GPUs per node, a ring all-reduce step is roughly one multi-gigabyte flow per GPU pair; a leaf with 16 uplinks sees perhaps 32 flows at a time. Hash a small number of flows across 16 links and the probability that *some* link carries two while another carries none is high — the birthday problem applied to uplinks. Non-blocking on paper, 50–60 % utilised in practice.
 
-**Incast.** *Analogy:* every truck in the city arrives at one warehouse door in the same minute. In all-reduce, many senders hit the same receiver in the same microsecond window; its leaf port is oversubscribed instantly. Without a lossless mechanism, packets drop and RoCE go-back-N collapses throughput. With **PFC** alone, pause frames propagate upstream and head-of-line block unrelated tenants.
+**How each one works.**
 
-**Tail latency.** A collective finishes when its *slowest* participant finishes; p99.9 matters more than the mean — a 1% slow-path event per iteration is a permanent tax on the job.
+- **ECMP hash collisions.** A standard switch chooses one equal-cost next hop per *flow* by hashing the 5-tuple (src/dst IP, protocol, src/dst UDP port — for RoCEv2 the destination port is always 4791, so the entropy is in the source port the NIC picks per QP). The choice is sticky for the life of the flow. With few flows and few uplinks, two elephant flows routinely land on the same spine link while another sits idle (Figure 4.1-2, left). Observe it on the switch: `nv show interface swp61-64 counters` shows one uplink at line rate and its neighbours nearly idle during a collective.
+- **Elephant flows.** A multi-gigabyte RDMA write is *one* flow. Flow-level load balancing cannot split it; resilient hashing (keeps flow→member mapping stable when a member fails) and flowlet switching (re-hashes on an idle gap) help marginally but still bind a flow to one path at a time. Only per-packet forwarding spreads it.
+- **Incast.** In an all-reduce or all-to-all, many senders target the same receiver inside the same window; its leaf downlink is oversubscribed instantly (N × 400G into one 400G port). Without a lossless mechanism the egress queue tail-drops; RoCE's go-back-N retransmission then re-sends everything after the lost sequence number, collapsing throughput. With **PFC** alone, pause frames propagate upstream hop by hop (leaf → spine → other leaves) and head-of-line block unrelated tenants sharing the same priority. Incast is *not* a path-selection problem: adaptive routing does nothing for it, congestion control and buffering do.
+- **Tail latency.** A collective finishes when its *slowest* participant finishes; p99.9 matters more than the mean. A 1 % slow-path event per iteration is a permanent tax on the job because every iteration waits for it. Nothing "fixes" tail latency directly — removing the other three removes most of it.
 
-**Why the exam cares:** match mechanism to problem. AR fixes collisions and elephants. Congestion control plus lossless buffering fixes incast. Nothing "fixes" tail latency except removing the other three.
+**Why the exam cares:** match mechanism to problem. AR fixes collisions and elephants. Congestion control plus lossless buffering fixes incast. Tail latency is the symptom, not the cause.
 
 ### 2.3 Adaptive routing (packet spraying + DDP)
 
 *Analogy:* adaptive routing is a traffic cop waving each truck — not each convoy — into whichever lane is emptiest right now. The SuperNIC is the receiving warehouse, which does not care in what order pallets arrive because each is labelled with its exact shelf location.
 
-**Adaptive routing** on Spectrum-4 forwards *per packet*, not per flow, across all equal-cost next hops, choosing the least-loaded egress from real-time queue occupancy and the port's link-utilization threshold. This eliminates hash collisions and splits elephant flows across every uplink.
+![ECMP hash collision on the left versus adaptive-routing packet spraying with SuperNIC Direct Data Placement on the right, with numbered steps](diagrams/4.1-02-ecmp-vs-adaptive-routing.svg)
+*Figure 4.1-2 — Flow-based ECMP puts two elephant flows on one spine link (left). Spectrum-X adaptive routing forwards every packet to the least-loaded uplink and the SuperNIC's DDP writes each packet straight to its final address (right, steps 1–4).*
 
-The cost is reordering. On a standard NIC, RoCE treats out-of-order arrival as loss and triggers go-back-N. The BlueField-3 SuperNIC solves this with **Direct Data Placement (DDP)**: an RDMA packet carries the virtual address it belongs to, so the SuperNIC writes each packet straight into the correct offset in GPU/host memory regardless of arrival order and signals completion once the full message is present. No reorder buffer, no retransmit. This is why AR in Spectrum-X requires the SuperNIC — with a ConnectX-6 or third-party NIC you must disable AR or accept the penalty.
+**What it is.** **Adaptive routing** (AR) on Spectrum-4 is a per-*packet* next-hop selection mode for an ECMP group: instead of hashing the flow onto one member, the ASIC chooses, for each packet, the member with the lowest current load. It is enabled globally (`nv set router adaptive-routing enable on`) and then per physical L3 interface (`nv set interface swp61-64 router adaptive-routing enable on`; 5.15+ uses `state enabled`). The per-interface knob `link-utilization-threshold` (percent, default 70) defines when a member counts as congested. AR applies to RoCE traffic (UDP destination port 4791 by default); non-RoCE traffic on the same ECMP group keeps flow-based hashing. It is not supported on SVIs, L3 subinterfaces, bonds or bond members — physical L3 uplinks only — and AR and resilient hashing are alternatives, not layers.
 
-Notes the exam likes: AR applies to RoCE traffic (UDP port 4791 by default) — non-RoCE traffic keeps flow-based ECMP; AR is not supported on SVIs, L3 subinterfaces, bonds or bond members — it is a physical L3 uplink feature; AR and resilient hashing are alternatives, not layers.
+**Why it exists.** Per-flow hashing cannot split an elephant and cannot avoid collisions with so few flows (§2.2). Per-packet spraying removes both problems at once: a single flow uses every uplink, and load is balanced on *measured* state rather than on a hash that knows nothing about current occupancy. The cost is reordering: packets of one flow traverse different spines with different queue depths and arrive out of order. On a conventional NIC, RoCE treats out-of-order arrival as loss (PSN gap → NAK → go-back-N), so spraying would make things worse. Spectrum-X pays that cost on the NIC: the BlueField-3 SuperNIC tolerates out-of-order delivery with **Direct Data Placement (DDP)**, so the switch can spray freely. That is the whole reason AR "requires" the SuperNIC. Trade-off: with a ConnectX-6/7 or third-party NIC you must disable AR on the uplinks serving those hosts or accept the retransmission penalty (Gotcha 1).
+
+**How it works** (numbered steps in Figure 4.1-2):
+
+1. The sender's SuperNIC emits an RDMA write as many packets; each RoCE packet carries enough addressing (QP, PSN, and the virtual address/offset semantics of RDMA write) for the receiver to know where its payload belongs.
+2. At leaf01 the lookup resolves to an ECMP group of uplinks (swp61–64). The AR engine ranks members by egress queue occupancy and link utilisation. A member whose utilisation exceeds `link-utilization-threshold` (70 %) is treated as congested and de-preferred; below the threshold the engine spreads packets to keep queues even. Default 70 % leaves headroom so a link is never driven into PFC by AR itself; raise it only when you can prove queues stay shallow, lower it on long-cable or oversubscribed uplinks. Spectrum-4 also evaluates **ECMP group member state** continuously, so a link that goes down leaves the group within hardware reaction time rather than waiting for BGP.
+3. Packets of the same flow return from different spines to the far leaf out of order. A classic NIC would NAK; a SuperNIC does not.
+4. The receiving SuperNIC's DDP engine writes each packet straight into the correct offset in GPU/host memory and raises the completion once the full message is present. No reorder buffer, no retransmit, no CPU involvement.
+
+Observe it: `nv show router adaptive-routing` (global enable), `nv show interface swp61 router adaptive-routing` (per-port enable and threshold), uplink counters evening out across swp61–64 under load, and on the host `ethtool -S <if> | grep out_of_sequence` rising *without* throughput loss on a SuperNIC — or rising *with* loss on anything else. Applying AR restarts `switchd` on Cumulus ≤ 5.12 (data-plane outage); 5.13+ reloads only.
+
+**Why the exam cares:** AR is a pair feature; the threshold semantics ("above this percentage a port counts as congested"); the unsupported interface types; the switchd restart on older releases.
 
 ### 2.4 Congestion control (telemetry-based, switch-to-NIC)
 
 *Analogy:* DCQCN is a driver who slows down on seeing brake lights. Spectrum-X CC is a driver with a live traffic feed showing how full each stretch of road is.
 
-Classic DCQCN relies on **ECN** marks that the receiving NIC reflects back as CNPs; it reacts late and probes blindly. Spectrum-X adds in-band telemetry: the switch stamps congestion information (queue depth, link utilization) into RoCE packets in flight; the receiving SuperNIC returns it to the sender, whose congestion-control engine (on the SuperNIC's programmable datapath, not the host CPU) adjusts injection rate per flow within microseconds. Rate set from *measured* fabric state converges faster than rate inferred from marks, so PFC is rarely triggered — it stays as a safety net, not the primary mechanism.
+![Sequence diagram of telemetry-based congestion control from a congested spine queue through the receiving SuperNIC back to the sender's DPA rate control](diagrams/4.1-03-telemetry-congestion-control.svg)
+*Figure 4.1-3 — The congestion-control loop: the switch marks and stamps queue state (steps 2–3), the receiving SuperNIC reflects it as a CNP plus telemetry (4), the sender's DPA sets a new rate from measured state (5–6); PFC is only the safety net (7).*
+
+**What it is.** Two layered mechanisms. The baseline is **DCQCN** (RoCEv2 congestion control): the switch marks packets with **ECN** Congestion Experienced (IP header ECN bits = 11) when a traffic-class queue exceeds a `min-threshold` (probability ramps linearly to 100 % at `max-threshold`, both in bytes per TC), the receiving NIC (notification point) sends a **CNP** (Congestion Notification Packet, a RoCE packet marked DSCP 48 and carried on switch-priority 6 strict priority so it is never queued behind data) back to the sender (reaction point), and the sender cuts the rate of that QP, then probes back up on timers. Spectrum-X adds **in-band telemetry**: the switch stamps queue depth and link-utilisation information into RoCE packets in flight; the receiving SuperNIC returns it to the sender, whose congestion-control engine runs on the SuperNIC's programmable DPA datapath, not the host CPU, and adjusts injection rate per flow within microseconds.
+
+**Why it exists.** DCQCN reacts late and probes blindly: a mark is one bit of information, it arrives a round trip after congestion started, and the sender has to guess how much to cut. For incast (§2.2) that guesswork costs either drops (too slow) or under-utilisation (too aggressive). A rate set from *measured* fabric state converges in one or two round trips, so queues stay below the PFC xoff watermark and pause frames are rarely triggered. PFC remains configured as a safety net, not the primary mechanism. The trade-off is that the smart endpoint is required: without a SuperNIC you are back to DCQCN, which works, just slower to converge.
+
+**How it works** (Figure 4.1-3):
+
+1. The sender injects at line rate (400G).
+2. A spine egress queue in TC 3 crosses the ECN min-threshold. On Cumulus the RoCE profile installs the thresholds for you (`nv set qos roce` → `nv show qos roce` shows ECN min/max and probability per TC; override with `nv set qos congestion-control default-global traffic-class 3 min-threshold <bytes>` / `max-threshold <bytes>` / `probability <%>`). Defaults are platform-specific — verify before quoting a number; the sample `netq show roce-config` in Module 4.5 shows a fabric at 150 000 / 1 500 000 bytes.
+3. Packets leave the spine with CE set and, on Spectrum-X, with telemetry carried in band.
+4. The receiving SuperNIC sends a CNP (DSCP 48 → SP6, strict priority) and reflects the telemetry to the sender. On Cumulus, SP6 strict priority is part of the RoCE profile; on the NIC the CNP class is set with `mlxconfig -s CNP_DSCP_P1=48 CNP_802P_PRIO_P1=6` (Module 5.2).
+5. The sender's DPA congestion-control algorithm computes a new rate for that flow/QP from the measured queue depth and utilisation, not from a binary mark.
+6. Injection continues at the reduced rate; the fabric drains; the rate recovers as telemetry reports headroom.
+7. Only if a queue still reaches the PFC xoff watermark does the switch send a pause frame for priority 3 upstream — rising PFC counters in a Spectrum-X fabric mean CC is losing the race and the ECN thresholds need attention first.
+
+Observe it: `nv show interface swpN qos roce counters` (ECN-marked packets, PFC rx/tx per priority), `nv action clear interface swpN qos roce counters` before a test, host `ethtool -S <if> | grep -E 'cnp|ecn|pause'` (`np_cnp_sent` on the receiver, `rp_cnp_handled` on the sender). Failure modes: ECN enabled on the switch but not on the NIC (`/sys/class/net/<if>/ecn/roce_np/enable/3` = 0) → marks are ignored and PFC does all the work; CNP class not strict → CNPs queue behind data and the loop reacts late; DSCP mismatch (host TOS 106 ↔ DSCP 26 ↔ switch-priority 3) → RoCE lands in a lossy best-effort queue and nothing above applies.
 
 ### 2.5 Lossless vs lossy — the decision
+
+**What it is.** The `mode` argument of the one-line RoCE profile: `nv set qos roce mode lossless|lossy` (plus two tuning variants). The profile installs, in one revision: DSCP 26 → switch-priority 3 (RoCE) and DSCP 48 → SP6 (CNP), trust L3, SP → traffic-class mapping, PFC on SP3 (lossless only), ECN min/max on the RoCE TC, a shared-buffer lossless pool with per-priority-group headroom, an ETS split (RoCE TC gets a guaranteed share), strict priority for CNP, and an LLDP application-priority TLV so DCBX-capable NICs learn the priority.
 
 | Mode | Mechanism | When to use |
 |---|---|---|
@@ -88,60 +133,101 @@ Classic DCQCN relies on **ECN** marks that the receiving NIC reflects back as CN
 | `lossless-single-ipool` | Lossless with one shared ingress pool | Specific buffer tuning cases — check current docs |
 | `lossy-multi-tc` | Lossy with multiple RoCE traffic classes | Multi-queue workloads — check current docs |
 
-Exam framing: lossless = "never drop; pause instead"; lossy = "mark and let the endpoints slow down". Spectrum-X reference designs typically run *lossless* with AR, but NVIDIA's AI-cloud guidance increasingly favours lossy with SuperNIC CC. Read the question for which NICs are present.
+**Why it exists.** RoCE's transport assumes no loss. You can satisfy that assumption two ways: never drop (PFC pauses the upstream hop when a lossless priority-group fills — "pause instead of drop") or almost never need to (congestion control keeps queues shallow enough that drops are rare and the NIC recovers from the rest). PFC's cost is head-of-line blocking and pause propagation: one slow receiver can pause a leaf, which pauses a spine, which pauses every other leaf on that priority — a **PFC storm** when a NIC gets stuck asserting pause (the PFC watchdog, `pfcwd`, exists for exactly this; Module 4.4). Lossy's cost is that it only works with endpoints whose CC is good enough, i.e. SuperNICs.
+
+**How it works — the buffer math behind lossless.** PFC is a per-priority XOFF/XON handshake on the link. When a port's lossless priority group (PG) reaches its **xoff** watermark the switch sends a PFC frame for that priority; the sender must stop within a bounded time, but everything already on the wire still arrives, so the switch must reserve **headroom** per lossless PG to absorb it:
+
+> headroom ≈ 2 × (cable propagation delay × line rate) + sender reaction time × line rate + 2 × MTU (one in flight each way) + the switch's own internal latency.
+
+Worked example at 400G over 100 m: propagation ≈ 5 ns/m → 500 ns one way, 1 µs round trip → 400 Gb/s × 1 µs = 400 kb ≈ 50 KB; add two 9 216-byte MTUs (≈ 18 KB) and the IEEE-bounded NIC response time, and you land around 70–100 KB per lossless PG per port. That is why `nv set qos pfc default-global cable-length 100` matters: longer cable → more headroom carved out of the shared pool → less burst absorption left for everyone else. When traffic drains to **xon** the switch stops asserting pause. On Cumulus you see the result in `nv show qos roce` (PFC on priority 3 rx/tx, ECN thresholds, trust L3, DSCP → SP and SP → TC tables); on SONiC the same numbers are the `xon`/`xoff`/`size` fields of a `BUFFER_PROFILE` named for speed and cable length (`pg_lossless_400000_100m_profile`, Module 4.4). Exam framing: lossless = "never drop; pause instead"; lossy = "mark and let the endpoints slow down". Spectrum-X reference designs typically run *lossless* with AR, but NVIDIA's AI-cloud guidance increasingly favours lossy with SuperNIC CC. Read the question for which NICs are present.
 
 ### 2.6 Performance isolation (multi-tenancy)
 
 *Analogy:* a **VRF** is a separate building with its own address book. Tenants in different buildings can reuse room numbers, and a fire alarm in one building does not empty the other.
 
-One tenant's incast must not stretch another's step time. Spectrum-X isolates by combining: **network segmentation** (BGP-EVPN, one VRF/L3VNI per tenant, §2.8); **per-flow congestion control at the SuperNIC** (rate limits hit the misbehaving flow, not the shared port); **shared-buffer architecture** (Spectrum-4's fully shared packet buffer lets any port absorb a burst, so one tenant's burst does not starve another's lossless pool); **traffic classes** (RoCE in its own lossless TC, CNP strict-priority, management in lossy TCs).
+**What it is.** The set of mechanisms that keep one tenant's incast from stretching another tenant's step time: **network segmentation** (BGP-EVPN, one VRF/L3VNI per tenant, §2.8), **per-flow congestion control at the SuperNIC** (rate limits hit the misbehaving flow, not the shared port), the **shared-buffer architecture** of Spectrum-4, and **traffic classes** (RoCE in its own lossless TC, CNP strict priority, management/storage in lossy TCs).
+
+**Why it exists.** In an AI cloud, tenant A's all-to-all and tenant B's all-reduce share spines and sometimes leaves. Flow-level isolation is not enough: a PFC pause is per *priority*, not per tenant, so without separate traffic classes or good CC, tenant A's incast pauses tenant B's packets on the same priority. Per-port buffer slicing would isolate but waste buffer; a fully shared pool with per-PG accounting and dynamic thresholds lets any port absorb a burst while a per-PG cap stops one port from consuming the whole pool.
+
+**How it works.** VRF per tenant gives separate routing tables and route-target-controlled import (§2.8) so tenant prefixes never meet. Traffic classes give separate queues and schedulers: ETS guarantees the RoCE TC a bandwidth share (`nv set qos egress-scheduler default-global traffic-class 3 bw-percent 50`) while CNP in a strict TC is never starved. The shared buffer uses dynamic thresholds (alpha) per PG so a bursting port can take more than its fair share while the pool has slack, but is cut off as the pool fills. Finally, the SuperNIC's CC engine throttles the specific QP/flow that is causing congestion, so a noisy tenant slows itself, not its neighbour. Observe isolation failures with `netq show wjh-drop buffer` (which tenant's 5-tuple is tail-dropping on which TC) and per-TC queue counters.
 
 ### 2.7 Telemetry: WJH and NetQ
 
-**WJH** (What Just Happened) is a Spectrum ASIC feature that exports every dropped packet's header plus a *reason code* ("TTL expired", "ingress port ACL", "tail drop on TC3"). With **NetQ** (Module 4.5) it turns "the job is slow" into "leaf03 swp12 TC3 dropped 1,204 packets from 10.1.3.7 because the PFC watchdog fired". Histogram telemetry (`nv set system telemetry ...`) samples queue occupancy and latency buckets continuously so you see congestion forming before drops.
+**What it is.** **WJH** (What Just Happened) is a Spectrum ASIC feature that exports every dropped packet's header plus a *reason code* ("TTL expired", "ingress port ACL", "tail drop on TC3", "PFC watchdog") to the NetQ agent, which streams it to the **NetQ** server (Module 4.5). Histogram telemetry (`nv set system telemetry ...`) samples queue occupancy and latency into buckets at microsecond granularity so you see congestion forming before drops occur.
+
+**Why it exists.** Counters tell you *that* packets were dropped; WJH tells you *which* packets and *why*, without mirroring or guesswork. Buffer histograms show the queue depth distribution between samples, which a once-a-minute counter poll would miss entirely. For an AI fabric, where a 7-second incast is a visible step-time jump, this is the difference between "the job is slow" and "leaf03 swp12 TC3 dropped 1 204 packets from 10.1.3.7 because the PFC watchdog fired".
+
+**How it works.** The ASIC samples dropped packets (aggregated per reason and 5-tuple with counts), the agent enriches them with port/time, NetQ indexes them by category (L1, L2, router, tunnel, ACL, buffer). Buffer histograms are configured per port/TC and exported via the agent or OpenTelemetry. CLI: `nv show system telemetry`, `netq show wjh-drop buffer between now and 10m`, `netq show roce-counters leaf01 swp61`. Object names differ between releases; the exam cares that *Spectrum provides hardware-timestamped histograms and WJH drop reasons*, not the exact NVUE path.
 
 ### 2.8 Multi-tenant BGP-EVPN with VRFs
 
 *Analogy:* **EVPN** is a phone directory every switch shares by BGP. Instead of flooding "who has MAC X?", each switch publishes its entries and reads everyone else's.
 
-An AI cloud fabric is almost always a BGP-unnumbered IP underlay with an EVPN/VXLAN overlay; each tenant gets a VRF (L3VNI) and optionally L2 VNIs. Spectrum-4 does VXLAN encap/decap, EVPN and RoCE AR in hardware simultaneously — unlike merchant silicon that disables features when VXLAN is active.
+![Two-leaf two-spine BGP-EVPN/VXLAN fabric with two tenant VRFs, their L2VNI/L3VNI, Type-2 and Type-5 routes and VTEPs on the leaves](diagrams/4.1-04-evpn-multitenant.svg)
+*Figure 4.1-4 — Multi-tenant EVPN: underlay BGP unnumbered between leaves and spines; overlay VXLAN tunnels between VTEPs; tenantA (L3VNI 100100) and tenantB (L3VNI 100200) isolated by route-targets.*
 
-- **VXLAN** — MAC-in-UDP (UDP 4789); the switch is the VTEP (NVE), identified by a loopback.
-- **EVPN** — BGP L2VPN EVPN address-family distributing MAC/IP reachability. **Type-2** = MAC (+IP) for hosts in an L2 VNI; **Type-5** = IP prefixes between VTEPs for an L3 VNI (inter-subnet, per-VRF).
+**What it is.** An AI-cloud fabric is almost always a BGP-unnumbered IPv4 underlay (Module 4.2 §2.8) with an EVPN/VXLAN overlay; each tenant gets a VRF mapped to one **L3VNI**, and optionally L2 VNIs for stretched subnets. The pieces, as the exam names them:
+
+- **VXLAN** — MAC-in-UDP encapsulation, UDP destination port 4789, 8-byte header carrying a 24-bit VNI; total overhead 50 bytes (14 Ethernet + 20 IPv4 + 8 UDP + 8 VXLAN), which is why the switch MTU stays at 9216 while hosts use 9000. The switch is the **VTEP** (NVE), identified by a loopback (`nv set nve vxlan source address 10.0.0.11`); Spectrum-4 does encap/decap, EVPN and RoCE AR in hardware simultaneously — unlike merchant silicon that disables features when VXLAN is active.
+- **EVPN** — the BGP L2VPN EVPN address family (AFI 25 / SAFI 70) distributing MAC/IP and prefix reachability as typed routes.
 - **VRF per tenant** — subnets live in a VRF mapped to one L3VNI; inter-VTEP traffic within the tenant routes symmetrically via the L3VNI.
-- **Multihoming / ESI** — dual-attachment without MLAG; leaves advertise an Ethernet Segment Identifier (Type-1/Type-4) so remote VTEPs load-balance to both. GPU SuperNICs single-attach to one rail leaf (§2.10), so this matters mostly for storage and management leaves.
+- **Multihoming / ESI** — dual-attachment without MLAG; leaves advertise an Ethernet Segment Identifier so remote VTEPs load-balance to both.
 
-Pure-L3 GPU fabrics often skip L2 VNIs: each GPU-node interface lands on a /31 or /30 routed port in the tenant VRF and only Type-5 routes are exchanged — no BUM, no ARP suppression, and a natural fit for AR, which needs physical L3 uplinks anyway.
+**Why it exists.** Flooding-based L2 does not scale across a fabric, and per-tenant physical separation does not scale economically. EVPN moves MAC/IP learning into BGP (no unknown-unicast flooding, ARP suppression from Type-2 routes), VXLAN lets any VLAN or VRF appear on any leaf over a pure L3 underlay, and route-targets give per-tenant import/export control for free. For GPU fabrics the big win is operational: the same BGP unnumbered + EVPN template on every switch, tenants added as VRFs without touching the underlay.
+
+**How it works — what the route types carry.** Every EVPN route has a **Route Distinguisher** (RD, makes the NLRI unique per VTEP — auto-derived as `<router-id>:<VNI or VLAN index>`) and one or more **Route-Target** extended communities (RT, decides who imports — auto-derived as `<ASN>:<VNI>`; Cumulus derives both automatically, which is why tenants with the same VNI on every leaf import each other and tenants with different VNIs do not).
+
+| Type | Name | Key fields | Used for |
+|---|---|---|---|
+| 1 | Ethernet Auto-Discovery | RD, **ESI** (10-byte Ethernet Segment ID), Ethernet tag | Multihoming: mass withdrawal, aliasing |
+| 2 | MAC/IP Advertisement | RD, ESI, Ethernet tag, MAC, optional IP, label 1 = **L2VNI**, label 2 = **L3VNI** (symmetric routing), RT = ASN:L2VNI (+ ASN:L3VNI), Router-MAC ext-community | Host MAC and ARP/ND entries in an L2 VNI; ARP suppression; host /32 routing |
+| 3 | Inclusive Multicast Ethernet Tag | RD, Ethernet tag, originating VTEP IP, PMSI tunnel (ingress replication) | BUM flooding: builds the head-end replication list (`Remote-VTEPs` in `nv show evpn vni`) |
+| 4 | Ethernet Segment | RD, ESI, originator IP | Designated-forwarder election for a multihomed segment |
+| 5 | IP Prefix | RD, ESI = 0, Ethernet tag, prefix/length, gateway IP, label = **L3VNI**, RT = ASN:L3VNI, Router-MAC | Inter-subnet / inter-VTEP routing per VRF; the only type a pure-L3 GPU fabric needs |
+
+Symmetric IRB in practice (Figure 4.1-4): leaf01 redistributes tenantA's connected SVI subnet into the per-VRF BGP instance (`nv set vrf tenantA router bgp address-family ipv4-unicast redistribute connected enable on`); it is advertised as a Type-5 route with label 100100 and RT 65011:100100 (auto-derived from the leaf ASN and L3VNI). leaf02 imports it into VRF tenantA because that VRF's import RT matches on the VNI (Cumulus accepts the auto-derived RT from any ASN on the same VNI), installs it with next hop = leaf01's VTEP address, and forwards traffic encapsulated with VNI 100100 to 10.0.0.11; leaf01 decapsulates into VRF tenantA and routes. tenantB's Type-5 carries VNI 100200 and RT 65011:100200, so it is never imported into tenantA — that is the isolation the assignment makes you prove. GPU SuperNICs single-attach to one rail leaf (§2.10), so ESI/Type-1/Type-4 matter mostly for storage and management leaves.
+
+Pure-L3 GPU fabrics often skip L2 VNIs entirely: each GPU-node interface lands on a /31 or /30 routed port (or the DPU runs HBN and advertises its /32, Module 5.2) in the tenant VRF and only Type-5 routes are exchanged — no BUM, no ARP suppression, and a natural fit for AR, which needs physical L3 uplinks anyway.
+
+Observe it: `nv show evpn vni` (L2 VNIs with remote VTEPs, L3 VNIs with their VRF), `nv show vrf tenantA router bgp address-family l2vpn-evpn route` (route type, RD, VNI), `nv show vrf tenantA router rib ipv4`, `sudo vtysh -c "show bgp l2vpn evpn route type prefix"`. Failure modes: Type-5 present on the remote leaf but not in the VRF RIB → RT/VNI mismatch (different L3VNI on the two leaves); no remote VTEPs → underlay cannot reach the loopback or the EVPN AF is not enabled on the peer-group; hosts cannot ARP → ARP suppression on with no Type-2 routes (L2VNI missing or `nv set evpn enable on` absent).
 
 ### 2.9 NVIDIA Air — the digital twin
 
-**NVIDIA Air** (formerly Cumulus in the Cloud; "DSX Air" in some Spectrum-X materials) is a hosted simulation platform running real Cumulus Linux, NVIDIA SONiC, NetQ and Ubuntu host images in a topology you draw or import. As a *digital twin* it lets you build the exact leaf/spine/host topology before hardware arrives, validate NVUE configuration, EVPN route exchange, BGP policy and Ansible playbooks (Module 6.1), push the identical YAML to production, and rehearse upgrades and failures safely. Limitation: no ASIC — no real RoCE/AR/PFC data-plane behaviour, no WJH hardware drops, no performance numbers. Control-plane and configuration validation only; the exam tests this. Air exposes a REST API and SDK so CI can spin up a twin, run the playbook and `netq check bgp`/`netq check evpn`, and tear it down.
+![NVIDIA Air digital-twin workflow from git and CI through a simulated leaf/spine/NetQ topology to production, showing what it can and cannot validate](diagrams/4.1-06-air-digital-twin.svg)
+*Figure 4.1-6 — The Air workflow: CI builds a twin, applies the same YAML and runs `netq check` (steps 1–3), then the identical artefacts go to hardware (4). No ASIC means no RoCE/AR/PFC data-plane proof.*
+
+**What it is.** **NVIDIA Air** (formerly Cumulus in the Cloud; "DSX Air" in some Spectrum-X materials) is a hosted simulation platform running real Cumulus Linux, NVIDIA SONiC, NetQ and Ubuntu host images in a topology you draw or import (DOT/JSON). As a *digital twin* it lets you build the exact leaf/spine/host topology before hardware arrives, validate NVUE configuration, EVPN route exchange, BGP policy and Ansible playbooks (Module 6.1), push the identical YAML to production, and rehearse upgrades and failures safely. It exposes a REST API and SDK so CI can create a twin, run the playbook and `netq check bgp`/`netq check evpn`, and tear it down.
+
+**Why it exists.** Fabric configuration errors are cheapest to find before the switches exist, and a lab of 20 SN5600s is not a realistic staging environment. Because Cumulus is the same software image whether the forwarding plane is a Spectrum ASIC or a virtual switch, the control plane behaves identically in the twin. The limitation is structural, and the exam tests it: there is **no ASIC** in the twin — no real RoCE/AR/PFC data-plane behaviour, no WJH hardware drops, no buffer histograms, no performance numbers. Air validates control plane and configuration only.
+
+**How it works** (Figure 4.1-6): (1) a commit renders per-switch YAML; (2) CI spins up the twin from a topology file and runs `ansible-playbook --check --diff`, then applies; (3) `netq check bgp|evpn|interfaces` inside the twin gates the merge; (4) on merge the same artefacts deploy to hardware, where `ib_write_bw`/NCCL tests (Module 8.x) provide the data-plane proof Air cannot. In Air, `nv set qos roce mode lossless` is accepted and `nv show qos roce` shows the profile, but PFC/ECN counters stay at zero forever and AR is accepted but never sprays. That sentence is the "what Air cannot verify" paragraph in the assignment.
 
 ### 2.10 Reference topology: Spectrum-X SuperPOD
 
-A Spectrum-X DGX SuperPOD compute fabric is **rail-optimized**: each DGX node has 8 GPUs, each with its own 400G SuperNIC; NIC *n* of every node connects to leaf *n* ("rail *n*"). Same-GPU-index NCCL traffic (the dominant ring/tree all-reduce pattern) stays on one leaf — one hop, no spine, no AR needed. Cross-rail traffic goes leaf → spine → leaf and benefits from AR. A scalable unit of 32 nodes × 8 NICs = 256 × 400G = 128 × 800G leaf downlinks after breakout; one SN5600 per rail handles 32 nodes with 32 × 400G downlinks (16 × 800G broken out) and 16–32 × 800G uplinks.
+![Rail-optimized Spectrum-X scalable unit: 32 DGX nodes with 8 SuperNICs each, NIC n of every node cabled to leaf n, 4 spines, 800G to 2×400G breakouts](diagrams/4.1-05-rail-optimized-su.svg)
+*Figure 4.1-5 — A rail-optimized scalable unit: eight SN5600 rail leaves, each receiving NIC n from all 32 nodes over 800G→2×400G breakouts, with 16×800G uplinks per leaf to four spines.*
+
+**What it is.** A Spectrum-X DGX SuperPOD compute fabric is **rail-optimized**: each DGX node has 8 GPUs, each with its own 400G SuperNIC; NIC *n* of every node connects to leaf *n* ("rail *n*"). A scalable unit (SU) is 32 nodes × 8 NICs = 256 × 400G host links = 128 × 800G leaf downlinks after breakout; one SN5600 per rail handles 32 nodes with 32 × 400G downlinks (16 × 800G ports broken out) and 16–32 × 800G uplinks depending on the oversubscription ratio.
+
+**Why it exists.** NCCL's dominant ring/tree all-reduce pattern sends GPU *n* of one node to GPU *n* of the next; with rail-optimized cabling that traffic stays on one leaf — one hop, no spine, no AR needed, and the spine layer is reserved for cross-rail traffic (all-to-all, expert-parallel MoE, PXN). The alternative, "one leaf per node", would push every collective through the spines. The design also decides the oversubscription trade-off:
 
 | Design | Leaf downlink:uplink | Pros | Cons |
 |---|---|---|---|
-| Non-blocking (1:1) | 12.8T down / 12.8T up on SN5600 | Any-to-any full bandwidth; simplest for all-to-all workloads | Twice the spine ports/optics; higher cost |
-| 2:1 oversubscribed | 2× more downlink than uplink | Cheaper; fine when rail-optimized traffic stays local | All-to-all (e.g., MoE expert parallel) suffers; AR becomes essential |
+| Non-blocking (1:1) | 12.8T down / 12.8T up on SN5600 (32×400G down, 16×800G up) | Any-to-any full bandwidth; simplest for all-to-all workloads | Twice the spine ports/optics; higher cost |
+| 2:1 oversubscribed | 2× more downlink than uplink (8×800G up) | Cheaper; fine when rail-optimized traffic stays local | All-to-all (e.g., MoE expert parallel) suffers; AR becomes essential |
 
-Spine count = uplinks per leaf for full ECMP spread; with AR the spines act as one aggregate pool so the fabric behaves close to non-blocking even at 2:1 for typical collectives. Management/storage is a separate conventional Ethernet network (often Spectrum, not Spectrum-X RoCE AR). Full SuperPOD RA: [`../01-ai-datacenter-design/`](../01-ai-datacenter-design/).
+**How it works** (Figure 4.1-5). Each rail leaf consumes 16 of its 64 × 800G ports as broken-out downlinks and 16 as uplinks (4 per spine with 4 spines) in the non-blocking case. Spine count = uplinks per leaf for full ECMP spread; with AR the spines act as one aggregate pool so the fabric behaves close to non-blocking even at 2:1 for typical collectives. Capacity math for the SU: 32 nodes × 8 × 400G = 102.4 Tb/s of host bandwidth; a single 51.2 Tb/s SN5600 per rail carries 12.8 Tb/s of it down and 12.8 Tb/s up, so it is far from saturated and the limit is port count, not ASIC capacity. Management and storage ride a separate conventional Ethernet network (often Spectrum, not Spectrum-X RoCE AR). Full SuperPOD RA: [`../01-ai-datacenter-design/`](../01-ai-datacenter-design/).
+
+**Why the exam cares:** "GPU 3 on node 17 → GPU 3 on node 22" stays on leaf 3; rail-optimized means same GPU index on the same leaf, not one leaf per node; 2:1 is workable *because of* AR.
 
 ## 3. Live-style walkthrough — one Spectrum-X leaf from factory default
 
 We take `leaf01`, an SN5600 fresh out of the box on Cumulus Linux 5.x, to a working Spectrum-X leaf: breakout, BGP unnumbered underlay, EVPN tenant VRFs, lossless RoCE, adaptive routing, telemetry. All commands are NVUE; legacy NCLU (`net add ...`) is deprecated on Spectrum-4.
 
-```text
-   spine01   spine02   spine03   spine04
-     |         |         |         |
-   swp61     swp62     swp63     swp64      (800G uplinks)
-      \        |         |        /
-       +------ leaf01 (SN5600) --+
-      /                           \
-   swp1s0                       swp1s1      (400G breakout)
-   SuperNIC, tenant A           SuperNIC, tenant B
-```
+![Walkthrough topology: leaf01 SN5600 with four 800G uplinks swp61–64 to spine01–04 and swp1 broken out to two 400G SuperNIC downlinks for tenants A and B](diagrams/4.1-07-walkthrough-leaf01.svg)
+*Figure 4.1-7 — The walkthrough topology. Steps 1–5 below build this leaf from the bottom up; each step ends at a checkpoint you must pass before continuing.*
+
+As you work, keep the mechanism diagrams open: Step 2 builds the underlay sessions of Figure 4.2-4 (BGP unnumbered, steps 1–6 there); Step 3 installs the RoCE profile and AR that drive Figure 4.1-2 (steps 1–4) and Figure 4.1-3 (steps 1–7); Step 4 builds the overlay of Figure 4.1-4.
 
 ### Step 1 — Identity and breakout
 
@@ -202,7 +288,7 @@ swp63     65000      Established  00:01:11  13       13       4        1
 swp64     65000      Established  00:01:09  13       13       4        1
 ```
 
-Watch the `Remote-AS` column: you never typed 65000; `remote-as external` learned it from the OPEN message. A session stuck in `Active` usually means the spine side lacks the interface neighbor or IPv6 RA is disabled.
+Watch the `Remote-AS` column: you never typed 65000; `remote-as external` learned it from the OPEN message (Figure 4.2-4, steps 2–3). A session stuck in `Active` usually means the spine side lacks the interface neighbor or IPv6 RA is disabled (step 1 of that figure never completed).
 
 ### Step 3 — RoCE lossless and adaptive routing
 
@@ -231,7 +317,7 @@ nv show router adaptive-routing                # enable on
 nv show interface swp61 router adaptive-routing     # enable on, link-utilization-threshold 70
 ```
 
-Rising `pfc tx` on a leaf *downlink*: the host NIC is being paused — the host is the congestion point. Rising `pfc rx` on an *uplink*: the spine is pausing *you*; look upstream.
+Rising `pfc tx` on a leaf *downlink*: the host NIC is being paused — the host is the congestion point. Rising `pfc rx` on an *uplink*: the spine is pausing *you*; look upstream. Either way you are watching step 7 of Figure 4.1-3 fire, which in a Spectrum-X fabric means steps 2–6 (ECN marking and SuperNIC rate control) did not keep the queue below xoff — check the ECN-marked counter is climbing before you touch PFC.
 
 To tune beneath the profile (set RoCE first, then override — the profile replaces existing QoS):
 
@@ -303,7 +389,7 @@ VNI     Type  VRF      VLAN  Flood-mode  Remote-VTEPs
 100200  L3    tenantB  -     -           -
 ```
 
-Good: L2 VNIs list remote VTEPs; L3 VNIs present with the right VRF. Underneath it is FRR: `sudo vtysh -c "show bgp l2vpn evpn summary"`.
+Good: L2 VNIs list remote VTEPs (built from Type-3 routes, §2.8); L3 VNIs present with the right VRF. The tenantA Type-5 route you will see in the next command carries label 100100 and RT 65011:100100 — the two fields that make Figure 4.1-4's isolation work. Underneath it is FRR: `sudo vtysh -c "show bgp l2vpn evpn summary"`.
 
 ### Step 5 — Telemetry
 

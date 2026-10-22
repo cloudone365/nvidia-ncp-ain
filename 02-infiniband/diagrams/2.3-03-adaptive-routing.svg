@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img" aria-label="Two panels: static routing sends two flows from one leaf over the same spine uplink leaving another idle; adaptive routing spreads packets across an AR group of uplinks and the receiving HCA places out of order RDMA writes by address"><title>Static LFT collision vs adaptive routing on a leaf&#x27;s spine uplinks</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="900" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Static LFT collision vs adaptive routing on a leaf&#x27;s spine uplinks</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Left: two elephant flows hash to the same uplink. Right: the AR group lets the ASIC pick the least-loaded uplink per packet; the HCA tolerates reordering</text>
+<g><title>Static routing (ftree, OpenSM)</title><rect x="40" y="150" width="740" height="560" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="56" y="180" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="start">Static routing (ftree, OpenSM)</text>
+<g><title>spine-01</title><rect x="100" y="200" width="200" height="60" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="200.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">spine-01</text>
+<g><title>spine-02</title><rect x="520" y="200" width="200" height="60" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="620.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">spine-02</text>
+<g><title>leaf-01 QM9700</title><rect x="310" y="420" width="200" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="410.0" y="450.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">leaf-01 QM9700</text>
+<text x="410.0" y="473.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">LFT: one port per DLID</text>
+<g><title>gpu01 flow A</title><rect x="100" y="580" width="180" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="190.0" y="604.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">gpu01 flow A</text>
+<text x="190.0" y="625.8" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu17 (LID 20)</text>
+<g><title>gpu02 flow B</title><rect x="540" y="580" width="180" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="630.0" y="604.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">gpu02 flow B</text>
+<text x="630.0" y="625.8" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu18 (LID 21)</text>
+<line x1="190" y1="580" x2="370" y2="490" stroke="#2f6fdb" stroke-width="3"/>
+<line x1="630" y1="580" x2="450" y2="490" stroke="#2f6fdb" stroke-width="3"/>
+<line x1="370" y1="420" x2="200" y2="260" stroke="#2f6fdb" stroke-width="9" marker-end="url(#arrow-blue)"/>
+<text x="150" y="350" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#d93025" text-anchor="start">p31: A + B</text>
+<text x="110" y="372" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#d93025" text-anchor="start">200 Gb/s each</text>
+<line x1="450" y1="420" x2="620" y2="260" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5"/>
+<text x="560" y="350" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="start">p32: idle</text>
+<text x="410" y="670" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">LFT: DLID 20 -&gt; p31, DLID 21 -&gt; p31 (chosen by LID, not load)</text>
+<text x="410" y="693" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#d93025" text-anchor="middle">PortXmitWait high on p31, zero on p32</text>
+<g><title>Adaptive routing (ar_ftree, MLNXSM/UFM)</title><rect x="820" y="150" width="740" height="560" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="836" y="180" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="start">Adaptive routing (ar_ftree, MLNXSM/UFM)</text>
+<g><title>spine-01</title><rect x="880" y="200" width="200" height="60" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="980.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">spine-01</text>
+<g><title>spine-02</title><rect x="1300" y="200" width="200" height="60" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1400.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">spine-02</text>
+<g><title>leaf-01 QM9700</title><rect x="1090" y="420" width="200" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1190.0" y="450.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">leaf-01 QM9700</text>
+<text x="1190.0" y="473.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">AR group {p31,p32}</text>
+<g><title>gpu01 flow A</title><rect x="880" y="580" width="180" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="970.0" y="604.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">gpu01 flow A</text>
+<text x="970.0" y="625.8" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu17 (LID 20)</text>
+<g><title>gpu02 flow B</title><rect x="1320" y="580" width="180" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1410.0" y="604.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">gpu02 flow B</text>
+<text x="1410.0" y="625.8" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu18 (LID 21)</text>
+<line x1="970" y1="580" x2="1150" y2="490" stroke="#2f6fdb" stroke-width="3"/>
+<line x1="1410" y1="580" x2="1230" y2="490" stroke="#2f6fdb" stroke-width="3"/>
+<line x1="1150" y1="420" x2="980" y2="260" stroke="#2f6fdb" stroke-width="5" marker-end="url(#arrow-blue)"/>
+<line x1="1230" y1="420" x2="1400" y2="260" stroke="#2f6fdb" stroke-width="5" marker-end="url(#arrow-blue)"/>
+<text x="910" y="350" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="start">p31: A pkts 1,3,5 + B</text>
+<text x="1320" y="350" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="start">p32: A pkts 2,4 + B</text>
+<text x="1190" y="670" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ARLFT: DLID 20 -&gt; AR group 7 = {p31,p32}, mode free or bounded</text>
+<text x="1190" y="693" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="middle">per packet: least-loaded egress queue wins</text>
+<circle cx="1300" cy="455" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1300" y="461" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<circle cx="1035" cy="300" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1035" y="306" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<circle cx="1445" cy="300" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1445" y="306" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<g><rect x="40" y="730" width="740" height="120" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="52" y="754" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Static LFT: one output port per destination LID (48K entries); spread is by</text>
+<text x="52" y="774" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">destination, never by load. Two NCCL elephant flows on one uplink cost</text>
+<text x="52" y="794" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">20-40% of all-reduce bandwidth. Ethernet twin: ECMP hash collision.</text>
+<g><rect x="820" y="730" width="740" height="120" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="832" y="754" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">   3  Receiving HCA (ConnectX-5+) places RDMA WRITE/READ by address, so</text>
+<text x="832" y="774" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">out-of-order packets inside a window need no retransmit. SENDs are stricter,</text>
+<text x="832" y="794" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">hence ar_sl_mask (per SL) and ar_transport_mask (RC+UD). NCCL_IB_AR_THRESHOLD = 8192 B.</text>
+<circle cx="850" cy="750" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="850" y="756" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+</svg>

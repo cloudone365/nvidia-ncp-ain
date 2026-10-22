@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>Lab 6 topology: Kubernetes cluster with the NVIDIA Network Operator</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Lab 6 topology: Kubernetes cluster with the NVIDIA Network Operator</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Operator -&gt; NicClusterPolicy -&gt; driver / device-plugin / Multus DaemonSets on NIC nodes -&gt; pods with an RDMA resource and a macvlan net1</text><g><title>control plane  (kind / minikube OK)</title><rect x="48" y="150" width="400" height="330" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="248.0" y="178" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">control plane  (kind / minikube OK)</text>
+</g>
+<g><title>network-operator (Helm)</title><rect x="70" y="200" width="356" height="120" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="86" y="226" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">network-operator (Helm)</text>
+<text x="86" y="254" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ns nvidia-network-operator</text>
+<text x="86" y="272" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">controller pod + NFD + SR-IOV</text>
+<text x="86" y="290" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">network operator (optional)</text>
+</g>
+<g><title>CRDs</title><rect x="70" y="340" width="356" height="120" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="86" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">CRDs</text>
+<text x="86" y="394" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nicclusterpolicies.mellanox.com</text>
+<text x="86" y="412" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">macvlannetworks / hostdevicenetworks /</text>
+<text x="86" y="430" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ipoibnetworks.mellanox.com; NAD (Multus)</text>
+</g>
+<g><title>NicClusterPolicy  nic-cluster-policy  (state: ready)</title><rect x="520" y="150" width="1030" height="120" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="536" y="177" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">NicClusterPolicy  nic-cluster-policy  (state: ready)</text>
+<text x="536" y="206" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ofedDriver (mofed container, optional if host OFED kept)  |  rdmaSharedDevicePlugin: resourceName rdma_shared_device_a, selectors ifNames</text>
+<text x="536" y="224" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">secondaryNetwork: multus, cniPlugins, ipamPlugin whereabouts  |  nvIpam / sriovDevicePlugin for the SR-IOV variant</text>
+</g>
+<line x1="448" y1="260" x2="520" y2="210" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<g><title>node-a  (ConnectX-6/7, NFD label pci-15b3.present)</title><rect x="520" y="320" width="490" height="420" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="765.0" y="347" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">node-a  (ConnectX-6/7, NFD label pci-15b3.present)</text>
+</g>
+<g><title>DaemonSet pods from the policy</title><rect x="540" y="370" width="450" height="110" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="556" y="395" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">DaemonSet pods from the policy</text>
+<text x="556" y="422" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mofed-ubuntu22.04-ds (driver)</text>
+<text x="556" y="440" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">rdma-shared-dp-ds (device plugin)</text>
+<text x="556" y="458" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">kube-multus-ds, whereabouts, cni-plugins-ds</text>
+</g>
+<g><title>Host</title><rect x="540" y="500" width="450" height="100" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="556" y="525" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Host</text>
+<text x="556" y="552" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">/dev/infiniband/* exposed to pods</text>
+<text x="556" y="570" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">allocatable rdma/rdma_shared_device_a: 63</text>
+<text x="556" y="588" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">/etc/cni/net.d/00-multus.conf, /opt/cni/bin/macvlan</text>
+</g>
+<g><title>pod perftest-server</title><rect x="540" y="620" width="450" height="100" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="556" y="645" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">pod perftest-server</text>
+<text x="556" y="672" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">limits: rdma/rdma_shared_device_a: 1</text>
+<text x="556" y="690" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">annotation k8s.v1.cni.cncf.io/networks: rdma-net</text>
+<text x="556" y="708" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">net1 (macvlan on the RDMA NIC); ib_write_bw</text>
+</g>
+<path d="M765,270 L765,320" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<g><title>node-b  (ConnectX-6/7, NFD label pci-15b3.present)</title><rect x="1060" y="320" width="490" height="420" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1305.0" y="347" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">node-b  (ConnectX-6/7, NFD label pci-15b3.present)</text>
+</g>
+<g><title>DaemonSet pods from the policy</title><rect x="1080" y="370" width="450" height="110" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="1096" y="395" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">DaemonSet pods from the policy</text>
+<text x="1096" y="422" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mofed-ubuntu22.04-ds (driver)</text>
+<text x="1096" y="440" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">rdma-shared-dp-ds (device plugin)</text>
+<text x="1096" y="458" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">kube-multus-ds, whereabouts, cni-plugins-ds</text>
+</g>
+<g><title>Host</title><rect x="1080" y="500" width="450" height="100" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1096" y="525" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Host</text>
+<text x="1096" y="552" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">/dev/infiniband/* exposed to pods</text>
+<text x="1096" y="570" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">allocatable rdma/rdma_shared_device_a: 63</text>
+<text x="1096" y="588" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">/etc/cni/net.d/00-multus.conf, /opt/cni/bin/macvlan</text>
+</g>
+<g><title>pod perftest-client</title><rect x="1080" y="620" width="450" height="100" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1096" y="645" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">pod perftest-client</text>
+<text x="1096" y="672" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">limits: rdma/rdma_shared_device_a: 1</text>
+<text x="1096" y="690" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">annotation k8s.v1.cni.cncf.io/networks: rdma-net</text>
+<text x="1096" y="708" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">net1 (macvlan on the RDMA NIC); ib_write_bw &lt;server net1 ip&gt;</text>
+</g>
+<path d="M1305,270 L1305,320" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<line x1="1010" y1="680" x2="1060" y2="680" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)" marker-start="url(#arrow-blue)" fill="none"/>
+<text x="1035" y="662" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#2f6fdb" text-anchor="middle" xml:space="preserve">RDMA</text>
+<g><title>MacvlanNetwork rdma-net -&gt; NAD</title><rect x="48" y="520" width="400" height="220" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="64" y="546" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">MacvlanNetwork rdma-net -&gt; NAD</text>
+<text x="64" y="574" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">kind: MacvlanNetwork</text>
+<text x="64" y="592" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">spec: master &lt;rdma netdev&gt;</text>
+<text x="64" y="610" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  mode bridge, mtu 9000</text>
+<text x="64" y="628" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  ipam whereabouts 192.168.100.0/24</text>
+<text x="64" y="646" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">status: rendered</text>
+<text x="64" y="664" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">NetworkAttachmentDefinition</text>
+<text x="64" y="682" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  in the pod namespace</text>
+</g>
+<g><title>Verify</title><rect x="48" y="780" width="1500" height="120" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="64" y="807" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Verify</text>
+<text x="64" y="836" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">kubectl get nicclusterpolicy -o yaml (status conditions)  |  kubectl get node &lt;nic-node&gt; -o jsonpath='{.status.allocatable}'  |  kubectl exec perftest-client -- ibv_devinfo</text>
+<text x="64" y="854" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Break/fix: wrong ifNames selector -&gt; allocatable 0, pods Pending 'Insufficient rdma/rdma_shared_device_a'; mechanics tier: DaemonSets 0 desired, policy notReady (read conditions)</text>
+</g>
+<g><title>Legend</title><rect x="1150" y="910" width="400" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="1166" y1="936" x2="1220" y2="936" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1234" y="941" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Operator reconciles / schedules</text>
+<line x1="1166" y1="966" x2="1220" y2="966" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="1234" y="971" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">RDMA between pods</text>
+</g></svg>

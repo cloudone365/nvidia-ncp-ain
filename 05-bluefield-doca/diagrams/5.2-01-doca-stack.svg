@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
+<title>DOCA stack: drivers (DOCA-OFED) → libraries → services → applications, on host and on the DPU</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">DOCA stack: drivers (DOCA-OFED) → libraries → services → applications, on host and on the DPU</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">One version number ships all layers; host DOCA major.minor should match the BFB's DOCA; firmware minimum per device in the release-notes matrix</text>
+<g><title>Host (x86 GPU server) — apt install doca-ofed | doca-all</title><rect x="60" y="150" width="700" height="700" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
+<text x="74" y="178" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">Host (x86 GPU server) — apt install doca-ofed | doca-all</text>
+<g><title>BlueField-3 Arm (BFB already contains DOCA)</title><rect x="840" y="150" width="700" height="700" rx="12" fill="#e9ddff" fill-opacity="0.55" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 6"/></g>
+<text x="854" y="178" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">BlueField-3 Arm (BFB already contains DOCA)</text>
+<g><title>Applications</title><rect x="90" y="200" width="640" height="110" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="410.0" y="250.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Applications</text>
+<text x="410.0" y="276.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">NCCL / ib_write_bw / your DOCA app</text>
+</g>
+<line x1="410" y1="310" x2="410" y2="340" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<g><title>Libraries (SDK)</title><rect x="90" y="340" width="640" height="110" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="410.0" y="390.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Libraries (SDK)</text>
+<text x="410.0" y="416.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">DOCA Flow · RDMA · DMA · Comm Channel · DPA · Telemetry · GPUNetIO</text>
+</g>
+<line x1="410" y1="450" x2="410" y2="480" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<g><title>Runtime / drivers = DOCA-OFED</title><rect x="90" y="480" width="640" height="110" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="410.0" y="530.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Runtime / drivers = DOCA-OFED</text>
+<text x="410.0" y="556.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlx5_core, rdma-core/libibverbs, MFT (mlxconfig, mlxlink, mlxfwmanager), rshim, OVS</text>
+</g>
+<line x1="410" y1="590" x2="410" y2="620" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<g><title>Firmware</title><rect x="90" y="620" width="640" height="110" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="410.0" y="670.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Firmware</text>
+<text x="410.0" y="696.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">BlueField-3 32.xx · ConnectX-7 28.xx (mlxfwmanager)</text>
+</g>
+<g><title>Services (containers from NGC)</title><rect x="870" y="200" width="640" height="110" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="1190.0" y="250.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Services (containers from NGC)</text>
+<text x="1190.0" y="276.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">HBN (FRR + NVUE) · DTS (telemetry) · Firefly (PTP) · Flow Inspector · BlueMan · SNAP · UROM</text>
+</g>
+<line x1="1190" y1="310" x2="1190" y2="340" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<g><title>Libraries (SDK)</title><rect x="870" y="340" width="640" height="110" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="1190.0" y="390.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Libraries (SDK)</text>
+<text x="1190.0" y="416.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">same DOCA libraries, Arm build; DOCA DPA kernels run on the DPA cores</text>
+</g>
+<line x1="1190" y1="450" x2="1190" y2="480" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<g><title>BSP (Ubuntu) + DOCA runtime</title><rect x="870" y="480" width="640" height="110" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1190.0" y="530.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">BSP (Ubuntu) + DOCA runtime</text>
+<text x="1190.0" y="556.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">kernel, mlx5, OVS offload, MFT, rshim, /etc/mlnx-release version string</text>
+</g>
+<line x1="1190" y1="590" x2="1190" y2="620" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<g><title>Firmware (bundled in BFB)</title><rect x="870" y="620" width="640" height="110" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1190.0" y="670.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Firmware (bundled in BFB)</text>
+<text x="1190.0" y="696.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">bfb-install updates NIC firmware; same minimum as host matrix</text>
+</g>
+<line x1="730" y1="500" x2="870" y2="500" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<rect x="724" y="465" width="152" height="23" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="800" y="480" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">PCIe · Comm Channel</text>
+<line x1="730" y1="640" x2="870" y2="640" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" marker-start="url(#arrow-purple)"/>
+<rect x="742" y="605" width="116" height="23" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="800" y="620" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">RShim / tmfifo</text>
+<text x="60" y="880" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start">Verify alignment: ofed_info -s · dpkg -l | grep doca · mlxfwmanager --query  (host)   ·   cat /etc/mlnx-release (Arm)</text>
+</svg>

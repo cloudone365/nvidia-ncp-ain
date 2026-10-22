@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
+<title>Hands-on topology: 2 spines, 2 MLAG leaves, dual-attached server</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Hands-on topology: 2 spines, 2 MLAG leaves, dual-attached server</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">spine01/02 AS 65000 (lo 10.0.0.1/.2) · leaf01 AS 65011 (lo 10.0.0.11) · leaf02 AS 65012 (lo 10.0.0.12) · server01 bond0 10.1.10.10/24, gw 10.1.10.254</text>
+<g><title>spine01 10.0.0.1 · AS 65000</title><rect x="300" y="170" width="360" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="480.0" y="193.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">spine01</text>
+<text x="480.0" y="215.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">10.0.0.1 · AS 65000</text>
+<text x="480.0" y="241.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1 → leaf01, swp2 → leaf02</text>
+</g>
+<g><title>spine02 10.0.0.2 · AS 65000</title><rect x="940" y="170" width="360" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1120.0" y="193.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">spine02</text>
+<text x="1120.0" y="215.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">10.0.0.2 · AS 65000</text>
+<text x="1120.0" y="241.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1 → leaf01, swp2 → leaf02</text>
+</g>
+<g><title>leaf01 10.0.0.11 · AS 65011 · MLAG primary</title><rect x="220" y="430" width="440" height="110" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="440.0" y="459.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
+<text x="440.0" y="481.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">10.0.0.11 · AS 65011 · MLAG primary</text>
+<text x="440.0" y="507.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">eth0 192.168.200.11 (vrf mgmt)</text>
+<text x="440.0" y="525.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlan10 10.1.10.1/24 · VRR 10.1.10.254</text>
+</g>
+<g><title>leaf02 10.0.0.12 · AS 65012 · MLAG secondary</title><rect x="940" y="430" width="440" height="110" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1160.0" y="459.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf02</text>
+<text x="1160.0" y="481.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">10.0.0.12 · AS 65012 · MLAG secondary</text>
+<text x="1160.0" y="507.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">eth0 192.168.200.12 (vrf mgmt)</text>
+<text x="1160.0" y="525.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlan10 10.1.10.2/24 · VRR 10.1.10.254</text>
+</g>
+<line x1="400" y1="250" x2="400" y2="430" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
+<rect x="371" y="329" width="58" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="400" y="345" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp51</text>
+<line x1="560" y1="250" x2="1060" y2="430" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
+<rect x="671" y="284" width="58" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="700" y="300" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp52</text>
+<line x1="1040" y1="250" x2="540" y2="430" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
+<rect x="871" y="284" width="58" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="900" y="300" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp51</text>
+<line x1="1200" y1="250" x2="1200" y2="430" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
+<rect x="1171" y="329" width="58" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="1200" y="345" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp52</text>
+<rect x="495" y="383" width="610" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="800" y="400" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">BGP unnumbered · remote-as external · loopbacks + redistribute connected</text>
+<line x1="660" y1="470" x2="940" y2="470" stroke="#e07b00" stroke-width="4"/>
+<line x1="660" y1="500" x2="940" y2="500" stroke="#e07b00" stroke-width="4"/>
+<rect x="704" y="446" width="192" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="800" y="462" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">peerlink swp49, swp50</text>
+<rect x="546" y="559" width="509" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="800" y="575" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlag mac 44:38:39:BE:EF:AA · peer-ip linklocal · backup via mgmt</text>
+<g><title>server01 (Ubuntu) bond0 802.3ad · 10.1.10.10/24 · gw 10.1.10.254</title><rect x="560" y="700" width="480" height="90" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="800.0" y="728.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">server01 (Ubuntu)</text>
+<text x="800.0" y="750.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">bond0 802.3ad · 10.1.10.10/24 · gw 10.1.10.254</text>
+<text x="800.0" y="776.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">eth1 → leaf01 swp1, eth2 → leaf02 swp1</text>
+</g>
+<line x1="700" y1="700" x2="440" y2="540" stroke="#e07b00" stroke-width="4"/>
+<rect x="460" y="614" width="201" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="560" y="630" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1 · bond1 · mlag id 1</text>
+<line x1="900" y1="700" x2="1160" y2="540" stroke="#e07b00" stroke-width="4"/>
+<rect x="940" y="614" width="201" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="1040" y="630" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1 · bond1 · mlag id 1</text>
+<g><title>Legend</title><rect x="48" y="790" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="62" y1="816" x2="122" y2="816" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="136" y="822" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<line x1="62" y1="846" x2="122" y2="846" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="136" y="852" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
+</g>
+<text x="1100" y="840" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">Acceptance: 10.1.10.0/24 on both spines with two ECMP next hops (RFC 5549 via swp1 and swp2).</text>
+</svg>

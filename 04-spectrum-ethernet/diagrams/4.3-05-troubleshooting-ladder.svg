@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" role="img">
+<title>Troubleshooting ladder: link → LLDP → bridge → L3 → ASIC → counters/WJH → cl-support</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Troubleshooting ladder: link → LLDP → bridge → L3 → ASIC → counters/WJH → cl-support</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Work bottom-up and verify each rung before climbing; most exam scenarios tell you which rung by the symptom</text>
+<g><title>1  Link</title><rect x="60" y="150" width="300" height="84" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="210.0" y="197.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">1  Link</text>
+</g>
+<g><title>nv show interface swpN link · counters · transceiver · mlxlink -d &lt;dev&gt; -m</title><rect x="380" y="150" width="1160" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="960.0" y="185.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">nv show interface swpN link · counters · transceiver · mlxlink -d &lt;dev&gt; -m</text>
+<text x="960.0" y="207.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">admin/oper, speed, FEC, autoneg, CRC — mismatched FEC/speed is the #1 cause of a down 400G/800G link</text>
+</g>
+<line x1="210" y1="234" x2="210" y2="254" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>2  LLDP / cabling</title><rect x="60" y="254" width="300" height="84" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="210.0" y="301.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">2  LLDP / cabling</text>
+</g>
+<g><title>nv show interface swpN lldp</title><rect x="380" y="254" width="1160" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="960.0" y="289.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">nv show interface swpN lldp</text>
+<text x="960.0" y="311.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">are you plugged into what the design says (rail n → leaf n)?</text>
+</g>
+<line x1="210" y1="338" x2="210" y2="358" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>3  Bridge / VLAN / MLAG</title><rect x="60" y="358" width="300" height="84" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="210.0" y="405.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">3  Bridge / VLAN / MLAG</text>
+</g>
+<g><title>nv show bridge domain br_default vlan · mac-table · bridge fdb show · nv show mlag consistency-checker</title><rect x="380" y="358" width="1160" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="960.0" y="393.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">nv show bridge domain br_default vlan · mac-table · bridge fdb show · nv show mlag consistency-checker</text>
+<text x="960.0" y="415.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">VLAN present, MAC not learned, link up → this rung, not routing</text>
+</g>
+<line x1="210" y1="442" x2="210" y2="462" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>4  L3</title><rect x="60" y="462" width="300" height="84" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="210.0" y="509.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">4  L3</text>
+</g>
+<g><title>nv show vrf &lt;v&gt; router rib ipv4 · router bgp neighbor · ip neigh · nv show interface vlanN</title><rect x="380" y="462" width="1160" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="960.0" y="497.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">nv show vrf &lt;v&gt; router rib ipv4 · router bgp neighbor · ip neigh · nv show interface vlanN</text>
+<text x="960.0" y="519.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">session Active? IPv6 RA / neighbour on the OTHER end; wrong VRF?</text>
+</g>
+<line x1="210" y1="546" x2="210" y2="566" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>5  ASIC</title><rect x="60" y="566" width="300" height="84" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="210.0" y="613.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">5  ASIC</text>
+</g>
+<g><title>sudo cl-resource-query · systemctl status switchd · journalctl -u switchd</title><rect x="380" y="566" width="1160" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="960.0" y="601.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">sudo cl-resource-query · systemctl status switchd · journalctl -u switchd</text>
+<text x="960.0" y="623.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">route in RIB but not forwarding → table full / switchd restart</text>
+</g>
+<line x1="210" y1="650" x2="210" y2="670" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>6  Counters / drops</title><rect x="60" y="670" width="300" height="84" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="210.0" y="717.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">6  Counters / drops</text>
+</g>
+<g><title>nv show interface swpN counters (deltas) · qos roce counters (PFC/ECN) · netq show wjh-drop</title><rect x="380" y="670" width="1160" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="960.0" y="705.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">nv show interface swpN counters (deltas) · qos roce counters (PFC/ECN) · netq show wjh-drop</text>
+<text x="960.0" y="727.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">WJH gives the drop REASON; PFC tx on downlink = host slow, rx on uplink = spine pausing you</text>
+</g>
+<line x1="210" y1="754" x2="210" y2="774" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>7  Escalate</title><rect x="60" y="774" width="300" height="84" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="210.0" y="821.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">7  Escalate</text>
+</g>
+<g><title>sudo cl-support → /var/support/cl_support_&lt;host&gt;_&lt;date&gt;.txz</title><rect x="380" y="774" width="1160" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="960.0" y="809.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">sudo cl-support → /var/support/cl_support_&lt;host&gt;_&lt;date&gt;.txz</text>
+<text x="960.0" y="831.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">collect while the problem is live; some ASIC counters are not retained</text>
+</g>
+<text x="60" y="895" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">Decision rule: fix the lowest failing rung first.</text>
+<text x="60" y="915" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">A clean rung 1–2 before BGP work saves chasing an MTU/FEC problem as a routing problem.</text>
+<g><title>Legend</title><rect x="1110" y="860" width="430" height="142" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1124" y1="886" x2="1184" y2="886" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="1198" y="892" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Flow / step</text>
+<rect x="1124" y="906" width="60" height="20" rx="4" fill="#ffe9cc" stroke="#e07b00" stroke-width="2"/>
+<text x="1198" y="922" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">physical / Ethernet</text>
+<rect x="1124" y="936" width="60" height="20" rx="4" fill="#fff5cc" stroke="#c9a400" stroke-width="2"/>
+<text x="1198" y="952" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">software state</text>
+<rect x="1124" y="966" width="60" height="20" rx="4" fill="#ffd9d9" stroke="#d93025" stroke-width="2"/>
+<text x="1198" y="982" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">drops</text>
+</g>
+</svg>

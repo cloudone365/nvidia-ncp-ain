@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1660" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>Decision flow: a flapping or degraded NDR link (mlxlink)</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="1660" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Decision flow: a flapping or degraded NDR link (mlxlink)</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Get the device handle, read MFT's own diagnosis, then module, counters, eye, loopback; replace only with evidence</text><g><title>UFM: 'Link downed counter exceeded' x3 on dgx-04 mlx5_3; NCCL error 12</title><rect x="180" y="150" width="680" height="70" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="520.0" y="177" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">UFM: 'Link downed counter exceeded' x3 on dgx-04 mlx5_3; NCCL error 12</text>
+</g>
+<line x1="520" y1="220" x2="520" y2="240.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>mst start; mst status -v: handle for mlx5_3 found ?</title><polygon points="520,240.0 780.0,300 520,360.0 260.0,300" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="295.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mst start; mst status -v:</text>
+<text x="520" y="315.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">handle for mlx5_3 found ?</text>
+</g>
+<g><title>Step 1</title><circle cx="220.0" cy="300" r="16" fill="#1f2937"/><text x="220.0" y="306" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<g><title>Exit 1</title><rect x="960" y="245" width="590" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="268" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">No /dev/mst node or wrong pciconf.</text>
+<text x="976" y="288" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Never assume pciconfN = mlx5_N;</text>
+<text x="976" y="308" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">take the RDMA column every time</text>
+</g>
+<line x1="780.0" y1="300" x2="960" y2="300" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="826.4" y="276" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="840.0" y="290" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="360.0" x2="520" y2="410.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="376.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="390.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>mlxlink -d &lt;dev&gt;: opcode 0, Width 4x, FEC RS, AN consistent ?</title><polygon points="520,410.0 780.0,470 520,530.0 260.0,470" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="465.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlxlink -d &lt;dev&gt;: opcode 0,</text>
+<text x="520" y="485.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Width 4x, FEC RS, AN consistent ?</text>
+</g>
+<g><title>Step 2</title><circle cx="220.0" cy="470" r="16" fill="#1f2937"/><text x="220.0" y="476" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<g><title>Exit 2</title><rect x="960" y="415" width="590" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="438" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Negotiation failure / No FEC / forced</text>
+<text x="976" y="458" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">speed on one end = CONFIG fault.</text>
+<text x="976" y="478" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Fix both ends (AU), not the cable</text>
+</g>
+<line x1="780.0" y1="470" x2="960" y2="470" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="826.4" y="446" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="840.0" y="460" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="530.0" x2="520" y2="580.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="546.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="560.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>mlxlink -m: temp mid-range, 4 Rx lanes within 1-2 dB, inside range ?</title><polygon points="520,580.0 780.0,640 520,700.0 260.0,640" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="635.3333333333334" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlxlink -m: temp mid-range, 4 Rx</text>
+<text x="520" y="655.3333333333334" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">lanes within 1-2 dB, inside range ?</text>
+</g>
+<g><title>Step 3</title><circle cx="220.0" cy="640" r="16" fill="#1f2937"/><text x="220.0" y="646" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><title>Exit 3</title><rect x="960" y="585" width="590" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="608" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Temp near ceiling -&gt; airflow / heatsink</text>
+<text x="976" y="628" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">variant first. One lane low -&gt; clean</text>
+<text x="976" y="648" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">MPO, reseat; check far-end Tx lane</text>
+</g>
+<line x1="780.0" y1="640" x2="960" y2="640" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="826.4" y="616" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="840.0" y="630" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="700.0" x2="520" y2="750.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="716.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="730.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>mlxlink -c: Effective errors 0, raw BER similar on all lanes ?</title><polygon points="520,750.0 780.0,810 520,870.0 260.0,810" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="805.3333333333334" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlxlink -c: Effective errors 0,</text>
+<text x="520" y="825.3333333333334" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">raw BER similar on all lanes ?</text>
+</g>
+<g><title>Step 4</title><circle cx="220.0" cy="810" r="16" fill="#1f2937"/><text x="220.0" y="816" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<g><title>Exit 4</title><rect x="960" y="755" width="590" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="778" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Effective &gt; 0 or one lane &gt;100x =</text>
+<text x="976" y="798" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">real corruption. --rx_fec_histogram:</text>
+<text x="976" y="818" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">bin 15 populated = FEC saturated</text>
+</g>
+<line x1="780.0" y1="810" x2="960" y2="810" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="826.4" y="786" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="840.0" y="800" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="870.0" x2="520" y2="920.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="886.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="900.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>mlxlink -e: all four lanes similar eye margin ?</title><polygon points="520,920.0 780.0,980 520,1040.0 260.0,980" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="975.3333333333334" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlxlink -e: all four lanes</text>
+<text x="520" y="995.3333333333334" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">similar eye margin ?</text>
+</g>
+<g><title>Step 5</title><circle cx="220.0" cy="980" r="16" fill="#1f2937"/><text x="220.0" y="986" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<g><title>Exit 5</title><rect x="960" y="925" width="590" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="948" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">One lane small = fiber / connector /</text>
+<text x="976" y="968" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">far-end Tx. All lanes small = port,</text>
+<text x="976" y="988" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">slot power, firmware (mlxfwmanager)</text>
+</g>
+<line x1="780.0" y1="980" x2="960" y2="980" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="826.4" y="956" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="840.0" y="970" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="1040.0" x2="520" y2="1090.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="1056.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="1070.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>mlxlink -l PH loopback, clear, 60 s: all lanes clean ?</title><polygon points="520,1090.0 780.0,1150 520,1210.0 260.0,1150" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="1145.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlxlink -l PH loopback, clear,</text>
+<text x="520" y="1165.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">60 s: all lanes clean ?</text>
+</g>
+<g><title>Step 6</title><circle cx="220.0" cy="1150" r="16" fill="#1f2937"/><text x="220.0" y="1156" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<g><title>Exit 6</title><rect x="960" y="1095" width="590" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="1118" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Port itself is bad: firmware upgrade,</text>
+<text x="976" y="1138" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">reseat NIC, --port_type PCIE -e,</text>
+<text x="976" y="1158" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">then RMA the NIC, not the cable</text>
+</g>
+<line x1="780.0" y1="1150" x2="960" y2="1150" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="826.4" y="1126" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="840.0" y="1140" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="1210.0" x2="520" y2="1260.0" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="1226.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="1240.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>After reseat / module swap / fiber swap: -a TG, clear, 10 min clean ?</title><polygon points="520,1260.0 780.0,1320 520,1380.0 260.0,1320" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="520" y="1315.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">After reseat / module swap / fiber</text>
+<text x="520" y="1335.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swap: -a TG, clear, 10 min clean ?</text>
+</g>
+<g><title>Step 7</title><circle cx="220.0" cy="1320" r="16" fill="#1f2937"/><text x="220.0" y="1326" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<g><title>Exit 7</title><rect x="960" y="1265" width="590" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="976" y="1288" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Escalate with the bundle: -m -c -e</text>
+<text x="976" y="1308" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">histogram, far-end -m, mlxfwmanager</text>
+<text x="976" y="1328" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">--query, PN/SN/temp/BER in ticket</text>
+</g>
+<line x1="780.0" y1="1320" x2="960" y2="1320" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="826.4" y="1296" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="840.0" y="1310" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="520" y1="1380.0" x2="520" y2="1480" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="546" y="1396.0" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="550" y="1410.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>Verified: Width 4x, opcode 0, effective 0, histogram empty above bin 3</title><rect x="220" y="1480" width="600" height="90" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="520.0" y="1506" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Verified: Width 4x, opcode 0, effective 0, histogram empty above bin 3</text>
+<text x="520.0" y="1535" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ib_write_bw -q 4 ~392 Gb/s; RMA the old module with the evidence</text>
+</g>
+<text x="960" y="1500" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Order of cheapness on exit 3/4/5:</text>
+<text x="960" y="1526" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">clean + reseat  -&gt;  swap transceiver  -&gt;  swap fiber  -&gt;  RMA</text>
+<g><title>Legend</title><rect x="1130" y="1550" width="420" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="1146" y1="1576" x2="1200" y2="1576" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="1214" y="1581" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Yes: next check</text>
+<line x1="1146" y1="1606" x2="1200" y2="1606" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)"/>
+<text x="1214" y="1611" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">No: exit to the fix</text>
+</g></svg>

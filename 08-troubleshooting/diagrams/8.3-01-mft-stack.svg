@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>The MFT stack: where mst, mlxlink, mlxcables, mlxconfig and mlxfwmanager act</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="900" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">The MFT stack: where mst, mlxlink, mlxcables, mlxconfig and mlxfwmanager act</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Every MFT tool talks to the silicon through a /dev/mst device, below the OS network stack, with or without a driver link</text><g><title>Operating system view</title><rect x="430" y="150" width="760" height="92" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="446" y="178" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Operating system view</text>
+<text x="446" y="208" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ibstat / ethtool / ibv_devinfo read the driver (mlx5_core)</text>
+<text x="446" y="226" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">not MFT: works only if the driver is up</text>
+</g>
+<g><title>mst  (MST driver set)</title><rect x="430" y="260" width="760" height="92" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="446" y="288" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">mst  (MST driver set)</text>
+<text x="446" y="318" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mst start   -&gt; loads mst_pci / mst_pciconf, creates /dev/mst/*</text>
+<text x="446" y="336" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mst status -v -&gt; /dev/mst/mt4129_pciconf0 &lt;-&gt; 17:00.0 &lt;-&gt; mlx5_0 &lt;-&gt; net-ibp23s0 &lt;-&gt; NUMA 0</text>
+</g>
+<g><title>Firmware  (ConnectX-7 28.4x.xxxx / BlueField-3 32.x)</title><rect x="430" y="370" width="760" height="92" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="446" y="398" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Firmware  (ConnectX-7 28.4x.xxxx / BlueField-3 32.x)</text>
+<text x="446" y="428" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">register interface: PDDR (link status), PPCNT (counters), PMDR, MCIA (module EEPROM)</text>
+<text x="446" y="446" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">non-volatile config (NV) : LINK_TYPE_P1, SRIOV_EN, NUM_OF_VFS, ADVANCED_PCI_SETTINGS</text>
+</g>
+<g><title>PHY / SerDes  (4 lanes x 106.25 Gb/s PAM4 for NDR)</title><rect x="430" y="480" width="760" height="92" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="446" y="508" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">PHY / SerDes  (4 lanes x 106.25 Gb/s PAM4 for NDR)</text>
+<text x="446" y="538" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">link training, auto-negotiation, speed / width, FEC encode-decode, eye margin</text>
+<text x="446" y="556" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">raw and effective BER counters live here</text>
+</g>
+<g><title>Module / cable  (OSFP, QSFP112, DAC)</title><rect x="430" y="590" width="760" height="92" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="446" y="618" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Module / cable  (OSFP, QSFP112, DAC)</text>
+<text x="446" y="648" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">CMIS EEPROM pages: vendor, PN, SN, length, compliance</text>
+<text x="446" y="666" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">DOM: temperature, Vcc, bias, Rx / Tx power per lane; LOS flags; own firmware</text>
+</g>
+<g><title>mlxfwmanager / mlxup / flint</title><rect x="48" y="330" width="340" height="100" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="64" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxfwmanager / mlxup / flint</text>
+<text x="64" y="384" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">--query firmware + PSID</text>
+<text x="64" y="402" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-u -i fw.bin   burn NIC firmware</text>
+<text x="64" y="420" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">then mlxfwreset -d &lt;dev&gt; reset</text>
+</g>
+<path d="M388,380.0 L410,380.0 L410,400 L430,400" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<g><title>mlxconfig</title><rect x="48" y="445" width="340" height="100" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="64" y="471" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxconfig</text>
+<text x="64" y="499" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">q / s / r  non-volatile params</text>
+<text x="64" y="517" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">LINK_TYPE_P1=1 IB, =2 ETH</text>
+<text x="64" y="535" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">needs mlxfwreset or reboot</text>
+</g>
+<path d="M388,495.0 L410,495.0 L410,425 L430,425" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<g><title>mlxlink  -d &lt;dev&gt; [-p &lt;port&gt;]</title><rect x="48" y="560" width="340" height="120" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="64" y="586" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxlink  -d &lt;dev&gt; [-p &lt;port&gt;]</text>
+<text x="64" y="614" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PDDR: state, speed, width, FEC,</text>
+<text x="64" y="632" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  opcode + Recommendation</text>
+<text x="64" y="650" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-c PPCNT: raw/eff BER, histogram</text>
+<text x="64" y="668" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-e eye, -a UP|DN|TG, -l PH, --speeds</text>
+</g>
+<path d="M388,620.0 L410,620.0 L410,530 L430,530" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<g><title>mlxcables -d &lt;cable_dev&gt;</title><rect x="48" y="695" width="340" height="100" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="64" y="721" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxcables -d &lt;cable_dev&gt;</text>
+<text x="64" y="749" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">MCIA: raw EEPROM pages (--dump)</text>
+<text x="64" y="767" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">--DDM diagnostics</text>
+<text x="64" y="785" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-q / -i fw.bin -b transceiver FW</text>
+</g>
+<path d="M388,745.0 L410,745.0 L410,650 L430,650" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M300,330 L300,300 L430,300" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<text x="60" y="318" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">all four need a device handle from mst status -v</text>
+<g><title>On a Spectrum / Quantum switch</title><rect x="1230" y="150" width="320" height="200" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1246" y="176" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">On a Spectrum / Quantum switch</text>
+<text x="1246" y="204" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">same stack; device is the ASIC:</text>
+<text x="1246" y="222" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">/dev/mst/mt53104_pci_cr0</text>
+<text x="1246" y="240" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">add -p &lt;port&gt; (ASIC port label,</text>
+<text x="1246" y="258" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">not swpN for split ports)</text>
+<text x="1246" y="276" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">NVOS / MLNX-OS: 'show interfaces</text>
+<text x="1246" y="294" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">... transceiver' calls the same regs</text>
+</g>
+<g><title>Runtime vs persistent</title><rect x="1230" y="380" width="320" height="200" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1246" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Runtime vs persistent</text>
+<text x="1246" y="434" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxlink -a / --speeds / --fec:</text>
+<text x="1246" y="452" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  runtime, lost at reset</text>
+<text x="1246" y="470" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxconfig: non-volatile,</text>
+<text x="1246" y="488" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  applied by mlxfwreset / reboot</text>
+<text x="1246" y="506" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">switch persistence: NVUE</text>
+<text x="1246" y="524" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  nv set interface swp1 link ...</text>
+</g>
+<g><title>Support bundles</title><rect x="1230" y="610" width="320" height="160" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1246" y="636" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Support bundles</text>
+<text x="1246" y="664" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxreg --reg_name PPCNT --get</text>
+<text x="1246" y="682" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxdump -d &lt;dev&gt; pcie_uc --all</text>
+<text x="1246" y="700" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">sysinfo-snapshot.py / cl-support</text>
+<text x="1246" y="718" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxlink = friendly front-end</text>
+<text x="1246" y="736" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  on PDDR / PPCNT / MCIA</text>
+</g>
+<g><title>Legend</title><rect x="430" y="720" width="420" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="446" y1="746" x2="500" y2="746" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="514" y="751" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Register access via /dev/mst</text>
+<line x1="446" y1="776" x2="500" y2="776" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="514" y="781" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Device-handle dependency</text>
+</g>
+<text x="430" y="830" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">Memorize: mst status -v is the Rosetta stone; mt4129 = ConnectX-7,</text>
+<text x="430" y="854" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">mt41692 = BlueField-3, mt53104 = Spectrum-3 (read them off, do not guess)</text></svg>

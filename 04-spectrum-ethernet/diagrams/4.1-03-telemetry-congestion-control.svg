@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" role="img">
+<title>Telemetry-based congestion control: switch → receiving SuperNIC → sender rate adjust</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Telemetry-based congestion control: switch → receiving SuperNIC → sender rate adjust</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">DCQCN reacts to ECN marks reflected as CNPs; Spectrum-X adds in-band telemetry so the sender sets rate from measured fabric state</text>
+<g><title>Sender SuperNIC</title><rect x="90" y="150" width="260" height="70" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="220.0" y="178.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Sender SuperNIC</text>
+<text x="220.0" y="204.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">BlueField-3 · CC engine on DPA</text>
+</g>
+<g><title>leaf01</title><rect x="450" y="150" width="220" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="560.0" y="178.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
+<text x="560.0" y="204.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600 · egress queue TC3</text>
+</g>
+<g><title>spine02</title><rect x="790" y="150" width="220" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="900.0" y="178.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">spine02</text>
+<text x="900.0" y="204.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600 · congested port</text>
+</g>
+<g><title>Receiver SuperNIC</title><rect x="1210" y="150" width="260" height="70" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="1340.0" y="178.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Receiver SuperNIC</text>
+<text x="1340.0" y="204.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">BlueField-3 · reflects telemetry</text>
+</g>
+<line x1="220" y1="220" x2="220" y2="880" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="560" y1="220" x2="560" y2="880" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="900" y1="220" x2="900" y2="880" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="1340" y1="220" x2="1340" y2="880" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="220" y1="270" x2="560" y2="270" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="390.0" y="262.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">RoCE data at line rate (400G)</text>
+<g><title>Step 1</title><circle cx="260" cy="240" r="16" fill="#1f2937"/><text x="260" y="246" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<line x1="560" y1="330" x2="900" y2="330" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="730.0" y="322.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">AR-sprayed packets</text>
+<g><title>queue build-up: occupancy crosses ECN min-threshold</title><rect x="750" y="376" width="400" height="48" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="950.0" y="404.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">queue build-up: occupancy crosses ECN min-threshold</text>
+</g>
+<g><title>Step 2</title><circle cx="725" cy="400" r="16" fill="#1f2937"/><text x="725" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<line x1="900" y1="470" x2="1340" y2="470" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1120.0" y="440.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">packet carries ECN CE mark +</text>
+<text x="1120.0" y="459.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">in-band telemetry (queue depth, link util)</text>
+<g><title>Step 3</title><circle cx="940" cy="440" r="16" fill="#1f2937"/><text x="940" y="446" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<line x1="1340" y1="560" x2="220" y2="560" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="780.0" y="582.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">CNP (DSCP 48, SP6 strict priority) +</text>
+<text x="780.0" y="601.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">telemetry reflected to the sender</text>
+<g><title>Step 4</title><circle cx="1300" cy="530" r="16" fill="#1f2937"/><text x="1300" y="536" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<g><title>DPA CC algorithm: rate ← f(measured state)</title><rect x="70" y="624" width="340" height="52" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="240.0" y="654.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">DPA CC algorithm: rate ← f(measured state)</text>
+</g>
+<g><title>Step 5</title><circle cx="435" cy="650" r="16" fill="#1f2937"/><text x="435" y="656" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<line x1="220" y1="730" x2="560" y2="730" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="390.0" y="722.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">RoCE data at reduced injection rate (per flow / QP)</text>
+<g><title>Step 6</title><circle cx="260" cy="700" r="16" fill="#1f2937"/><text x="260" y="706" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<line x1="900" y1="800" x2="560" y2="800" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="730.0" y="822.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">PFC pause (SP3) only if the queue still reaches xoff —</text>
+<text x="730.0" y="841.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">safety net, not the primary control</text>
+<g><title>Step 7</title><circle cx="860" cy="770" r="16" fill="#1f2937"/><text x="860" y="776" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<g><title>Note</title><rect x="60" y="880" width="1000" height="90" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="72" y="903" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Why it converges faster than DCQCN alone: step 5 uses the actual queue depth and link utilization, not a binary mark, so the</text>
+<text x="72" y="922" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">first rate decision is close to correct. Observe: nv show interface swpN qos roce counters (ECN marked, PFC rx/tx);</text>
+<text x="72" y="941" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">host ethtool -S &lt;if&gt; | grep -E 'cnp|ecn|pause'. Rising PFC in a Spectrum-X fabric means CC is losing the race — tune ECN min/max first.</text>
+<g><title>Legend</title><rect x="1100" y="885" width="450" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1114" y1="911" x2="1174" y2="911" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1188" y="917" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
+<line x1="1114" y1="941" x2="1174" y2="941" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="1188" y="947" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Congestion signal (ECN / CNP / PFC)</text>
+</g>
+</svg>

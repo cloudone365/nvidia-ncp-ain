@@ -25,108 +25,142 @@ By the end of this module you will be able to…
 
 *Analogy:* the Linux kernel is the architect's drawing of how traffic *should* flow; `switchd` is the construction foreman who makes the ASIC build exactly that, at line rate.
 
-Cumulus Linux is a Debian-based network operating system. Everything you know about a Linux server applies: `apt`, `systemd`, `/etc/network/interfaces`, `ip route`, `tcpdump`. What makes it a switch OS is one daemon:
+![Cumulus Linux architecture: NVUE daemon renders ifupdown2 and FRR files, daemons push state into the Linux kernel, switchd mirrors kernel state into the Spectrum ASIC via the SDK](diagrams/4.2-01-cumulus-architecture.svg)
+*Figure 4.2-1 — Cumulus Linux: nvued (1–2) renders configuration files; ifupdown2, FRR and cl-acltool (3) push state into the kernel; switchd (4) watches netlink and programs the Spectrum ASIC through the SDK (5). Steady-state traffic never touches the CPU.*
 
-- **`switchd`** — the "switch daemon". It watches the Linux kernel's networking state (interfaces, bridge FDB, neighbor table, routing table from FRR) and programs the Spectrum ASIC through the NVIDIA SDK so the forwarding decision the kernel *would* make is made in hardware. Think of the kernel as the control plane's source of truth and `switchd` as the synchroniser.
-- **SDK / ASIC** — the Spectrum (Spectrum-2/3/4) ASIC does all steady-state forwarding: L2 switching, L3 routing, VXLAN, ACLs, QoS, RoCE PFC/ECN. `systemctl status switchd` is the first check when "the config applied but traffic isn't flowing".
-- **Hardware vs software forwarding** — anything with a matching ASIC entry is forwarded in hardware. Traffic *to* the switch (BGP, SSH, LLDP, ARP replies destined to the switch's own MAC) and traffic the ASIC can't handle (exception processing, control-plane protocols) is punted to the CPU over an internal port. The CPU path is rate-limited and slow (tens of thousands of pps, not terabits). If a show command reports a route as "offloaded" false, that prefix is being software-forwarded — a problem you diagnose with `cl-resource-query` in Module 4.3.
-- **FRRouting (FRR)** — the routing suite (`bgpd`, `zebra`, `ospfd`, …). NVUE writes FRR configuration for you; `vtysh` exposes it directly.
-- **`cumulus` user** — default local administrator (default password `cumulus`, which you are forced to change on first login in 4.x/5.x). It has passwordless `sudo`. NVUE commands run as `cumulus` without `sudo`; Linux-level tools (`vtysh`, editing `/etc/...`) need `sudo`.
+**What it is.** Cumulus Linux is a Debian-based network operating system. Everything you know about a Linux server applies: `apt`, `systemd`, `/etc/network/interfaces`, `ip route`, `tcpdump`. The components, top to bottom in Figure 4.2-1:
 
 | Component | What it does | How you check it |
 |---|---|---|
-| Linux kernel | Control-plane state (interfaces, FDB, RIB/FIB) | `ip link`, `bridge fdb`, `ip route` |
-| `switchd` | Programs ASIC from kernel state | `systemctl status switchd` |
-| FRR | Routing protocols | `sudo vtysh -c "show bgp summary"` |
-| `nvued` | NVUE daemon, REST API on 8765 | `systemctl status nvued`, `nv show system` |
-| `ifupdown2` | Interface configuration from `/etc/network/interfaces` | `ifquery -a`, `ifreload -a` |
+| **`nvued`** | NVUE daemon: owns the configuration object tree and revisions, serves the CLI and the REST API on TCP 8765, renders `/etc/network/interfaces`, `/etc/frr/frr.conf` and the ACL/QoS files on every apply | `systemctl status nvued`, `nv show system`, `nv config history` |
+| **`ifupdown2`** | Applies interface configuration from `/etc/network/interfaces` to the kernel (netdevs, bridges, bonds, VLANs, addresses) | `ifquery -a`, `ifreload -a`, `ip -br link` |
+| **FRRouting (FRR)** | Routing suite: `bgpd`, `zebra` (RIB → kernel FIB), `staticd`, `ospfd`… | `sudo vtysh -c "show bgp summary"`, `systemctl status frr` |
+| Linux kernel | Control-plane source of truth: netdevs `swpN`/`swpNsM`/`eth0`/`lo`/`vlanN`/`bondN`/`br_default`, bridge FDB, neighbour table, per-VRF RIB/FIB, netfilter | `ip link`, `bridge fdb`, `ip route`, `ip neigh` |
+| **`switchd`** | The "switch daemon": subscribes to kernel netlink events and programs the Spectrum ASIC through the NVIDIA SDK so the forwarding decision the kernel *would* make is made in hardware | `systemctl status switchd`, `journalctl -u switchd` |
+| SDK / ASIC | Spectrum-2/3/4 does all steady-state forwarding: L2 switching, L3 routing, VXLAN, ACLs, QoS, RoCE PFC/ECN, counters | `cl-resource-query` (table occupancy, Module 4.3), WJH |
+| `cumulus` user | Default local administrator (default password `cumulus`, forced change on first login); passwordless `sudo`; NVUE commands run as `cumulus` without `sudo`, Linux-level tools (`vtysh`, editing `/etc/...`) need `sudo` | `nv show system aaa user` |
+
+**Why it exists.** Separating "what the forwarding state should be" (kernel) from "where it is executed" (ASIC) is what lets a switch run unmodified Linux tooling and still forward at 51.2 Tb/s. The price is a two-state system: configuration can be perfectly applied in the kernel and still not be in hardware (table full, `switchd` crashed, unsupported combination), and the symptom is "config looks fine, traffic does not flow". Everything in Module 4.3's troubleshooting ladder exists to tell those two states apart.
+
+**How it works** (numbers in Figure 4.2-1). (1) `nv set …` writes into a pending revision; (2) `nv config apply` validates the whole tree, then renders the Linux configuration files; (3) `ifreload -a`, an FRR reload and `cl-acltool` push the result into the kernel; (4) `switchd` sees the netlink changes (new netdev, FDB entry, route, neighbour, ACL) and (5) calls the SDK to install matching ASIC entries. From then on anything with a matching ASIC entry is forwarded in hardware. Traffic *to* the switch (BGP, SSH, LLDP, ARP replies to the switch's own MAC) and anything the ASIC cannot handle (exceptions, control-plane protocols, a prefix that did not fit in the LPM table) is **punted** to the CPU over an internal port, through a control-plane policer — tens of thousands of packets per second, not terabits. If a show command reports a route as `offloaded: false`, that prefix is being software-forwarded, which you diagnose with `cl-resource-query` (Module 4.3). `systemctl status switchd` is the first check when "the config applied but traffic isn't flowing"; every `switchd` restart reprograms the ASIC and costs seconds of forwarding.
 
 **Why the exam cares:** "config applied, traffic not flowing" questions are answered by distinguishing kernel state from ASIC state. `switchd` is the bridge between them.
 
 ### 2.2 NVUE — the object model
 
-**NVUE** (NVIDIA User Experience) is the supported CLI and REST API. Legacy **NCLU** (`net add`, `net commit`) was removed in Cumulus 5.x; if you see `net` commands in older study material, translate them to `nv`.
+![Anatomy of an NVUE command: verb, object, identifier, attribute path, value, and the same path in YAML and REST](diagrams/4.2-05-nvue-command-anatomy.svg)
+*Figure 4.2-5 — One NVUE path, three surfaces: the CLI argument list, the YAML tree that `nv config show -o yaml` emits, and the REST URL under `/nvue_v1/`.*
 
-NVUE presents configuration as a tree of objects. The top level includes `system`, `interface`, `bridge`, `mlag`, `router`, `vrf`, `nve`, `evpn`, `qos`, `acl`, `service`. Every command is a path into that tree plus a value:
+**What it is.** **NVUE** (NVIDIA User Experience) is the supported CLI and REST API. Legacy **NCLU** (`net add`, `net commit`) was removed in Cumulus 5.x; if you see `net` commands in older study material, translate them to `nv`. NVUE presents configuration as a tree of objects whose top level includes `system`, `interface`, `bridge`, `mlag`, `router`, `vrf`, `nve`, `evpn`, `qos`, `acl`, `service`. Every command is a path into that tree plus a value — `nv set interface swp1 link mtu 9216` is verb + object (`interface`) + identifier (`swp1`) + attribute path (`link mtu`) + value (`9216`), as Figure 4.2-5 shows.
 
-```text
-nv set interface swp1 link mtu 9216
-       └─object─┘└──id──┘└─attribute path─┘└value┘
-```
+**Why it exists.** A single tree means one schema for three surfaces: the CLI, the YAML file (`nv config show -o yaml`) and the REST API (`PATCH /nvue_v1/interface/swp1/link {"mtu": 9216}`, Module 6.1). Automation gets a declarative document instead of a transcript of commands, and the CLI gets completion and validation from the same schema.
 
-Because it is a tree, `nv show <path>` shows the whole subtree at any depth, and `nv unset <path>` removes it. Ranges work on identifiers: `swp1-4,swp10`, `vlan10-20`.
+**How it works.** Because it is a tree, `nv show <path>` shows the whole subtree at any depth, `nv unset <path>` removes it, and `nv list-commands` prints every valid path. Ranges and lists work on identifiers: `swp1-4,swp10`, `vlan10-20`, `bridge domain br_default vlan 10,20,30`. Output formats are `-o json`, `-o yaml`, `-o commands`. Leaf values that are merely "present" render as empty mappings in YAML (`10.0.0.11/32: {}`), numeric keys are quoted (`'100'`), and enumerations use CLI words (`on`, `external`, `lossless`). The fastest way to learn a schema detail is to configure it once and read `nv config show -o yaml`.
 
 ### 2.3 The change lifecycle: pending → applied → startup
 
 *Analogy:* think of a blog post. **Pending** is your draft — only you see it. **Applied** is published — the world sees it now. **Startup** is the copy saved to disk — what survives if the server reboots. Publishing does not save to disk, and saving to disk does not publish your draft.
 
+![NVUE lifecycle state diagram: pending revision applied with nv config apply, persisted with nv config save, rolled back from history](diagrams/4.2-02-nvue-lifecycle.svg)
+*Figure 4.2-2 — The three NVUE states and the four verbs that move configuration between them: `nv set` into pending (1), `nv config apply` to applied (2), `nv config save` to startup (3), `nv config apply <rev>` to roll back (4).*
+
+**What it is.** Three named configuration states and the commands that read and move them:
+
 | Name | What it is | Commands |
 |---|---|---|
-| **Pending** | Edits you have made with `nv set`/`nv unset` but not applied | `nv config diff` (pending vs applied), `nv config detach` discards |
-| **Applied** | What the switch is running now | `nv config show` (applied, in YAML) |
-| **Startup** | What will load at boot: `/etc/nvue.d/startup.yaml` | `nv config save` copies applied → startup |
+| **Pending** | Edits you have made with `nv set`/`nv unset` (or loaded with `nv config replace`/`patch`) but not applied; a *detached* revision that belongs to your user session | `nv config diff` (pending vs applied), `nv config detach` discards |
+| **Applied** | What the switch is running now; every apply gets a numbered **revision** `rev_id N` | `nv config show` (applied, in YAML), `nv config history` |
+| **Startup** | What will load at boot: `/etc/nvue.d/startup.yaml` | `nv config save` copies applied → startup; `nv config diff startup applied` shows the gap |
 
-Exam trap: `nv config apply` does **not** persist. A reboot after apply-without-save reverts to the last saved startup. Conversely, `nv config save` without `apply` saves whatever is *applied*, not pending.
+**Why it exists.** A transactional model gives you three things a "type and it is live" CLI cannot: a review step (`nv config diff` shows exactly what will change before anything moves), atomic validation (apply checks the whole tree, so a VLAN referenced by an SVI must exist on the bridge in the same revision), and rollback (every applied revision is numbered and re-applicable). The cost is two classic mistakes the exam loves: reading `nv show` to "confirm" an un-applied draft (it reads applied/operational state, not pending), and rebooting after apply-without-save.
+
+**How it works** (Figure 4.2-2). `nv set` writes into your pending revision (1). `nv config apply` validates it, renders the Linux files (§2.1), triggers the daemons, waits for the kernel to converge and records `applied [rev_id: N]` (2); without `-y` it prompts with the diff first. `nv config save` copies the *applied* tree — not pending — to `/etc/nvue.d/startup.yaml` (3). Reboot loads startup. Rollback is `nv config history` to find the revision, then `nv config apply <rev>` which makes that revision pending and applies it (4) — then `save` again if you want the rollback to persist. Pending changes are per user by default; if another user has unapplied changes, `nv config apply` warns, and via REST a conflicting revision returns `409 Conflict` (Module 6.1). `nv config detach` throws your draft away.
+
+**Why the exam cares:** `nv config apply` does **not** persist. A reboot after apply-without-save reverts to the last saved startup. Conversely, `nv config save` without `apply` saves whatever is *applied*, not pending. `nv show` reflects applied/operational state; `nv config diff` reflects pending.
 
 ### 2.4 Revisions, history, replace
 
-Every apply creates a numbered **revision**. `nv config history` lists them; `nv config show --rev <n>` (or `nv config diff <rev1> <rev2>`) compares; `nv config apply <rev>` rolls back to one. NVUE also supports declarative files:
+**What it is.** Every apply creates a numbered **revision**. `nv config history` lists them; `nv config show --rev <n>` or `nv config diff <rev1> <rev2>` compares; `nv config apply <rev>` rolls back to one. NVUE also supports declarative files, which is the path automation uses:
 
 ```bash
 nv config show -o commands              # applied config as nv set commands (great for backup)
 nv config show -o yaml > backup.yaml    # applied config as YAML
-nv config replace /path/new.yaml        # pending := exactly this file (declarative)
-nv config patch /path/partial.yaml      # merge file into pending
+nv config replace /path/new.yaml        # pending := exactly this file (declarative; removes anything not in it)
+nv config patch /path/partial.yaml      # merge file into pending (add/override; cannot remove unless it carries '- unset:')
 nv config apply -y
 ```
 
-`replace` is what Ansible and git-based pipelines use (Module 6.1). The file format is the same YAML `nv config show` produces: a list with a top-level `- set:` key.
+**Why it exists.** A numbered revision history turns "what changed at 09:14?" into a one-line answer and makes rollback a first-class operation rather than a reverse-engineered script. `replace` makes the YAML file *the* configuration: running it twice with the same file produces an empty diff, which is the idempotency primitive Ansible and git-based pipelines build on (Module 6.1). `patch` exists for feature-scoped files (a RoCE profile, a VLAN) that should not demolish everything else.
 
-Pending changes are per-user-session by default (a "detached" revision). If another user has unapplied changes, `nv config apply` warns about it. In automation you may see errors about a locked or conflicting revision; `nv config detach` clears your pending set. NVUE also has the REST API (`https://<switch>:8765/nvue_v1/`) that exposes exactly the same tree — covered in Module 6.1.
+**How it works.** The file format is the same YAML `nv config show -o yaml` produces: a list with a top-level `- set:` key (and optionally `- unset:`). `replace` loads it as the entire pending tree; `patch` merges it over the current pending tree. Both are followed by `nv config diff`, `nv config apply -y`, `nv config save`. In automation you may see errors about a locked or conflicting revision when a previous session left a detached draft; `nv config detach` clears your pending set, and REST clients can `force` an apply over other pending sets. The REST API (`https://<switch>:8765/nvue_v1/`) exposes exactly the same tree and revision model — covered in Module 6.1.
 
 ### 2.5 Interfaces
 
-Front-panel ports are `swp1`, `swp2`, … (switch port). Breakout sub-ports are `swp1s0`–`swp1s3`. The management port is `eth0`. Loopback is `lo`. SVIs are `vlan<N>`. Bonds you name yourself (`bond1`, `uplink`, or `peerlink` for the MLAG link).
+**What it is.** Front-panel ports are `swp1`, `swp2`, … (switch port). Breakout sub-ports are `swp1s0`–`swp1s3`. The management port is `eth0` (in the `mgmt` VRF by default). Loopback is `lo`. SVIs are `vlan<N>`. Bonds you name yourself (`bond1`, `uplink`, or `peerlink` for the MLAG link). Per-port link attributes live under `nv set interface swpN link …`: `state up|down`, `speed`, `auto-negotiate`, `fec` (`rs`, `baser`, `auto` — RS-FEC is mandatory at 400G/800G), `mtu`, `breakout`.
 
-Default MTU on Cumulus is 9216 on swp ports (verify for your release); the bridge MTU follows the lowest member. For RoCE you typically want 9000+ end to end with the host set to 9000 or 4200 — but keep the switch at 9216 to leave room for VXLAN headers (50 bytes) in EVPN fabrics.
+**Why it exists.** Naming by physical position (`swp`) rather than lane index (SONiC's `EthernetN`, Module 4.4) keeps cabling documents and CLI aligned. Breakout exists because an 800G OSFP cage can serve two 400G SuperNICs or four 200G NICs; the ASIC port map changes when you break out, so on most platforms it requires a `switchd` reload or restart, and on some older platforms neighbouring ports are disabled (e.g., every other port on an SN2700) — check the platform's port-mapping note.
 
-A breakout changes the ASIC port mapping; on most platforms it requires a `switchd` reload or restart, and on some, neighbouring ports are disabled (e.g., every other port on an SN2700). Check the platform's port-mapping note.
-
-**Bonds:** members must have matching speed and must not have their own IP/bridge config. Cumulus 5.x bonds default to LACP; a `lacp-bypass` option lets a single member forward before LACP negotiates (useful for PXE/ZTP of hosts).
+**How it works.** Default MTU on Cumulus is 9216 on swp ports (verify for your release); a bridge's MTU follows its lowest member. For RoCE you typically want 9000+ end to end with the host at 9000 or 4200, but keep the switch at 9216 to leave room for the 50-byte VXLAN header in EVPN fabrics. **Bonds** (`nv set interface bond1 bond member swp5,swp6`) default to LACP in 5.x (`bond mode lacp|static|lacp-bypass`, `lacp-rate fast` = 1 s LACPDUs); members must have matching speed and must not carry their own IP or bridge configuration — put VLAN/IP config on the bond. `lacp-bypass` lets a single member forward before LACP negotiates (useful for PXE/ZTP of hosts). Observe: `nv show interface swp1 link` (speed, autoneg, FEC, transceiver), `nv show interface swp1 counters`, `nv show interface bond1 bond` (members `up`, LACP partner), `nv show interface --view=lldp`.
 
 ### 2.6 The VLAN-aware bridge and SVIs
 
 *Analogy:* one apartment building (`br_default`) with many floors (VLANs). An access port is a resident with a key to one floor; a trunk port is the building manager with keys to several.
 
-Cumulus uses a single **VLAN-aware bridge** (`br_default`) by default. One bridge carries all VLANs; ports are access or trunk members of it. (Traditional per-VLAN bridges exist but are legacy.) SVIs (routed interfaces per VLAN) are `vlan<N>` interfaces.
+![VLAN-aware bridge br_default on an MLAG leaf pair with access and trunk ports, LACP bonds, SVIs with VRR, and the clagd peerlink](diagrams/4.2-03-vlan-bridge-mlag.svg)
+*Figure 4.2-3 — One VLAN-aware bridge per switch carrying VLANs 10/20/30; access ports untagged (PVID), trunks tagged; SVIs `vlan10`/`vlan20` with a VRR anycast gateway; a dual-attached server on an MLAG bond; clagd syncing over the peerlink.*
 
-**VRR** (Virtual Router Redundancy) is Cumulus's active-active first-hop redundancy for MLAG pairs — both switches own the virtual IP/MAC and both forward. VRRP (standards-based, active-standby) is also supported; the exam contrasts the two.
+**What it is.** Cumulus uses a single **VLAN-aware bridge** (`br_default`) by default. One Linux bridge carries all VLANs with 802.1Q filtering; ports are access or trunk members of it (`nv set interface swp3 bridge domain br_default access 10` / `… vlan 10,20` / no VLAN list = all bridge VLANs). Traditional per-VLAN bridges exist but are legacy. **SVIs** (routed interfaces per VLAN) are `vlan<N>` interfaces with `ip address`, optionally placed in a VRF (`ip vrf tenantA`). The bridge's native/untagged VLAN on trunks defaults to 1 (`nv set bridge domain br_default untagged 1`).
+
+**Why it exists.** One bridge with VLAN filtering scales to 4 k VLANs with one FDB and one set of ASIC bridge resources, and maps directly onto the Spectrum L2 pipeline (VLAN tag → FID lookup → FDB). Per-VLAN bridges would need one kernel bridge per VLAN and burn ASIC resources. SVIs are where L2 meets L3 on a leaf (tenant gateway); in EVPN fabrics they are also the anchor for the L2VNI/L3VNI mapping (Module 4.1 §2.8).
+
+**How it works.** A frame entering an access port is tagged internally with the PVID; a frame entering a trunk keeps its tag (or gets the native VLAN if untagged). The kernel bridge learns source MACs per VLAN into the FDB; `switchd` mirrors the FDB into the ASIC. `nv show bridge domain br_default vlan` prints membership with a `PVID` flag marking untagged membership — read it as: `PVID` on an access port = its access VLAN; `PVID` on a trunk = its native VLAN. First-hop redundancy on a pair of leaves is **VRR** (Virtual Router Redundancy): both switches own the virtual IP and the virtual MAC and both forward actively (`nv set interface vlan10 ip vrr address 10.1.10.254/24` + `vrr mac-address 00:00:5e:00:01:0a`, identical on both peers; real SVI addresses differ). Standards-based VRRP (active-standby) is also supported; the exam contrasts the two. Observe: `nv show bridge domain br_default mac-table`, `bridge vlan show` and `bridge fdb show br br_default` (kernel view — must agree with `nv show`), `nv show interface vlan10` (SVI state, VRR).
 
 ### 2.7 MLAG
 
 *Analogy:* two receptionists sharing one phone number and one appointment book. The caller (host) dials one number and either can answer; the shared book (`clagd` sync over the peerlink) keeps them consistent.
 
-**MLAG** (Multi-Chassis Link Aggregation) lets two Cumulus switches present as one LACP partner to a dual-attached host or downstream switch. The two switches are joined by a **peerlink** bond carrying a dedicated peer VLAN (4094 by default) over which `clagd` synchronises MAC tables and LACP state. Each dual-attached bond needs an `mlag id` identical on both peers; the pair shares a system `mac-address`; a `backup` IP over the management network detects peer death if the peerlink fails.
+**What it is.** **MLAG** (Multi-Chassis Link Aggregation) lets two Cumulus switches present as one LACP partner to a dual-attached host or downstream switch (Figure 4.2-3). The pieces: a **peerlink** bond between the peers carrying a dedicated peer VLAN (4094 by default, sub-interface `peerlink.4094`); the `clagd` daemon on each peer exchanging MAC tables, LACP state and VLAN/MTU consistency data over it; an identical **system MAC** on both peers (`nv set mlag mac-address 44:38:39:BE:EF:AA`) which becomes the LACP system ID the host sees; a per-bond **`mlag id`** identical on both peers that ties `bond1` on leaf01 to `bond1` on leaf02; `peer-ip linklocal` (IPv6 link-local over the peerlink, no addressing to plan); a **backup IP** over the management network (`nv set mlag backup 192.168.200.12 vrf mgmt`, the *other* peer's eth0) to tell peer death from peerlink failure; and `priority` (lower = primary, default 32768).
 
-Design note for AI fabrics: GPU-side RoCE ports are *not* usually MLAG'd — each SuperNIC single-attaches to a rail leaf. MLAG shows up on management, storage and traditional service leaves. For EVPN fabrics NVIDIA increasingly recommends EVPN multihoming instead of MLAG.
+**Why it exists.** Hosts and storage want two uplinks for redundancy and bandwidth, and LACP requires both links to terminate on what looks like one switch. Without MLAG you would need STP (one link blocked) or host-side active/backup. The trade-off is operational coupling: two switches must agree on VLANs, MTU, bond membership and the system MAC, and a split brain (peerlink down, both alive) must be arbitrated — that is what the backup IP and the primary/secondary roles do (the secondary shuts its MLAG bonds if it loses both the peerlink and the backup heartbeat says the primary is alive).
+
+**How it works.** When `clagd` establishes the peer session, both switches advertise the shared system MAC in LACPDUs on every bond with an `mlag id`, so the host's LACP state machine sees one partner and brings both members up. MACs learned on one peer's MLAG bond are synced to the other, so the peer forwards locally instead of across the peerlink; the peerlink carries only traffic that must cross (single-attached orphans, BUM, failover). A dual-attached bond that is down on one peer while `nv show mlag` says peer alive almost always means the `mlag id` differs. Design note for AI fabrics: GPU-side RoCE ports are *not* MLAG'd — each SuperNIC single-attaches to a rail leaf (Module 4.1 §2.10). MLAG shows up on management, storage and traditional service leaves, and for EVPN fabrics NVIDIA increasingly recommends EVPN multihoming (ESI, Module 4.1 §2.8) instead. Observe: `nv show mlag` (role, peer-alive, backup-active), `nv show mlag consistency-checker` (per-VLAN/MTU/bond mismatches), `nv show interface bond1 bond`.
 
 ### 2.8 Layer 3: VRFs and BGP unnumbered
 
 *Analogy:* a **VRF** is a separate building with its own address book. The `mgmt` VRF (Module 4.3) is the security office's building — `eth0` lives there so fabric routes can never hijack SSH.
 
-Each VRF is a Linux VRF device with its own routing table; FRR runs a routing instance per VRF.
+![BGP unnumbered between leaf01 and spine01: IPv6 router advertisements discover link-local addresses, the eBGP session runs over them, IPv4 prefixes carry an IPv6 next hop (RFC 5549) and land in the FIB](diagrams/4.2-04-bgp-unnumbered.svg)
+*Figure 4.2-4 — BGP unnumbered mechanics: RA discovery (1), TCP/179 over link-local with `remote-as external` (2–3), IPv4 NLRI with an IPv6 next hop via the extended-next-hop capability (4–5), FIB install with `via inet6 fe80::…` (6).*
 
-Cumulus pioneered **BGP unnumbered**: eBGP sessions over interfaces with no IPv4 address, using IPv6 link-local addresses discovered via router advertisements, with IPv4 routes carried using RFC 5549 extended next hops. The benefit is that every leaf and spine have *identical* interface configuration — no per-link /31 planning — which is why it underpins every NVIDIA EVPN reference design. `remote-as external` (or `internal`) means you do not hard-code the neighbour's ASN. Spines typically share one ASN; each leaf (or leaf pair) has its own.
+**What it is.** Each **VRF** is a Linux VRF device with its own routing table (`nv set vrf blue`, `nv set interface swp10 ip vrf blue`); FRR runs a routing instance per VRF (`nv set vrf blue router bgp …`). **BGP unnumbered** is eBGP over interfaces with no IPv4 address: the session uses IPv6 link-local addresses discovered via router advertisements, and IPv4 routes are carried with an IPv6 next hop using the **extended next-hop capability (RFC 5549)**. Configuration is per interface, not per address: `nv set vrf default router bgp neighbor swp51 remote-as external` — `external` means "any ASN that is not mine" (eBGP), `internal` means "my ASN" (iBGP); you never type the neighbour's ASN. Spines typically share one ASN; each leaf (or leaf pair) has its own.
+
+**Why it exists.** A leaf/spine fabric has hundreds of point-to-point links. Numbering each with a /31 means an address plan, per-link neighbour statements with explicit ASNs and addresses, and a different configuration on every switch — every one a chance for a typo. Unnumbered makes every fabric link's configuration *identical* (no address, no neighbour ASN), so templates collapse to a loop over interface names (Module 6.1) and the only per-switch values are hostname, loopback and ASN. That is why it underpins every NVIDIA EVPN and Spectrum-X reference design. The trade-off is that you must understand IPv6 link-local to troubleshoot it, and that a session needs the *other* end configured the same way.
+
+**How it works** (Figure 4.2-4):
+
+1. With `ipv6 ra` on by default for unnumbered interfaces, each side sends Router Advertisements; from them FRR learns the peer's `fe80::` link-local address on that interface (`swp51`) without any configuration.
+2. FRR opens TCP 179 to `fe80::2%swp51`; the OPEN messages carry each side's ASN (65011 / 65000).
+3. `remote-as external` accepts the OPEN because the peer ASN differs from the local one. (With `internal` it must match.) Capabilities negotiated include *extended next hop* for AFI 1 / SAFI 1.
+4. The leaf advertises `10.0.0.11/32` (its loopback, `address-family ipv4-unicast network 10.0.0.11/32`) as IPv4 NLRI whose next hop is its IPv6 link-local address — RFC 5549 encoding.
+5. The spine advertises its own loopback and every other leaf's prefixes back; the `l2vpn-evpn` address family rides the same session when enabled on the peer-group (Module 4.1).
+6. `zebra` installs the IPv4 route with the IPv6 next hop: `ip route` shows `10.0.0.1 via inet6 fe80::2 dev swp51`. With two uplinks the spine prefix appears with two next hops — ECMP, one per interface — and the `cumulus` kernel resolves the link-local to the peer's MAC via the ND cache.
+
+Observe: `nv show vrf default router bgp neighbor` (Remote-AS *learned*, State Established, PfxRcvd), `sudo vtysh -c "show ip bgp neighbors swp51"` (`Extended nexthop capability: advertised and received`), `ip route show vrf default`. Failure modes: stuck in `Active` → the other end lacks the interface neighbour, IPv6 RA is disabled, or the link is down at L1; `Established` with `PfxRcvd 0` → address family not activated; routes present but not in the FIB → check `ip -6 neigh` for the link-local and `nv show vrf default router rib ipv4`. Peer-groups (`nv set vrf default router bgp peer-group fabric remote-as external` + `neighbor swp51 peer-group fabric`) remove repetition and are where you enable `l2vpn-evpn` once for all fabric links.
 
 ### 2.9 Installation, licensing and ZTP
 
+**What it is.** Three lifecycle facts you need before Module 4.3 goes deep:
 - **ONIE** (Open Network Install Environment) is the boot loader shipped on every Spectrum switch. `onie-select -i` from a running Cumulus or the ONIE menu lets you (re)install an image by HTTP/TFTP/USB, or via DHCP option 114 pointing to the installer URL. ONIE also handles "uninstall" to wipe the OS.
 - **Licensing** — Cumulus Linux historically required a license file (`cl-license -i`) to enable front-panel ports; with NVIDIA Spectrum hardware (Cumulus 5.x on NVIDIA switches) a license is no longer required on NVIDIA-branded switches. Check the current doc for your platform; on older third-party hardware you may still see `cl-license`.
-- **ZTP** (Zero Touch Provisioning) — on first boot Cumulus looks for a script: on USB, via DHCP option 239 (URL), or by hostname default. The script (bash or Python) typically installs an image, sets passwords, pulls an NVUE YAML and runs `nv config replace` + `apply`, and installs the NetQ agent. `ztp -s <url>` runs it manually; `ztp -e` enables and `ztp -d` disables ZTP. Full detail in Module 4.3.
+- **ZTP** (Zero Touch Provisioning) — on first boot Cumulus looks for a script: on USB, via DHCP option 239 (URL), or by hostname default. The script (bash or Python) must carry the `# CUMULUS-AUTOPROVISIONING` marker and typically installs an image, sets passwords, pulls an NVUE YAML and runs `nv config replace` + `apply` + `save`, and installs the NetQ agent.
+
+**Why it exists.** ONIE decouples the hardware from the NOS (the same SN5600 runs Cumulus or SONiC); ZTP makes a hundred leaves come up identical from a serial-number-keyed YAML repository without a console cable.
+
+**How it works.** `ztp -s <url>` runs a script manually; `ztp -e` enables and `ztp -d` disables ZTP; `ztp -i` shows status (`nv show system ztp` in newer releases); `/var/log/ztp.log` records what happened. Option 239 is ZTP; option 114 is ONIE — the exam confuses them on purpose. Full detail and the sequence diagram are in Module 4.3 §2.8.
 
 ## 3. Live-style walkthrough
 
-We will do two things on `leaf01`: first walk the full NVUE lifecycle on a trivial change so you *see* pending, applied and startup behave differently, then build a VLAN-aware bridge with an SVI and an LACP bond.
+We will do two things on `leaf01`: first walk the full NVUE lifecycle on a trivial change so you *see* pending, applied and startup behave differently (Part A follows the four numbered transitions of Figure 4.2-2 in order), then build the VLAN-aware bridge, SVI and LACP bond of Figure 4.2-3 (Part B) and the BGP unnumbered sessions of Figure 4.2-4 (Part C).
 
 ### Part A — the NVUE lifecycle on one MTU change
 
@@ -199,7 +233,7 @@ nv set interface swp1 link mtu 1400
 nv config detach              # throw the draft away; nv config diff is now empty
 ```
 
-Watch the pattern: `set` → `diff` → `apply` → `save`. Two of those four are optional in a lab and mandatory in production.
+Watch the pattern: `set` → `diff` → `apply` → `save` — transitions 1, 2 and 3 of Figure 4.2-2, with transition 4 (rollback) exercised by `nv config apply 11`. Two of those four are optional in a lab and mandatory in production.
 
 ### Part B — VLAN-aware bridge, SVI, LACP bond
 
@@ -303,7 +337,7 @@ nv show vrf default router bgp neighbor  # swp51/swp52 Established, Remote-AS le
 sudo vtysh -c "show ip bgp summary"      # same data from FRR
 ```
 
-Peer-groups reduce repetition: `nv set vrf default router bgp peer-group fabric remote-as external` then `nv set vrf default router bgp neighbor swp51 peer-group fabric`.
+What just happened on swp51 is steps 1–6 of Figure 4.2-4: RA discovery, TCP/179 over link-local, `external` accepting any foreign ASN, and the loopback advertised with an IPv6 next hop. Prove the last point with `ip route show vrf default | grep inet6` — every spine prefix says `via inet6 fe80::…`. Peer-groups reduce repetition: `nv set vrf default router bgp peer-group fabric remote-as external` then `nv set vrf default router bgp neighbor swp51 peer-group fabric`.
 
 ### Part D — the Linux underneath
 
@@ -558,16 +592,8 @@ Output formats: `-o json`, `-o yaml`, `-o commands`.
 
 ### Topology
 
-```text
-        spine01 (10.0.0.1, AS65000)      spine02 (10.0.0.2, AS65000)
-           swp1        swp2                 swp1        swp2
-            |            \                 /             |
-          swp51          swp52         swp51           swp52
-        leaf01 (10.0.0.11, AS65011) ==peerlink swp49/50== leaf02 (10.0.0.12, AS65012)
-          swp1 \                                        / swp1
-                \________ server01 bond0 (LACP) _______/
-                          10.1.10.10/24, gw 10.1.10.254
-```
+![Assignment topology: two spines, two MLAG leaves joined by a peerlink, dual-attached server01 on an LACP bond, BGP unnumbered on every fabric link](diagrams/4.2-06-assignment-topology.svg)
+*Figure 4.2-6 — The assignment topology: spine01/02 (AS 65000), leaf01/02 (AS 65011/65012) in an MLAG pair over swp49–50, server01 dual-attached on bond1 (`mlag id 1`) in VLAN 10 with VRR gateway 10.1.10.254.*
 
 ### Spines (spine02: hostname, lo 10.0.0.2/32, router-id 10.0.0.2)
 

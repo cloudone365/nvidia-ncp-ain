@@ -26,9 +26,7 @@ By the end of this module you will be able to…
 
 *Analogy:* a refinery, not an office park. Raw material (data) enters, energy is consumed, and one product (intelligence — tokens, trained weights) leaves. Everything in the building is tuned for one production line.
 
-NVIDIA uses the term **AI factory** for a data center whose output is not web pages or transactions but *tokens* and *trained model weights*. The practical consequence for you as a network engineer is that the whole facility is optimized around a single, tightly coupled workload class instead of thousands of independent tenants. GPU utilization is the primary KPI; any network behavior that leaves GPUs idle — a slow link, a lost packet, a congested spine — is a direct hit to the factory's throughput.
-
-An AI factory is built from a small number of repeating blocks:
+**What it is.** NVIDIA uses the term **AI factory** for a data center whose output is not web pages or transactions but *tokens* and *trained model weights*. Physically it is a small set of repeating blocks — node, Scalable Unit (SU), pod/SuperPOD — connected by four physically separate networks (Figure 1.1-1). The unit of accounting is the GPU-hour: a 1,016-GPU H100 SuperPOD at ~10.2 kW per node burns on the order of 1.3 MW for compute alone, so every percent of GPU idle time has a dollar figure attached.
 
 | Block | What it is | Example |
 |---|---|---|
@@ -37,25 +35,32 @@ An AI factory is built from a small number of repeating blocks:
 | Pod / SuperPOD | Multiple SUs under one spine (and optionally core) layer | 4 SUs ≈ 127 nodes, ~1,016 GPUs |
 | Fabrics | Separate physical networks for compute, storage, in-band and OOB management | InfiniBand Quantum-2 or Spectrum-X for compute |
 
+![AI factory stack: one DGX H100 node with its scale-up NVLink domain and the four separate fabrics it connects to](diagrams/1.1-01-ai-factory-four-fabrics.svg)
+*Figure 1.1-1 — The AI factory from one node's point of view: 8 ConnectX-7 ports to the compute fabric, BlueField-3 ports to storage and in-band, the BMC to OOB; NVLink/NVSwitch never leaves the chassis.*
+
+**Why it exists.** The whole facility is optimized around a single, tightly coupled workload class instead of thousands of independent tenants. The practical consequence for you as a network engineer is that **GPU utilization is the primary KPI**, and the network is the component most likely to reduce it: a slow link, a lost packet, or a congested spine stalls every GPU in the job, not just the one behind the bad port. Enterprise designs amortize a bad link across thousands of unrelated flows; an AI factory cannot, because the flows are coupled by synchronous collectives (§2.2).
+
+**How it works.** Because the blocks repeat, the design is formulaic: 8 compute ports per node → 8 leaf switches per SU (one per rail) → 32 nodes × 8 = 256 node-to-leaf cables → 256 leaf-to-spine cables → 4 spines of 64 ports. Operations repeat the same way: every node runs the same DGX OS image deployed by **Base Command Manager (BCM)**, every leaf has the same NVUE or MLNX-OS template, and acceptance is done per SU with the same **Cluster Validation Tool (CVT)** run. You observe the structure on the CLI with `ibnetdiscover` (every leaf shows 32 `mlx5_n`-homogeneous downlinks) and `nvidia-smi topo -m` (GPU *n* ↔ `mlx5_n` = `PIX`).
+
 **Why the exam cares:** because the blocks repeat, the exam asks *formula* questions (how many leaf switches for N SUs) rather than one-off trivia. Learn the structure, not the numbers.
 
 ### 2.2 Training versus inference traffic
 
 *Analogy:* training is a rowing crew — every oar must hit the water at the same instant, and the boat moves at the speed of the slowest rower. Inference is a taxi rank — many independent short trips, each one judged on how fast it got there.
 
-**Training.** Training a large model means splitting the model and/or the data across hundreds or thousands of GPUs and keeping them synchronized. Every iteration (a few hundred milliseconds to seconds) ends with a **collective operation** — most commonly an all-reduce of gradients — in which every GPU must exchange data with many others before the next iteration can begin:
+**What it is.** Two workload classes with opposite network signatures (Figure 1.1-3). **Training** splits a model and/or its data across hundreds to thousands of GPUs and keeps them synchronized with **collective operations** — most commonly an all-reduce of gradients at the end of every iteration. **Inference** serves independent requests: a prompt arrives over the front-end (north-south) network, the model produces tokens, the response leaves.
 
-- **Bulk-synchronous.** All participants wait at a barrier; the iteration finishes when the *slowest* transfer finishes.
-- **Very large transfers.** Gradient buffers are hundreds of MB to tens of GB per GPU per step.
-- **Predictable, repetitive patterns.** The same pairs of GPUs talk to each other in the same order every iteration.
-- **Long-lived jobs.** Days to weeks, so a rare failure (link flap, silent packet loss) will eventually be hit.
+![Side-by-side comparison of training traffic (few synchronous elephant flows bounded by the slowest) and inference traffic (many independent latency-bound requests)](diagrams/1.1-03-training-vs-inference.svg)
+*Figure 1.1-3 — Training is bounded by the tail of a handful of elephant flows; inference is bounded by per-request latency across many small flows.*
 
-**Inference.** Inference serves requests: a prompt comes in over the front-end (north-south) network, the model produces tokens, the response goes out. Large models are still sharded across several GPUs (tensor parallelism within a node, sometimes pipeline parallelism across nodes), so there is east-west traffic, but it is smaller per request and latency-sensitive rather than bandwidth-hungry. Inference clusters care about:
+**Why it exists.** The two classes stress different resources, so a design tuned for one is wrong for the other:
 
-- Request/response latency and tail latency (p99) per token.
-- Many concurrent small flows rather than a few giant ones.
-- KV-cache transfer between prefill and decode GPUs in disaggregated serving — a newer pattern that re-introduces large east-west transfers.
-- Front-end load balancing and north-south capacity.
+- **Training is bulk-synchronous.** All participants wait at a barrier; the iteration finishes when the *slowest* transfer finishes. In Figure 1.1-3 seven flows finish in ~10 ms and one takes 30 ms; the step takes 30 ms and seven GPUs idle for 20 ms — while average link utilization reads a healthy ~40 %.
+- **Very large transfers.** For a model with *P* parameters in mixed precision, the gradient buffer is 2 × *P* bytes per data-parallel replica — 140 GB for a 70 B model before sharding, hundreds of MB to tens of GB per GPU per step after it. These are **elephant flows**.
+- **Predictable, repetitive patterns.** The same pairs of GPUs exchange the same byte counts in the same order every iteration, which is why a mis-cabled rail shows up as a constant, not a random, slowdown.
+- **Long-lived jobs.** Days to weeks, so a rare failure (link flap, silent packet loss, a 10⁻¹² BER optic) *will* be hit.
+
+Inference clusters care about request/response latency and **tail latency (p99) per token**, many concurrent small flows rather than a few giant ones, front-end load balancing and north-south capacity. Two patterns re-introduce east-west bandwidth into inference: tensor parallelism inside the node (NVLink) and **KV-cache transfer** between prefill and decode GPUs in disaggregated serving, which is a large RDMA transfer across the fabric.
 
 | Property | Training | Inference |
 |---|---|---|
@@ -65,19 +70,22 @@ An AI factory is built from a small number of repeating blocks:
 | Sensitivity | Tail latency of the slowest flow; any packet loss | Per-request latency, jitter |
 | Typical fabric | InfiniBand NDR/XDR or Spectrum-X | Spectrum-X / standard Ethernet, NVLink within node |
 
+**How it works.** In a training step (Figure 1.1-2) the forward and backward passes run on all GPUs (①); tensor-parallel all-reduces run thousands of times per step inside the NVLink domain (②); then the data-parallel gradient all-reduce fires on all 8 rails at once — GPU *n* to GPU *n* on the peer node, one hop on a rail-optimized fabric (③); the optimizer step is local (④); and every *N* steps a checkpoint burst goes out over the storage fabric (⑤). You can watch the pattern on the CLI: `NCCL_DEBUG=INFO` shows `via P2P` for ② and `via NET/IB/n/GDRDMA` for ③, `nvidia-smi dmon -s u` shows utilization dipping briefly at each all-reduce, and `iblinkinfo` counters on the leaf climb in lock-step across all 32 downlinks.
+
 **Why the exam cares:** scenario questions describe a symptom ("average utilization is low but step time is 3× expected") and expect you to recognize bulk-synchronous behavior.
 
 ### 2.3 Why AI networking differs from enterprise networking
 
 If you come from a Cisco/Arista enterprise background, slow down here; this is the conceptual core of the whole exam.
 
-**Elephant flows and low entropy.** *Analogy:* ECMP is a toll plaza that assigns cars to lanes by license plate. With ten thousand cars the lanes fill evenly. With eight trucks, two of them will get the same lane and crawl. Classic data-center Ethernet relies on **ECMP** hashing of five-tuples (src/dst IP, protocol, src/dst port). AI traffic has too few flows for hashing to balance them, and the flows are too big for a collision to be harmless: a node might have only 8 RDMA queue pairs active, each moving gigabytes. Two elephant flows hashed onto the same uplink each get half the bandwidth for the whole collective, and the entire job waits for them. This is the **low-entropy** problem. NVIDIA's answers are **adaptive routing** (per-packet or per-flowlet spraying with reordering handled in the NIC — standard in InfiniBand, added to Ethernet by Spectrum-X) and **rail-optimized** topologies that keep most traffic a single hop away from the spine entirely.
+**What it is.** A set of four properties of AI back-end traffic — low entropy, synchronous completion, loss intolerance, and extreme per-server bandwidth — each of which invalidates one assumption that classic data-center Ethernet is built on.
 
-**Synchronous collectives and tail latency.** An all-reduce across 1,024 GPUs completes when the last byte arrives at the last GPU. If 1,023 flows finish in 10 ms and one takes 30 ms because of a congested link, the effective collective time is 30 ms and 1,023 GPUs idle for 20 ms. Average throughput is irrelevant; the metric that matters is the **tail**. This is why AI fabrics are built *non-blocking* (1:1 oversubscription) and why congestion control (**ECN**/**PFC**/DCQCN on Ethernet, credit-based flow control on InfiniBand) is not optional.
+**Why it exists.**
 
-**Loss intolerance.** RDMA transports (InfiniBand natively, RoCEv2 on Ethernet) move data directly from one GPU's memory to another's with no CPU involvement. The transport was designed for a lossless link layer; a single dropped packet forces a go-back-N retransmission that can stall a queue pair for milliseconds. Enterprise Ethernet tolerates loss as a congestion signal (TCP). AI Ethernet must either avoid loss entirely (**PFC** — a per-lane red light) or signal congestion before loss occurs (**ECN** marking → DCQCN rate reduction at the NIC). See [`../03-rdma/03-roce-a-to-z.md`](../03-rdma/03-roce-a-to-z.md).
-
-**Scale of bandwidth.** Each GPU in a DGX H100 has a dedicated 400 Gb/s port; a single node therefore injects 3.2 Tb/s into the compute fabric. One SU of 32 nodes is ~100 Tb/s of injection bandwidth that the fabric must carry without oversubscription. Enterprise designs rarely exceed 25–100 Gb/s per server with 3:1 or higher oversubscription.
+- **Elephant flows and low entropy.** *Analogy:* **ECMP** is a toll plaza that assigns cars to lanes by license plate. With ten thousand cars the lanes fill evenly. With eight trucks, two of them will get the same lane and crawl. Classic DC Ethernet hashes the five-tuple (src/dst IP, protocol, src/dst port) onto equal-cost paths. A DGX node running NCCL typically has only 8–16 RDMA queue pairs active per direction, each moving gigabytes. With *k* flows hashed onto *k* equal-cost uplinks, the probability that *no* two share a path is *k*!/*k*ᵏ — for 4 flows on 4 uplinks only 4!/4⁴ ≈ 9 %; in the other 91 % of iterations at least one uplink carries two elephants at half rate each, and the whole collective waits for it. This is the **low-entropy** problem. NVIDIA's answers are **adaptive routing** (per-packet spraying with reordering handled in the NIC — standard in InfiniBand, added to Ethernet by Spectrum-X with the BlueField-3 **SuperNIC**) and **rail-optimized** topologies that keep same-rail traffic a single hop from the spine entirely.
+- **Synchronous collectives and tail latency.** An all-reduce across 1,024 GPUs completes when the last byte arrives at the last GPU. If 1,023 flows finish in 10 ms and one takes 30 ms, the effective collective time is 30 ms and 1,023 GPUs idle for 20 ms. Average throughput is irrelevant; the metric is the **tail**. This is why AI fabrics are built *non-blocking* (1:1 oversubscription) and why congestion control (**ECN**/**PFC**/DCQCN on Ethernet, credit-based flow control on InfiniBand) is not optional.
+- **Loss intolerance.** RDMA transports (InfiniBand natively, RoCEv2 on Ethernet) move data from one GPU's memory to another's with no CPU involvement and were designed for a lossless link layer. A single dropped packet forces a go-back-N retransmission: the responder NAKs, the requester replays from the lost PSN, and the queue pair stalls for the retransmission timeout — milliseconds against a collective that should take tens of microseconds. Enterprise Ethernet tolerates loss as a congestion signal (TCP). AI Ethernet must either avoid loss entirely (**PFC** — a per-lane red light, priority-flow-control pause frames on the lossless traffic class) or signal congestion before loss occurs (**ECN** marking at a buffer threshold → CNP back to the sender → DCQCN rate reduction at the NIC). See [`../03-rdma/03-roce-a-to-z.md`](../03-rdma/03-roce-a-to-z.md).
+- **Scale of bandwidth.** Each GPU in a DGX H100 has a dedicated 400 Gb/s port (50 GB/s per direction); a node injects 3.2 Tb/s. One SU of 32 nodes is 102.4 Tb/s of injection bandwidth that the fabric must carry without oversubscription. Enterprise designs rarely exceed 25–100 Gb/s per server with 3:1 or higher oversubscription.
 
 | Enterprise/cloud DC assumption | AI back-end reality |
 |---|---|
@@ -89,13 +97,15 @@ If you come from a Cisco/Arista enterprise background, slow down here; this is t
 | Server NIC 25–100G | 400G–800G per GPU, 8 per node |
 | CPU handles the transport (TCP) | RDMA; NIC moves data GPU-to-GPU |
 
+**How it works (and how you see it).** On InfiniBand, lossless-ness is credit-based: a port may only transmit when the receiver has advertised buffer credits per virtual lane, so the fabric never drops for congestion; adaptive routing is computed by the Subnet Manager and executed per packet in the Quantum ASIC. On Spectrum-X, the switch marks ECN at a configured buffer threshold (observable with `nv show qos roce` and `nv show interface swp1 counters`), the SuperNIC reacts with DCQCN rate control, and PFC is the backstop on the RoCE priority. A hash collision shows up as one uplink with far higher `tx-bytes` and ECN marks than its siblings; a mis-cabled rail shows up as unexpected spine utilization during an all-reduce that should have stayed on the leaf.
+
 **Why the exam cares:** nearly every design question is a disguised version of one row in this table.
 
 ### 2.4 The four fabrics
 
 *Analogy:* a hospital has separate corridors for patients, supplies, staff and emergency services. They never share a hallway because a gurney must never be stuck behind a laundry cart.
 
-NVIDIA reference architectures physically separate traffic into four networks. Each has a distinct purpose, technology, and failure domain.
+**What it is.** NVIDIA reference architectures physically separate traffic into four networks (Figure 1.1-1), each with its own switches, cables, addressing and failure domain.
 
 | Fabric | Purpose | Typical technology (H100-era SuperPOD) | Carries |
 |---|---|---|---|
@@ -104,21 +114,21 @@ NVIDIA reference architectures physically separate traffic into four networks. E
 | **In-band management** | Cluster services, OS provisioning, Slurm/Kubernetes control, user SSH, home directories | Ethernet (e.g. SN4600C) | Everything that is not RDMA data or storage |
 | **Out-of-band (OOB) management** | BMC/IPMI/Redfish, switch management ports, PDUs | 1G Ethernet (e.g. SN2201) | Lights-out management |
 
-Why separate them? Three reasons the exam likes:
-
-1. **Isolation of performance.** A checkpoint write to storage must not create congestion on the compute fabric during a collective.
-2. **Isolation of failure.** You can lose or reconfigure the in-band network without the running job's compute traffic being affected.
-3. **Different protocol requirements.** The compute fabric needs lossless RDMA tuned for low entropy; the storage fabric needs RoCE but with many clients and normal flow mixes; management needs ordinary routed IP.
-
 A DGX H100 node's physical ports map as: 8 × ConnectX-7 (OSFP, 400G) for compute; 2 × BlueField-3 (dual-port) for storage and in-band; 1 × 1G BMC port for OOB. Later nodes (B200, GB200) follow the same pattern with ConnectX-8 and higher link rates — verify exact NIC counts and rates in the current RA.
+
+**Why it exists.** Three reasons the exam likes:
+
+1. **Isolation of performance.** A checkpoint write to storage is a synchronized burst from every node — hundreds of GB at > 40 GB/s per node — and must not share a switch buffer with the next all-reduce. On a shared fabric the checkpoint would fill the lossless queue and the PFC/credit back-pressure would stall the collective behind it.
+2. **Isolation of failure.** You can lose or reconfigure the in-band network (BGP reconvergence, a switch upgrade) without the running job's compute traffic being affected, and you can power-cycle a hung node over OOB while its neighbors keep computing.
+3. **Different protocol requirements.** The compute fabric needs lossless RDMA tuned for low entropy and a flat, unrouted L2/L3 domain; the storage fabric needs RoCE but with many clients and normal flow mixes (modest oversubscription tolerated); management needs ordinary routed IP with DHCP/PXE and reachability to the corporate network.
+
+**How it works.** The separation is enforced at the node by which card the traffic leaves on: NCCL is pinned to the ConnectX-7 rails with `NCCL_IB_HCA` (excluding the BlueField ports), the parallel filesystem client is bound to a BlueField-3 port, the OS default route and PXE interface are on the other BlueField-3 port, and the BMC has its own MAC and IP on the 1G RJ45. On the switch side the four networks have no L3 adjacency; the compute fabric usually has no IP routing to the outside world at all. You verify placement with `ibdev2netdev` (which `mlx5_N` is which netdev), `ip route` (the in-band default route is on a BF3 netdev, never on `ibp*`), `mount | grep -E 'lustre|gpfs'` (storage client bound to the storage interface) and `ipmitool lan print` (BMC on the OOB subnet).
 
 ### 2.5 Scale-up versus scale-out
 
 *Analogy:* scale-up is the open-plan office where colleagues shout across desks; scale-out is the phone system that connects offices in different buildings. Shouting is faster, but it only reaches the room.
 
-**Scale-up: NVLink and NVSwitch.** Inside a node (and, with GB200 NVL72, inside a rack) GPUs are connected by **NVLink**, a proprietary point-to-point interconnect, switched by **NVSwitch** so every GPU has full-bandwidth access to every other. Fourth-generation NVLink on H100 provides 900 GB/s per GPU of bidirectional bandwidth — far above the 50 GB/s (400 Gb/s) of a ConnectX-7 port. The NVLink domain is a shared-memory-like domain: GPUs can load/store into each other's memory. Collectives inside the NVLink domain are extremely fast and never touch your switches.
-
-**Scale-out: InfiniBand or Spectrum-X.** Beyond the NVLink domain, GPUs communicate over the compute fabric using RDMA. Two NVIDIA options:
+**What it is.** Two tiers of GPU interconnect with an order-of-magnitude bandwidth gap between them. **Scale-up** is **NVLink**, a proprietary point-to-point interconnect switched by **NVSwitch** so every GPU has full-bandwidth access to every other GPU in the domain — 8 GPUs in a DGX H100, 72 in a GB200 NVL72 rack. Fourth-generation NVLink on H100 provides 18 links per GPU, 900 GB/s bidirectional (450 GB/s each way). **Scale-out** is the compute fabric: ConnectX-7 (InfiniBand) or BlueField-3 SuperNIC (Spectrum-X) at 400 Gb/s = 50 GB/s per direction per GPU.
 
 | | InfiniBand (Quantum-2 / Quantum-X800) | Spectrum-X Ethernet (Spectrum-4 / Spectrum-X800 + BlueField-3 SuperNIC) |
 |---|---|---|
@@ -129,104 +139,106 @@ A DGX H100 node's physical ports map as: 8 × ConnectX-7 (OSFP, 400G) for comput
 | Fabric management | Subnet Manager (**UFM** / opensm) | Standard Ethernet control plane (BGP) + NetQ |
 | Best fit | Maximum performance, HPC heritage | Ethernet-standard operations, multi-tenant cloud |
 
-The hierarchy:
+**Why it exists.** Physics and cost: NVLink is a short-reach, parallel electrical interconnect on a board or across a rack's copper backplane; it cannot span a data hall. The 900 GB/s versus 50 GB/s ratio (18×) is the reason the most communication-intensive parallelism dimension — tensor parallelism, which all-reduces activations several times *per layer* — must stay inside the NVLink domain, while the less chatty dimensions (data parallelism's once-per-step gradient all-reduce, pipeline parallelism's point-to-point activations) go over the fabric. The NVLink domain is also a shared-memory-like domain: GPUs can load/store into each other's memory, which NCCL exploits as the **P2P** transport.
 
-```text
-GPU ── NVLink/NVSwitch ── 8 GPUs in a node         (scale-up, ~900 GB/s per GPU)
-   ── NVLink Switch rack (GB200 NVL72) ── 72 GPUs  (scale-up, rack level)
-   ── ConnectX / SuperNIC ── leaf ── spine ── core (scale-out, 400–800 Gb/s per GPU)
-```
+**How it works.** The hierarchy:
 
-Good parallelism strategies place the most communication-intensive dimension (tensor parallelism) inside the NVLink domain and the less intensive dimensions (data, pipeline parallelism) across the fabric. NCCL automatically selects NVLink for intra-node and the network (IB or RoCE) for inter-node transfers — see [Module 1.3](03-gpu-to-gpu-communication-nccl-gpudirect.md).
+- GPU ↔ NVLink/NVSwitch ↔ 8 GPUs in a node — scale-up, ~900 GB/s per GPU; in GB200 NVL72, the NVLink Switch trays extend this to 72 GPUs in a rack.
+- GPU ↔ ConnectX-7 / SuperNIC ↔ leaf ↔ spine ↔ core — scale-out, 400–800 Gb/s per GPU.
+
+NCCL selects the transport automatically at communicator init: NVLink P2P for pairs in the same node, the IB plugin (RDMA) for pairs on different nodes — see [Module 1.3](03-gpu-to-gpu-communication-nccl-gpudirect.md). On the CLI, `nvidia-smi topo -m` prints `NV18` between every GPU pair (18 NVLink links) and `nvidia-smi nvlink -s` shows every one of the 18 links active (it reports ~26.5 GB/s per link); `NCCL_DEBUG=INFO` prints `via P2P/CUMEM` for intra-node channels. If NVLink is degraded you will see `via SHM` and the step time will explode before any switch counter moves.
 
 **Why the exam cares:** "which is faster, NVLink or InfiniBand" and "where does tensor parallelism belong" are recurring question shapes.
 
 ### 2.6 East-west versus north-south
 
-In enterprise networks the dominant traffic is **north-south**: clients outside the DC talking to servers inside. In an AI training cluster essentially all traffic is **east-west**: GPU to GPU, node to node, node to storage. North-south is limited to job submission, monitoring, dataset ingest, and (for inference) serving requests.
+**What it is.** In enterprise networks the dominant traffic is **north-south**: clients outside the DC talking to servers inside. In an AI training cluster essentially all traffic is **east-west**: GPU to GPU, node to node, node to storage. North-south is limited to job submission, monitoring, dataset ingest, and (for inference) serving requests.
 
-Design consequences:
-- The compute fabric has *no* north-south path at all in most designs; it is an isolated back-end network, often without IP routing to the outside world.
-- Border/edge capacity is sized for ingest and serving, not for the GPU traffic.
-- Security boundaries move: the back-end fabric is trusted and flat; segmentation, if any, is done per tenant with **PKey** (InfiniBand) or VLAN/VXLAN (Ethernet).
+**Why it exists.** The byte counts are not comparable. One SU's compute fabric moves up to 102.4 Tb/s of all-reduce traffic between nodes; the same SU's north-south need is a few 100G links for ingest and user access. Sizing the border for GPU traffic would be a waste; sizing the back-end for north-south would starve the GPUs.
+
+**How it works.** Design consequences:
+- The compute fabric has *no* north-south path at all in most designs; it is an isolated back-end network, often without IP routing to the outside world (an IPoIB or RoCE subnet reachable only from the nodes).
+- Border/edge capacity is sized for ingest and serving, not for the GPU traffic; ingest lands on the storage fabric via the in-band edge.
+- Security boundaries move: the back-end fabric is trusted and flat; segmentation, if any, is done per tenant with **PKey** partitions (InfiniBand — the SM programs the partition table in every HCA and switch) or VLAN/VXLAN (Ethernet). You see a node's partition membership in `/sys/class/infiniband/mlx5_0/ports/1/pkeys/0` (`0x7fff` is the default full-member key).
 
 ### 2.7 Power and cooling basics
 
-A DGX H100 draws up to about 10.2 kW; a DGX B200 about 14.3 kW (verify in the current spec sheet). Four nodes per rack is the common H100 density, giving ~40 kW per rack — already beyond what most enterprise colos (5–10 kW per rack) provide. GB200 NVL72 racks approach 120 kW and are liquid-cooled.
+**What it is.** The facility constraints that determine how many nodes fit in a rack and therefore how far the compute cables run. A DGX H100 draws up to about 10.2 kW; a DGX B200 about 14.3 kW (verify in the current spec sheet). Four nodes per rack is the common H100 density, giving ~40 kW per rack — already beyond what most enterprise colos (5–10 kW per rack) provide. GB200 NVL72 racks approach 120 kW and are liquid-cooled. **PUE** (power usage effectiveness = total facility power ÷ IT power) is the efficiency metric; AI facilities target ~1.1–1.3.
 
-Key points for you:
+**Why it exists.** Rack density drives topology. Few nodes per rack means an SU's 32 nodes spread over 8+ racks while its 8 leaf switches sit in a central network rack; node-to-leaf runs are 10–50 m, which is beyond passive copper reach at 400G (DAC is ~2–3 m at NDR) and forces optical transceivers + structured fiber or AOCs. See [Module 1.2](02-dgx-superpod-basepod-reference-architectures.md).
 
-- **Rack density drives topology.** Few nodes per rack means leaf switches may be in separate network racks and compute cables run 30–100 m — which forces optical (AOC or transceiver) rather than DAC cabling. See [Module 1.2](02-dgx-superpod-basepod-reference-architectures.md).
-- **Power sequencing.** Switches and management infrastructure must be on separate PDUs/circuits from the nodes so the fabric stays up when nodes are power-cycled.
-- **Cooling for optics.** 400G/800G transceivers run hot (12–17 W each for 800G twin-port OSFP); switch airflow direction (port-side intake vs exhaust) must match the hot/cold aisle.
+**How it works.** Key points for you:
+
+- **Power sequencing.** Switches and management infrastructure must be on separate PDUs/circuits from the nodes so the fabric and the OOB network stay up when nodes are power-cycled.
+- **Cooling for optics.** 400G/800G transceivers run hot (12–17 W each for 800G twin-port OSFP; a fully populated QM9700 carries 32 of them); switch airflow direction (port-side intake vs exhaust, "P2C"/"C2P" SKUs) must match the hot/cold aisle, and `mlxlink -m` reports module temperature so you can alert on it.
 - **Liquid cooling.** GB200 and some B200 deployments use direct-to-chip liquid cooling for GPUs; switches (Quantum-X800, Spectrum-X800) also come in liquid-cooled variants.
-- **PUE** (power usage effectiveness) is the facility efficiency metric; AI facilities target ~1.1–1.3.
+- **Observe it.** `nvidia-smi -q -d POWER,TEMPERATURE` per GPU, `ipmitool sdr` for node-level power and inlet temperature over OOB, and the switch's `nv show platform environment` (Cumulus) for PSU and fan state.
 
 ### 2.8 Operations lifecycle
 
-**Bring-up** happens in a fixed order, and the order itself is testable:
+**What it is.** The four-stage loop of Figure 1.1-4: **bring-up → validate → monitor → remediate**, with a fixed bring-up order and a bottom-up validation ladder. Every stage has an NVIDIA tool whose name the exam uses.
+
+![Operations lifecycle flow: bring-up, validate, monitor and remediate stages with the NVIDIA tool used at each](diagrams/1.1-04-ops-lifecycle.svg)
+*Figure 1.1-4 — The operations lifecycle. Bring-up is strictly ordered (OOB first); validation climbs from the physical layer to full-stack burn-in; remediation always re-enters validation.*
+
+**Why it exists.** Each stage depends on the one below it: you cannot provision nodes until the Subnet Manager has assigned **LID**s and the in-band network can PXE boot them; you cannot interpret an `all_reduce_perf` number until every link is proven at 400G with zero effective errors; and a monitoring alert without a validation ladder to re-run tells you *that* something is wrong but not *where*. Skipping the order is the classic bring-up failure (§4.3).
+
+**How it works.**
+
+*Bring-up* happens in this order, and the order itself is testable:
 
 1. Physical install: racks, PDUs, cabling per the RA cable schedule; label every cable by rail and port.
-2. OOB network first — BMCs, switch management ports — so everything else can be reached.
-3. Switch OS and firmware (Cumulus Linux / SONiC on Spectrum; MLNX-OS on Quantum) at the RA-specified versions.
-4. Fabric manager: for InfiniBand, bring up the Subnet Manager (**UFM** appliance or opensm) so **LID**s are assigned and routing tables are computed; for Spectrum-X, configure BGP underlay, PFC/ECN, and adaptive routing.
-5. Node provisioning via **Base Command Manager (BCM)**: PXE boot, DGX OS image, driver stack (CUDA, MOFED/DOCA-OFED, NCCL), Slurm or Kubernetes.
-6. NIC firmware and configuration with **mlxconfig** (link type IB vs ETH, SR-IOV, etc.).
+2. OOB network first — BMCs, switch management ports, PDUs on the SN2201 — so everything else can be reached (`ipmitool -I lanplus -H <bmc> chassis power status`).
+3. Switch OS and firmware (Cumulus Linux / SONiC on Spectrum; MLNX-OS on Quantum) at the RA-specified versions (`nv show system`, `show version`).
+4. Fabric manager: for InfiniBand, bring up the Subnet Manager (**UFM** appliance or opensm) so **LID**s are assigned and routing tables are computed (`sminfo` reports one master SM; `ibnetdiscover` lists every switch); for Spectrum-X, configure the BGP underlay, PFC/ECN and adaptive routing.
+5. Node provisioning via **Base Command Manager (BCM)**: PXE boot over in-band, DGX OS image, driver stack (CUDA, MOFED/DOCA-OFED, NCCL), Slurm or Kubernetes (`cmsh -c "device status"` → all `UP`).
+6. NIC firmware and configuration with **mlxconfig** (`LINK_TYPE_P1` = IB(1) vs ETH(2), `SRIOV_EN`, `NUM_OF_VFS`), then `ibstat` showing every compute port `Active` at `Rate: 400`.
 
-**Validation** proves the fabric before handing it to users, layer by layer from the bottom up:
+*Validation* proves the fabric before handing it to users, layer by layer from the bottom up. Every rung has a numeric or state-based pass criterion:
 
-| Layer | Tool | What it proves |
-|---|---|---|
-| Physical | **mlxlink**, **mlxcables**, **iblinkinfo** | Every link up at the expected rate/width, no high BER, correct optics |
-| Fabric topology | **ibnetdiscover**, **ibdiagnet**, NetQ topology | Cabling matches the intended rail-optimized design |
-| Point-to-point RDMA | **ib_write_bw**, **ib_write_lat**, **ibping** | Each NIC pair achieves line rate and expected latency |
-| Collectives | **nccl-tests** (`all_reduce_perf`) | Full-cluster bus bandwidth close to theoretical |
-| Full stack | **Cluster Validation Tool (CVT)**, HPL/NCCL burn-in | Sustained performance under load, no stragglers |
+| Layer | Tool | What it proves | Pass criterion |
+|---|---|---|---|
+| Physical | **mlxlink**, **mlxcables**, **iblinkinfo** | Every link up at the expected rate/width, no high BER, correct optics | `Speed: NDR`, `Width: 4x`, Effective Physical Errors = 0, raw BER better than ~1e-12, module PN per cable schedule |
+| Fabric topology | **ibnetdiscover**, **ibdiagnet**, NetQ topology | Cabling matches the intended rail-optimized design | `ibdiagnet` 0 errors; every leaf's downlinks are one `mlx5_N` index |
+| Point-to-point RDMA | **ib_write_bw**, **ib_write_lat**, **ibping** | Each NIC pair achieves line rate and expected latency | ≥ ~390 Gb/s at ≥ 64 KB messages; one-hop write latency ≈ 2 µs (verify RA figure) |
+| Collectives | **nccl-tests** (`all_reduce_perf`) | Full-cluster bus bandwidth close to theoretical | busbw ≥ ~85 % of 8 × 50 GB/s = 400 GB/s per node at 8 GB; every inter-node channel `GDRDMA` |
+| Full stack | **Cluster Validation Tool (CVT)**, HPL/NCCL burn-in | Sustained performance under load, no stragglers | 24 h run, no node outside ±5 % of the median, no error-counter increments |
 
-**Monitoring** (day two) requires telemetry at every layer:
+*Monitoring* (day two) requires telemetry at every layer:
 - **UFM** for InfiniBand: link errors, congestion counters, topology changes, SM state.
 - **NetQ** and **WJH (What Just Happened)** for Spectrum Ethernet: per-packet drop reasons, buffer occupancy, ECN marks.
-- **DCGM** (Data Center GPU Manager) for GPU health, and its NIC/NVLink counters.
+- **DCGM** (Data Center GPU Manager, `dcgmi dmon`) for GPU health, and its NIC/NVLink counters.
 - BCM dashboards and Prometheus/Grafana for node and job-level metrics.
 - Regular `ibdiagnet` runs diffed against a baseline to catch degraded links before they cause stragglers.
 
-The recurring operational theme: **a slow link is worse than a dead link.** A dead link is routed around; a link with a high bit-error rate retransmits silently and makes every collective wait for it. This is why BER and symbol-error monitoring is emphasized in the Troubleshooting domain.
+*Remediation* re-enters validation: find the port with `ibstat` `Rate` ≠ 400 or `mlxlink -e` errors, bisect with 2-node `all_reduce_perf`, reseat/replace, then re-run the ladder from the physical rung up.
+
+The recurring operational theme: **a slow link is worse than a dead link.** A dead link is routed around by the SM within seconds; a link with a high bit-error rate stays in the routing table, retransmits silently, and makes every collective wait for it. This is why BER and symbol-error monitoring is emphasized in the Troubleshooting domain.
 
 ### 2.9 Where DPUs fit
 
 *Analogy:* the DPU is the building's facilities manager — it handles plumbing (storage), doors and badges (network isolation, encryption) so the tenants (GPUs and host CPU) never have to.
 
-The **BlueField-3 DPU** is a ConnectX-7-class NIC with embedded Arm cores, its own memory, and a programmable datapath, running the **DOCA** software stack. In the DGX reference design, BlueField-3 cards serve the storage and in-band management networks, not the compute fabric (which uses plain ConnectX-7 for minimum latency). In Spectrum-X designs the BlueField-3 **SuperNIC** variant *is* the compute NIC: it is a BlueField-3 tuned for RoCE performance (adaptive-routing packet reordering, congestion control, lower power) rather than for general offload.
+**What it is.** The **BlueField-3 DPU** is a ConnectX-7-class NIC with 16 embedded Arm A78 cores, its own DDR memory, and a programmable datapath, running the **DOCA** software stack on its own OS. In the DGX reference design, two BlueField-3 cards (dual-port 400G each) serve the storage and in-band management networks (Figure 1.1-1); the compute fabric uses plain ConnectX-7 for minimum latency. In Spectrum-X designs the BlueField-3 **SuperNIC** variant *is* the compute NIC: it is a BlueField-3 tuned for RoCE performance (adaptive-routing packet reordering, DCQCN congestion control, lower power) rather than for general offload.
 
-Functions a DPU offloads from the host CPU:
-- Storage initiator (NVMe-oF, RoCE to parallel filesystems).
+**Why it exists.** Host CPU cores are expensive and the GPU should never wait on them. Storage initiators (NVMe-oF, RoCE to parallel filesystems), OVS/VXLAN encapsulation, firewalling, IPsec/TLS and telemetry would otherwise consume host cores and expose the host to the tenant network. Because the DPU runs its own OS, cloud/multi-tenant operators can manage the node even if the host is compromised or owned by a tenant — the infrastructure plane is physically separated from the tenant plane. On Spectrum-X specifically, the SuperNIC implements the NIC-side half of the end-to-end congestion control and adaptive-routing scheme (reordering sprayed packets back into order), which a plain NIC cannot do.
+
+**How it works.** Functions a DPU offloads from the host CPU:
+- Storage initiator (NVMe-oF, RoCE to parallel filesystems), with GPUDirect Storage landing data directly in GPU memory.
 - Networking: OVS/VXLAN, firewalling, telemetry — without consuming host cores or exposing the host to the tenant network.
-- Infrastructure isolation: the DPU runs its own OS, so cloud/multi-tenant operators can manage the node even if the host is compromised or owned by a tenant.
+- Infrastructure isolation: the DPU runs its own OS; the host sees the card as an ordinary NIC (`mlx5_8`–`mlx5_11` on a DGX H100).
 - Precision timing, encryption (IPsec/TLS), and in Spectrum-X, the RoCE-side half of the end-to-end congestion control and adaptive routing scheme.
+
+You see the split on the node with `ibdev2netdev -v`: ConnectX-7 devices report PCI device ID `mt4129` and are `mlx5_0`–`mlx5_7`; BlueField-3 devices appear as `mlx5_8`+ with Ethernet link layer when serving storage/in-band. `mlxconfig -d <bf3-device> q | grep INTERNAL_CPU_MODEL` shows whether the card runs in DPU mode (embedded CPU owns the NIC) or NIC mode.
 
 **Why the exam cares:** *compute fabric = ConnectX-7 (IB) or BlueField-3 SuperNIC (Spectrum-X); storage/in-band = BlueField-3 DPU.* Details in [`../05-bluefield-doca/`](../05-bluefield-doca/).
 
 ## 3. Live-style walkthrough — one training iteration, hop by hop
 
-Let's follow a single iteration of a data-parallel training job across two DGX H100 nodes (16 GPUs) and watch where the bytes go. Tensor parallelism is set to 8 (inside each node), data parallelism to 2 (across nodes). At the end of the step a checkpoint is written. Three fabrics get involved, in order: NVLink, the compute fabric, the storage fabric.
+Let's follow a single iteration of a data-parallel training job across two DGX H100 nodes (16 GPUs) and watch where the bytes go. Tensor parallelism is set to 8 (inside each node), data parallelism to 2 (across nodes). At the end of the step a checkpoint is written. Three fabrics get involved, in order: NVLink, the compute fabric, the storage fabric. Figure 1.1-2 numbers every hop; the steps below reference those numbers.
 
-```text
-                 ┌──────────────── DGX H100 node dgx01 ────────────────┐
-                 │  GPU0 GPU1 GPU2 GPU3 GPU4 GPU5 GPU6 GPU7            │
-                 │   │    │    │    │    │    │    │    │   (1) TP all-reduce
-                 │   └────┴────┴────┴─NVSwitch─┴────┴────┘   stays here, ~900 GB/s/GPU
-                 │   │    │    │    │    │    │    │    │
-                 │  CX7  CX7  CX7  CX7  CX7  CX7  CX7  CX7   8 × 400G compute ports
-                 │   │    │    │    │    │    │    │    │
-                 │  BF3 ─┬─ BF3                               2 × BlueField-3 (storage/in-band)
-                 │  BMC ─┼───────────────────────────────────  1G OOB
-                 └───────┼─────────────────────────────────────────────┘
-                         │
-   (2) DP all-reduce ──► rail 0..7 → Leaf 0..7 (one hop to dgx02 same rail)   COMPUTE FABRIC
-   (3) checkpoint     ──► BF3 ports → storage leaf → Lustre/GPFS               STORAGE FABRIC
-   (4) Slurm/BCM/SSH  ──► BF3 port  → SN4600C                                  IN-BAND
-   (5) IPMI/Redfish   ──► BMC       → SN2201                                   OOB
-```
+![One training iteration traced hop by hop: NVLink tensor-parallel all-reduce, rail-aligned data-parallel all-reduce over the compute fabric, checkpoint over the storage fabric, and management traffic](diagrams/1.1-02-training-iteration-flow.svg)
+*Figure 1.1-2 — One iteration, numbered: ① forward/backward, ② TP all-reduce on NVSwitch, ③ DP all-reduce on rail n (one hop), ④ optimizer step, ⑤ checkpoint via BlueField-3, ⑥ in-band scheduler/telemetry, ⑦ OOB.*
 
 **Step 0 — know your node before the job starts.** Watch how each GPU is paired with its own NIC. This affinity is the whole reason GPUDirect RDMA works at full speed.
 
@@ -265,7 +277,7 @@ mlxconfig -d /dev/mst/mt4129_pciconf0 q | grep LINK_TYPE   # Query NIC firmware:
                               #         ETH(2) on a Spectrum-X fabric. mt4129 = ConnectX-7 device ID.
 ```
 
-**Step 1 — forward/backward pass: tensor-parallel all-reduce on NVLink.** Each layer of the model is split across the 8 GPUs of the node. Several times per layer the GPUs all-reduce partial activations. These are latency-critical and happen thousands of times per step. Watch the NCCL log confirm they never leave the node:
+**Step 1 — forward/backward pass: tensor-parallel all-reduce on NVLink (Figure 1.1-2, ① and ②).** Each layer of the model is split across the 8 GPUs of the node. Several times per layer the GPUs all-reduce partial activations. These are latency-critical and happen thousands of times per step. Watch the NCCL log confirm they never leave the node:
 
 ```bash
 NCCL_DEBUG=INFO python train.py 2>&1 | grep -E 'via P2P|via NET'   # Show every channel's chosen transport.
@@ -278,7 +290,7 @@ dgx01:12345:12401 [0] NCCL INFO Channel 01/0 : 0[0] -> 1[1] via P2P/CUMEM      #
 
 Not one byte of this touches a switch you manage. Per-GPU bandwidth here is ~900 GB/s. If you ever see `via SHM` between GPUs in the same DGX, NVLink or PCIe P2P is broken and the step time will explode before any network problem shows up.
 
-**Step 2 — gradient all-reduce: data-parallel across the compute fabric.** When the backward pass finishes, each GPU holds gradients for its shard. GPU *n* on dgx01 must average them with GPU *n* on dgx02. This is the elephant flow — gigabytes per GPU, eight flows per node, all starting at the same instant.
+**Step 2 — gradient all-reduce: data-parallel across the compute fabric (Figure 1.1-2, ③).** When the backward pass finishes, each GPU holds gradients for its shard. GPU *n* on dgx01 must average them with GPU *n* on dgx02. This is the elephant flow — gigabytes per GPU, eight flows per node, all starting at the same instant.
 
 ```text
 dgx01:12345:12401 [0] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB [1]mlx5_1:1/IB ... [7]mlx5_7:1/IB   # all 8 rails
@@ -295,7 +307,7 @@ iblinkinfo | grep -i dgx01    # List every link involving dgx01 with width, spee
                               # Each line's far end should be a different leaf (Leaf 0..7) — one per rail.
 ```
 
-**Step 3 — checkpoint: storage fabric.** Every N steps, all 16 GPUs write their optimizer state at once — a several-hundred-GB burst. It leaves through the BlueField-3 ports, *not* the ConnectX-7s:
+**Step 3 — checkpoint: storage fabric (Figure 1.1-2, ⑤; the optimizer step ④ in between generates no traffic).** Every N steps, all 16 GPUs write their optimizer state at once — a several-hundred-GB burst. It leaves through the BlueField-3 ports, *not* the ConnectX-7s:
 
 ```bash
 ibdev2netdev | grep -E 'mlx5_(8|9|10|11)'   # The BF3 netdevs; expect Up on the storage/in-band ports.
@@ -305,7 +317,7 @@ cat /proc/fs/lustre/llite/*/stats | head    # Lustre client counters climb durin
 
 Because the storage fabric is physically separate, this burst never shares a buffer with the next all-reduce. If someone had put storage on the compute NICs, step N+1's all-reduce would queue behind the checkpoint and the whole job would stall.
 
-**Step 4 and 5 — management.** Slurm's heartbeat, Prometheus scrapes and your SSH session ride in-band on a BF3 port to the SN4600C. If dgx02 hangs, BCM power-cycles it over the BMC on the SN2201 — the OOB network — and the compute fabric never notices.
+**Step 4 and 5 — management (Figure 1.1-2, ⑥ and ⑦).** Slurm's heartbeat, Prometheus scrapes and your SSH session ride in-band on a BF3 port to the SN4600C. If dgx02 hangs, BCM power-cycles it over the BMC on the SN2201 — the OOB network — and the compute fabric never notices.
 
 **What "good" looks like for the whole iteration:** `P2P` for every intra-node channel, `NET/IB/n/GDRDMA` with matching NIC index on both ends for inter-node, all 8 ports at 400G on every node, and `nvidia-smi` showing GPU utilization near 100 % with only short dips at the all-reduce. If you can read those four signals, you can diagnose most of what Section 4 covers.
 
@@ -380,7 +392,7 @@ nv show interface --view=brief         # On each Spectrum switch: mgmt port up, 
 - The straggler procedure contains at least one step that would catch a port negotiated at 200 Gb/s and at least one that would catch high BER on an `Active` link.
 
 ### Hint
-- Start from the node port map in Section 2.4 — every traffic type belongs to exactly one of the five arrows in the Section 3 diagram.
+- Start from the node port map in Section 2.4 — every traffic type belongs to exactly one of the numbered arrows ③–⑦ in Figure 1.1-2.
 - The bring-up order in Section 2.8 is already numbered; your job is to attach a command and an expected output to each number.
 - For the validation ladder, the table in Section 2.8 lists the rungs; the pass criteria come from the "what good looks like" notes in Section 3 (rate 400, `GDRDMA`, zero effective errors).
 - For straggler hunting, think bisection: a 2-node test that includes the suspect node vs. one that does not.

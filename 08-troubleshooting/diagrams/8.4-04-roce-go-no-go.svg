@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>RoCE fabric validation: go / no-go flow</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">RoCE fabric validation: go / no-go flow</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Ten checks in a fixed order; a Rotten agent stops everything, a lossless violation under load is a NO-GO</text><g><title>netq check agents</title><rect x="110" y="150" width="640" height="120" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="126" y="176" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">netq check agents</text>
+<text x="126" y="205" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PASS: Rotten = 0</text>
+<text x="126" y="225" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">FAIL: fix VRF / NTP / version; STOP</text>
+</g>
+<g><title>Step 1</title><circle cx="80" cy="210" r="16" fill="#1f2937"/><text x="80" y="216" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<line x1="430" y1="270" x2="430" y2="300" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>netq check interfaces / mtu / bgp</title><rect x="110" y="300" width="640" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="126" y="326" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">netq check interfaces / mtu / bgp</text>
+<text x="126" y="355" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PASS: Failed = 0</text>
+<text x="126" y="375" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">FAIL: down links, MTU drift, BGP</text>
+</g>
+<g><title>Step 2</title><circle cx="80" cy="360" r="16" fill="#1f2937"/><text x="80" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<line x1="430" y1="420" x2="430" y2="450" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>WJH -&gt; NetQ handoff per leaf</title><rect x="110" y="450" width="640" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="126" y="476" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">WJH -&gt; NetQ handoff per leaf</text>
+<text x="126" y="505" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PASS: local wjh disabled + agent wjh</text>
+<text x="126" y="525" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">FAIL: nv set system wjh state disabled</text>
+</g>
+<g><title>Step 3</title><circle cx="80" cy="510" r="16" fill="#1f2937"/><text x="80" y="516" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<line x1="430" y1="570" x2="430" y2="600" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>netq show roce-config (+ check roce)</title><rect x="110" y="600" width="640" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="126" y="626" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">netq show roce-config (+ check roce)</text>
+<text x="126" y="655" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PASS: 1 distinct value per field, lossless</text>
+<text x="126" y="675" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">FAIL: nv set qos roce ... on the drifted leaf</text>
+</g>
+<g><title>Step 4</title><circle cx="80" cy="660" r="16" fill="#1f2937"/><text x="80" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<line x1="430" y1="720" x2="430" y2="750" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>idle pause sample x2, 10 s apart</title><rect x="110" y="750" width="640" height="120" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="126" y="776" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">idle pause sample x2, 10 s apart</text>
+<text x="126" y="805" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PASS: pause delta = 0 while idle</text>
+<text x="126" y="825" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">FAIL: pause storm: isolate port, hung NIC</text>
+</g>
+<g><title>Step 5</title><circle cx="80" cy="810" r="16" fill="#1f2937"/><text x="80" y="816" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<g><title>load: ib_write_bw -R -D 60 -q 4 all rails</title><rect x="890" y="150" width="640" height="120" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="906" y="176" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">load: ib_write_bw -R -D 60 -q 4 all rails</text>
+<text x="906" y="205" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PASS: &gt;= 97% of link rate per pair</text>
+<text x="906" y="225" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">FAIL: Module 8.1 / 8.3 on the slow rail</text>
+</g>
+<g><title>Step 6</title><circle cx="860" cy="210" r="16" fill="#1f2937"/><text x="860" y="216" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<line x1="1210" y1="270" x2="1210" y2="300" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>netq show wjh-drop buffer dst-port 4791</title><rect x="890" y="300" width="640" height="120" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="906" y="326" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">netq show wjh-drop buffer dst-port 4791</text>
+<text x="906" y="355" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PASS: 0 records in the window</text>
+<text x="906" y="375" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">FAIL: TC column; host DSCP / PFC end to end</text>
+</g>
+<g><title>Step 7</title><circle cx="860" cy="360" r="16" fill="#1f2937"/><text x="860" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<line x1="1210" y1="420" x2="1210" y2="450" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>roce-counters before / after load</title><rect x="890" y="450" width="640" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="906" y="476" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">roce-counters before / after load</text>
+<text x="906" y="505" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PASS: ECN marked delta &gt; 0</text>
+<text x="906" y="525" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">FAIL: ECN not active on TC3</text>
+</g>
+<g><title>Step 8</title><circle cx="860" cy="510" r="16" fill="#1f2937"/><text x="860" y="516" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">8</text></g>
+<line x1="1210" y1="570" x2="1210" y2="600" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>netq show events type link (window)</title><rect x="890" y="600" width="640" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="906" y="626" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">netq show events type link (window)</text>
+<text x="906" y="655" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PASS: 0 link events, no FEC/symbol rise</text>
+<text x="906" y="675" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">FAIL: mlxlink -p &lt;port&gt; -m -c</text>
+</g>
+<g><title>Step 9</title><circle cx="860" cy="660" r="16" fill="#1f2937"/><text x="860" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">9</text></g>
+<line x1="1210" y1="720" x2="1210" y2="750" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>evidence dir: roce-config json, wjh json, nv show qos roce</title><rect x="890" y="750" width="640" height="120" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="906" y="776" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">evidence dir: roce-config json, wjh json, nv show qos roce</text>
+<text x="906" y="805" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PASS: all saved under timestamp</text>
+<text x="906" y="825" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">FAIL: re-run until GO</text>
+</g>
+<g><title>Step 10</title><circle cx="860" cy="810" r="16" fill="#1f2937"/><text x="860" y="816" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">10</text></g>
+<path d="M750,810 L780,810 L780,210 L842,210" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>GO only if 1-10 all PASS; NO-GO names the row and the device</title><rect x="60" y="910" width="700" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="410.0" y="937" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">GO only if 1-10 all PASS; NO-GO names the row and the device</text>
+</g>
+<g><title>Row 1 Rotten -&gt; exit before interpreting rows 2-10</title><rect x="900" y="910" width="640" height="60" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1220.0" y="937" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Row 1 Rotten -&gt; exit before interpreting rows 2-10</text>
+</g></svg>

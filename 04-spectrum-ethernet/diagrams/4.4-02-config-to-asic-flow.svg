@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" role="img">
+<title>From config_db.json to the ASIC: one static route's journey through SONiC</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">From config_db.json to the ASIC: one static route's journey through SONiC</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">config load (merge, live) vs config reload (rebuild, restarts swss/syncd). Each hop leaves a table you can inspect with redis-cli / sonic-db-cli</text>
+<g><title>Operator sudo config …</title><rect x="50" y="150" width="220" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="160.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Operator</text>
+<text x="160.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">sudo config …</text>
+</g>
+<g><title>CONFIG_DB (4) /etc/sonic/config_db.json</title><rect x="350" y="150" width="260" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="480.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">CONFIG_DB (4)</text>
+<text x="480.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">/etc/sonic/config_db.json</text>
+</g>
+<g><title>swss *mgrd · orchagent</title><rect x="690" y="150" width="260" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="820.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">swss</text>
+<text x="820.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">*mgrd · orchagent</text>
+</g>
+<g><title>ASIC_DB (1) · syncd SAI</title><rect x="1020" y="150" width="260" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1150.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">ASIC_DB (1) · syncd</text>
+<text x="1150.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">SAI</text>
+</g>
+<g><title>Spectrum ASIC hardware tables</title><rect x="1330" y="150" width="220" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1440.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Spectrum ASIC</text>
+<text x="1440.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">hardware tables</text>
+</g>
+<line x1="160" y1="220" x2="160" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="480" y1="220" x2="480" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="820" y1="220" x2="820" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="1150" y1="220" x2="1150" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="1440" y1="220" x2="1440" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="160" y1="280" x2="480" y2="280" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="320.0" y="304.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">config route add prefix 10.9.0.0/24 nexthop 192.168.1.1  (or config load -y file.json)</text>
+<g><title>Step 1</title><circle cx="190" cy="256" r="16" fill="#1f2937"/><text x="190" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<g><title>STATIC_ROUTE|default|10.9.0.0/24 written (immediately, not persisted)</title><rect x="250" y="326" width="460" height="48" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="480.0" y="353.7" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1f2937" text-anchor="middle">STATIC_ROUTE|default|10.9.0.0/24 written (immediately, not persisted)</text>
+</g>
+<g><title>Step 2</title><circle cx="225" cy="350" r="16" fill="#1f2937"/><text x="225" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<line x1="480" y1="420" x2="820" y2="420" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="650.0" y="444.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">Redis keyspace notification → staticroutebm / bgpcfgd → FRR → fpmsyncd</text>
+<g><title>Step 3</title><circle cx="510" cy="396" r="16" fill="#1f2937"/><text x="510" y="402" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><title>APPL_DB (0): ROUTE_TABLE:10.9.0.0/24 nexthop=192.168.1.1 ifname=Ethernet248</title><rect x="560" y="466" width="520" height="48" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="820.0" y="493.7" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1f2937" text-anchor="middle">APPL_DB (0): ROUTE_TABLE:10.9.0.0/24 nexthop=192.168.1.1 ifname=Ethernet248</text>
+</g>
+<g><title>Step 4</title><circle cx="535" cy="490" r="16" fill="#1f2937"/><text x="535" y="496" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<g><title>orchagent: resolve next hop (NEIGH_TABLE), check CRM, build SAI route_entry</title><rect x="560" y="536" width="520" height="48" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="820.0" y="563.7" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1f2937" text-anchor="middle">orchagent: resolve next hop (NEIGH_TABLE), check CRM, build SAI route_entry</text>
+</g>
+<g><title>Step 5</title><circle cx="535" cy="560" r="16" fill="#1f2937"/><text x="535" y="566" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<line x1="820" y1="630" x2="1150" y2="630" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="985.0" y="654.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:{vr, dest 10.9.0.0/24} → next_hop oid</text>
+<g><title>Step 6</title><circle cx="850" cy="606" r="16" fill="#1f2937"/><text x="850" y="612" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<line x1="1150" y1="700" x2="1440" y2="700" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1295.0" y="724.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">sai_route_api-&gt;create_route_entry() via Spectrum SDK</text>
+<g><title>Step 7</title><circle cx="1180" cy="676" r="16" fill="#1f2937"/><text x="1180" y="682" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<line x1="1440" y1="770" x2="1150" y2="770" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1295.0" y="794.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">flex counters → COUNTERS_DB (2); oper state → STATE_DB (6)</text>
+<g><title>Step 8</title><circle cx="1410" cy="746" r="16" fill="#1f2937"/><text x="1410" y="752" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text></g>
+<line x1="160" y1="840" x2="480" y2="840" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="320.0" y="864.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">sudo config save -y  → /etc/sonic/config_db.json (only now does it survive a reboot)</text>
+<g><title>Step 9</title><circle cx="190" cy="816" r="16" fill="#1f2937"/><text x="190" y="822" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">9</text></g>
+<g><title>Note</title><rect x="60" y="905" width="1000" height="70" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="72" y="927" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Inspect each hop: sonic-db-cli CONFIG_DB hgetall 'STATIC_ROUTE|default|10.9.0.0/24' · redis-cli -n 0 hgetall 'ROUTE_TABLE:10.9.0.0/24' ·</text>
+<text x="72" y="945" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">redis-cli -n 1 keys '*ROUTE_ENTRY*10.9.0.0*' · show ip route · crm show resources all · show logging orchagent</text>
+<g><title>Legend</title><rect x="1110" y="880" width="430" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1124" y1="906" x2="1184" y2="906" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1198" y="912" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<line x1="1124" y1="936" x2="1184" y2="936" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1198" y="942" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
+<line x1="1124" y1="966" x2="1184" y2="966" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1198" y="972" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
+</g>
+</svg>

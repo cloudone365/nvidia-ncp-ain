@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 980" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>Rail-optimized SU cabling plan with a swapped rail on dgx-17</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="980" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Rail-optimized SU cabling plan with a swapped rail on dgx-17</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">32 nodes x 8 rails in the real SU; three nodes and four rails drawn. Rule: dgx-NN mlx5_R -&gt; leaf-rR-01 port NN</text><g><title>leaf-r0-01</title><rect x="120" y="330" width="280" height="90" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="260.0" y="358" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">leaf-r0-01</text>
+<text x="260.0" y="388" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">QM9700, 64 x 400G NDR</text>
+<text x="260.0" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">host ports 1-32 carry mlx5_0</text>
+</g>
+<g><title>leaf-r1-01</title><rect x="480" y="330" width="280" height="90" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="620.0" y="358" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">leaf-r1-01</text>
+<text x="620.0" y="388" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">QM9700, 64 x 400G NDR</text>
+<text x="620.0" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">host ports 1-32 carry mlx5_1</text>
+</g>
+<g><title>leaf-r2-01</title><rect x="840" y="330" width="280" height="90" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="980.0" y="358" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">leaf-r2-01</text>
+<text x="980.0" y="388" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">QM9700, 64 x 400G NDR</text>
+<text x="980.0" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">host ports 1-32 carry mlx5_2</text>
+</g>
+<g><title>leaf-r3-01</title><rect x="1200" y="330" width="280" height="90" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="1340.0" y="358" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">leaf-r3-01</text>
+<text x="1340.0" y="388" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">QM9700, 64 x 400G NDR</text>
+<text x="1340.0" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">host ports 1-32 carry mlx5_3</text>
+</g>
+<g><title>spine-01</title><rect x="420" y="150" width="280" height="80" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="560.0" y="178" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">spine-01</text>
+<text x="560.0" y="208" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">QM9700 (4 spines in SU)</text>
+</g>
+<g><title>spine-02</title><rect x="900" y="150" width="280" height="80" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="1040.0" y="178" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">spine-02</text>
+<text x="1040.0" y="208" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">QM9700 (4 spines in SU)</text>
+</g>
+<line x1="260" y1="330" x2="560" y2="230" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="260" y1="330" x2="1040" y2="230" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="620" y1="330" x2="560" y2="230" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="620" y1="330" x2="1040" y2="230" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="980" y1="330" x2="560" y2="230" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="980" y1="330" x2="1040" y2="230" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="1340" y1="330" x2="560" y2="230" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="1340" y1="330" x2="1040" y2="230" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<text x="1230" y="190" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">uplinks: leaf ports 33-64,</text>
+<text x="1230" y="210" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">8 per spine</text>
+<g><title>dgx-16</title><rect x="150" y="590" width="320" height="110" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="310.0" y="618" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">dgx-16</text>
+<text x="310.0" y="648" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ConnectX-7 NDR x8  (mlx5_0 .. mlx5_7)</text>
+<text x="310.0" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">GPU R &lt;-&gt; mlx5_R, PCIe-local</text>
+</g>
+<text x="190" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_0</text>
+<line x1="190" y1="572" x2="260" y2="420" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<text x="270" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_1</text>
+<line x1="270" y1="572" x2="620" y2="420" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<text x="350" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_2</text>
+<line x1="350" y1="572" x2="980" y2="420" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<text x="430" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_3</text>
+<line x1="430" y1="572" x2="1340" y2="420" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<g><title>dgx-17</title><rect x="640" y="590" width="320" height="110" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="800.0" y="618" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">dgx-17</text>
+<text x="800.0" y="648" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ConnectX-7 NDR x8  (mlx5_0 .. mlx5_7)</text>
+<text x="800.0" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">GPU R &lt;-&gt; mlx5_R, PCIe-local</text>
+</g>
+<text x="680" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_0</text>
+<line x1="680" y1="572" x2="260" y2="420" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<text x="760" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_1</text>
+<line x1="760" y1="572" x2="620" y2="420" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<text x="840" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_2</text>
+<text x="920" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_3</text>
+<g><title>dgx-18</title><rect x="1130" y="590" width="320" height="110" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1290.0" y="618" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">dgx-18</text>
+<text x="1290.0" y="648" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ConnectX-7 NDR x8  (mlx5_0 .. mlx5_7)</text>
+<text x="1290.0" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">GPU R &lt;-&gt; mlx5_R, PCIe-local</text>
+</g>
+<text x="1170" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_0</text>
+<line x1="1170" y1="572" x2="260" y2="420" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<text x="1250" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_1</text>
+<line x1="1250" y1="572" x2="620" y2="420" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<text x="1330" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_2</text>
+<line x1="1330" y1="572" x2="980" y2="420" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<text x="1410" y="585" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_3</text>
+<line x1="1410" y1="572" x2="1340" y2="420" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="840" y1="572" x2="1340" y2="420" stroke="#d93025" stroke-width="4" fill="none"/>
+<line x1="920" y1="572" x2="980" y2="420" stroke="#d93025" stroke-width="4" fill="none"/>
+<path d="M1340,330 L1040,230" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)" fill="none"/>
+<path d="M1040,230 L980,330" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)" fill="none"/>
+<g><title>CVT report (illustrative)</title><rect x="60" y="760" width="440" height="160" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="76" y="787" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">CVT report (illustrative)</text>
+<text x="76" y="816" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">WRONG-NEIGHBOR dgx-17/mlx5_2</text>
+<text x="76" y="834" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  planned leaf-r2-01:17  found leaf-r3-01:17</text>
+<text x="76" y="852" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">WRONG-NEIGHBOR dgx-17/mlx5_3</text>
+<text x="76" y="870" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  planned leaf-r3-01:17  found leaf-r2-01:17</text>
+<text x="76" y="888" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">both links Active / 4X NDR / BER OK</text>
+</g>
+<g><title>Consequence before the fix</title><rect x="540" y="760" width="440" height="160" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="556" y="787" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Consequence before the fix</text>
+<text x="556" y="816" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">rail-2 all_reduce dgx-17 &lt;-&gt; dgx-18:</text>
+<text x="556" y="834" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  leaf-r3-01 -&gt; spine -&gt; leaf-r2-01 = 3 hops</text>
+<text x="556" y="852" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  instead of 1 leaf hop; spine hot spot</text>
+<text x="556" y="870" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">iblinkinfo on leaf-r2-01: 31 x mlx5_2 +</text>
+<text x="556" y="888" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  1 x mlx5_3  -&gt; rail miswire</text>
+</g>
+<g><title>Legend</title><rect x="1020" y="760" width="530" height="114" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="1036" y1="786" x2="1090" y2="786" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="1104" y="791" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Planned cable, correct</text>
+<line x1="1036" y1="816" x2="1090" y2="816" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)"/>
+<text x="1104" y="821" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Discovered cable, wrong leaf (swapped rail)</text>
+<line x1="1036" y1="846" x2="1090" y2="846" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="1104" y="851" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Detour rail-2 traffic now takes via a spine</text>
+</g></svg>

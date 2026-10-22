@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" role="img">
+<title>BGP unnumbered on a leaf/spine link: IPv6 link-local session, IPv4 routes via RFC 5549</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">BGP unnumbered on a leaf/spine link: IPv6 link-local session, IPv4 routes via RFC 5549</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">No IPv4 on fabric links. RA discovers the neighbour's fe80:: address; eBGP peers per interface; IPv4 NLRI carries an IPv6 next hop</text>
+<g><title>leaf01 AS 65011 · lo 10.0.0.11/32</title><rect x="70" y="170" width="520" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="330.0" y="206.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
+<text x="330.0" y="228.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">AS 65011 · lo 10.0.0.11/32</text>
+<text x="330.0" y="254.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp51: no IPv4 address, ipv6 link-local fe80::1 (auto)</text>
+<text x="330.0" y="270.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set vrf default router bgp neighbor swp51 remote-as external</text>
+</g>
+<g><title>spine01 AS 65000 · lo 10.0.0.1/32</title><rect x="1010" y="170" width="520" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1270.0" y="206.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">spine01</text>
+<text x="1270.0" y="228.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">AS 65000 · lo 10.0.0.1/32</text>
+<text x="1270.0" y="254.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1: no IPv4 address, ipv6 link-local fe80::2 (auto)</text>
+<text x="1270.0" y="270.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set vrf default router bgp neighbor swp1 remote-as external</text>
+</g>
+<line x1="590" y1="230" x2="1010" y2="230" stroke="#6b7280" stroke-width="2.5"/>
+<rect x="639" y="205" width="321" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="800" y="222" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp51 ↔ swp1 · 800G · no /31 planning</text>
+<line x1="330" y1="290" x2="330" y2="880" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="1270" y1="290" x2="1270" y2="880" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
+<line x1="330" y1="340" x2="1270" y2="340" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<text x="800.0" y="328.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">IPv6 Router Advertisements (every few s): each side learns the peer's fe80:: link-local</text>
+<g><title>Step 1</title><circle cx="330" cy="308" r="16" fill="#1f2937"/><text x="330" y="314" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<line x1="330" y1="420" x2="1270" y2="420" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<text x="800.0" y="408.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">TCP 179 over fe80::2%swp51 ↔ fe80::1%swp1 · BGP OPEN (ASN 65011 / 65000)</text>
+<g><title>Step 2</title><circle cx="330" cy="388" r="16" fill="#1f2937"/><text x="330" y="394" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<g><title>remote-as external → accept any ASN ≠ mine (eBGP); 'internal' = same ASN</title><rect x="520" y="474" width="560" height="52" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="800.0" y="504.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">remote-as external → accept any ASN ≠ mine (eBGP); 'internal' = same ASN</text>
+</g>
+<g><title>Step 3</title><circle cx="490" cy="500" r="16" fill="#1f2937"/><text x="490" y="506" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<line x1="330" y1="580" x2="1270" y2="580" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="800.0" y="568.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">UPDATE: AFI 1 / SAFI 1 (IPv4 unicast) 10.0.0.11/32, next hop = fe80::1 (extended next-hop capability, RFC 5549)</text>
+<g><title>Step 4</title><circle cx="330" cy="548" r="16" fill="#1f2937"/><text x="330" y="554" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<line x1="1270" y1="660" x2="330" y2="660" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="800.0" y="648.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">UPDATE: 10.0.0.1/32 + IPv4 prefixes from other leaves, next hop fe80::2 · l2vpn-evpn AF: Type-2/5 routes</text>
+<g><title>Step 5</title><circle cx="1270" cy="628" r="16" fill="#1f2937"/><text x="1270" y="634" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<g><title>FIB: 10.0.0.1/32 via fe80::2 dev swp51 zebra installs IPv4 route with IPv6 nexthop</title><rect x="90" y="710" width="480" height="60" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="330.0" y="735.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">FIB: 10.0.0.1/32 via fe80::2 dev swp51</text>
+<text x="330.0" y="753.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">zebra installs IPv4 route with IPv6 nexthop</text>
+</g>
+<g><title>Step 6</title><circle cx="70" cy="740" r="16" fill="#1f2937"/><text x="70" y="746" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<g><title>FIB: 10.0.0.11/32 via fe80::1 dev swp1 ECMP: one next hop per leaf-facing interface</title><rect x="1030" y="710" width="480" height="60" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1270.0" y="735.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">FIB: 10.0.0.11/32 via fe80::1 dev swp1</text>
+<text x="1270.0" y="753.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle">ECMP: one next hop per leaf-facing interface</text>
+</g>
+<g><title>Step 6</title><circle cx="1530" cy="740" r="16" fill="#1f2937"/><text x="1530" y="746" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<g><title>Note</title><rect x="60" y="830" width="1000" height="120" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="72" y="853" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Why: every fabric link has IDENTICAL configuration (no addresses, no neighbour ASN), so templates are trivial and errors fall.</text>
+<text x="72" y="872" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Observe: nv show vrf default router bgp neighbor (Remote-AS learned, State Established);</text>
+<text x="72" y="891" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">sudo vtysh -c 'show ip bgp neighbors swp51' → 'Extended nexthop capability: advertised and received';</text>
+<text x="72" y="910" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">ip route → '10.0.0.1 via inet6 fe80::2 dev swp51'. Stuck in Active? Check IPv6 RA / interface neighbour on the OTHER end.</text>
+<g><title>Legend</title><rect x="1110" y="840" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1124" y1="866" x2="1184" y2="866" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1198" y="872" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<line x1="1124" y1="896" x2="1184" y2="896" stroke="#6b7280" stroke-width="2.5" marker-end="url(#arrow-gray)"/>
+<text x="1198" y="902" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Physical link</text>
+</g>
+</svg>

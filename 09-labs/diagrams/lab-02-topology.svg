@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 940" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>Lab 2 topology: a small InfiniBand subnet with Subnet Manager placement</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="940" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Lab 2 topology: a small InfiniBand subnet with Subnet Manager placement</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Option A is hostA-hostB back to back; Option B adds a managed Quantum switch; the full picture shows where the SM and PKeys live</text><g><title>ibsw-01  (QM97xx)</title><rect x="480" y="200" width="300" height="110" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="630.0" y="228" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">ibsw-01  (QM97xx)</text>
+<text x="630.0" y="258" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">managed, standby SM (priority 10)</text>
+<text x="630.0" y="276" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">LID 4; MF0;ibsw-01:MQM9700/U1</text>
+</g>
+<g><title>ibsw-02  (QM97xx)</title><rect x="900" y="200" width="300" height="110" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="1050.0" y="228" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">ibsw-02  (QM97xx)</text>
+<text x="1050.0" y="258" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">managed, no SM</text>
+<text x="1050.0" y="276" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">LID 5</text>
+</g>
+<line x1="780" y1="255" x2="900" y2="255" stroke="#2f6fdb" stroke-width="4" fill="none"/>
+<text x="840" y="245" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#2f6fdb" text-anchor="middle" xml:space="preserve">ISL 4X NDR</text>
+<g><title>hostA</title><rect x="120" y="440" width="300" height="120" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="270.0" y="468" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">hostA</text>
+<text x="270.0" y="498" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">opensm MASTER (priority 15)</text>
+<text x="270.0" y="516" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">LID 1, mlx5_0</text>
+<text x="270.0" y="534" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">PKeys 0x7fff + 0x8001</text>
+</g>
+<g><title>hostB</title><rect x="440" y="440" width="300" height="120" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="590.0" y="468" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">hostB</text>
+<text x="590.0" y="498" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ibping -S responder</text>
+<text x="590.0" y="516" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">LID 2, mlx5_0</text>
+<text x="590.0" y="534" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">PKeys 0x7fff + 0x8001</text>
+</g>
+<g><title>hostC</title><rect x="860" y="440" width="300" height="120" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1010.0" y="468" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">hostC</text>
+<text x="1010.0" y="498" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">no SM</text>
+<text x="1010.0" y="516" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">LID 3, mlx5_0</text>
+<text x="1010.0" y="534" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">PKey 0x7fff only</text>
+</g>
+<g><title>hostD</title><rect x="1180" y="440" width="300" height="120" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1330.0" y="468" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">hostD</text>
+<text x="1330.0" y="498" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">no SM</text>
+<text x="1330.0" y="516" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">LID 6, mlx5_0</text>
+<text x="1330.0" y="534" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">PKey 0x7fff only</text>
+</g>
+<line x1="270" y1="440" x2="560" y2="310" stroke="#2f6fdb" stroke-width="4" fill="none"/>
+<line x1="590" y1="440" x2="640" y2="310" stroke="#2f6fdb" stroke-width="4" fill="none"/>
+<line x1="1010" y1="440" x2="1000" y2="310" stroke="#2f6fdb" stroke-width="4" fill="none"/>
+<line x1="1330" y1="440" x2="1100" y2="310" stroke="#2f6fdb" stroke-width="4" fill="none"/>
+<path d="M270,560 L270,600 L590,600 L590,560" stroke="#2f6fdb" stroke-width="3" fill="none"/>
+<text x="430" y="625" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#2f6fdb" text-anchor="middle" xml:space="preserve">Option A: one cable hostA &lt;-&gt; hostB, no switch (minimum lab)</text>
+<path d="M200,440 L200,150 L630,150 L630,200" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<text x="240" y="142" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">SM sweep: SMPs assign LIDs, program LFTs, distribute PKey tables (hostA master; ibsw-01 standby takes over if hostA stops)</text>
+<g><title>Partitions in opensm partitions.conf</title><rect x="48" y="680" width="740" height="200" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="64" y="707" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Partitions in opensm partitions.conf</text>
+<text x="64" y="736" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Default=0x7fff, ipoib, rate=7, mtu=5 : ALL=full, SELF=full;</text>
+<text x="64" y="754" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Tenant1=0x8001, ipoib, rate=7, mtu=5 : hostA-GUID=full, hostB-GUID=full;</text>
+<text x="64" y="772" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">child interface ib0.8001 on hostA/hostB only; hostC cannot join 0x8001</text>
+<text x="64" y="790" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">verify: smpquery pkeys &lt;lid&gt; ; saquery -p ; cat /sys/class/net/ib0.8001/pkey</text>
+</g>
+<g><title>Lab flow</title><rect x="820" y="680" width="730" height="200" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="836" y="707" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Lab flow</text>
+<text x="836" y="736" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">1 no SM: every port Initializing / LinkUp / LID 0     2 start opensm on hostA -&gt; Active, LIDs</text>
+<text x="836" y="754" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">3 ibhosts / ibswitches / iblinkinfo (4X 106.25 Gbps)   4 ibping -S on hostB, ibping -L 2 from hostA</text>
+<text x="836" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">5 perfquery baseline, ibdiagnet -&gt; /var/tmp/ibdiagnet2   6 default PKey 0xffff on ib0</text>
+<text x="836" y="790" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">7 Tenant1 0x8001 child interfaces; ping across; hostC excluded by design</text>
+</g>
+<g><title>Legend</title><rect x="1200" y="580" width="350" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="1216" y1="606" x2="1270" y2="606" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="1284" y="611" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">4X NDR / HDR InfiniBand link</text>
+<line x1="1216" y1="636" x2="1270" y2="636" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1284" y="641" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SM management datagrams (VL15)</text>
+</g></svg>

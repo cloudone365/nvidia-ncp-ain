@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>Lab 4 topology: Ansible control node driving the Air leaf-spine through NVUE</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="900" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Lab 4 topology: Ansible control node driving the Air leaf-spine through NVUE</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Preferred path is the NVUE REST API (nvidia.nvue collection, HTTPS 8765); fallback is rendered nv set commands over SSH</text><g><title>spine01</title><rect x="420" y="200" width="300" height="100" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="570.0" y="228" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">spine01</text>
+<text x="570.0" y="258" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x, ASN 65100</text>
+<text x="570.0" y="276" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">lo 10.10.10.101/32</text>
+</g>
+<g><title>spine02</title><rect x="860" y="200" width="300" height="100" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1010.0" y="228" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">spine02</text>
+<text x="1010.0" y="258" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x, ASN 65100</text>
+<text x="1010.0" y="276" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">lo 10.10.10.102/32</text>
+</g>
+<g><title>leaf01</title><rect x="420" y="420" width="300" height="100" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="570.0" y="448" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">leaf01</text>
+<text x="570.0" y="478" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x, ASN 65101</text>
+<text x="570.0" y="496" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">lo 10.10.10.1/32</text>
+</g>
+<g><title>leaf02</title><rect x="860" y="420" width="300" height="100" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1010.0" y="448" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">leaf02</text>
+<text x="1010.0" y="478" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Cumulus VX 5.x, ASN 65102</text>
+<text x="1010.0" y="496" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">lo 10.10.10.2/32</text>
+</g>
+<line x1="530" y1="420" x2="530" y2="300" stroke="#e07b00" stroke-width="3" fill="none"/>
+<line x1="610" y1="420" x2="970" y2="300" stroke="#e07b00" stroke-width="3" fill="none"/>
+<line x1="970" y1="420" x2="610" y2="300" stroke="#e07b00" stroke-width="3" fill="none"/>
+<line x1="1050" y1="420" x2="1050" y2="300" stroke="#e07b00" stroke-width="3" fill="none"/>
+<text x="540" y="405" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp51</text>
+<text x="620" y="405" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp52</text>
+<text x="980" y="405" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp51</text>
+<text x="1060" y="405" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp52</text>
+<text x="540" y="318" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp1</text>
+<text x="620" y="318" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp2</text>
+<text x="980" y="318" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp1</text>
+<text x="1060" y="318" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">swp2</text>
+<g><title>oob-mgmt-server (control node)</title><rect x="48" y="160" width="330" height="320" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="64" y="187" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">oob-mgmt-server (control node)</text>
+<text x="64" y="216" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ansible-core 2.14+</text>
+<text x="64" y="234" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ansible-galaxy collection install</text>
+<text x="64" y="252" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  nvidia.nvue</text>
+<text x="64" y="270" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">inventory.ini:</text>
+<text x="64" y="288" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  [spines] spine01 spine02</text>
+<text x="64" y="306" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  [leaves] leaf01 leaf02</text>
+<text x="64" y="324" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  [cumulus:children] + vars</text>
+<text x="64" y="342" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">group_vars/spines.yml, leaves.yml</text>
+<text x="64" y="360" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">host_vars: loopback, bgp_asn,</text>
+<text x="64" y="378" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  router_id, server_if, server_ip</text>
+</g>
+<path d="M378,300 L400,300 L400,250 L420,250" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<path d="M400,300 L400,470 L420,470" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<path d="M400,300 L400,140 L1010,140 L1010,200" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<path d="M400,470 L400,560 L1010,560 L1010,520" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<text x="410" y="160" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">mgmt network (eth0 / VRF mgmt)</text>
+<g><title>Two transports</title><rect x="48" y="520" width="330" height="200" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="64" y="547" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Two transports</text>
+<text x="64" y="576" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">REST: nvidia.nvue modules -&gt;</text>
+<text x="64" y="594" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  https://&lt;switch&gt;:8765/nvue_v1/</text>
+<text x="64" y="612" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  PATCH + revision apply</text>
+<text x="64" y="630" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">CLI: ansible.builtin.command</text>
+<text x="64" y="648" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  nv set ... ; nv config apply -y</text>
+<text x="64" y="666" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  idempotent via nv config diff</text>
+</g>
+<g><title>On each switch</title><rect x="1200" y="160" width="350" height="200" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1216" y="187" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">On each switch</text>
+<text x="1216" y="216" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv show system api  (REST enabled)</text>
+<text x="1216" y="234" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nvued renders -&gt; /etc/nvue.d/</text>
+<text x="1216" y="252" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  startup.yaml</text>
+<text x="1216" y="270" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv config diff = dry run (check mode)</text>
+<text x="1216" y="288" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv config save persists</text>
+</g>
+<g><title>Playbook result = Lab 1 config</title><rect x="1200" y="400" width="350" height="200" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1216" y="427" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Playbook result = Lab 1 config</text>
+<text x="1216" y="456" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">hostname, lo, swp51/52 up</text>
+<text x="1216" y="474" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">BGP unnumbered peer-group</text>
+<text x="1216" y="492" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">server-facing swp1 IP</text>
+<text x="1216" y="510" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv set qos roce (leaves only)</text>
+<text x="1216" y="528" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">run twice: changed=0 the 2nd time</text>
+</g>
+<g><title>Verify with Ansible, not by hand</title><rect x="48" y="760" width="1500" height="90" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="64" y="787" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Verify with Ansible, not by hand</text>
+<text x="64" y="817" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ansible cumulus -m command -a 'nv show router bgp'  |  ansible leaves -m command -a 'nv show qos roce'  |  nv config diff empty on every node</text>
+</g>
+<g><title>Legend</title><rect x="1200" y="640" width="350" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="1216" y1="666" x2="1270" y2="666" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1284" y="671" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Ansible -&gt; NVUE REST (8765) or SSH</text>
+<line x1="1216" y1="696" x2="1270" y2="696" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1284" y="701" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Fabric link</text>
+</g></svg>

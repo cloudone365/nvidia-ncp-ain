@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1040" width="100%" role="img" aria-label="Top panel shows a switch ingress buffer for priority 3 with xoff and xon thresholds and headroom and the pause frame sent to the host; bottom panel shows pause propagating from a hung NIC through leaf and spine to unrelated hosts and the PFC watchdog dropping to break it"><title>PFC: per-priority pause, XOFF/XON, headroom, and how a pause becomes a storm</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="1040" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">PFC: per-priority pause, XOFF/XON, headroom, and how a pause becomes a storm</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Top: one hop in detail. Bottom: a stuck receiver propagates XOFF hop by hop until the watchdog breaks the chain</text>
+<g><title>hostA ens1f0np0 (TX)</title><rect x="60" y="170" width="260" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="190.0" y="215.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">hostA ens1f0np0 (TX)</text>
+<text x="190.0" y="238.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sends prio 3 (DSCP 26)</text>
+<text x="190.0" y="258.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">stops ONLY on PFC XOFF</text>
+<g><title>leaf01 swp1 ingress (RX)</title><rect x="1240" y="170" width="300" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1390.0" y="215.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">leaf01 swp1 ingress (RX)</text>
+<text x="1390.0" y="238.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">priority-3 lossless pool</text>
+<text x="1390.0" y="258.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">trust DSCP</text>
+<line x1="320" y1="200" x2="1240" y2="200" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="780.0" y="190.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="500" fill="#e07b00" text-anchor="middle">RoCE data, priority 3, 400 Gb/s</text>
+<circle cx="780" cy="240" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="780" y="246" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<line x1="1240" y1="260" x2="320" y2="260" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="780.0" y="276.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#d93025" text-anchor="middle">PFC frame (MAC 01:80:C2:00:00:01, EtherType 0x8808, opcode 0x0101): prio-3 pause, time 0xFFFF quanta (512 bit-times each)</text>
+<circle cx="780" cy="300" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="780" y="306" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<g><rect x="500" y="330" width="600" height="60" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<g><rect x="500" y="330" width="330" height="60" rx="6" fill="#ffe9cc" stroke="#e07b00" stroke-width="0" fill-opacity="1.0"/></g>
+<g><rect x="830" y="330" width="170" height="60" rx="6" fill="#ffd9d9" stroke="#d93025" stroke-width="0" fill-opacity="0.6"/></g>
+<text x="725" y="368" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#1f2937" text-anchor="middle">normal fill</text>
+<text x="915" y="368" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle">headroom</text>
+<text x="1050" y="368" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">spare</text>
+<path d="M830,320 L830,400" fill="none" stroke="#1f2937" stroke-width="3"/>
+<text x="830" y="314" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#d93025" text-anchor="middle">XOFF threshold: send pause here</text>
+<path d="M620,320 L620,400" fill="none" stroke="#1f2937" stroke-width="3"/>
+<text x="620" y="418" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">XON: resume when drained to here</text>
+<circle cx="470" cy="360" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="470" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<g><rect x="60" y="430" width="1480" height="110" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="72" y="454" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">3  Headroom must hold everything still arriving after XOFF is sent: sender reaction (&lt;= 2 x 512 bit-times + pipeline) + one max frame in flight (9216 B)</text>
+<text x="72" y="473" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">   + 2 x cable propagation (fibre ~5 ns/m). 400 Gb/s x 100 m: 2 x 500 ns x 50 GB/s = 50 KB, plus ~9 KB frame, plus NIC/MAC delay -&gt; ~70-100 KB per port per priority.</text>
+<text x="72" y="492" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">   Spectrum computes it from the configured cable-length (nv show qos roce). Too small = rx_prio3_discards on a &#x27;lossless&#x27; priority. XON &lt; XOFF gives hysteresis.</text>
+<text x="60" y="600" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start">PFC storm: XOFF propagates against the flow of traffic</text>
+<g><title>hostX NIC (hung)</title><rect x="60" y="630" width="240" height="80" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="180.0" y="665.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">hostX NIC (hung)</text>
+<text x="180.0" y="687.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">holds XOFF forever</text>
+<g><title>leaf02 swp7</title><rect x="360" y="630" width="240" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="480.0" y="665.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">leaf02 swp7</text>
+<text x="480.0" y="687.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">tx stalls, buffer fills</text>
+<g><title>spine01 swp49</title><rect x="660" y="630" width="240" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="780.0" y="665.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">spine01 swp49</text>
+<text x="780.0" y="687.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">fills, pauses upstream</text>
+<g><title>leaf01 swp52</title><rect x="960" y="630" width="240" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1080.0" y="665.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">leaf01 swp52</text>
+<text x="1080.0" y="687.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">fills, pauses hosts</text>
+<g><title>hostA (victim)</title><rect x="1260" y="630" width="240" height="80" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1380.0" y="665.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">hostA (victim)</text>
+<text x="1380.0" y="687.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">frozen, never talked to hostX</text>
+<line x1="360" y1="655" x2="300" y2="655" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<line x1="300" y1="690" x2="360" y2="690" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<line x1="660" y1="655" x2="600" y2="655" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<line x1="600" y1="690" x2="660" y2="690" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<line x1="960" y1="655" x2="900" y2="655" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<line x1="900" y1="690" x2="960" y2="690" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<line x1="1260" y1="655" x2="1200" y2="655" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<line x1="1200" y1="690" x2="1260" y2="690" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="800" y="740" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">data flows right-to-left; pause frames travel left-to-right, one hop at a time (PFC is link-local, never end-to-end)</text>
+<circle cx="340" cy="690" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="340" y="696" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<g><title>PFC watchdog on leaf02 swp7</title><rect x="360" y="780" width="600" height="90" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="660.0" y="809.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">PFC watchdog on leaf02 swp7</text>
+<text x="660.0" y="830.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">paused &gt; threshold (~200-400 ms) -&gt; drop prio-3 on that port, log,</text>
+<text x="660.0" y="850.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">restore after recovery interval (nv set ... qos pfc-watchdog; verify syntax)</text>
+<circle cx="340" cy="825" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="340" y="831" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<g><rect x="980" y="780" width="560" height="90" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="992" y="804" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Observe: rx_prio3_pause_duration never returning to 0 (ethtool -S);</text>
+<text x="992" y="823" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">nv show interface qos-roce-counters sorted by rx pfc; switchd.log for watchdog.</text>
+<text x="992" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Deadlock variant: cyclic buffer dependency across a Clos during reroutes.</text>
+<g><rect x="60" y="900" width="480" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="74" y="920" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
+<line x1="74" y1="942" x2="134" y2="942" stroke="#e07b00" stroke-width="4"/>
+<text x="146" y="948" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (Ethernet / RoCE)</text>
+<line x1="74" y1="972" x2="134" y2="972" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6"/>
+<text x="146" y="978" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Congestion / flow-control signal</text>
+<line x1="74" y1="1002" x2="134" y2="1002" stroke="#1f2937" stroke-width="3"/>
+<text x="146" y="1008" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Local call / state change</text>
+</svg>

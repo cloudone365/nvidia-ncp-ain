@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1700" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>Decision flow: "NCCL is slow between two nodes" on RoCE and on InfiniBand</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="1700" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Decision flow: "NCCL is slow between two nodes" on RoCE and on InfiniBand</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Same opening move on both fabrics (perftest per rail); the tracks diverge at the congestion step</text><g><title>nccl-tests busbw at 60% of reference between dgx-01 and dgx-02</title><rect x="500" y="150" width="600" height="70" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="800.0" y="177" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">nccl-tests busbw at 60% of reference between dgx-01 and dgx-02</text>
+</g>
+<line x1="800" y1="220" x2="800" y2="270" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>ib_write_bw per rail pair: one rail low, others ~line rate ?</title><polygon points="800,270.0 1080.0,330 800,390.0 520.0,330" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="800" y="325.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ib_write_bw per rail pair: one rail</text>
+<text x="800" y="345.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">low, others ~line rate ?</text>
+</g>
+<g><title>Step 1</title><circle cx="480" cy="330" r="16" fill="#1f2937"/><text x="480" y="336" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<g><rect x="1180" y="275" width="370" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1196" y="298" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">All rails low -&gt; host: PCIe (nvidia-smi</text>
+<text x="1196" y="318" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">topo -m), NCCL_IB_HCA, GDR level,</text>
+<text x="1196" y="338" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">CPU governor; not the fabric</text>
+</g>
+<line x1="1080" y1="330" x2="1180" y2="330" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="1116.4" y="306" width="27.2" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="1130" y="320" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">No</text>
+<line x1="800" y1="390" x2="800" y2="440" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<rect x="826" y="406" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="830" y="420" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="start" xml:space="preserve">Yes</text>
+<g><title>Half rate (~196 of 400) or physical errors on that rail ?</title><polygon points="800,440.0 1080.0,500 800,560.0 520.0,500" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="800" y="495.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Half rate (~196 of 400) or</text>
+<text x="800" y="515.3333333333333" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">physical errors on that rail ?</text>
+</g>
+<g><title>Step 2</title><circle cx="480" cy="500" r="16" fill="#1f2937"/><text x="480" y="506" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<g><rect x="1180" y="445" width="370" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1196" y="468" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Layer 1: iblinkinfo 'Could be', nv show</text>
+<text x="1196" y="488" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">interface link lanes, mlxlink -m -c (8.3).</text>
+<text x="1196" y="508" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Cable, not QoS</text>
+</g>
+<line x1="1080" y1="500" x2="1180" y2="500" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)" fill="none"/>
+<rect x="1111.6" y="476" width="36.8" height="22" fill="#ffffff" opacity="0.9"/>
+<text x="1130" y="490" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle" xml:space="preserve">Yes</text>
+<text x="820" y="600" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#1f2937" text-anchor="start" xml:space="preserve">No: 5-10% low with retries = loss or congestion. Which fabric?</text>
+<path d="M800,560 L800,630 L310,630 L310,670" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<path d="M800,560 L800,630 L1030,630 L1030,670" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<text x="310" y="660" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#e07b00" text-anchor="middle" xml:space="preserve">RoCE / Spectrum-X</text>
+<text x="1030" y="660" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#2f6fdb" text-anchor="middle" xml:space="preserve">InfiniBand / Quantum + UFM</text>
+<g><title>netq &lt;leaf&gt; show roce-counters: PFC Tx to the host rising ?</title><polygon points="310,690.0 500.0,750 310,810.0 120.0,750" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="310" y="745.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">netq &lt;leaf&gt; show roce-counters:</text>
+<text x="310" y="764.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">PFC Tx to the host rising ?</text>
+</g>
+<g><title>Step 3</title><circle cx="90" cy="750" r="16" fill="#1f2937"/><text x="90" y="756" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><rect x="520" y="695" width="280" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="532" y="717" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">No PFC, no ECN, still slow:</text>
+<text x="532" y="735" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">WJH drops of any type on</text>
+<text x="532" y="753" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">the path; netq trace (ECMP)</text>
+</g>
+<line x1="500" y1="750" x2="520" y2="750" stroke="#d93025" stroke-width="3" marker-end="url(#arrow-red)" fill="none"/>
+<line x1="310" y1="810" x2="310" y2="860" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>netq show wjh-drop buffer dst-port 4791: Tail drop ?</title><polygon points="310,860.0 500.0,920 310,980.0 120.0,920" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="310" y="915.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">netq show wjh-drop buffer</text>
+<text x="310" y="934.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">dst-port 4791: Tail drop ?</text>
+</g>
+<g><title>Step 4</title><circle cx="90" cy="920" r="16" fill="#1f2937"/><text x="90" y="926" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<g><rect x="520" y="865" width="280" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="532" y="887" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">No drops = congestion only.</text>
+<text x="532" y="905" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ECN marks rising = DCQCN</text>
+<text x="532" y="923" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">working; check ECMP, oversub</text>
+</g>
+<line x1="500" y1="920" x2="520" y2="920" stroke="#d93025" stroke-width="3" marker-end="url(#arrow-red)" fill="none"/>
+<line x1="310" y1="980" x2="310" y2="1030" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>WJH TC column = 3 (lossless) for the dropped packets ?</title><polygon points="310,1030.0 500.0,1090 310,1150.0 120.0,1090" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="310" y="1085.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">WJH TC column = 3 (lossless)</text>
+<text x="310" y="1104.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">for the dropped packets ?</text>
+</g>
+<g><title>Step 5</title><circle cx="90" cy="1090" r="16" fill="#1f2937"/><text x="90" y="1096" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<g><rect x="520" y="1035" width="280" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="532" y="1057" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">TC 0 = host DSCP wrong:</text>
+<text x="532" y="1075" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">NCCL_IB_TC=106, sysfs tc/1/</text>
+<text x="532" y="1093" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">traffic_class, mlnx_qos trust</text>
+</g>
+<line x1="500" y1="1090" x2="520" y2="1090" stroke="#d93025" stroke-width="3" marker-end="url(#arrow-red)" fill="none"/>
+<line x1="310" y1="1150" x2="310" y2="1200" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>PFC pause pegged at line rate with the link idle (storm) ?</title><polygon points="310,1200.0 500.0,1260 310,1320.0 120.0,1260" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="310" y="1255.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">PFC pause pegged at line rate</text>
+<text x="310" y="1274.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">with the link idle (storm) ?</text>
+</g>
+<g><title>Step 6</title><circle cx="90" cy="1260" r="16" fill="#1f2937"/><text x="90" y="1266" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<g><rect x="520" y="1205" width="280" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="532" y="1227" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Storm: isolate port, hung NIC</text>
+<text x="532" y="1245" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">or driver, PFC loop; counters</text>
+<text x="532" y="1263" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">--view=pause, WJH L1</text>
+</g>
+<line x1="500" y1="1260" x2="520" y2="1260" stroke="#d93025" stroke-width="3" marker-end="url(#arrow-red)" fill="none"/>
+<line x1="310" y1="1320" x2="310" y2="1370" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>nv show qos roce identical on every leaf (netq check roce) ?</title><polygon points="310,1370.0 500.0,1430 310,1490.0 120.0,1430" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="310" y="1425.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">nv show qos roce identical on</text>
+<text x="310" y="1444.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">every leaf (netq check roce) ?</text>
+</g>
+<g><title>Step 7</title><circle cx="90" cy="1430" r="16" fill="#1f2937"/><text x="90" y="1436" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<g><rect x="520" y="1375" width="280" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="532" y="1397" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Drift: a lossy leaf or other</text>
+<text x="532" y="1415" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ECN thresholds -&gt; nv set qos</text>
+<text x="532" y="1433" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">roce mode lossless; Ansible</text>
+</g>
+<line x1="500" y1="1430" x2="520" y2="1430" stroke="#d93025" stroke-width="3" marker-end="url(#arrow-red)" fill="none"/>
+<line x1="310" y1="1490" x2="310" y2="1560" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>PFC + ECN + DSCP consistent host to host</title><rect x="80" y="1560" width="460" height="80" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="310.0" y="1585" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">PFC + ECN + DSCP consistent host to host</text>
+<text x="310.0" y="1612" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">perftest OK, WJH 4791 empty, busbw at reference</text>
+</g>
+<g><title>UFM events on the path: Symbol error / High BER / link down ?</title><polygon points="1030,690.0 1220.0,750 1030,810.0 840.0,750" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1030" y="745.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">UFM events on the path: Symbol</text>
+<text x="1030" y="764.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">error / High BER / link down ?</text>
+</g>
+<g><title>Step 3</title><circle cx="810" cy="750" r="16" fill="#1f2937"/><text x="810" y="756" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><rect x="1240" y="695" width="280" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1252" y="717" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Physical: UFM isolate port,</text>
+<text x="1252" y="735" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxlink -m -c, replace (8.3)</text>
+</g>
+<line x1="1220" y1="750" x2="1240" y2="750" stroke="#d93025" stroke-width="3" marker-end="url(#arrow-red)" fill="none"/>
+<line x1="1030" y1="810" x2="1030" y2="860" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>perfquery -x on the leaf port: XmitWait rising, Symbol 0 ?</title><polygon points="1030,860.0 1220.0,920 1030,980.0 840.0,920" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1030" y="915.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">perfquery -x on the leaf port:</text>
+<text x="1030" y="934.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">XmitWait rising, Symbol 0 ?</text>
+</g>
+<g><title>Step 4</title><circle cx="810" cy="920" r="16" fill="#1f2937"/><text x="810" y="926" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<g><rect x="1240" y="865" width="280" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1252" y="887" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">No wait, no errors -&gt; SL/VL,</text>
+<text x="1252" y="905" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PKey (saquery -p), or host</text>
+</g>
+<line x1="1220" y1="920" x2="1240" y2="920" stroke="#d93025" stroke-width="3" marker-end="url(#arrow-red)" fill="none"/>
+<line x1="1030" y1="980" x2="1030" y2="1030" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>ibtracert rail-N -&gt; rail-N: one leaf hop as designed ?</title><polygon points="1030,1030.0 1220.0,1090 1030,1150.0 840.0,1090" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1030" y="1085.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ibtracert rail-N -&gt; rail-N:</text>
+<text x="1030" y="1104.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">one leaf hop as designed ?</text>
+</g>
+<g><title>Step 5</title><circle cx="810" cy="1090" r="16" fill="#1f2937"/><text x="810" y="1096" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<g><rect x="1240" y="1035" width="280" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1252" y="1057" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Extra hop = miswire (CVT, 8.2)</text>
+<text x="1252" y="1075" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">or routing engine / LFT issue</text>
+</g>
+<line x1="1220" y1="1090" x2="1240" y2="1090" stroke="#d93025" stroke-width="3" marker-end="url(#arrow-red)" fill="none"/>
+<line x1="1030" y1="1150" x2="1030" y2="1200" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>UFM SM: adaptive routing on, SHARP trees healthy ?</title><polygon points="1030,1200.0 1220.0,1260 1030,1320.0 840.0,1260" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1030" y="1255.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">UFM SM: adaptive routing on,</text>
+<text x="1030" y="1274.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">SHARP trees healthy ?</text>
+</g>
+<g><title>Step 6</title><circle cx="810" cy="1260" r="16" fill="#1f2937"/><text x="810" y="1266" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<g><rect x="1240" y="1205" width="280" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1252" y="1227" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">AR off on a fat tree = static</text>
+<text x="1252" y="1245" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">hot spots; enable AR, fix</text>
+<text x="1252" y="1263" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SHARP (Module 2.3)</text>
+</g>
+<line x1="1220" y1="1260" x2="1240" y2="1260" stroke="#d93025" stroke-width="3" marker-end="url(#arrow-red)" fill="none"/>
+<line x1="1030" y1="1320" x2="1030" y2="1370" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>UFM telemetry: XmitWait sawtooth aligned with all_reduce phases ?</title><polygon points="1030,1370.0 1220.0,1430 1030,1490.0 840.0,1430" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1030" y="1425.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">UFM telemetry: XmitWait sawtooth</text>
+<text x="1030" y="1444.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">aligned with all_reduce phases ?</text>
+</g>
+<g><title>Step 7</title><circle cx="810" cy="1430" r="16" fill="#1f2937"/><text x="810" y="1436" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<g><rect x="1240" y="1375" width="280" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1252" y="1397" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Credit starvation on the path:</text>
+<text x="1252" y="1415" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">oversubscription, traffic</text>
+<text x="1252" y="1433" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">pattern; rebalance placement</text>
+</g>
+<line x1="1220" y1="1430" x2="1240" y2="1430" stroke="#d93025" stroke-width="3" marker-end="url(#arrow-red)" fill="none"/>
+<line x1="1030" y1="1490" x2="1030" y2="1560" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
+<g><title>UFM Fabric Health clean after the change</title><rect x="800" y="1560" width="460" height="80" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1030.0" y="1585" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">UFM Fabric Health clean after the change</text>
+<text x="1030.0" y="1612" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">zero Speed/Width, High BER, routing warnings</text>
+</g>
+<g><title>Legend</title><rect x="48" y="150" width="330" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="64" y1="176" x2="118" y2="176" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="132" y="181" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Next check</text>
+<line x1="64" y1="206" x2="118" y2="206" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)"/>
+<text x="132" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Exit to the fix</text>
+</g></svg>

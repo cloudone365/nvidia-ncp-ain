@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
+<title>CI/CD pipeline: commit → lint/render → check mode → Air twin → apply → netq check → rollback</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">CI/CD pipeline: commit → lint/render → check mode → Air twin → apply → netq check → rollback</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Repository layout on the left; each stage either produces a reviewable artefact or gates the next; git revert + nv config replace is the rollback</text>
+<g><title>fabric-config/ (git) </title><rect x="60" y="150" width="400" height="300" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="260.0" y="236.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">fabric-config/ (git)</text>
+<text x="260.0" y="284.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">inventory/hosts.ini</text>
+<text x="260.0" y="300.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">group_vars/{cumulus,leaves,spines}.yml</text>
+<text x="260.0" y="316.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">host_vars/leaf01.yml …</text>
+<text x="260.0" y="332.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">templates/spectrumx-leaf.yaml.j2, spine.yaml.j2</text>
+<text x="260.0" y="348.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">rendered/&lt;switch&gt;.yaml  ← CI artefact, reviewed</text>
+<text x="260.0" y="364.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">playbooks/ site.yml vlan-roce.yml validate.yml</text>
+<text x="260.0" y="380.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">roles/nvue_fabric/{tasks,templates}</text>
+</g>
+<g><title>1  Commit / PR</title><rect x="520" y="150" width="260" height="72" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="650.0" y="190.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">1  Commit / PR</text>
+</g>
+<g><title>feature branch; reviewers see host_vars change</title><rect x="800" y="150" width="740" height="72" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1170.0" y="190.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle">feature branch; reviewers see host_vars change</text>
+</g>
+<line x1="650" y1="222" x2="650" y2="242" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>2  Lint + render</title><rect x="520" y="242" width="260" height="72" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="650.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">2  Lint + render</text>
+</g>
+<g><title>ansible-lint · yamllint · jinja2 render → rendered/*.yaml · git diff shows the DEVICE change</title><rect x="800" y="242" width="740" height="72" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1170.0" y="282.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle">ansible-lint · yamllint · jinja2 render → rendered/*.yaml · git diff shows the DEVICE change</text>
+</g>
+<line x1="650" y1="314" x2="650" y2="334" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>3  Check mode</title><rect x="520" y="334" width="260" height="72" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="650.0" y="374.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">3  Check mode</text>
+</g>
+<g><title>ansible-playbook --check --diff → nv config replace + diff on each switch, apply skipped, detach</title><rect x="800" y="334" width="740" height="72" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1170.0" y="374.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle">ansible-playbook --check --diff → nv config replace + diff on each switch, apply skipped, detach</text>
+</g>
+<line x1="650" y1="406" x2="650" y2="426" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>4  Simulate (Air)</title><rect x="520" y="426" width="260" height="72" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="650.0" y="466.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">4  Simulate (Air)</text>
+</g>
+<g><title>spin up twin via API → apply → netq check bgp/evpn/interfaces (control plane only) → tear down</title><rect x="800" y="426" width="740" height="72" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1170.0" y="466.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle">spin up twin via API → apply → netq check bgp/evpn/interfaces (control plane only) → tear down</text>
+</g>
+<line x1="650" y1="498" x2="650" y2="518" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>5  Deploy (merge)</title><rect x="520" y="518" width="260" height="72" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="650.0" y="558.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">5  Deploy (merge)</text>
+</g>
+<g><title>serial: 1 · nv config replace → diff → apply → save; async/poll around AR/breakout</title><rect x="800" y="518" width="740" height="72" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1170.0" y="558.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle">serial: 1 · nv config replace → diff → apply → save; async/poll around AR/breakout</text>
+</g>
+<line x1="650" y1="590" x2="650" y2="610" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>6  Validate</title><rect x="520" y="610" width="260" height="72" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="650.0" y="650.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">6  Validate</text>
+</g>
+<g><title>netq check bgp|evpn|interfaces|mtu|roce json; snapshot compare before/after</title><rect x="800" y="610" width="740" height="72" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1170.0" y="650.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle">netq check bgp|evpn|interfaces|mtu|roce json; snapshot compare before/after</text>
+</g>
+<line x1="650" y1="682" x2="650" y2="702" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>7  Rollback / drift</title><rect x="520" y="702" width="260" height="72" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="650.0" y="742.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">7  Rollback / drift</text>
+</g>
+<g><title>fail → git revert → replace (declarative); nightly nv config show -o yaml vs rendered/ = drift</title><rect x="800" y="702" width="740" height="72" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1170.0" y="742.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle">fail → git revert → replace (declarative); nightly nv config show -o yaml vs rendered/ = drift</text>
+</g>
+<line x1="460" y1="300" x2="520" y2="200" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="480.0" y="238.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">push</text>
+<polyline points="1540,738 1570,738 1570,186 1540,186" fill="none" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<rect x="1547" y="454" width="47" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="1570" y="470" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">fail</text>
+<text x="60" y="500" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#5f6b7a" text-anchor="start">Gates</text>
+<text x="60" y="530" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">• stage 2: YAML must parse (python3 -c yaml.safe_load)</text>
+<text x="60" y="554" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">• stage 3: no writes (nv config history unchanged)</text>
+<text x="60" y="578" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">• stage 4: failedNodeCount == 0 in the twin</text>
+<text x="60" y="602" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">• stage 5: changed only where diff non-empty</text>
+<text x="60" y="626" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">• stage 6: failedNodeCount == 0 on hardware</text>
+<text x="60" y="650" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">• secrets: Ansible Vault; API cert: nv set system api certificate</text>
+<text x="60" y="710" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start">What Air cannot gate: RoCE/AR/PFC behaviour —</text>
+<text x="60" y="728" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start">stage 6 on hardware (plus ib_write_bw / NCCL) is the only proof.</text>
+<g><title>Legend</title><rect x="60" y="770" width="430" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="74" y1="796" x2="134" y2="796" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="148" y="802" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Flow / step</text>
+<line x1="74" y1="826" x2="134" y2="826" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="148" y="832" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<line x1="74" y1="856" x2="134" y2="856" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="148" y="862" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">failure → rollback</text>
+</g>
+</svg>

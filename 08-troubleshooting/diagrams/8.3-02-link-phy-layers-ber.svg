@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 940" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>Inside one NDR link: lanes, FEC, raw vs effective BER, and where errors are born</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="940" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Inside one NDR link: lanes, FEC, raw vs effective BER, and where errors are born</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">PAM4 at 106.25 Gb/s per lane is designed to run with raw errors; RS-FEC(544,514) removes them. Only what FEC misses reaches the link layer</text><g><title>Local port (ConnectX-7)</title><rect x="48" y="200" width="300" height="460" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="198.0" y="228" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Local port (ConnectX-7)</text>
+</g>
+<g><title>Link layer</title><rect x="70" y="250" width="256" height="110" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="86" y="276" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Link layer</text>
+<text x="86" y="304" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">packets, VLs, credits</text>
+<text x="86" y="322" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">sees: Symbol Errors,</text>
+<text x="86" y="340" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">LinkErrorRecovery, LinkDowned</text>
+</g>
+<g><title>RS-FEC (544,514) decoder</title><rect x="70" y="380" width="256" height="120" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="86" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">RS-FEC (544,514) decoder</text>
+<text x="86" y="434" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">10-bit symbols, 544 per codeword</text>
+<text x="86" y="452" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">corrects up to 15 bad symbols</text>
+<text x="86" y="470" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">16+ bad = uncorrectable</text>
+</g>
+<g><title>SerDes Rx, 4 lanes</title><rect x="70" y="520" width="256" height="120" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="86" y="546" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">SerDes Rx, 4 lanes</text>
+<text x="86" y="574" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PAM4, 106.25 Gb/s each</text>
+<text x="86" y="592" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">eye height / phase margin (-e)</text>
+<text x="86" y="610" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">raw BER counted per lane</text>
+</g>
+<g><title>OSFP module</title><rect x="430" y="520" width="220" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="540.0" y="546" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">OSFP module</text>
+<text x="540.0" y="574" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Rx power per lane [dBm]</text>
+<text x="540.0" y="592" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">temp, Vcc, LOS</text>
+<text x="540.0" y="610" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">(-m / DOM)</text>
+</g>
+<g><title>Fiber / DAC</title><rect x="730" y="520" width="220" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="840.0" y="546" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Fiber / DAC</text>
+<text x="840.0" y="574" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">MPO ferrule, 4+4 fibers</text>
+<text x="840.0" y="592" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">or 8 copper pairs</text>
+<text x="840.0" y="610" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">bend radius, length</text>
+</g>
+<g><title>Far-end module</title><rect x="1030" y="520" width="220" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1140.0" y="546" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Far-end module</text>
+<text x="1140.0" y="574" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Tx power per lane [dBm]</text>
+<text x="1140.0" y="592" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">bias current [mA]</text>
+<text x="1140.0" y="610" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">its temp</text>
+</g>
+<g><title>Far-end port</title><rect x="1300" y="200" width="250" height="460" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="1425.0" y="228" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">Far-end port</text>
+</g>
+<g><title>Link layer</title><rect x="1320" y="250" width="210" height="100" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="1336" y="276" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Link layer</text>
+<text x="1336" y="304" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">same view from</text>
+<text x="1336" y="322" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">the other side</text>
+</g>
+<g><title>RS-FEC encoder</title><rect x="1320" y="380" width="210" height="110" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="1336" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">RS-FEC encoder</text>
+<text x="1336" y="434" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">adds 30 parity</text>
+<text x="1336" y="452" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">symbols per 514</text>
+</g>
+<g><title>SerDes Tx, 4 lanes</title><rect x="1320" y="520" width="210" height="120" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="1336" y="546" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">SerDes Tx, 4 lanes</text>
+<text x="1336" y="574" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PAM4 drivers</text>
+<text x="1336" y="592" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">pre-emphasis</text>
+</g>
+<line x1="1300" y1="560" x2="350" y2="560" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
+<line x1="1300" y1="578" x2="350" y2="578" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
+<line x1="1300" y1="596" x2="350" y2="596" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
+<line x1="1300" y1="614" x2="350" y2="614" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
+<text x="660" y="505" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#2f6fdb" text-anchor="start" xml:space="preserve">4 lanes  (link Width 4x; two lanes lit = Width 2x = 'Could be 4X')</text>
+<g><title>Error source</title><rect x="430" y="690" width="280" height="100" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="446" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Dirty / scratched ferrule, bent fiber:</text>
+<text x="446" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ONE lane low Rx power, one lane raw</text>
+<text x="446" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">BER 100-1000x its siblings</text>
+</g>
+<line x1="550" y1="690" x2="550" y2="640" stroke="#d93025" stroke-width="2" marker-end="url(#arrow-red)" fill="none"/>
+<g><title>Error source</title><rect x="730" y="690" width="280" height="100" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="746" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Hot module (near [-5..80] C ceiling):</text>
+<text x="746" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ALL lanes drift; BER rises with load</text>
+<text x="746" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">and fixes itself at night</text>
+</g>
+<line x1="850" y1="690" x2="850" y2="640" stroke="#d93025" stroke-width="2" marker-end="url(#arrow-red)" fill="none"/>
+<g><title>Error source</title><rect x="1030" y="690" width="280" height="100" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1046" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Far-end Tx lane dying:</text>
+<text x="1046" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">low Rx here, normal Rx there;</text>
+<text x="1046" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">check far end -m Tx power</text>
+</g>
+<line x1="1150" y1="690" x2="1150" y2="640" stroke="#d93025" stroke-width="2" marker-end="url(#arrow-red)" fill="none"/>
+<g><title>Error source</title><rect x="48" y="690" width="300" height="100" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="64" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Host SerDes / PCIe slot / firmware:</text>
+<text x="64" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ALL lanes bad in -l PH loopback too</text>
+<text x="64" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-&gt; port, not cable</text>
+</g>
+<line x1="168" y1="690" x2="168" y2="640" stroke="#d93025" stroke-width="2" marker-end="url(#arrow-red)" fill="none"/>
+<g><title>Reading the numbers (mlxlink -c)</title><rect x="430" y="150" width="820" height="240" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="446" y="178" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Reading the numbers (mlxlink -c)</text>
+<text x="446" y="208" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Raw Physical BER per lane   = errors / bits BEFORE FEC.  2E-10 .. 1E-8 is normal PAM4.</text>
+<text x="446" y="226" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">                              FEC correction budget ends around 1E-6 .. 1E-5 (worse = codewords with 16+ bad symbols).</text>
+<text x="446" y="244" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Effective Physical BER      = errors AFTER FEC. Target 1E-12 (Ethernet spec floor) to 1E-15 (what a healthy NDR</text>
+<text x="446" y="262" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">                              link shows). '15E-255' = none observed in the window.</text>
+<text x="446" y="280" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Effective Physical Errors   = count of uncorrectable codewords; must stay 0 / flat. These become Symbol Errors</text>
+<text x="446" y="298" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">                              in the link layer = perfquery SymbolErrorCounter = retransmits = NCCL 'error 12'.</text>
+<text x="446" y="316" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">--rx_fec_histogram          = codewords binned by corrected symbols 0..15; bin 15 = uncorrectable.</text>
+<text x="446" y="334" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">At 400 Gb/s a BER of 1E-12 is ~1 bit error every 2.5 s; 1E-15 is one every ~40 min. Rate over a window, not totals.</text>
+</g>
+<g><title>Legend</title><rect x="48" y="810" width="400" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="64" y1="836" x2="118" y2="836" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="132" y="841" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Lane (PAM4 serial stream)</text>
+<line x1="64" y1="866" x2="118" y2="866" stroke="#d93025" stroke-width="4" marker-end="url(#arrow-red)"/>
+<text x="132" y="871" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Where the error is born</text>
+</g>
+<text x="480" y="850" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="600" fill="#1f2937" text-anchor="start" xml:space="preserve">One lane bad = connector / fiber lane / far-end Tx lane.   All lanes bad = module heat, cable length or type, firmware, or the port itself.</text></svg>

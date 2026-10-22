@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
+<title>BlueField-3 internals: Arm, ConnectX-7 engine, DPA, memory, PCIe, management</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">BlueField-3 internals: Arm, ConnectX-7 engine, DPA, memory, PCIe, management</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Three personalities on one card: a NIC the host sees, a Linux server in the data path, and a management controller reachable when both are down</text>
+<g><title>BlueField-3 (PCI device 15b3:a2dc · mst mt41692)</title><rect x="60" y="140" width="1480" height="560" rx="12" fill="#e9ddff" fill-opacity="0.55" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 6"/></g>
+<text x="74" y="168" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">BlueField-3 (PCI device 15b3:a2dc · mst mt41692)</text>
+<g><title>Arm subsystem 16× Cortex-A78 (8 on some SKUs)</title><rect x="100" y="200" width="380" height="160" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="290.0" y="245.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Arm subsystem</text>
+<text x="290.0" y="267.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">16× Cortex-A78 (8 on some SKUs)</text>
+<text x="290.0" y="293.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">Ubuntu from eMMC / NVMe (BSP + DOCA)</text>
+<text x="290.0" y="311.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">runs OVS, HBN, DTS, firewall, SNAP</text>
+<text x="290.0" y="329.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">oob_net0, tmfifo_net0, p0/p1 representors</text>
+</g>
+<g><title>DDR5 16–32 GB on-card memory</title><rect x="100" y="390" width="380" height="110" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="290.0" y="428.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">DDR5 16–32 GB</text>
+<text x="290.0" y="450.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">on-card memory</text>
+<text x="290.0" y="476.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">Arm OS + datapath tables, independent of host</text>
+</g>
+<g><title>Accelerators IPsec/TLS · compression · SHA · RegEx(BF-2)</title><rect x="100" y="530" width="380" height="140" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="290.0" y="583.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Accelerators</text>
+<text x="290.0" y="605.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">IPsec/TLS · compression · SHA · RegEx(BF-2)</text>
+<text x="290.0" y="631.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">inline, line-rate, used by DOCA libraries</text>
+</g>
+<g><title>ConnectX-7 network engine 1×400G / 2×200G (2×400G on some SKUs)</title><rect x="560" y="200" width="440" height="200" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="780.0" y="265.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">ConnectX-7 network engine</text>
+<text x="780.0" y="287.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">1×400G / 2×200G (2×400G on some SKUs)</text>
+<text x="780.0" y="313.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">RoCE v2, GPUDirect, flow steering, eswitch (ASAP²)</text>
+<text x="780.0" y="331.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">DDP (direct data placement) for out-of-order RoCE</text>
+<text x="780.0" y="349.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">PFC/ECN, CNP generation, RoCE counters</text>
+</g>
+<g><title>DPA — Data Path Accelerator 16 programmable RISC-V datapath cores</title><rect x="560" y="430" width="440" height="110" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="780.0" y="468.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">DPA — Data Path Accelerator</text>
+<text x="780.0" y="490.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">16 programmable RISC-V datapath cores</text>
+<text x="780.0" y="516.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">runs the Spectrum-X congestion-control algorithm (DOCA DPA)</text>
+</g>
+<g><title>Internal eswitch switchdev: p0/p1 ↔ pf0hpf/pf0vfN/pf0sfN</title><rect x="560" y="570" width="440" height="100" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="780.0" y="603.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Internal eswitch</text>
+<text x="780.0" y="623.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">switchdev: p0/p1 ↔ pf0hpf/pf0vfN/pf0sfN</text>
+<text x="780.0" y="647.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">first packet in OVS software, flow then offloaded to hardware</text>
+</g>
+<g><title>PCIe Gen5 x16 host interface endpoint to the host; root/switch downstream</title><rect x="1080" y="200" width="420" height="110" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1290.0" y="239.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">PCIe Gen5 x16 host interface</text>
+<text x="1290.0" y="260.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">endpoint to the host; root/switch downstream</text>
+<text x="1290.0" y="285.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">can own NVMe/GPUs behind it; SNAP emulates devices to the host</text>
+</g>
+<g><title>RShim (PCIe or USB-C) /dev/rshim0: boot · console · misc · tmfifo_net0</title><rect x="1080" y="340" width="420" height="110" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1290.0" y="379.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">RShim (PCIe or USB-C)</text>
+<text x="1290.0" y="400.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">/dev/rshim0: boot · console · misc · tmfifo_net0</text>
+<text x="1290.0" y="425.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">host 192.168.100.1 ↔ Arm 192.168.100.2</text>
+</g>
+<g><title>BMC (ASPEED) · Redfish/IPMI power, sensors, BFB via Redfish, SOL</title><rect x="1080" y="480" width="420" height="90" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1290.0" y="509.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">BMC (ASPEED) · Redfish/IPMI</text>
+<text x="1290.0" y="530.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">power, sensors, BFB via Redfish, SOL</text>
+<text x="1290.0" y="555.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">own 1GbE OOB RJ45 (NC-SI shared on some SKUs)</text>
+</g>
+<g><title>UART console · eMMC/NVMe boot BOOT_MODE 0 rshim / 1 emmc</title><rect x="1080" y="600" width="420" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1290.0" y="629.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">UART console · eMMC/NVMe boot</text>
+<text x="1290.0" y="649.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">BOOT_MODE 0 rshim / 1 emmc</text>
+</g>
+<line x1="480" y1="280" x2="560" y2="280" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)" marker-start="url(#arrow-orange)"/>
+<line x1="480" y1="460" x2="560" y2="480" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" marker-start="url(#arrow-purple)"/>
+<line x1="1000" y1="300" x2="1080" y2="260" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<line x1="1000" y1="480" x2="1080" y2="390" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" marker-start="url(#arrow-purple)"/>
+<g><title>Host (DGX / HGX server) sees ens3f0np0 / mlx5_0 (ConnectX-class NIC)</title><rect x="100" y="740" width="420" height="80" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="310.0" y="774.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Host (DGX / HGX server)</text>
+<text x="310.0" y="795.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">sees ens3f0np0 / mlx5_0 (ConnectX-class NIC)</text>
+</g>
+<line x1="310" y1="740" x2="310" y2="700" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<rect x="397" y="706" width="47" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="420" y="722" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">PCIe</text>
+<g><title>Wire: SN5600 leaf (Spectrum-4) 400G per SuperNIC port</title><rect x="1080" y="740" width="420" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1290.0" y="774.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Wire: SN5600 leaf (Spectrum-4)</text>
+<text x="1290.0" y="795.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">400G per SuperNIC port</text>
+</g>
+<line x1="1290" y1="740" x2="1290" y2="700" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)" marker-start="url(#arrow-orange)"/>
+<rect x="1343" y="706" width="75" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="1380" y="722" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">p0 / p1</text>
+<g><title>Legend</title><rect x="600" y="720" width="430" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="614" y1="746" x2="674" y2="746" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="688" y="752" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
+<line x1="614" y1="776" x2="674" y2="776" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="688" y="782" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<line x1="614" y1="806" x2="674" y2="806" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="688" y="812" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
+</g>
+</svg>

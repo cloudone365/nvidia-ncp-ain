@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif"><title>OSFP twin-port: one module, two 400G ports, one breakout cable</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1600" height="900" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">OSFP twin-port: one module, two 400G ports, one breakout cable</text><text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Switch cage: 8 lanes, finned-top module, ports 1/1 and 1/2. NIC end: 4 lanes each, flat-top module. Mixing them presents as heat and BER</text><g><title>QM9700 (Quantum-2) OSFP cage 1</title><rect x="48" y="160" width="520" height="420" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="308.0" y="190" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">QM9700 (Quantum-2) OSFP cage 1</text>
+</g>
+<g><title>Twin-port OSFP transceiver  (finned top, power class 8 &gt; 14 W)</title><rect x="70" y="210" width="476" height="150" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="86" y="236" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Twin-port OSFP transceiver  (finned top, power class 8 &gt; 14 W)</text>
+<text x="86" y="264" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">one EEPROM, one temperature sensor, one FW image</text>
+<text x="86" y="282" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">8 electrical lanes -&gt; 2 x 4 optical lanes (2xDR4 / 2xFR4)</text>
+<text x="86" y="300" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxlink -m on port 1/1 and 1/2 shows the SAME module data</text>
+</g>
+<g><title>port 1/1  -  lanes 0-3  -  400G NDR 4x  -  to dgx-01 mlx5_0</title><rect x="70" y="385" width="476" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="308.0" y="411" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">port 1/1  -  lanes 0-3  -  400G NDR 4x  -  to dgx-01 mlx5_0</text>
+</g>
+<g><title>port 1/2  -  lanes 4-7  -  400G NDR 4x  -  to dgx-02 mlx5_0</title><rect x="70" y="475" width="476" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="308.0" y="501" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">port 1/2  -  lanes 4-7  -  400G NDR 4x  -  to dgx-02 mlx5_0</text>
+</g>
+<g><title>Breakout cable</title><rect x="660" y="300" width="300" height="190" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="676" y="327" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Breakout cable</text>
+<text x="676" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">1 x OSFP twin-port (switch)</text>
+<text x="676" y="374" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  -&gt; 2 x OSFP / QSFP112 (NICs)</text>
+<text x="676" y="392" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">MPO-12/APC x2 or split DAC</text>
+<text x="676" y="410" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">each NIC sees 4 of the 8 lanes</text>
+<text x="676" y="428" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">cable PN must match: NDR,</text>
+<text x="676" y="446" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  2x400G breakout, length</text>
+</g>
+<line x1="546" y1="400" x2="660" y2="340" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="546" y1="490" x2="660" y2="420" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="546" y1="414" x2="660" y2="352" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="546" y1="504" x2="660" y2="432" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="546" y1="428" x2="660" y2="364" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="546" y1="518" x2="660" y2="444" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="546" y1="442" x2="660" y2="376" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="546" y1="532" x2="660" y2="456" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<g><title>dgx-01  ConnectX-7 mlx5_0</title><rect x="1060" y="160" width="490" height="170" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1305.0" y="188" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">dgx-01  ConnectX-7 mlx5_0</text>
+<text x="1305.0" y="219" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">single-port OSFP (flat top) or QSFP112</text>
+<text x="1305.0" y="239" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">4 lanes = Width 4x; NIC never sees lanes 4-7</text>
+<text x="1305.0" y="259" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlxlink -d /dev/mst/mt4129_pciconf0 -m</text>
+</g>
+<g><title>dgx-02  ConnectX-7 mlx5_0</title><rect x="1060" y="400" width="490" height="170" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1305.0" y="428" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">dgx-02  ConnectX-7 mlx5_0</text>
+<text x="1305.0" y="459" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">second half of the same switch module</text>
+<text x="1305.0" y="479" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">shares its temperature and firmware</text>
+<text x="1305.0" y="499" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">a hot module on 1/1 hurts dgx-02 too</text>
+</g>
+<line x1="960" y1="340" x2="1060" y2="230" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="960" y1="420" x2="1060" y2="470" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="960" y1="352" x2="1060" y2="244" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="960" y1="432" x2="1060" y2="484" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="960" y1="364" x2="1060" y2="258" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="960" y1="444" x2="1060" y2="498" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="960" y1="376" x2="1060" y2="272" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<line x1="960" y1="456" x2="1060" y2="512" stroke="#2f6fdb" stroke-width="2" fill="none"/>
+<g><title>What this means when troubleshooting</title><rect x="48" y="620" width="740" height="230" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="64" y="647" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">What this means when troubleshooting</text>
+<text x="64" y="676" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Temperature / Tx power / FW version are per MODULE: an alarm on 1/1 is an alarm on 1/2.</text>
+<text x="64" y="694" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Split profile must match the cable: Quantum port-split profile; Spectrum 'nv set interface swp1</text>
+<text x="64" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  link breakout 2x'. Wrong profile -&gt; 'Negotiation failure' or Width 2x that is CONFIG, not cable.</text>
+<text x="64" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Finned top belongs in the switch cage (more heat to shed); flat top in the NIC cage.</text>
+<text x="64" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  The wrong variant fits mechanically and fails thermally: heat -&gt; raw BER -&gt; flaps under load.</text>
+<text x="64" y="766" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mlxcables lists the module once per MST device that can reach it; burn transceiver FW in a window.</text>
+</g>
+<g><title>Numbers to remember</title><rect x="830" y="620" width="720" height="230" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="846" y="647" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Numbers to remember</text>
+<text x="846" y="676" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">NDR lane: 106.25 Gb/s PAM4; 4 lanes = 400G; twin-port cage = 8 lanes = 800G</text>
+<text x="846" y="694" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Power class 8 = &gt; 14 W per OSFP; cage temperature window typically [-5..80] C (part-specific)</text>
+<text x="846" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Rx power window on NDR DR4 roughly [-11..+4] dBm; lanes should match within ~1-2 dB</text>
+<text x="846" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Tx power window roughly [-7..+4] dBm; Vcc 3.3 V +/- 10 % [2970..3630] mV</text>
+<text x="846" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">DAC (copper) shows no optical power: rely on BER, eye and temperature instead</text>
+<text x="846" y="766" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Verify exact alarm thresholds in the module's own DOM brackets, not from memory</text>
+</g>
+<g><title>Legend</title><rect x="660" y="510" width="300" height="54" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<line x1="676" y1="536" x2="730" y2="536" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="744" y="541" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">One electrical / optical lane</text>
+</g></svg>

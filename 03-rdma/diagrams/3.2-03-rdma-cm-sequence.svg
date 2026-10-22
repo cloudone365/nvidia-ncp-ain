@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1120" width="100%" role="img" aria-label="Sequence diagram of librdmacm client and server calls with the CM events between them, the SA path record query on InfiniBand, and the error events mapped to fabric causes"><title>RDMA CM connection sequence and the fabric meaning of each error event</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="1120" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">RDMA CM connection sequence and the fabric meaning of each error event</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">rdma_resolve_addr -&gt; rdma_resolve_route -&gt; rdma_connect / rdma_accept -&gt; ESTABLISHED; CM MADs (IB) or CM over UDP 4791 (RoCE) carry QPN/PSN</text>
+<g><title>client (rdma_cm_id)</title><rect x="140.0" y="140" width="320" height="64" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="300.0" y="167.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">client (rdma_cm_id)</text>
+<text x="300.0" y="192.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">rdma_create_id(ec, RDMA_PS_TCP)</text>
+<g><title>fabric services</title><rect x="650.0" y="140" width="300" height="64" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="800.0" y="167.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">fabric services</text>
+<text x="800.0" y="192.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">SA (IB) / ARP+route (RoCE)</text>
+<g><title>server (listen id)</title><rect x="1140.0" y="140" width="320" height="64" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1300.0" y="167.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">server (listen id)</text>
+<text x="1300.0" y="192.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">rdma_bind_addr + rdma_listen</text>
+<line x1="300" y1="204" x2="300" y2="1060" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="800" y1="204" x2="800" y2="1060" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="1300" y1="204" x2="1300" y2="1060" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="300" y1="250" x2="800" y2="250" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="314" y="241" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">rdma_resolve_addr(id, NULL, server_ip, 2000ms): IP -&gt; RDMA device, port, source GID index</text>
+<circle cx="270" cy="250" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="270" y="256" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<g><rect x="140" y="280" width="500" height="40" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="152" y="304" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">event ADDR_RESOLVED  (ADDR_ERROR = IP not on an RDMA netdev)</text>
+<g><rect x="140" y="330" width="500" height="40" rx="6" fill="#eeeeee" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="152" y="354" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">ibv_alloc_pd, ibv_create_cq, ibv_reg_mr, rdma_create_qp -&gt; INIT</text>
+<circle cx="110" cy="350" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="110" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<line x1="300" y1="396" x2="800" y2="396" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="314" y="387" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">rdma_resolve_route: IB = SA PathRecord GET (DLID, SL, MTU, rate); RoCE = kernel route + neighbour (MAC)</text>
+<circle cx="270" cy="396" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="270" y="402" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<line x1="800" y1="436" x2="300" y2="436" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="314" y="427" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">path record / route</text>
+<g><rect x="140" y="462" width="500" height="40" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="152" y="486" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">event ROUTE_RESOLVED  (ROUTE_ERROR = no SM, PKey mismatch, no route)</text>
+<line x1="300" y1="532" x2="1300" y2="532" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="314" y="523" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">rdma_connect(id, {private_data = rkey/addr, responder_resources, initiator_depth, retry_count, rnr_retry_count})  -&gt; CM REQ</text>
+<circle cx="270" cy="532" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="270" y="538" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<g><rect x="980" y="562" width="480" height="40" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="992" y="586" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">event CONNECT_REQUEST (new per-connection id, private_data visible)</text>
+<g><rect x="980" y="612" width="480" height="40" rx="6" fill="#eeeeee" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="992" y="636" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">rdma_create_qp, ibv_post_recv x N, rdma_accept(id, &amp;cp)</text>
+<circle cx="1490" cy="632" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1490" y="638" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<line x1="1300" y1="678" x2="300" y2="678" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="314" y="669" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">CM REP (server QPN, PSN) — client QP -&gt; RTR -&gt; RTS</text>
+<line x1="300" y1="718" x2="1300" y2="718" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="314" y="709" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">CM RTU (ready to use) — server QP -&gt; RTS</text>
+<circle cx="270" cy="718" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="270" y="724" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
+<g><rect x="140" y="748" width="500" height="40" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="152" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">event ESTABLISHED on both ids</text>
+<g><rect x="1140" y="748" width="320" height="40" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="1152" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">event ESTABLISHED</text>
+<line x1="300" y1="818" x2="1300" y2="818" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="314" y="809" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">verbs data path: ibv_post_send / ibv_poll_cq exactly as with raw verbs (rkeys came in private_data)</text>
+<circle cx="270" cy="818" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="270" y="824" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text>
+<line x1="300" y1="878" x2="1300" y2="878" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="314" y="869" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">rdma_disconnect -&gt; CM DREQ/DREP; event DISCONNECTED; rdma_destroy_qp / rdma_destroy_id</text>
+<circle cx="270" cy="878" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="270" y="884" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text>
+<g><rect x="60" y="948" width="1040" height="130" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="72" y="972" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Error event -&gt; fabric cause:  ADDR_ERROR = wrong interface / missing IPoIB address</text>
+<text x="72" y="991" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">ROUTE_ERROR (IB) = SA query failed: no master SM or PKey mismatch</text>
+<text x="72" y="1010" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">UNREACHABLE / CONNECT_ERROR (RoCE) = GID/MAC resolution, UDP 4791 blocked, wrong RoCE version</text>
+<text x="72" y="1029" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">REJECTED = peer not listening on that port space or refused. Timeouts: resolve_addr/route 2000 ms each.</text>
+<text x="72" y="1048" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Smallest test: rping -s -a &lt;ip&gt; -v  /  rping -c -a &lt;ip&gt; -v -C 10  (connect + WRITE ping + READ pong).</text>
+<g><rect x="1130" y="948" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="1144" y="968" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
+<line x1="1144" y1="990" x2="1204" y2="990" stroke="#2f6fdb" stroke-width="4"/>
+<text x="1216" y="996" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (IB / RDMA payload)</text>
+<line x1="1144" y1="1020" x2="1204" y2="1020" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
+<text x="1216" y="1026" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (SM MADs, REST, CM)</text>
+</svg>

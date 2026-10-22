@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
+<title>Upgrade decision flow: package upgrade vs ONIE image install + YAML restore</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Upgrade decision flow: package upgrade vs ONIE image install + YAML restore</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Same major train and release notes permit → apt/nv action upgrade. Major jump, corrupted system, or notes require → ONIE install, then nv config replace</text>
+<g><title>Target version vs running version? nv show system · release notes</title><rect x="560" y="150" width="480" height="80" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="800.0" y="184.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Target version vs running version?</text>
+<text x="800.0" y="206.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">nv show system · release notes</text>
+</g>
+<g><title>Same major release (5.9 → 5.11) and release notes allow package upgrade</title><rect x="160" y="320" width="480" height="110" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5"/>
+<text x="400.0" y="343.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Same major release (5.9 → 5.11)</text>
+<text x="400.0" y="364.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">and release notes allow package upgrade</text>
+<text x="400.0" y="389.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config save; backup YAML anyway</text>
+<text x="400.0" y="405.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv action upgrade system packages to-version 5.11.0 use-vrf mgmt</text>
+<text x="400.0" y="421.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">(or sudo apt update &amp;&amp; sudo apt upgrade) → reboot</text>
+</g>
+<g><title>Major jump (4.4 → 5.10), corrupted OS, or notes say 'image install required'</title><rect x="960" y="320" width="480" height="110" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1200.0" y="343.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Major jump (4.4 → 5.10), corrupted OS,</text>
+<text x="1200.0" y="364.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">or notes say 'image install required'</text>
+<text x="1200.0" y="389.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">1 nv config show -o yaml &gt; backup.yaml (off-box!)</text>
+<text x="1200.0" y="405.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">2 sudo onie-select -i &amp;&amp; sudo reboot (or NetQ LCM / ZTP)</text>
+<text x="1200.0" y="421.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">3 ONIE installs fresh image — config wiped</text>
+</g>
+<line x1="700" y1="230" x2="400" y2="320" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="500.0" y="265.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">minor</text>
+<g><title>Step 1</title><circle cx="540" cy="290" r="16" fill="#1f2937"/><text x="540" y="296" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<line x1="900" y1="230" x2="1200" y2="320" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="1100.0" y="265.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">major</text>
+<g><title>Step 1</title><circle cx="1060" cy="290" r="16" fill="#1f2937"/><text x="1060" y="296" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<g><title>Reboot, verify nv show system → new version · switchd active</title><rect x="160" y="500" width="480" height="90" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="400.0" y="528.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Reboot, verify</text>
+<text x="400.0" y="549.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">nv show system → new version · switchd active</text>
+<text x="400.0" y="574.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">config preserved in /etc/nvue.d/startup.yaml</text>
+</g>
+<line x1="400" y1="430" x2="400" y2="500" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>Step 2</title><circle cx="430" cy="465" r="16" fill="#1f2937"/><text x="430" y="471" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<g><title>Restore configuration nv config replace backup.yaml → apply -y → save</title><rect x="960" y="500" width="480" height="90" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1200.0" y="528.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Restore configuration</text>
+<text x="1200.0" y="549.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">nv config replace backup.yaml → apply -y → save</text>
+<text x="1200.0" y="574.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">re-add: users/passwords, ssh keys, NetQ agent, cron, ZTP</text>
+</g>
+<line x1="1200" y1="430" x2="1200" y2="500" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>Step 2</title><circle cx="1230" cy="465" r="16" fill="#1f2937"/><text x="1230" y="471" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<g><title>Validate netq check bgp|evpn|interfaces|roce · snapshot compare</title><rect x="560" y="670" width="480" height="90" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="800.0" y="699.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Validate</text>
+<text x="800.0" y="720.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">netq check bgp|evpn|interfaces|roce · snapshot compare</text>
+<text x="800.0" y="745.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">NetQ LCM does backup → upgrade → restore-on-failure → snapshot for you</text>
+</g>
+<line x1="400" y1="590" x2="700" y2="670" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<line x1="1200" y1="590" x2="900" y2="670" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>Step 3</title><circle cx="800" cy="640" r="16" fill="#1f2937"/><text x="800" y="646" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><title>Note</title><rect x="60" y="800" width="1000" height="60" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="72" y="823" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Single OS partition on Cumulus (unlike SONiC's multi-image GRUB). Because NVUE YAML is a full declarative description,</text>
+<text x="72" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">replace + apply + save recreates the switch in three commands — this is why the backup matters more than the upgrade path.</text>
+<g><title>Legend</title><rect x="1110" y="800" width="430" height="52" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1124" y1="826" x2="1184" y2="826" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="1198" y="832" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Flow / step</text>
+</g>
+</svg>

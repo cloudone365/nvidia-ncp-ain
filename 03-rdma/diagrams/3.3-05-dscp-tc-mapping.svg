@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img" aria-label="Table-like diagram mapping DSCP values to switch priorities, traffic classes, queue properties and scheduler weights for RoCE data CNP and best effort"><title>Classification chain: DSCP -&gt; switch priority -&gt; traffic class -&gt; egress queue and scheduler</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="900" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Classification chain: DSCP -&gt; switch priority -&gt; traffic class -&gt; egress queue and scheduler</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">What &#x27;nv set qos roce mode lossless&#x27; programs on a Spectrum switch, and the matching NIC side</text>
+<g><title>Traffic</title><rect x="48" y="160" width="174" height="44" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="135.0" y="186.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Traffic</text>
+<g><title>DSCP (ToS)</title><rect x="230" y="160" width="182" height="44" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="321.0" y="186.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">DSCP (ToS)</text>
+<g><title>Switch priority</title><rect x="420" y="160" width="192" height="44" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="516.0" y="186.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Switch priority</text>
+<g><title>Traffic class / queue</title><rect x="620" y="160" width="252" height="44" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="746.0" y="186.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Traffic class / queue</text>
+<g><title>Lossless?</title><rect x="880" y="160" width="152" height="44" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="956.0" y="186.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Lossless?</text>
+<g><title>ECN</title><rect x="1040" y="160" width="182" height="44" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1131.0" y="186.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">ECN</text>
+<g><title>Scheduler</title><rect x="1230" y="160" width="312" height="44" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1386.0" y="186.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Scheduler</text>
+<g><title>RoCE data</title><rect x="48" y="220" width="174" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="135.0" y="256.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">RoCE data</text>
+<g><title>26 (0x6a with ECT)</title><rect x="230" y="220" width="182" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="321.0" y="256.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">26 (0x6a with ECT)</text>
+<g><title>SP3</title><rect x="420" y="220" width="192" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="516.0" y="256.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">SP3</text>
+<g><title>TC3 -&gt; queue 3, lossless pool</title><rect x="620" y="220" width="252" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="746.0" y="256.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">TC3 -&gt; queue 3, lossless pool</text>
+<g><title>PFC on</title><rect x="880" y="220" width="152" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="956.0" y="256.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">PFC on</text>
+<g><title>150 KB / 1.5 MB</title><rect x="1040" y="220" width="182" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1131.0" y="256.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">150 KB / 1.5 MB</text>
+<g><title>DWRR 50 %</title><rect x="1230" y="220" width="312" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1386.0" y="256.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">DWRR 50 %</text>
+<g><title>CNP</title><rect x="48" y="300" width="174" height="64" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="135.0" y="336.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">CNP</text>
+<g><title>48 (0xc0)</title><rect x="230" y="300" width="182" height="64" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="321.0" y="336.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">48 (0xc0)</text>
+<g><title>SP6</title><rect x="420" y="300" width="192" height="64" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="516.0" y="336.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">SP6</text>
+<g><title>TC6 -&gt; queue 6</title><rect x="620" y="300" width="252" height="64" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="746.0" y="336.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">TC6 -&gt; queue 6</text>
+<g><title>no (tiny)</title><rect x="880" y="300" width="152" height="64" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="956.0" y="336.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">no (tiny)</text>
+<g><title>no</title><rect x="1040" y="300" width="182" height="64" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1131.0" y="336.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">no</text>
+<g><title>strict priority (served first)</title><rect x="1230" y="300" width="312" height="64" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1386.0" y="336.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">strict priority (served first)</text>
+<g><title>Everything else</title><rect x="48" y="380" width="174" height="64" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="135.0" y="416.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">Everything else</text>
+<g><title>0 (and others)</title><rect x="230" y="380" width="182" height="64" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="321.0" y="416.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">0 (and others)</text>
+<g><title>SP0</title><rect x="420" y="380" width="192" height="64" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="516.0" y="416.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">SP0</text>
+<g><title>TC0 -&gt; queue 0, lossy pool</title><rect x="620" y="380" width="252" height="64" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="746.0" y="416.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">TC0 -&gt; queue 0, lossy pool</text>
+<g><title>no, drops OK</title><rect x="880" y="380" width="152" height="64" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="956.0" y="416.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">no, drops OK</text>
+<g><title>optional (tc 0,3)</title><rect x="1040" y="380" width="182" height="64" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1131.0" y="416.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">optional (tc 0,3)</text>
+<g><title>DWRR 50 %</title><rect x="1230" y="380" width="312" height="64" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1386.0" y="416.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">DWRR 50 %</text>
+<g><title>IB equivalent</title><rect x="48" y="460" width="174" height="64" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="135.0" y="496.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">IB equivalent</text>
+<g><title>SL (4 bits)</title><rect x="230" y="460" width="182" height="64" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="321.0" y="496.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">SL (4 bits)</text>
+<g><title>—</title><rect x="420" y="460" width="192" height="64" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="516.0" y="496.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">—</text>
+<g><title>VL via SL2VL</title><rect x="620" y="460" width="252" height="64" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="746.0" y="496.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">VL via SL2VL</text>
+<g><title>credits, always</title><rect x="880" y="460" width="152" height="64" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="956.0" y="496.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">credits, always</text>
+<g><title>IB CC / PCC</title><rect x="1040" y="460" width="182" height="64" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1131.0" y="496.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">IB CC / PCC</text>
+<g><title>VLArb high/low tables</title><rect x="1230" y="460" width="312" height="64" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1386.0" y="496.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#1f2937" text-anchor="middle">VLArb high/low tables</text>
+<text x="800" y="580" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">packet path on the switch</text>
+<g><title>ingress: trust DSCP</title><rect x="48" y="600" width="256" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="176.0" y="634.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#1f2937" text-anchor="middle">ingress: trust DSCP</text>
+<line x1="304" y1="630" x2="360" y2="630" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<circle cx="68" cy="600" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="68" y="606" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<g><title>DSCP -&gt; SP (dscp2prio)</title><rect x="360" y="600" width="256" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="488.0" y="634.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#1f2937" text-anchor="middle">DSCP -&gt; SP (dscp2prio)</text>
+<line x1="616" y1="630" x2="672" y2="630" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<circle cx="380" cy="600" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="380" y="606" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<g><title>SP -&gt; TC (prio_tc)</title><rect x="672" y="600" width="256" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="800.0" y="634.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#1f2937" text-anchor="middle">SP -&gt; TC (prio_tc)</text>
+<line x1="928" y1="630" x2="984" y2="630" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<circle cx="692" cy="600" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="692" y="606" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<g><title>buffer pool + PFC/ECN by TC</title><rect x="984" y="600" width="256" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1112.0" y="634.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#1f2937" text-anchor="middle">buffer pool + PFC/ECN by TC</text>
+<line x1="1240" y1="630" x2="1296" y2="630" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<circle cx="1004" cy="600" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1004" y="606" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<g><title>ETS / strict out</title><rect x="1296" y="600" width="256" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1424.0" y="634.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#1f2937" text-anchor="middle">ETS / strict out</text>
+<circle cx="1316" cy="600" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1316" y="606" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<g><rect x="48" y="700" width="1000" height="150" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="60" y="724" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">NIC side (mlnx_qos): trust dscp; dscp2prio 24-31 -&gt; prio 3, 48-55 -&gt; prio 6 (defaults); --pfc 0,0,0,1,0,0,0,0;</text>
+<text x="60" y="743" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">--prio_tc 0,0,0,3,0,0,6,0; --tsa/--tcbw for ETS shares. PCP (802.1p) only exists on tagged links and is lost</text>
+<text x="60" y="762" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">at L3: trust DSCP for routed RoCE v2. Conventions, not laws (some sites use DSCP 24 for data); every box must agree.</text>
+<text x="60" y="781" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Observe: ethtool -S | grep rx_prio3_bytes (RoCE really in prio 3?), nv show qos roce, nv show interface swp1 qos roce status.</text>
+<g><rect x="1130" y="700" width="430" height="172" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="1144" y="720" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
+<line x1="1144" y1="742" x2="1204" y2="742" stroke="#1f2937" stroke-width="3"/>
+<text x="1216" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Local call / state change</text>
+<rect x="1144" y="761" width="60" height="22" rx="5" fill="#ffe9cc" stroke="#e07b00" stroke-width="2"/>
+<text x="1216" y="778" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">RoCE data class</text>
+<rect x="1144" y="791" width="60" height="22" rx="5" fill="#ffd9d9" stroke="#d93025" stroke-width="2"/>
+<text x="1216" y="808" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">CNP class</text>
+<rect x="1144" y="821" width="60" height="22" rx="5" fill="#eeeeee" stroke="#6b7280" stroke-width="2"/>
+<text x="1216" y="838" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">best effort</text>
+<rect x="1144" y="851" width="60" height="22" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2"/>
+<text x="1216" y="868" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">InfiniBand analogue</text>
+</svg>

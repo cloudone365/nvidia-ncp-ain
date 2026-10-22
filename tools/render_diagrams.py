@@ -21,7 +21,7 @@ def fail(msg: str) -> None:
     print("FAIL", msg)
 
 svgs = sorted(p for p in ROOT.rglob("diagrams/*.svg") if ".git" not in p.parts)
-mds = sorted(p for p in ROOT.rglob("*.md") if ".git" not in p.parts)
+mds = sorted(p for p in ROOT.rglob("*.md") if ".git" not in p.parts and p.name not in {"AUTHORING_SPEC.md", "DIAGRAM_STYLE.md"})
 
 # --- reference check -------------------------------------------------------
 referenced: set[pathlib.Path] = set()

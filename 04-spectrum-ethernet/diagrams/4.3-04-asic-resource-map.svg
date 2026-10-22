@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
+<title>cl-resource-query: Spectrum ASIC table occupancy (illustrative leaf)</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">cl-resource-query: Spectrum ASIC table occupancy (illustrative leaf)</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">The kernel/FRR RIB can hold more than the ASIC; when a table fills, new entries are software-forwarded or dropped while config still 'looks fine'</text>
+<g><title>sudo cl-resource-query   (used, max, %)</title><rect x="60" y="140" width="980" height="560" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
+<text x="74" y="168" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">sudo cl-resource-query   (used, max, %)</text>
+<text x="80" y="210" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Host entries (ARP/ND → host table)</text>
+<text x="470" y="210" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="end"> 1,250 / 16,384</text>
+<g><title>Host entries (ARP/ND → host table) 8%</title><rect x="490" y="194" width="420" height="24" rx="4" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/><rect x="490" y="194" width="33.6" height="24" rx="4" fill="#76b900" fill-opacity="0.75"/></g>
+<text x="922" y="212.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">8%</text>
+<text x="80" y="264" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">IPv4 route entries (LPM)</text>
+<text x="470" y="264" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="end">41,200 / 81,920</text>
+<g><title>IPv4 route entries (LPM) 50%</title><rect x="490" y="248" width="420" height="24" rx="4" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/><rect x="490" y="248" width="210.0" height="24" rx="4" fill="#76b900" fill-opacity="0.75"/></g>
+<text x="922" y="266.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">50%</text>
+<text x="80" y="318" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">IPv6 route entries (LPM)</text>
+<text x="470" y="318" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="end">   120 / 16,384</text>
+<g><title>IPv6 route entries (LPM) 1%</title><rect x="490" y="302" width="420" height="24" rx="4" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/><rect x="490" y="302" width="4.2" height="24" rx="4" fill="#76b900" fill-opacity="0.75"/></g>
+<text x="922" y="320.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">1%</text>
+<text x="80" y="372" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">ECMP next hops</text>
+<text x="470" y="372" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="end">   420 / 4,096</text>
+<g><title>ECMP next hops 10%</title><rect x="490" y="356" width="420" height="24" rx="4" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/><rect x="490" y="356" width="42.0" height="24" rx="4" fill="#76b900" fill-opacity="0.75"/></g>
+<text x="922" y="374.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">10%</text>
+<text x="80" y="426" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">ECMP groups</text>
+<text x="470" y="426" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="end">    64 / 512</text>
+<g><title>ECMP groups 13%</title><rect x="490" y="410" width="420" height="24" rx="4" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/><rect x="490" y="410" width="54.6" height="24" rx="4" fill="#76b900" fill-opacity="0.75"/></g>
+<text x="922" y="428.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">13%</text>
+<text x="80" y="480" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">MAC entries (bridge FDB)</text>
+<text x="470" y="480" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="end">12,500 / 40,960</text>
+<g><title>MAC entries (bridge FDB) 31%</title><rect x="490" y="464" width="420" height="24" rx="4" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/><rect x="490" y="464" width="130.2" height="24" rx="4" fill="#76b900" fill-opacity="0.75"/></g>
+<text x="922" y="482.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">31%</text>
+<text x="80" y="534" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Ingress ACL entries (TCAM)</text>
+<text x="470" y="534" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="end">   310 / 2,048</text>
+<g><title>Ingress ACL entries (TCAM) 15%</title><rect x="490" y="518" width="420" height="24" rx="4" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/><rect x="490" y="518" width="63.0" height="24" rx="4" fill="#76b900" fill-opacity="0.75"/></g>
+<text x="922" y="536.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">15%</text>
+<text x="80" y="588" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Egress ACL entries (TCAM)</text>
+<text x="470" y="588" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="end">    16 / 1,024</text>
+<g><title>Egress ACL entries (TCAM) 2%</title><rect x="490" y="572" width="420" height="24" rx="4" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/><rect x="490" y="572" width="8.4" height="24" rx="4" fill="#76b900" fill-opacity="0.75"/></g>
+<text x="922" y="590.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">2%</text>
+<text x="80" y="642" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Total routes</text>
+<text x="470" y="642" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="end">41,320 / 98,304</text>
+<g><title>Total routes 42%</title><rect x="490" y="626" width="420" height="24" rx="4" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/><rect x="490" y="626" width="176.4" height="24" rx="4" fill="#76b900" fill-opacity="0.75"/></g>
+<text x="922" y="644.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">42%</text>
+<text x="80" y="690" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start">green &lt; 70% · orange 70–90% (NetQ TCA warning) · red ≥ 90% (table-full imminent)</text>
+<g><title>What fills it </title><rect x="1090" y="150" width="450" height="120" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1315.0" y="175.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">What fills it</text>
+<text x="1315.0" y="221.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">Hosts: big L2 domains, EVPN ARP suppression</text>
+<text x="1315.0" y="239.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">Routes: leaked full tables, no summarisation</text>
+<text x="1315.0" y="257.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">ECMP groups: many VRFs × distinct next-hop sets</text>
+</g>
+<g><title>Symptoms at 100% </title><rect x="1090" y="300" width="450" height="120" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="1315.0" y="325.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Symptoms at 100%</text>
+<text x="1315.0" y="371.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">route in nv show … rib but traffic blackholes / CPU</text>
+<text x="1315.0" y="389.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">switchd log: 'failed to add route — table full'</text>
+<text x="1315.0" y="407.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">ACL apply fails; NetQ TCA_TCAM_* event fires</text>
+</g>
+<g><title>Fixes (architectural) </title><rect x="1090" y="450" width="450" height="120" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5"/>
+<text x="1315.0" y="475.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Fixes (architectural)</text>
+<text x="1315.0" y="521.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">summarise / filter inbound routes</text>
+<text x="1315.0" y="539.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">fewer VRFs &amp; VNIs per switch, L3-only designs</text>
+<text x="1315.0" y="557.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set system forwarding profile &lt;p&gt; (restarts switchd)</text>
+</g>
+<g><title>Kernel vs ASIC </title><rect x="1090" y="595" width="450" height="110" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1315.0" y="615.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Kernel vs ASIC</text>
+<text x="1315.0" y="661.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">ip route / nv show … rib = what FRR wants</text>
+<text x="1315.0" y="679.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">cl-resource-query = what the ASIC holds</text>
+<text x="1315.0" y="697.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">the gap is the problem</text>
+</g>
+<line x1="1040" y1="470" x2="1090" y2="360" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<g><title>Note</title><rect x="60" y="730" width="1480" height="120" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="72" y="753" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Reading this leaf: IPv4 routes at 50% is a warning — a leaf should carry fabric prefixes and tenant summaries only; somebody is leaking a full table.</text>
+<text x="72" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">ACL rule with a port range expands into many TCAM entries (310 entries from ~40 rules is typical). Trend 'Total routes' in NetQ with a TCA at 90%.</text>
+<text x="72" y="791" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Newer releases expose the same data via NVUE (nv show system forwarding resources / nv show platform forwarding-table — verify object name).</text>
+</svg>

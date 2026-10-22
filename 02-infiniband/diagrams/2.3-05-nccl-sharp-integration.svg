@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" role="img" aria-label="Component diagram of the NCCL SHARP control path from the application through the CollNet plugin and sharpd on each host to sharp_am and the SM on the management host and the switch aggregation engines"><title>Integration: NCCL CollNet plugin -&gt; sharpd -&gt; sharp_am -&gt; SM -&gt; Quantum switches</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Integration: NCCL CollNet plugin -&gt; sharpd -&gt; sharp_am -&gt; SM -&gt; Quantum switches</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">All four pieces must be present or NCCL silently falls back to Ring/Tree: plugin + NCCL_COLLNET_ENABLE=1, sharpd, sharp_am, SHARP enabled in the SM</text>
+<g><title>Compute host nodeA (x8 GPUs)</title><rect x="40" y="150" width="640" height="560" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="56" y="180" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="start">Compute host nodeA (x8 GPUs)</text>
+<g><title>PyTorch / nccl-tests  (all_reduce_perf)</title><rect x="70" y="200" width="580" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="360.0" y="240.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">PyTorch / nccl-tests  (all_reduce_perf)</text>
+<g><rect x="70" y="290" width="580" height="80" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="360.0" y="325.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">NCCL  with NCCL_COLLNET_ENABLE=1</text>
+<text x="360.0" y="348.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">CollNet chosen only if the plugin loads and the job spans &gt; 1 node</text>
+<g><title>libnccl-net.so (SHARP plugin)</title><rect x="70" y="390" width="280" height="90" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="210.0" y="420.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">libnccl-net.so (SHARP plugin)</text>
+<text x="210.0" y="442.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">/opt/mellanox/sharp/lib</text>
+<text x="210.0" y="462.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">in LD_LIBRARY_PATH</text>
+<g><title>libsharp / libsharp_coll</title><rect x="370" y="390" width="280" height="90" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="510.0" y="420.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">libsharp / libsharp_coll</text>
+<text x="510.0" y="442.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SHARP_COLL_ENABLE_SAT=1</text>
+<text x="510.0" y="462.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SHARP_COLL_LOG_LEVEL=3</text>
+<g><title>ConnectX-7 mlx5_0..7 (verbs)</title><rect x="70" y="500" width="280" height="90" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="210.0" y="530.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">ConnectX-7 mlx5_0..7 (verbs)</text>
+<text x="210.0" y="552.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">data on SL7 / VL7 (high table)</text>
+<text x="210.0" y="572.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">GPUDirect RDMA</text>
+<g><title>sharpd (systemd)</title><rect x="370" y="500" width="280" height="90" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="510.0" y="530.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">sharpd (systemd)</text>
+<text x="510.0" y="552.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">local broker for</text>
+<text x="510.0" y="572.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">job / communicator requests</text>
+<line x1="360" y1="270" x2="360" y2="290" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<line x1="210" y1="370" x2="210" y2="390" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<line x1="510" y1="370" x2="510" y2="390" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<line x1="210" y1="480" x2="210" y2="500" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<line x1="510" y1="480" x2="510" y2="500" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<circle cx="40" cy="330" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="40" y="336" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<circle cx="680" cy="545" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="680" y="551" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<g><title>Management host mgmt01 / UFM</title><rect x="760" y="150" width="800" height="300" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="0.45"/></g>
+<text x="776" y="180" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="start">Management host mgmt01 / UFM</text>
+<g><title>opensm / MLNXSM (UFM SM)</title><rect x="790" y="200" width="350" height="100" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="965.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">opensm / MLNXSM (UFM SM)</text>
+<text x="965.0" y="258.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharp_enabled TRUE</text>
+<text x="965.0" y="278.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SL2VL/VLArb for SL7, ar_ftree</text>
+<g><title>sharp_am (systemd)</title><rect x="1180" y="200" width="350" height="100" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1355.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">sharp_am (systemd)</text>
+<text x="1355.0" y="258.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">/var/log/sharp_am.log</text>
+<text x="1355.0" y="278.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">trees, quotas, job registry</text>
+<line x1="1140" y1="250" x2="1180" y2="250" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<circle cx="1160" cy="215" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1160" y="221" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<text x="1160" y="320" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">topology + SHARP capability</text>
+<g><title>UFM: Settings -&gt; Subnet Manager -&gt; SHARP = enabled</title><rect x="790" y="340" width="500" height="90" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1040.0" y="380.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">UFM: Settings -&gt; Subnet Manager -&gt; SHARP = enabled</text>
+<text x="1040.0" y="402.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharp_am then runs under the UFM HA pair</text>
+<g><title>Quantum-2 QM9700 switches (leaves + spines)</title><rect x="760" y="600" width="800" height="140" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1160.0" y="655.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">Quantum-2 QM9700 switches (leaves + spines)</text>
+<text x="1160.0" y="678.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SHARP aggregation nodes: finite buffer + group resources per ASIC</text>
+<text x="1160.0" y="698.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">reduction (sum/min/max, fp32/fp16/bf16) executed in silicon; SHARPv3 = multiple concurrent jobs</text>
+<path d="M650,545 L1355,545 L1355,300" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<circle cx="1000" cy="545" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1000" y="551" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<text x="1030" y="535" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#6b7280" text-anchor="start">job / tree request from sharpd to sharp_am (in-band MADs)</text>
+<path d="M1420,300 L1420,600" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<circle cx="1420" cy="480" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1420" y="486" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<text x="1445" y="486" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#6b7280" text-anchor="start">program tree</text>
+<path d="M210,590 L210,660 L760,660" fill="none" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<circle cx="480" cy="660" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="480" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
+<text x="510" y="650" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="start">data on the SHARP SL</text>
+<g><title>Any piece missing -&gt; &#x27;Connected all rings&#x27; only, no &#x27;Connected CollNet&#x27; line</title><rect x="40" y="730" width="640" height="60" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="360.0" y="764.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">Any piece missing -&gt; &#x27;Connected all rings&#x27; only, no &#x27;Connected CollNet&#x27; line</text>
+<g><rect x="760" y="760" width="800" height="130" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="772" y="784" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">1 NCCL loads the plugin, asks for a CollNet communicator.  2 libsharp talks to local sharpd.</text>
+<text x="772" y="804" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">3 sharpd requests tree/quota from sharp_am.  4 sharp_am got topology from the SM.</text>
+<text x="772" y="824" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">5 sharp_am programs aggregation nodes.  6 data flows on the SHARP SL/VL.</text>
+<text x="772" y="844" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Test bottom-up: sharp_hello -d mlx5_0:1, then nccl-tests with NCCL_DEBUG=INFO.</text>
+<g><rect x="40" y="820" width="480" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="54" y="840" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
+<line x1="54" y1="862" x2="114" y2="862" stroke="#2f6fdb" stroke-width="4"/>
+<text x="126" y="868" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (IB / RDMA payload)</text>
+<line x1="54" y1="892" x2="114" y2="892" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
+<text x="126" y="898" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (SM MADs, REST, CM)</text>
+<line x1="54" y1="922" x2="114" y2="922" stroke="#1f2937" stroke-width="3"/>
+<text x="126" y="928" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Local call / state change</text>
+</svg>

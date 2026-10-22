@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" role="img" aria-label="Sequence diagram of DCQCN with a sending NIC as reaction point, a Spectrum switch egress queue as congestion point marking CE between min and max thresholds, and the receiving NIC as notification point returning CNPs that cause multiplicative rate decrease then additive and hyper increase"><title>DCQCN: the switch marks (CP), the receiver notifies (NP), the sender slows (RP)</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">DCQCN: the switch marks (CP), the receiver notifies (NP), the sender slows (RP)</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">ECN acts per flow before buffers fill; PFC is the hop-by-hop backstop. CNPs ride a strict-priority class (DSCP 48 / TC6) so they never queue behind the congestion</text>
+<g><title>RP: hostA ConnectX-7 (sender)</title><rect x="110.0" y="140" width="380" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="300.0" y="167.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">RP: hostA ConnectX-7 (sender)</text>
+<text x="300.0" y="192.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">roce_rp/enable/3 = 1</text>
+<g><title>CP: leaf02 swp1 egress queue TC3</title><rect x="580.0" y="140" width="440" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="800.0" y="167.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">CP: leaf02 swp1 egress queue TC3</text>
+<text x="800.0" y="192.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set qos roce: ECN min 150 KB / max 1.5 MB / 100 %</text>
+<g><title>NP: hostB ConnectX-7 (receiver)</title><rect x="1110.0" y="140" width="380" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="1300.0" y="167.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">NP: hostB ConnectX-7 (receiver)</text>
+<text x="1300.0" y="192.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">roce_np/enable/3 = 1, cnp_dscp 48</text>
+<line x1="300" y1="204" x2="300" y2="830" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="800" y1="204" x2="800" y2="830" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="1300" y1="204" x2="1300" y2="830" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="300" y1="250" x2="800" y2="250" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="314" y="241" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#e07b00" text-anchor="start">RoCE v2 data, ToS 0x6a (DSCP 26, ECT(0) = &#x27;I am ECN-capable&#x27;) at full rate</text>
+<circle cx="270" cy="250" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="270" y="256" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<g><rect x="580" y="284" width="440" height="48" rx="6" fill="#eeeeee" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="592" y="308" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">queue depth between Kmin and Kmax -&gt; mark with probability</text>
+<text x="592" y="326" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">rising linearly 0 -&gt; Pmax (WRED style); above Kmax mark all</text>
+<circle cx="550" cy="308" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="550" y="314" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<line x1="800" y1="358" x2="1300" y2="358" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="814" y="349" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#e07b00" text-anchor="start">same packet forwarded with ECN = 11 (CE), ToS 0x6b</text>
+<g><rect x="1120" y="392" width="360" height="48" rx="6" fill="#eeeeee" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="1132" y="416" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">np_ecn_marked_roce_packets++</text>
+<text x="1132" y="434" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">CNP timer: at most 1 CNP per N us per QP</text>
+<circle cx="1090" cy="416" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1090" y="422" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<line x1="1300" y1="466" x2="300" y2="466" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="314" y="457" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#d93025" text-anchor="start">CNP (BTH opcode 0x81, DSCP 48 -&gt; TC6 strict) for that QP — np_cnp_sent++</text>
+<circle cx="270" cy="466" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="270" y="472" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<g><rect x="120" y="500" width="360" height="70" rx="6" fill="#ffd9d9" stroke="#d93025" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="132" y="524" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">rp_cnp_handled++; alpha = (1-g) alpha + g</text>
+<text x="132" y="542" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">rate = rate x (1 - alpha/2)  (multiplicative decrease)</text>
+<text x="132" y="560" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">target rate remembered</text>
+<circle cx="90" cy="534" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="90" y="540" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<line x1="300" y1="596" x2="800" y2="596" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="314" y="587" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#e07b00" text-anchor="start">data continues at the reduced rate; queue drains below Kmin -&gt; no more marks</text>
+<g><rect x="120" y="630" width="360" height="92" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="132" y="654" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">no CNP for a timer/byte period -&gt; recovery:</text>
+<text x="132" y="672" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">fast recovery: rate -&gt; (rate + target)/2, 5 stages</text>
+<text x="132" y="690" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">additive increase: + R_AI per stage</text>
+<text x="132" y="708" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">hyper increase: + R_HAI per stage</text>
+<circle cx="90" cy="676" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="90" y="682" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
+<line x1="300" y1="750" x2="800" y2="750" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="314" y="741" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#e07b00" text-anchor="start">rate back at line rate; cycle repeats only if congestion returns</text>
+<g><rect x="60" y="800" width="1040" height="130" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="72" y="824" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Knobs: switch Kmin/Kmax/Pmax (nv show qos roce congestion-control). NIC /sys/class/net/&lt;if&gt;/ecn/roce_rp/:</text>
+<text x="72" y="843" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">dce_tcp_g (alpha gain g), initial_alpha_value, rate_reduce_monitor_period, rpg_time_reset / rpg_byte_reset,</text>
+<text x="72" y="862" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">rpg_ai_rate, rpg_hai_rate, clamp_tgt_rate. roce_np/: cnp_dscp 48, cnp_802p_prio 6, min_time_between_cnps.</text>
+<text x="72" y="881" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Design rule: Kmax &lt; PFC XOFF so ECN acts first; PFC frames rare and non-growing. Marked packets are NOT dropped.</text>
+<g><rect x="1130" y="800" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="1144" y="820" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
+<line x1="1144" y1="842" x2="1204" y2="842" stroke="#e07b00" stroke-width="4"/>
+<text x="1216" y="848" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (Ethernet / RoCE)</text>
+<line x1="1144" y1="872" x2="1204" y2="872" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6"/>
+<text x="1216" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Congestion / flow-control signal</text>
+</svg>

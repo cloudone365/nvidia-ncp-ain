@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
+<title>Multi-tenant BGP-EVPN / VXLAN on Spectrum-X: two tenant VRFs, L2VNI + L3VNI</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Multi-tenant BGP-EVPN / VXLAN on Spectrum-X: two tenant VRFs, L2VNI + L3VNI</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Underlay: BGP unnumbered (IPv6 link-local, RFC 5549). Overlay: EVPN Type-2 (MAC/IP in L2VNI) and Type-5 (prefix in L3VNI) between VTEPs</text>
+<g><title>spine01</title><rect x="560" y="150" width="200" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="660.0" y="176.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">spine01</text>
+<text x="660.0" y="202.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">AS 65000 · EVPN RR-less eBGP</text>
+</g>
+<g><title>spine02</title><rect x="840" y="150" width="200" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="940.0" y="176.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">spine02</text>
+<text x="940.0" y="202.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">AS 65000 · reflects Type-2/5</text>
+</g>
+<g><title>leaf01 (VTEP) lo 10.0.0.11 · AS 65011</title><rect x="220" y="400" width="320" height="90" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="380.0" y="428.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01 (VTEP)</text>
+<text x="380.0" y="449.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">lo 10.0.0.11 · AS 65011</text>
+<text x="380.0" y="474.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">VXLAN UDP 4789 · encap/decap in ASIC</text>
+</g>
+<g><title>leaf02 (VTEP) lo 10.0.0.12 · AS 65012</title><rect x="1060" y="400" width="320" height="90" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1220.0" y="428.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">leaf02 (VTEP)</text>
+<text x="1220.0" y="449.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">lo 10.0.0.12 · AS 65012</text>
+<text x="1220.0" y="474.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">VXLAN UDP 4789 · encap/decap in ASIC</text>
+</g>
+<line x1="660" y1="214" x2="390" y2="400" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
+<line x1="940" y1="214" x2="390" y2="400" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
+<line x1="660" y1="214" x2="1210" y2="400" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
+<line x1="940" y1="214" x2="1210" y2="400" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
+<rect x="348" y="312" width="905" height="26" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="800" y="330" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">eBGP unnumbered, l2vpn-evpn AF: Type-2 / Type-5 routes carried with RD = &lt;lo&gt;:&lt;vni&gt;, RT = &lt;asn&gt;:&lt;vni&gt;</text>
+<g><title>VRF tenantA L3VNI 100100</title><rect x="60" y="560" width="220" height="110" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="170.0" y="589.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">VRF tenantA</text>
+<text x="170.0" y="609.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">L3VNI 100100</text>
+<text x="170.0" y="633.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">VLAN 100 / L2VNI 10100</text>
+<text x="170.0" y="651.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">SVI 10.100.1.1/24, VRR .254</text>
+</g>
+<g><title>VRF tenantB L3VNI 100200</title><rect x="300" y="560" width="220" height="110" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5"/>
+<text x="410.0" y="589.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">VRF tenantB</text>
+<text x="410.0" y="609.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">L3VNI 100200</text>
+<text x="410.0" y="633.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">VLAN 200 / L2VNI 10200</text>
+<text x="410.0" y="651.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">SVI 10.200.1.1/24, VRR .254</text>
+</g>
+<g><title>VRF tenantA L3VNI 100100</title><rect x="1080" y="560" width="220" height="110" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
+<text x="1190.0" y="589.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">VRF tenantA</text>
+<text x="1190.0" y="609.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">L3VNI 100100</text>
+<text x="1190.0" y="633.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">VLAN 100 / L2VNI 10100</text>
+<text x="1190.0" y="651.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">SVI 10.100.1.2/24, VRR .254</text>
+</g>
+<g><title>VRF tenantB L3VNI 100200</title><rect x="1320" y="560" width="220" height="110" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5"/>
+<text x="1430.0" y="589.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">VRF tenantB</text>
+<text x="1430.0" y="609.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">L3VNI 100200</text>
+<text x="1430.0" y="633.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">VLAN 200 / L2VNI 10200</text>
+<text x="1430.0" y="651.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">SVI 10.200.1.2/24, VRR .254</text>
+</g>
+<line x1="170" y1="560" x2="330" y2="490" stroke="#6b7280" stroke-width="2.5"/>
+<line x1="410" y1="560" x2="390" y2="490" stroke="#6b7280" stroke-width="2.5"/>
+<line x1="1190" y1="560" x2="1210" y2="490" stroke="#6b7280" stroke-width="2.5"/>
+<line x1="1430" y1="560" x2="1270" y2="490" stroke="#6b7280" stroke-width="2.5"/>
+<g><title>SuperNIC, tenant A</title><rect x="60" y="720" width="220" height="60" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="170.0" y="743.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">SuperNIC, tenant A</text>
+<text x="170.0" y="767.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1s0 access 100</text>
+</g>
+<g><title>SuperNIC, tenant B</title><rect x="300" y="720" width="220" height="60" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="410.0" y="743.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">SuperNIC, tenant B</text>
+<text x="410.0" y="767.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1s1 access 200</text>
+</g>
+<g><title>SuperNIC, tenant A</title><rect x="1080" y="720" width="220" height="60" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="1190.0" y="743.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">SuperNIC, tenant A</text>
+<text x="1190.0" y="767.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1s0 access 100</text>
+</g>
+<g><title>SuperNIC, tenant B</title><rect x="1320" y="720" width="220" height="60" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="1430.0" y="743.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">SuperNIC, tenant B</text>
+<text x="1430.0" y="767.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1s1 access 200</text>
+</g>
+<line x1="170" y1="720" x2="170" y2="670" stroke="#e07b00" stroke-width="4"/>
+<line x1="410" y1="720" x2="410" y2="670" stroke="#e07b00" stroke-width="4"/>
+<line x1="1190" y1="720" x2="1190" y2="670" stroke="#e07b00" stroke-width="4"/>
+<line x1="1430" y1="720" x2="1430" y2="670" stroke="#e07b00" stroke-width="4"/>
+<line x1="540" y1="430" x2="1060" y2="430" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<line x1="540" y1="462" x2="1060" y2="462" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<rect x="437" y="503" width="726" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="800" y="520" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">blue: VXLAN VNI 100100 (tenantA Type-5 10.100.1.0/24) + VNI 10100 (Type-2 host MAC/IP)</text>
+<rect x="495" y="531" width="610" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="800" y="548" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">green: VXLAN VNI 100200 (tenantB) — different RT, separate routing table</text>
+<g><title>Note</title><rect x="560" y="585" width="480" height="140" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="572" y="608" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Isolation = different Route-Targets:</text>
+<text x="572" y="627" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">tenantA imports only RT 65011:100100 / 65012:100100</text>
+<text x="572" y="646" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">tenantB imports only RT 65011:100200 / 65012:100200</text>
+<text x="572" y="665" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">leaf02 tenantB RIB never learns 10.100.1.0/24.</text>
+<text x="572" y="684" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Pure-L3 GPU fabrics skip L2VNIs: Type-5 only, no BUM.</text>
+<g><title>Legend</title><rect x="560" y="740" width="480" height="142" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="574" y1="766" x2="634" y2="766" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="648" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<line x1="574" y1="796" x2="634" y2="796" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="648" y="802" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
+<line x1="574" y1="826" x2="634" y2="826" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="648" y="832" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">VXLAN tunnel, tenantA VNIs (logical)</text>
+<line x1="574" y1="856" x2="634" y2="856" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<text x="648" y="862" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">VXLAN tunnel, tenantB VNIs (logical)</text>
+</g>
+</svg>

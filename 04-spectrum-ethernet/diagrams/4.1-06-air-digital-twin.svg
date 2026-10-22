@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
+<title>NVIDIA Air (DSX Air) digital-twin workflow: validate the control plane before hardware</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">NVIDIA Air (DSX Air) digital-twin workflow: validate the control plane before hardware</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Same Cumulus/SONiC/NetQ images, same NVUE YAML and Ansible — no Spectrum ASIC, so RoCE / AR / PFC / WJH data-plane behaviour is not reproduced</text>
+<g><title>Git repository templates + host_vars</title><rect x="60" y="170" width="260" height="90" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="190.0" y="198.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Git repository</text>
+<text x="190.0" y="220.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">templates + host_vars</text>
+<text x="190.0" y="246.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">rendered/ NVUE YAML per switch</text>
+</g>
+<g><title>CI runner Ansible + Air SDK/API</title><rect x="400" y="170" width="260" height="90" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="530.0" y="198.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">CI runner</text>
+<text x="530.0" y="220.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Ansible + Air SDK/API</text>
+<text x="530.0" y="246.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">ansible-playbook --check --diff</text>
+</g>
+<g><title>NVIDIA Air simulation (hosted)</title><rect x="730" y="140" width="810" height="330" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
+<text x="744" y="168" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">NVIDIA Air simulation (hosted)</text>
+<g><title>spine01 (sim)</title><rect x="770" y="190" width="200" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="870.0" y="213.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">spine01 (sim)</text>
+<text x="870.0" y="237.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">Cumulus Linux 5.x</text>
+</g>
+<g><title>spine02 (sim)</title><rect x="1000" y="190" width="200" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1100.0" y="213.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">spine02 (sim)</text>
+<text x="1100.0" y="237.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">Cumulus Linux 5.x</text>
+</g>
+<g><title>leaf01 (sim)</title><rect x="770" y="300" width="200" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="870.0" y="323.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01 (sim)</text>
+<text x="870.0" y="347.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">EVPN, VRFs, RoCE profile</text>
+</g>
+<g><title>leaf02 (sim)</title><rect x="1000" y="300" width="200" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1100.0" y="323.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">leaf02 (sim)</text>
+<text x="1100.0" y="347.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">EVPN, VRFs, RoCE profile</text>
+</g>
+<g><title>NetQ server (sim)</title><rect x="1260" y="190" width="240" height="60" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1380.0" y="213.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">NetQ server (sim)</text>
+<text x="1380.0" y="237.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">netq check bgp / evpn</text>
+</g>
+<g><title>server01 (Ubuntu)</title><rect x="770" y="400" width="200" height="50" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="870.0" y="429.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">server01 (Ubuntu)</text>
+</g>
+<g><title>server02 (Ubuntu)</title><rect x="1000" y="400" width="200" height="50" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1100.0" y="429.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">server02 (Ubuntu)</text>
+</g>
+<line x1="870" y1="250" x2="870" y2="300" stroke="#6b7280" stroke-width="2.5"/>
+<line x1="1100" y1="250" x2="870" y2="300" stroke="#6b7280" stroke-width="2.5"/>
+<line x1="870" y1="250" x2="1100" y2="300" stroke="#6b7280" stroke-width="2.5"/>
+<line x1="1100" y1="250" x2="1100" y2="300" stroke="#6b7280" stroke-width="2.5"/>
+<line x1="870" y1="360" x2="870" y2="400" stroke="#6b7280" stroke-width="2.5"/>
+<line x1="1100" y1="360" x2="1100" y2="400" stroke="#6b7280" stroke-width="2.5"/>
+<line x1="1260" y1="220" x2="1200" y2="220" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5"/>
+<line x1="320" y1="215" x2="400" y2="215" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 1</title><circle cx="360" cy="185" r="16" fill="#1f2937"/><text x="360" y="191" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<line x1="660" y1="215" x2="770" y2="215" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 2</title><circle cx="715" cy="185" r="16" fill="#1f2937"/><text x="715" y="191" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<rect x="666" y="245" width="98" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
+<text x="715" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">REST / SSH</text>
+<g><title>Step 3</title><circle cx="1240" cy="160" r="16" fill="#1f2937"/><text x="1240" y="166" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><title>What Air validates (control plane + configuration)</title><rect x="60" y="540" width="440" height="130" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5"/>
+<text x="280.0" y="570.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">What Air validates</text>
+<text x="280.0" y="591.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">(control plane + configuration)</text>
+<text x="280.0" y="616.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">NVUE syntax &amp; apply · BGP/EVPN route exchange</text>
+<text x="280.0" y="634.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">VRF isolation (Type-5) · Ansible idempotency</text>
+<text x="280.0" y="652.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">Upgrade rehearsal · netq check results</text>
+</g>
+<g><title>What Air cannot validate (no ASIC)</title><rect x="560" y="540" width="440" height="130" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="780.0" y="570.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">What Air cannot validate</text>
+<text x="780.0" y="591.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">(no ASIC)</text>
+<text x="780.0" y="616.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">PFC/ECN counters stay 0 · AR accepted but never sprays</text>
+<text x="780.0" y="634.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">No WJH drops, no buffer histograms</text>
+<text x="780.0" y="652.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">No NCCL / ib_write_bw performance numbers</text>
+</g>
+<g><title>Promote to production identical YAML, Ansible, netq check</title><rect x="1060" y="540" width="480" height="130" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1300.0" y="579.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Promote to production</text>
+<text x="1300.0" y="600.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">identical YAML, Ansible, netq check</text>
+<text x="1300.0" y="625.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600 + SuperNIC hosts</text>
+<text x="1300.0" y="643.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">then ib_write_bw / NCCL tests (Module 8.x)</text>
+</g>
+<line x1="500" y1="605" x2="560" y2="605" stroke="#1f2937" stroke-width="3"/>
+<line x1="1000" y1="605" x2="1060" y2="605" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>Step 4</title><circle cx="1030" cy="575" r="16" fill="#1f2937"/><text x="1030" y="581" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<text x="60" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">1  Commit renders the per-switch YAML; CI diff shows the device-level change.    2  CI spins up the twin from a topology file and runs the playbook (check, then apply).</text>
+<text x="60" y="758" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">3  netq check bgp / evpn / interfaces inside the twin gates the merge.    4  On merge, the same artefacts deploy to hardware; data-plane proof needs real Spectrum-4 + SuperNICs.</text>
+<g><title>Legend</title><rect x="1110" y="780" width="430" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1124" y1="806" x2="1184" y2="806" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1198" y="812" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<line x1="1124" y1="836" x2="1184" y2="836" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1198" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
+<line x1="1124" y1="866" x2="1184" y2="866" stroke="#6b7280" stroke-width="2.5" marker-end="url(#arrow-gray)"/>
+<text x="1198" y="872" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Physical link</text>
+</g>
+</svg>

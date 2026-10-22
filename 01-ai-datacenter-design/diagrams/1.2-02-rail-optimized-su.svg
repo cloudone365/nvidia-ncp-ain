@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img" aria-label="Rail-optimized Scalable Unit: NIC n of every node → Leaf n">
+<title>Rail-optimized Scalable Unit: NIC n of every node → Leaf n</title>
+<defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a9c8a"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs>
+<rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Rail-optimized Scalable Unit: NIC n of every node → Leaf n</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">32 DGX H100 × 8 ConnectX-7 = 256 node→leaf cables; rail 0 highlighted end to end</text>
+<g><title>Leaf 0  (rail 0)</title><rect x="70" y="170" width="170" height="70" rx="10" fill="#dbe8ff" stroke="#1d4ed8" stroke-width="4"/><text x="155.0" y="201.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Leaf 0  (rail 0)</text><text x="155.0" y="222.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">QM9700 · 32 ↓ / 32 ↑</text></g>
+<g><title>Leaf 1  (rail 1)</title><rect x="260" y="170" width="170" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="345.0" y="201.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Leaf 1  (rail 1)</text><text x="345.0" y="222.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">QM9700 · 32 ↓ / 32 ↑</text></g>
+<g><title>Leaf 2  (rail 2)</title><rect x="450" y="170" width="170" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="535.0" y="201.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Leaf 2  (rail 2)</text><text x="535.0" y="222.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">QM9700 · 32 ↓ / 32 ↑</text></g>
+<g><title>Leaf 3  (rail 3)</title><rect x="640" y="170" width="170" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="725.0" y="201.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Leaf 3  (rail 3)</text><text x="725.0" y="222.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">QM9700 · 32 ↓ / 32 ↑</text></g>
+<g><title>Leaf 4  (rail 4)</title><rect x="830" y="170" width="170" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="915.0" y="201.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Leaf 4  (rail 4)</text><text x="915.0" y="222.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">QM9700 · 32 ↓ / 32 ↑</text></g>
+<g><title>Leaf 5  (rail 5)</title><rect x="1020" y="170" width="170" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1105.0" y="201.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Leaf 5  (rail 5)</text><text x="1105.0" y="222.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">QM9700 · 32 ↓ / 32 ↑</text></g>
+<g><title>Leaf 6  (rail 6)</title><rect x="1210" y="170" width="170" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1295.0" y="201.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Leaf 6  (rail 6)</text><text x="1295.0" y="222.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">QM9700 · 32 ↓ / 32 ↑</text></g>
+<g><title>Leaf 7  (rail 7)</title><rect x="1400" y="170" width="170" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1485.0" y="201.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Leaf 7  (rail 7)</text><text x="1485.0" y="222.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">QM9700 · 32 ↓ / 32 ↑</text></g>
+<text x="800.0" y="150.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="500" fill="#5f6b7a" text-anchor="middle">8 leaves in the SU network rack — one per NIC index, NOT one per server rack</text>
+<g><title>dgx01</title><rect x="70" y="560" width="214" height="120" rx="14" fill="#e4f1cc" fill-opacity="0.25" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
+<text x="84.0" y="584.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#76b900" text-anchor="start">dgx01</text>
+<g><rect x="84" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#1d4ed8" stroke-width="3"/></g>
+<text x="95.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1d4ed8" text-anchor="middle">0</text>
+<path d="M95.0,612.0 L155.0,240.0" fill="none" stroke="#1d4ed8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<g><rect x="109" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="120.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">1</text>
+<path d="M120.0,612.0 L345.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="134" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="145.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">2</text>
+<path d="M145.0,612.0 L535.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="159" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="170.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">3</text>
+<path d="M170.0,612.0 L725.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="184" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="195.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">4</text>
+<path d="M195.0,612.0 L915.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="209" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="220.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">5</text>
+<path d="M220.0,612.0 L1105.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="234" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="245.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">6</text>
+<path d="M245.0,612.0 L1295.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="259" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="270.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">7</text>
+<path d="M270.0,612.0 L1485.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<text x="180.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlx5_0 … mlx5_7  (8 × 400G)</text>
+<g><title>dgx02</title><rect x="320" y="560" width="214" height="120" rx="14" fill="#e4f1cc" fill-opacity="0.25" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
+<text x="334.0" y="584.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#76b900" text-anchor="start">dgx02</text>
+<g><rect x="334" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#1d4ed8" stroke-width="3"/></g>
+<text x="345.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1d4ed8" text-anchor="middle">0</text>
+<path d="M345.0,612.0 L155.0,240.0" fill="none" stroke="#1d4ed8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<g><rect x="359" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="370.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">1</text>
+<path d="M370.0,612.0 L345.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="384" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="395.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">2</text>
+<path d="M395.0,612.0 L535.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="409" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="420.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">3</text>
+<path d="M420.0,612.0 L725.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="434" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="445.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">4</text>
+<path d="M445.0,612.0 L915.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="459" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="470.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">5</text>
+<path d="M470.0,612.0 L1105.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="484" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="495.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">6</text>
+<path d="M495.0,612.0 L1295.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="509" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="520.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">7</text>
+<path d="M520.0,612.0 L1485.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<text x="430.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlx5_0 … mlx5_7  (8 × 400G)</text>
+<g><title>dgx03</title><rect x="570" y="560" width="214" height="120" rx="14" fill="#e4f1cc" fill-opacity="0.25" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
+<text x="584.0" y="584.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#76b900" text-anchor="start">dgx03</text>
+<g><rect x="584" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#1d4ed8" stroke-width="3"/></g>
+<text x="595.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1d4ed8" text-anchor="middle">0</text>
+<path d="M595.0,612.0 L155.0,240.0" fill="none" stroke="#1d4ed8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<g><rect x="609" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="620.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">1</text>
+<path d="M620.0,612.0 L345.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="634" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="645.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">2</text>
+<path d="M645.0,612.0 L535.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="659" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="670.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">3</text>
+<path d="M670.0,612.0 L725.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="684" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="695.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">4</text>
+<path d="M695.0,612.0 L915.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="709" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="720.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">5</text>
+<path d="M720.0,612.0 L1105.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="734" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="745.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">6</text>
+<path d="M745.0,612.0 L1295.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="759" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="770.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">7</text>
+<path d="M770.0,612.0 L1485.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<text x="680.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlx5_0 … mlx5_7  (8 × 400G)</text>
+<g><title>dgx04</title><rect x="820" y="560" width="214" height="120" rx="14" fill="#e4f1cc" fill-opacity="0.25" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
+<text x="834.0" y="584.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#76b900" text-anchor="start">dgx04</text>
+<g><rect x="834" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#1d4ed8" stroke-width="3"/></g>
+<text x="845.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1d4ed8" text-anchor="middle">0</text>
+<path d="M845.0,612.0 L155.0,240.0" fill="none" stroke="#1d4ed8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<g><rect x="859" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="870.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">1</text>
+<path d="M870.0,612.0 L345.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="884" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="895.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">2</text>
+<path d="M895.0,612.0 L535.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="909" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="920.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">3</text>
+<path d="M920.0,612.0 L725.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="934" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="945.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">4</text>
+<path d="M945.0,612.0 L915.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="959" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="970.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">5</text>
+<path d="M970.0,612.0 L1105.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="984" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="995.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">6</text>
+<path d="M995.0,612.0 L1295.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1009" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1020.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">7</text>
+<path d="M1020.0,612.0 L1485.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<text x="930.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlx5_0 … mlx5_7  (8 × 400G)</text>
+<g><title>dgx05</title><rect x="1070" y="560" width="214" height="120" rx="14" fill="#e4f1cc" fill-opacity="0.25" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
+<text x="1084.0" y="584.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#76b900" text-anchor="start">dgx05</text>
+<g><rect x="1084" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#1d4ed8" stroke-width="3"/></g>
+<text x="1095.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1d4ed8" text-anchor="middle">0</text>
+<path d="M1095.0,612.0 L155.0,240.0" fill="none" stroke="#1d4ed8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<g><rect x="1109" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1120.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">1</text>
+<path d="M1120.0,612.0 L345.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1134" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1145.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">2</text>
+<path d="M1145.0,612.0 L535.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1159" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1170.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">3</text>
+<path d="M1170.0,612.0 L725.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1184" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1195.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">4</text>
+<path d="M1195.0,612.0 L915.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1209" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1220.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">5</text>
+<path d="M1220.0,612.0 L1105.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1234" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1245.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">6</text>
+<path d="M1245.0,612.0 L1295.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1259" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1270.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">7</text>
+<path d="M1270.0,612.0 L1485.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<text x="1180.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlx5_0 … mlx5_7  (8 × 400G)</text>
+<text x="1292.0" y="630.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#5f6b7a" text-anchor="middle">···</text>
+<text x="1292.0" y="656.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">6–31</text>
+<g><title>dgx32</title><rect x="1320" y="560" width="214" height="120" rx="14" fill="#e4f1cc" fill-opacity="0.25" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
+<text x="1334.0" y="584.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#76b900" text-anchor="start">dgx32</text>
+<g><rect x="1334" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#1d4ed8" stroke-width="3"/></g>
+<text x="1345.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1d4ed8" text-anchor="middle">0</text>
+<path d="M1345.0,612.0 L155.0,240.0" fill="none" stroke="#1d4ed8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<g><rect x="1359" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1370.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">1</text>
+<path d="M1370.0,612.0 L345.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1384" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1395.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">2</text>
+<path d="M1395.0,612.0 L535.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1409" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1420.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">3</text>
+<path d="M1420.0,612.0 L725.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1434" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1445.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">4</text>
+<path d="M1445.0,612.0 L915.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1459" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1470.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">5</text>
+<path d="M1470.0,612.0 L1105.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1484" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1495.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">6</text>
+<path d="M1495.0,612.0 L1295.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<g><rect x="1509" y="612" width="22" height="50" rx="4" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="1.5"/></g>
+<text x="1520.0" y="676.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">7</text>
+<path d="M1520.0,612.0 L1485.0,240.0" fill="none" stroke="#2f6fdb" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.35"/>
+<text x="1430.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlx5_0 … mlx5_7  (8 × 400G)</text>
+<text x="800.0" y="720.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1d4ed8" text-anchor="middle">Path for GPU 0 (dgx01) → GPU 0 (dgx32): mlx5_0 → Leaf 0 → mlx5_0 — ONE switch hop, spine idle</text>
+<text x="800.0" y="748.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">Cross-rail (GPU 0 → GPU 3 on another node): Leaf 0 → spine → Leaf 3 — three hops, unless PXN first moves the data to GPU 3's NIC over NVLink</text>
+<g><title>Arithmetic: 32 nodes × 8 rails = 256 node→leaf cables; each leaf takes 32 downlinks (ports 1–32) and keeps 32 for uplinks.</title><rect x="48" y="775" width="1080" height="62" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/></g>
+<text x="60.0" y="802.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Arithmetic: 32 nodes × 8 rails = 256 node→leaf cables; each leaf takes 32 downlinks (ports 1–32) and keeps 32 for uplinks.</text>
+<text x="60.0" y="821.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">As built: 31 nodes + 4 UFM ports = 252 downlinks. Verify a rail with  iblinkinfo -S &lt;leaf-GUID&gt;  → every remote is mlx5_N.</text>
+<rect x="1150" y="775" width="402" height="122" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<text x="1166.0" y="803.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">Legend</text>
+<path d="M1166,832.0 L1212,832.0" fill="none" stroke="#2f6fdb" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
+<text x="1226.0" y="838.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Rail 0 (highlighted)</text>
+<path d="M1166,858.0 L1212,858.0" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round"/>
+<text x="1226.0" y="864.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Rails 1–7 (same pattern)</text>
+<rect x="1166" y="873.0" width="46" height="22" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2"/>
+<text x="1226.0" y="890.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">QM9700 leaf / CX7 port</text>
+</svg>
