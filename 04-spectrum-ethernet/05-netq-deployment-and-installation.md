@@ -25,11 +25,20 @@ By the end of this module you will be able to…
 
 *Analogy:* `nv show` is a security guard looking at one camera. NetQ is the control room with every camera recorded, so you can ask "show me every door that was open at 3 a.m." — across the whole building, and in the past.
 
-**NetQ** is NVIDIA's network operations and telemetry platform for Cumulus Linux, NVIDIA SONiC, and Linux hosts. It continuously collects state (not just counters) from every device — interfaces, LLDP, BGP, EVPN, MLAG, routes, MAC/ARP tables, sensors, RoCE/PFC/ECN statistics, WJH drops — stores it as a time series, and lets you validate the *whole fabric* with a single command or UI card. It is the operational layer in the Spectrum-X stack (Module 4.1) and the primary troubleshooting tool for Ethernet in the exam's Troubleshooting domain.
+**What it is.** **NetQ** is NVIDIA's network operations and telemetry platform for Cumulus Linux, NVIDIA SONiC, and Linux hosts. It continuously collects state (not just counters) from every device — interfaces, LLDP, BGP, EVPN, MLAG, routes, MAC/ARP tables, sensors, RoCE/PFC/ECN statistics, WJH drops — stores it as a time series, and lets you validate the *whole fabric* with a single command or UI card. It is the operational layer in the Spectrum-X stack (Module 4.1) and the primary troubleshooting tool for Ethernet in the exam's Troubleshooting domain.
 
 Mental model for Cisco/Arista engineers: NetQ ≈ CloudVision/DNA Center assurance, but agent-based, CLI-first and fabric-wide validation oriented.
 
+**Why it exists.** Most fabric faults are *relationships*, not single-device states: an MTU that differs between two LLDP neighbours, a VNI present on one VTEP and missing on another, one leaf left in lossy mode among lossless peers. No single-switch command sees those, and by the time an engineer logs in the transient state (a PFC storm, a flapping session) may be gone. NetQ keeps every device's state over time in one store, so it can compare devices with each other and look back in time.
+
+**How it works.** Three moving parts (Figure 4.5-1): an **agent** on every switch and host gathers state locally and streams changes; a **server** (on-premises, or NVIDIA's cloud reached through an **OPTA**) ingests, stores and indexes them; the **CLI/UI/API** query that store. Everything else in this module — validation, RoCE views, WJH, traces, LCM, notifications — is a query or an action against that store.
+
 ### 2.2 Components and deployment models
+
+![NetQ architecture: switch and host agents stream to TCP 31980 on the on-premises server, whose Kubernetes-hosted pipeline runs Kafka, stream processors and Cassandra behind the validation engine, events, LCM, UI and CLI; in the cloud model agents send to an on-site OPTA on 31443 which forwards over TLS to NetQ Cloud](diagrams/4.5-01-netq-architecture.svg)
+*Figure 4.5-1 — Two deployment shapes, one data model: agents → TCP 31980 → Kafka → processors → Cassandra on-prem, or agents → OPTA (31443) → NetQ Cloud.*
+
+**What it is.**
 
 | Component | Role |
 |---|---|
@@ -45,51 +54,109 @@ Deployment models:
 2. **On-premises, cluster** — three VMs (one master, two workers) for HA and larger scale.
 3. **Cloud-hosted** — NVIDIA runs the backend; you deploy an OPTA VM (standalone or cluster) that agents connect to.
 
+**Why it exists.** The split between a thin agent and a heavy backend keeps the switch CPU free for routing while the expensive work — storing months of state, correlating events, running fabric-wide checks — happens on a server sized for it. Kafka decouples ingest from storage, so a burst of updates (a spine reboot makes every leaf report hundreds of changes at once) is buffered rather than lost; Cassandra is a time-series-friendly store that makes "as of time T" queries cheap. The cloud model exists for operators who do not want to run that backend; the OPTA keeps the agents' connections local and sends one aggregated, encrypted stream out.
+
+**How it works.** In the on-prem model the installer (`netq install standalone|cluster full …`, §3 Step 1) bootstraps Kubernetes on the VM(s) and runs every NetQ service as a pod. Agents open a connection to TCP 31980 on the server's address; the ingest side writes their messages into Kafka topics; stream processors normalise them, detect events (a BGP session going down, a sensor crossing a threshold) and write the results to Cassandra, keyed by hostname and timestamp. The validation engine, events/notifications, LCM, UI (443) and CLI/API all read from that store. In the cloud model agents point at the OPTA on 31443 with TLS, and the OPTA forwards over outbound HTTPS to NetQ Cloud — no inbound firewall holes on your side. A cluster spreads the pods over three nodes behind a virtual IP so one VM failure does not stop ingest.
+
+Failure modes and observation: pods not `Running` (`netq show status verbose`, `kubectl get pods`), disk filling on the VM (Cassandra growth — size for retention), a firewall blocking 31980/31443 (agents Rotten everywhere), OPTA unable to reach the cloud (`netq show opta-health`).
+
 **Why the exam cares:** port numbers (31980 vs 31443 vs 443) and "which model has an OPTA" are reliable questions.
 
 ### 2.3 Sizing
 
-Published requirements change by release; verify in the current install guide. Representative on-prem standalone VM: 16 vCPU, 64 GB RAM, 500 GB SSD (cluster nodes similar each). The OPTA is lighter (8 vCPU, 64 GB, 256 GB — again verify). NetQ scales to several hundred to low thousands of devices per server depending on telemetry rate; a Spectrum-X SuperPOD with a few hundred switches and GPU hosts with agents is squarely within one on-prem cluster.
+**What it is.** Published requirements change by release; verify in the current install guide. Representative on-prem standalone VM: 16 vCPU, 64 GB RAM, 500 GB SSD (cluster nodes similar each). The OPTA is lighter (8 vCPU, 64 GB, 256 GB — again verify). NetQ scales to several hundred to low thousands of devices per server depending on telemetry rate; a Spectrum-X SuperPOD with a few hundred switches and GPU hosts with agents is squarely within one on-prem cluster.
 
-Hypervisors: VMware ESXi (OVA) and KVM (qcow2). The VM needs a routable management-network address reachable from every switch's `eth0` (mgmt VRF) and outbound HTTPS if cloud or for LCM image downloads.
+**Why it exists.** The server's load is driven by *change rate* and *retention*, not just device count: every agent's deltas land in Kafka and Cassandra, and RoCE counters, WJH records and flapping interfaces generate far more updates than a quiet campus switch. Undersizing shows up as slow queries, lagging ingest (agents look Rotten while the server is simply behind) and a full disk.
+
+**How it works.** Hypervisors: VMware ESXi (OVA) and KVM (qcow2). The VM needs a routable management-network address reachable from every switch's `eth0` (mgmt VRF) and outbound HTTPS if cloud or for LCM image downloads. Plan for the cluster model when you need HA or when the fabric's change rate (many GPU hosts streaming RoCE counters) approaches a single VM's capacity, and keep the server's clock synchronised — every timestamp NetQ compares depends on it.
 
 ### 2.4 Agents: Fresh and Rotten
 
 *Analogy:* an agent is a reporter phoning in from each switch. "Fresh" means they called recently; "Rotten" means the line went dead — and anything NetQ tells you about that switch is stale news.
 
-Cumulus ships with the `netq-agent` and `netq-apps` (CLI) packages installed but pointed at nothing. `sudo netq config add server <ip> port 31980 vrf mgmt` points them at your server. Host agents (Ubuntu/RHEL GPU servers) report interfaces, LLDP (so NetQ builds host-to-leaf topology), routes/neighbours, and on NVIDIA NICs the RoCE counters. Hosts have no mgmt VRF, so omit `vrf`. On DGX/GPU nodes this is how NetQ correlates a slow NCCL job with a specific leaf port's PFC storm.
+![Sequence diagram: the NetQ agent polls switch state and streams heartbeats and deltas to the server on TCP 31980; the operator queries the server; an LCM job backs up, snapshots, upgrades and validates each switch over SSH in order](diagrams/4.5-02-agent-telemetry-lcm-flow.svg)
+*Figure 4.5-2 — Telemetry (steps 1–5) and an LCM upgrade job (steps 6–9). A Rotten agent means steps 2–3 have stopped; every later answer is stale.*
+
+**What it is.** Cumulus ships with the `netq-agent` and `netq-apps` (CLI) packages installed but pointed at nothing. `sudo netq config add server <ip> port 31980 vrf mgmt` points them at your server. Host agents (Ubuntu/RHEL GPU servers) report interfaces, LLDP (so NetQ builds host-to-leaf topology), routes/neighbours, and on NVIDIA NICs the RoCE counters. Hosts have no mgmt VRF, so omit `vrf`. On DGX/GPU nodes this is how NetQ correlates a slow NCCL job with a specific leaf port's PFC storm.
 
 "Fresh" means recent heartbeat; "Rotten" means the agent has stopped reporting — the first thing to check before trusting any `netq check`.
 
+**Why it exists.** Sending full state every few seconds from every device would swamp the server; sending only changes is efficient but creates a new problem — silence could mean "nothing changed" or "agent dead". The heartbeat resolves that ambiguity: no news plus a heartbeat means unchanged; no heartbeat means unknown, and NetQ marks the device Rotten rather than presenting old data as current.
+
+**How it works** (Figure 4.5-2, steps 1–5).
+
+1. The agent runs a set of collection *services*, each with its own polling period — interfaces and LLDP, FRR (BGP/EVPN), the kernel's routes, neighbours and FDB, sensors, RoCE counters, WJH records. `netq config show agent commands` lists them and their periods; they can be tuned per service (verify the exact syntax and defaults for your release). `cpu-limit` caps the agent's CPU share.
+2. After each poll the agent compares the result with what it last sent and streams only the *differences*, plus a periodic heartbeat, over TCP 31980 from the mgmt VRF.
+3. The server records the heartbeat time (Fresh) and pushes the deltas through Kafka into Cassandra, keyed by hostname and time. If heartbeats stop for longer than the server's threshold, the device turns Rotten.
+4. Queries — `netq check …`, `netq show …`, with `around <time>` — run against the store, never against the switch.
+5. Results come back as tables or `json`.
+
+Failure modes: missing `vrf mgmt` (the agent sends from the default VRF and never connects — Gotcha 1); agent version too far behind the server (some data types missing); clock skew (events out of order); agent CPU-limited on a busy switch (slow updates). Observe on the switch with `sudo netq config show`, `systemctl status netq-agent`, `sudo journalctl -u netq-agent`; on the server with `netq show agents [rotten]` and `netq check agents`.
+
 ### 2.5 Validation with `netq check`
 
-A **validation** compares the collected state of *every* device against protocol expectations and against each other. Checks run on demand or on a schedule and feed the UI "Validation Summary" card. Output lists total nodes, checked, failed, warnings and the specific session/link that failed with a reason.
+![netq check pipeline: Fresh agents feed a time-series store holding the state of all devices at time T; validation suites for interfaces, BGP, EVPN, MLAG and RoCE run against it; a summary lists failed nodes and sessions with the exact interface and reason, which gates CI or drives drill-down](diagrams/4.5-03-netq-check-pipeline.svg)
+*Figure 4.5-3 — Collect (1), test the stored snapshot at time T (2), summarise with the exact failing interface (3), act or gate the pipeline (4).*
 
-Typical exam usage: "after an EVPN change, which single command confirms every VTEP and VNI across the fabric agrees?" → `netq check evpn`. `netq check interfaces` catching an MTU mismatch between two LLDP neighbours is another favourite — a problem no single-switch `nv show` reveals. Because NetQ is time-series, `netq check bgp around 1h` validates the *past*.
+**What it is.** A **validation** compares the collected state of *every* device against protocol expectations and against each other. Checks run on demand or on a schedule and feed the UI "Validation Summary" card. Output lists total nodes, checked, failed, warnings and the specific session/link that failed with a reason.
+
+**Why it exists.** Protocol correctness is pairwise: a BGP session is healthy only if *both* ends agree, an MLAG pair only if both peers carry the same bonds and VLANs, a RoCE fabric only if every hop has the same lossless profile. Typical exam usage: "after an EVPN change, which single command confirms every VTEP and VNI across the fabric agrees?" → `netq check evpn`. `netq check interfaces` catching an MTU mismatch between two LLDP neighbours is another favourite — a problem no single-switch `nv show` reveals.
+
+**How it works** (Figure 4.5-3).
+
+1. **Collect.** Agents keep the store current; the check first notes which nodes are Fresh. Rotten nodes are reported in their own summary line because their data cannot be trusted.
+2. **Test.** Each suite is a numbered list of tests (for BGP: session establishment, address families, router-ID uniqueness …) evaluated against the stored state *at time T* — now by default, or the past with `around`. Because NetQ is time-series, `netq check bgp around 1h` validates the *past*. `include`/`exclude` select tests by number and `hostnames` limits scope.
+3. **Summarise.** The result counts total/checked/failed/rotten/warning nodes and sessions, then lists each failure with hostname, VRF, peer, interface and reason — a BGP session failure usually appears twice, once from each end.
+4. **Act.** In CI, parse `json` output and fail the pipeline when any node failed; in the UI, drill from the Validation Summary card to the device.
+
+Run suites lowest layer first — `interfaces`/`mtu` before `bgp`, `bgp` before `evpn` — because a lower-layer failure explains upper-layer ones (Step 3 of §3). The failure mode that bites is trusting a green result built on Rotten nodes or taken before agents reported a change (Gotcha 2).
 
 ### 2.6 RoCE telemetry and WJH
 
-`netq show roce-config` reveals a leaf accidentally left in lossy mode; `netq check roce` automates that comparison across the fabric. `netq show roce-counters <host> <port>` gives per-port PFC pause rx/tx, ECN-marked packets, RoCE packets and drops, with `ingress|egress|pool` views.
+![RoCE telemetry for a slow receiver: dgx01 pauses leaf01, leaf01 marks ECN and pauses spine02, any lossy hop shows WJH buffer drops; side panel lists netq show roce-config, netq check roce, netq show roce-counters, netq show wjh-drop buffer and TCAs](diagrams/4.5-04-roce-telemetry-view.svg)
+*Figure 4.5-4 — Where a slow receiver shows up: PFC rx on the host port (1), ECN marks (2), PFC tx toward the spine (3), and WJH buffer drops on any lossy hop (4) — and which NetQ view shows each.*
+
+**What it is.** `netq show roce-config` reveals a leaf accidentally left in lossy mode; `netq check roce` automates that comparison across the fabric. `netq show roce-counters <host> <port>` gives per-port PFC pause rx/tx, ECN-marked packets, RoCE packets and drops, with `ingress|egress|pool` views.
 
 **WJH** (What Just Happened) is the Spectrum ASIC's drop-reason telemetry (Module 4.1 and Module 8.x). The NetQ agent collects WJH records when enabled (`netq config add agent wjh`) and streams them so you can query fleet-wide. Drop categories: **L1** (link down/flaps, FEC errors), **L2** (MLAG/VLAN mismatch, STP, unknown VLAN), **Router** (blackhole, TTL, uRPF), **Tunnel** (VXLAN decap failures), **ACL**, **Buffer** (tail drop, WRED, PFC-WD), plus congestion/latency events. Each record includes the switch, port, drop reason, 5-tuple of the sample packet and a count. WJH answers *why* a packet died without mirroring or guesswork — it is a Spectrum differentiator the exam highlights.
 
+**Why it exists.** RoCE performance problems are almost always congestion problems, and congestion leaves a trail across several devices and counters at once. Reading those counters one switch at a time, after the event, rarely works; NetQ keeps them as a time series per port so you can see which port paused which, in which direction, and when.
+
+**How it works** (Figure 4.5-4). Read every PFC counter from the switch port's point of view. A slow receiver (dgx01) cannot drain its queue, so its NIC transmits PAUSE for priority 3 (1): leaf01's host port counts **PFC rx**. leaf01's egress queue toward dgx01 grows, so ECN marks rise there and CNPs slow the senders (2). If the leaf's ingress PG still fills, leaf01 transmits PAUSE upstream (3): **PFC tx** on its uplink, PFC rx on the spine. If any hop is lossy (one leaf left in lossy mode), the overflow becomes **WJH buffer** drops with the RoCEv2 5-tuple (UDP 4791) (4). The rules that follow: PFC rx on a host port = slow host; PFC tx on a host port = the leaf is pausing that host because its own buffers toward the destination are filling; PFC rx on an uplink = the spine is pausing you; ECN marking with little PFC = congestion control is winning. Failure modes: WJH collection off (empty `wjh-drop` output while counters show drops — Gotcha 3); a drop filter hiding the reason; comparing cumulative counters instead of deltas over a window (`between now and 10m`, `around 30m`).
+
 ### 2.7 Traces, topology and snapshots
 
-`netq trace` computes the L2/L3 path through the fabric *from collected state* — it does not inject packets. It shows every ECMP path, hops, and flags issues (MTU mismatch, missing route, down link) along the way, and can trace a path as it was an hour ago. The UI topology view is built from LLDP data reported by agents (including hosts); `netq show lldp` is the CLI equivalent. A **snapshot** captures fabric state at a point in time; comparing two lists every difference. LCM takes them automatically when asked.
+**What it is.** `netq trace` computes the L2/L3 path through the fabric *from collected state* — it does not inject packets. The UI topology view is built from LLDP data reported by agents (including hosts); `netq show lldp` is the CLI equivalent. A **snapshot** captures fabric state at a point in time; comparing two lists every difference.
+
+**Why it exists.** Injected-packet tools (ping, traceroute) see one hash result per probe and nothing about why; a computed trace sees every ECMP branch and every hop's tables at once, and can do it for the past.
+
+**How it works.** The trace walks the stored routing, ARP/ND, MAC and interface tables hop by hop from source to destination, branching at every ECMP decision; it shows every ECMP path, hops, and flags issues (MTU mismatch, missing route, down link) along the way, and can trace a path as it was an hour ago. Snapshots record the same tables at a moment; comparing two lists added/removed interfaces, BGP sessions, routes, MACs. LCM takes them automatically when asked.
 
 ### 2.8 Lifecycle Management (LCM)
 
-LCM lets NetQ upgrade Cumulus Linux images and NetQ agents, and (in newer releases) push NVUE configuration, across many switches from one place. Key behaviours: LCM backs up the configuration before upgrade and can restore on failure; it can take a NetQ snapshot before and after to prove nothing changed in BGP/EVPN/interfaces state; it upgrades sequentially or in configured groups to protect MLAG pairs. For NVUE configuration management, LCM can store NVUE YAML "configuration profiles" and apply them — a GUI alternative to Ansible (Module 6.1).
+**What it is.** LCM lets NetQ upgrade Cumulus Linux images and NetQ agents, and (in newer releases) push NVUE configuration, across many switches from one place. For NVUE configuration management, LCM can store NVUE YAML "configuration profiles" and apply them — a GUI alternative to Ansible (Module 6.1).
+
+**Why it exists.** A Cumulus major upgrade is a destructive image install (Module 4.3 Figure 4.3-3): back up, install, restore, validate. Doing that by hand on hundreds of switches invites mistakes — two MLAG peers upgraded at once, a forgotten backup. LCM makes the safe procedure the default.
+
+**How it works** (Figure 4.5-2, steps 6–9). You register SSH credentials and upload the image (6). For each switch, in the configured `order`, LCM connects over SSH, backs up the configuration, takes a snapshot 'before', copies the image, installs it and reboots (7). When the agent reconnects, LCM takes the snapshot 'after' and compares BGP/EVPN/interfaces state; with `run-restore-on-failure`, a failed upgrade or mismatch triggers restore (8). Then it moves to the next host — sequential or grouped upgrades protect MLAG pairs (9). `netq lcm show upgrade-jobs cl-image` shows progress. Failure modes: wrong or expired credentials (job fails at the SSH step), a switch with a Rotten agent (no 'after' snapshot to compare), image download blocked (outbound HTTPS from the server).
 
 ### 2.9 Notifications and thresholds
 
 *Analogy:* a **channel** is a phone number (Slack, PagerDuty, syslog, email); a **rule** is a keyword you listen for; a **filter** wires a rule to a number. **TCAs** are separate smoke detectors — they trigger on a numeric threshold and ring a channel directly.
 
-**Threshold-crossing events (TCA)** fire when a metric exceeds a value you set. TCA event IDs exist for interface rates/errors, sensors, ASIC resource utilization (hosts, routes, ACLs, MAC — ties to `cl-resource-query`), RoCE counters, WJH drop rates, and digital-optics (DOM) values. Exact IDs are listed in the Threshold-Crossing Events reference; the exam asks what categories exist and that the scope syntax is `hostname,interface` with wildcards.
+**What it is.** NetQ events (state changes it detects in the stream) are delivered through **channels**, selected by **rules** (match on event fields such as hostname or message) and wired together by **filters** (rule + channel + minimum severity). **Threshold-crossing events (TCA)** fire when a metric exceeds a value you set. TCA event IDs exist for interface rates/errors, sensors, ASIC resource utilization (hosts, routes, ACLs, MAC — ties to `cl-resource-query`), RoCE counters, WJH drop rates, and digital-optics (DOM) values. Exact IDs are listed in the Threshold-Crossing Events reference; the exam asks what categories exist and that the scope syntax is `hostname,interface` with wildcards.
+
+**Why it exists.** A fabric generates far more events than people can read; rules and filters route the few that matter to the right team, and TCAs catch slow trends (a route table at 90%, rising PFC pause rates) before they become outages.
+
+**How it works.** Stream processors evaluate every update against the configured TCAs and event definitions; a match creates an event in the store, and the notifier passes it through the filters in order to the matching channels. Failure modes: a filter with a severity above the event's (nothing sent), a rule whose regex never matches, a channel the server cannot reach (Slack webhook blocked by a proxy — Gotcha 4). Observe with `netq show events`, `netq show notification channel|rule|filter`, `netq show tca`.
 
 ### 2.10 UI workbench
 
-The UI organises everything into *cards* on a *workbench*: Validation Summary, Network Health, Events, Inventory, Device/Interface cards, RoCE cards, WJH cards, Topology. Each card has a small/medium/large/full view; clicking into a validation card shows failed checks with drill-down to the device. You build custom workbenches per team (e.g., an "AI fabric" workbench showing RoCE validation + WJH buffer drops + PFC rate cards). The UI also exposes LCM, snapshot compare, and notification configuration graphically. The CLI is exam-primary.
+**What it is.** The UI organises everything into *cards* on a *workbench*: Validation Summary, Network Health, Events, Inventory, Device/Interface cards, RoCE cards, WJH cards, Topology. Each card has a small/medium/large/full view; clicking into a validation card shows failed checks with drill-down to the device.
+
+**Why it exists.** Different teams need different slices of the same store; a NOC wants health and events, an AI-infrastructure team wants RoCE and WJH.
+
+**How it works.** You build custom workbenches per team (e.g., an "AI fabric" workbench showing RoCE validation + WJH buffer drops + PFC rate cards). The UI also exposes LCM, snapshot compare, and notification configuration graphically, over HTTPS 443 against the same API the CLI uses. The CLI is exam-primary.
 
 ## 3. Live-style walkthrough — install NetQ, add agents, validate, read RoCE
 
@@ -132,6 +199,8 @@ netq show status
 
 ### Step 2 — Point switch agents at the server
 
+These commands set up steps 1–2 of Figure 4.5-2: what the agent collects and where it streams it.
+
 On each Cumulus switch (ZTP normally does this — Module 4.3):
 
 ```bash
@@ -170,6 +239,8 @@ spine01    Rotten   yes       4.x.y-cl5u  2d:4h       1d:3h         1d:3h       
 Stop. `spine01` is Rotten. Do not run a single `netq check` until that is fixed — the result would be built on day-old data. Nine times out of ten: `sudo netq config show` on spine01 reveals no `vrf mgmt`. Fix it, restart the agent, re-run `netq show agents rotten` until the list is empty.
 
 ### Step 3 — Run the validation suites
+
+Each command below is one pass through Figure 4.5-3; the summary block is its step 3.
 
 ```bash
 netq check agents                  # all Fresh?
@@ -265,7 +336,7 @@ netq show roce-counters egress-queue leaf01 swp1  # per TC queue depth/drops (na
 netq check roce
 ```
 
-Workflow for "job X is slow": `netq check roce` to confirm every switch has the same RoCE profile, then `netq show roce-counters` on the suspect leaf's host-facing ports for Tx pause (host slow) or uplinks for Rx pause (spine congestion), then correlate timestamps with `netq show events type roce` and WJH drops.
+Workflow for "job X is slow": `netq check roce` to confirm every switch has the same RoCE profile, then `netq show roce-counters` on the suspect leaf's host-facing ports for Rx pause (the host NIC is pausing the leaf: slow receiver) or uplinks for Rx pause (spine congestion) — Figure 4.5-4 shows which direction each counter moves, then correlate timestamps with `netq show events type roce` and WJH drops.
 
 ### Step 6 — WJH
 
@@ -298,6 +369,8 @@ netq trace 44:38:39:00:00:5e vlan 100 from leaf01              # L2 trace
 In the UI, Snapshot → Create before a change, Create after, Compare: every interface, BGP, EVPN, MLAG, route and MAC difference is listed.
 
 ### Step 8 — LCM
+
+The upgrade command is steps 6–9 of Figure 4.5-2 in one line.
 
 ```bash
 netq lcm add credentials username cumulus password <pw>           # SSH creds used for all switches

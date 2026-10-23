@@ -224,7 +224,9 @@ netq check roce                            # consistency across the fabric (veri
 |---|---|
 | `roce-config` differs on one leaf (mode lossy, or different ECN max) | Configuration drift — the usual root cause of "one rack is slow". Fix with NVUE (`nv set qos roce mode lossless`) or Ansible |
 | **PFC** pause RX rising on a *spine* port | Downstream leaf is congested and pushing back; check its host ports for oversubscription or a slow NIC |
-| PFC pause TX on a *host-facing* port while the host shows RX drops | Host NIC not honoring PFC on that priority (`mlnx_qos -i <if>`) |
+| PFC pause RX rising on a *host-facing* port | The host is pausing the switch: it can't drain (slow receiver, PCIe/memory pressure, CPU-bound app). The host is the congestion point |
+| PFC pause TX rising on a *host-facing* port | The switch is pausing that host: its traffic is backing up toward a congested egress elsewhere (incast or a paused uplink). The host is a sender caught in back-pressure; look downstream |
+| PFC pause TX on a host-facing port **and** tail drops on that port's ingress (WJH Buffer) | Host NIC not honoring pause on that priority (`mlnx_qos -i <if>` shows PFC off for prio 3) |
 | ECN marked counts high but no drops | Working as designed under load (DCQCN engaged) |
 | Tail drops on the RoCE traffic class | Lossless not actually configured on that port/class — WJH Buffer `Tail drop` confirms |
 | PFC pause continuously at line rate (pause storm) | Stuck receiver or PFC loop; isolate the port, check for a hung NIC/driver; WJH L1/Buffer + `nv show interface swpX counters` (Section 2.7) |
@@ -337,7 +339,9 @@ leaf-r2-01  swp2        0                   318011              104110      8.8e
 leaf-r2-01  swp49       1204                0                   0           ...                           ...   <- uplink
 # Reading it: the switch is SENDING PFC pause toward dgx-02 on swp2 (Tx PFC) — it is asking the host to stop.
 # ECN marks exist on both host ports: DCQCN is engaged, which is normal under load. Nothing dropped yet... or is it?
-# Decision: PFC Tx from switch to host at this volume means the switch's TC3 queue toward dgx-02 is filling.
+# Decision: PFC Tx from switch to host means traffic arriving FROM dgx-02 is backing up in the switch's TC3 ingress
+# buffer — dgx-02 is a sender feeding a congested egress. swp49 (uplink) shows Rx pause: the spine is pausing us.
+# So the congestion point is downstream of this leaf, not dgx-02 itself.
 # A lossless class should never DROP, though. Check WJH Buffer.
 
 # ---- Step 2 (RoCE diamonds 4 and 5; Sections 2.1-2.2): WJH buffer drops, filtered to RoCEv2 (UDP 4791) in the last hour.

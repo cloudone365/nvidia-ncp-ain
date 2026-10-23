@@ -317,7 +317,7 @@ nv show router adaptive-routing                # enable on
 nv show interface swp61 router adaptive-routing     # enable on, link-utilization-threshold 70
 ```
 
-Rising `pfc tx` on a leaf *downlink*: the host NIC is being paused — the host is the congestion point. Rising `pfc rx` on an *uplink*: the spine is pausing *you*; look upstream. Either way you are watching step 7 of Figure 4.1-3 fire, which in a Spectrum-X fabric means steps 2–6 (ECN marking and SuperNIC rate control) did not keep the queue below xoff — check the ECN-marked counter is climbing before you touch PFC.
+Remember who sends a pause frame: the *receiver* whose ingress buffer can't drain. Rising `pfc rx` on a leaf *downlink*: the host is pausing the switch — the host can't drain fast enough and **is** the congestion point (slow receiver, PCIe or memory pressure). Rising `pfc tx` on a downlink: the switch is pausing the host because that host's traffic is backing up inside the switch on its way to a congested egress — the host is a *sender* caught in the back-pressure, and the real congestion point is downstream. Rising `pfc rx` on an *uplink*: the spine is pausing *you*; look further downstream through the spine. Either way you are watching step 7 of Figure 4.1-3 fire, which in a Spectrum-X fabric means steps 2–6 (ECN marking and SuperNIC rate control) did not keep the queue below xoff — check the ECN-marked counter is climbing before you touch PFC.
 
 To tune beneath the profile (set RoCE first, then override — the profile replaces existing QoS):
 
@@ -499,7 +499,7 @@ ethtool -S ens3f0np0 | grep out_of_sequence        # rising = reordering penalty
 - NVIDIA Air validates control plane and config, not RoCE/AR performance — there is no ASIC in the twin.
 - Type-2 = MAC/IP (L2 VNI); Type-5 = IP prefix (L3 VNI). A pure-L3 GPU fabric uses only Type-5.
 - Rail-optimized means GPU *n* of every node on leaf *n*, not "one leaf per node"; AR makes 2:1 oversubscription workable.
-- RoCE counters: PFC *tx* on a downlink = host congested; PFC *rx* on an uplink = spine pausing you. NCLU `net add` is never the answer — NVUE is.
+- RoCE counters: PFC *rx* on a downlink = the host is pausing you (host is the congestion point); PFC *tx* on a downlink = you are pausing the host (congestion is downstream of the leaf); PFC *rx* on an uplink = the spine is pausing you. NCLU `net add` is never the answer — NVUE is.
 
 ## Appendix C — Knowledge check
 

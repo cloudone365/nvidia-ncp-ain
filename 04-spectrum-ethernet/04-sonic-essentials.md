@@ -25,12 +25,24 @@ By the end of this module you will be able to…
 
 *Analogy:* Cumulus is a single company where everyone sits in one office and talks directly. SONiC is a campus of separate buildings (containers) that communicate only by writing on shared whiteboards (Redis databases). Any one building can be rebuilt without evacuating the others.
 
-**SONiC** (Software for Open Networking in the Cloud) is an open-source network OS started by Microsoft for Azure and now governed by the Linux Foundation. Two ideas define it:
+![SONiC architecture: feature containers (bgp, lldp, teamd, pmon, snmp/telemetry, mgmt-framework) read and write Redis databases in the database container; swss turns CONFIG_DB and APPL_DB into ASIC_DB; syncd calls the NVIDIA Spectrum SAI to program the ASIC](diagrams/4.4-01-sonic-architecture.svg)
+*Figure 4.4-1 — SONiC on a Spectrum switch: every container talks only to Redis. CONFIG_DB is read by the `*mgrd` daemons (1), APPL_DB carries intent to orchagent (2), orchagent writes SAI objects to ASIC_DB (3), syncd consumes them (4) and programs the ASIC through the Spectrum SAI and SDK (5).*
+
+**What it is.** **SONiC** (Software for Open Networking in the Cloud) is an open-source network OS started by Microsoft for Azure and now governed by the Linux Foundation. Two ideas define it:
 
 1. **Everything is a container.** A Debian host runs Docker; each functional block (BGP, LLDP, SNMP, telemetry, the switch state service, the ASIC sync daemon) is a separate container with its own lifecycle. A crashed BGP container is restarted without touching the data plane.
 2. **State lives in Redis.** Instead of config files and inter-process RPCs, every daemon reads and writes tables in a Redis database. Configuration, derived application state and the ASIC's programmed state are three separate databases, and the differences between them are how you troubleshoot.
 
+**Why it exists.** A hyperscaler running tens of thousands of switches from several silicon vendors wants one NOS, one automation model and the ability to patch or replace a single feature without a full image upgrade. Containers give independent lifecycles; Redis gives a single, inspectable state store that any new daemon can subscribe to; and **SAI** (§2.3) hides the ASIC behind a standard C API so the same upper layers run on any vendor's silicon. The price is more moving parts: a feature that Cumulus configures with one NVUE command may touch three containers and a dozen tables on SONiC.
+
+**How it works.** On boot the host starts the `database` container first (Redis), loads `/etc/sonic/config_db.json` into CONFIG_DB, then starts the feature containers as systemd units (`systemctl status swss`, `bgp`, `syncd` …). From then on no daemon calls another directly: each one writes the tables it owns and *subscribes* to the tables it consumes (§2.2). Figure 4.4-1 is the whole system in one picture — trace any feature by asking "which table does it write, and who is listening?". Observe with `docker ps`, `show services`, `show feature status`.
+
 ### 2.2 The database stack — whiteboards each daemon reads
+
+![Sequence of one static route through SONiC: config CLI writes CONFIG_DB, bgpcfgd renders it into FRR, fpmsyncd writes APPL_DB, orchagent resolves and writes ASIC_DB, syncd calls the SAI to program the ASIC, counters flow back, config save persists](diagrams/4.4-02-config-to-asic-flow.svg)
+*Figure 4.4-2 — One static route, nine steps, five tables you can inspect. Steps 3–6 are keyspace notifications; step 9 is the only one that touches the disk.*
+
+**What it is.** One Redis server inside the `database` container holds several logical databases, numbered:
 
 | Database | Redis DB # | Who writes it | What it holds |
 |---|---|---|---|
@@ -40,11 +52,27 @@ By the end of this module you will be able to…
 | **STATE_DB** | 6 | Various | Operational state (port oper status, transceiver info, PFC WD status) |
 | COUNTERS_DB | 2 | `syncd` via flex counters | Interface/queue/PFC counters |
 
-The flow for a static route: `config route add` → CONFIG_DB → `*mgrd` daemon → APPL_DB → **`orchagent`** (inside the `swss` container) translates it to SAI calls → ASIC_DB → **`syncd`** (inside the `syncd` container) reads ASIC_DB and calls the vendor SAI library → ASIC programmed. If a route is in APPL_DB but not ASIC_DB, orchagent rejected it; if it is in ASIC_DB but not in hardware, syncd/SAI failed.
+Two smaller ones you will meet: DB 3 (log levels) and DB 5 (flex-counter and PFC-watchdog polling configuration). Key syntax differs by database and is a common stumbling block: CONFIG_DB and STATE_DB use `|` (`PORT_QOS_MAP|Ethernet0`, `BUFFER_PG|Ethernet0|3`), APPL_DB, ASIC_DB and COUNTERS_DB use `:` (`ROUTE_TABLE:10.9.0.0/24`, `ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:{…}`). `sonic-db-cli <DB_NAME> …` takes the name and hides the number; `redis-cli -n <number>` needs the number.
 
-**Why the exam cares:** "route exists but doesn't forward" on SONiC is answered by naming which whiteboard it is missing from and therefore which daemon dropped it.
+**Why it exists.** Splitting *intent* (CONFIG_DB), *derived application state* (APPL_DB) and *hardware state* (ASIC_DB) gives each translation step one owner and leaves a durable record of what every step decided. That is what makes SONiC debuggable without a vendor shell: if a route is in APPL_DB but not ASIC_DB, orchagent rejected it; if it is in ASIC_DB but not in hardware, syncd/SAI failed. It also makes restarts survivable — a restarted daemon re-reads its input tables and reconciles instead of losing state.
+
+**How it works.** Redis **keyspace notifications** turn the databases into a message bus. A producer writes a table entry and publishes a notification on a channel; every consumer subscribed to that table wakes up, pops the changed keys and processes them (SONiC's `swss-common` library wraps this as producer/consumer *state tables*). Follow the static route in Figure 4.4-2:
+
+1. `config route add prefix 10.9.0.0/24 nexthop 192.168.1.1` (or `config load`) writes CONFIG_DB.
+2. `STATIC_ROUTE|default|10.9.0.0/24` is live immediately — and not yet on disk.
+3. The keyspace notification wakes `bgpcfgd` in the `bgp` container, which renders the static route into FRR.
+4. `zebra` selects it and `fpmsyncd` writes `ROUTE_TABLE:10.9.0.0/24` with `nexthop` and `ifname` into APPL_DB. (Interfaces, VLANs and buffers take the shorter path through the `*mgrd` daemons in `swss`, which read CONFIG_DB and write APPL_DB directly.)
+5. `orchagent`'s RouteOrch consumes it, resolves the next hop against NEIGH_TABLE, checks resources (CRM) and builds a SAI route entry. An unresolved next hop or a full table stops the route here.
+6. orchagent's SAI calls go through the `sairedis` library, which serialises them into ASIC_DB as `ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY:{vr, dest}` with object IDs (OIDs) for the next hop.
+7. `syncd` consumes ASIC_DB and calls the real vendor function — `sai_route_api->create_route_entry()` in NVIDIA's Spectrum SAI, which drives the SDK. syncd keeps a map between the *virtual* OIDs orchagent used and the *real* IDs the SAI returned, stored in ASIC_DB so it can reconcile after a restart.
+8. syncd polls hardware counters (flex counters) into COUNTERS_DB and operational state lands in STATE_DB.
+9. `sudo config save -y` writes CONFIG_DB to `/etc/sonic/config_db.json` — the only step that survives a reboot.
+
+**Why the exam cares:** "route exists but doesn't forward" on SONiC is answered by naming which whiteboard it is missing from and therefore which daemon dropped it. Observe each hop: `sonic-db-cli CONFIG_DB hgetall 'STATIC_ROUTE|default|10.9.0.0/24'`, `redis-cli -n 0 hgetall 'ROUTE_TABLE:10.9.0.0/24'`, `redis-cli -n 1 keys '*ROUTE_ENTRY*10.9.0.0*'`, `show logging orchagent`, `docker logs syncd`, `crm show resources all`.
 
 ### 2.3 Key containers and daemons
+
+**What it is.**
 
 | Container | Contents |
 |---|---|
@@ -59,12 +87,20 @@ The flow for a static route: `config route add` → CONFIG_DB → `*mgrd` daemon
 
 **SAI** (Switch Abstraction Interface) is the C API between orchagent and the ASIC vendor's code. Because every ASIC vendor ships a SAI, SONiC's upper layers are hardware-agnostic. NVIDIA's contribution is the Spectrum SAI, which exposes Spectrum features (shared buffers, WJH, RoCE, adaptive routing on newer releases) through standard and extended SAI attributes.
 
+**Why it exists.** Each container is a fault and upgrade boundary. The split that matters operationally is *which restarts touch the data plane*: `swss` and `syncd` own the ASIC's programmed state, so restarting either one rebuilds the ASIC (like a `switchd` restart on Cumulus, Module 4.3); `bgp`, `lldp`, `snmp`, `telemetry` only produce or consume tables, so restarting them leaves forwarding untouched (BGP sessions flap, but routes already in the ASIC stay programmed until withdrawn).
+
+**How it works.** Inside `swss`, **orchagent** is a set of "Orch" modules — PortsOrch, IntfsOrch, NeighOrch, RouteOrch, BufferOrch, QosOrch, PfcWdOrch and others — each consuming its APPL_DB (or CONFIG_DB) tables and emitting SAI objects in dependency order (a route needs its next hop, which needs its neighbour, which needs its router interface). If a dependency is missing, the task is retried rather than failed, which is why a route can sit in APPL_DB "pending" until ARP resolves. `syncd` is deliberately thin: it translates ASIC_DB operations into SAI calls and SAI notifications (port up/down, FDB learn events) back into the databases. Observe with `docker exec swss supervisorctl status`, `show logging orchagent`, `docker logs syncd --tail 100`, `show interfaces status` (fed by STATE_DB/APPL_DB).
+
 ### 2.4 NVIDIA and SONiC
 
-NVIDIA (Mellanox before acquisition) has been a top SONiC contributor since 2016 and ships:
+**What it is.** NVIDIA (Mellanox before acquisition) has been a top SONiC contributor since 2016 and ships:
 - **NVIDIA Networking SONiC** (sometimes "NVIDIA pure SONiC"): an NVIDIA-built, tested and supported distribution based on upstream community SONiC with Spectrum SAI, platform drivers and NVIDIA-validated fixes, delivered as `.bin` images for Spectrum switches (SN2000–SN5000). Support comes with the NVIDIA switch support contract.
 - Spectrum SAI and platform modules upstreamed to the community tree, so community SONiC also runs on Spectrum.
 - Tooling integrations: NetQ agents for SONiC, WJH on SONiC, NVIDIA Air images for SONiC.
+
+**Why it exists.** Customers who standardise on SONiC across vendors still want a supported image with validated buffer templates and drivers for their Spectrum hardware; NVIDIA's distribution provides that without forking the architecture.
+
+**How it works** — choosing between the two NVIDIA-supported NOSes:
 
 | Choose Cumulus Linux when… | Choose SONiC when… |
 |---|---|
@@ -77,12 +113,14 @@ The exam expects you to know that *both* are NVIDIA-supported on Spectrum and th
 
 ### 2.5 Configuration model: `config_db.json`
 
-The CONFIG_DB is persisted as `/etc/sonic/config_db.json`. Everything you configure through `config` commands ends up here. Structure is a JSON object keyed by table, then by object key (pipe-separated for compound keys). Points to remember:
+**What it is.** The CONFIG_DB is persisted as `/etc/sonic/config_db.json`. Everything you configure through `config` commands ends up here. Structure is a JSON object keyed by table, then by object key (pipe-separated for compound keys). Points to remember:
 - Interface names are `EthernetN` where N is the *first lane index*, not a port number. `etp1a` style aliases map to front-panel labels; `show interfaces alias` translates. A 4-lane breakout of port 1 yields Ethernet0/4/8/12 on an 8-lane 800G platform — the HWSKU defines this.
 - The **HWSKU** (`Mellanox-SN5600-C256S1`, etc.) encodes platform, port configuration and default buffer profile. Changing breakout configuration on SONiC is done via `config interface breakout` (Dynamic Port Breakout) or by selecting a different HWSKU — much more rigid than NVUE's `link breakout`.
 - MTU default is 9100 on most SONiC platforms.
 
-Unlike Cumulus, SONiC's `config` commands take effect *immediately* (no pending/apply model). There is no built-in diff; the discipline is: change → verify → `config save`.
+**Why it exists.** A single JSON document that *is* the database makes SONiC friendly to orchestrators: generate the file from a source of truth, push it, load it. The cost is the absence of a transaction: unlike Cumulus, SONiC's `config` commands take effect *immediately* (no pending/apply model). There is no built-in diff; the discipline is: change → verify → `config save`.
+
+**How it works.**
 
 | Command | Effect |
 |---|---|
@@ -92,15 +130,24 @@ Unlike Cumulus, SONiC's `config` commands take effect *immediately* (no pending/
 | `sudo config load_minigraph` | Azure-style XML topology (rare outside hyperscalers) |
 | `show runningconfiguration all` | dump CONFIG_DB as JSON |
 
+`load` writes each table entry into CONFIG_DB and the normal keyspace notifications propagate it (Figure 4.4-2); nothing restarts. `reload` stops the services, flushes the databases, loads the file and restarts `swss`/`syncd`, so the ASIC is reprogrammed from zero — correct for a rebuild, an outage if you only meant to add one VLAN (Gotcha 4). Because writes are live but not persistent, the two failure modes are mirror images: forget `config save` and a reboot loses your work (Gotcha 1); `load` a file with a mistake and it is live immediately with nothing to roll back to except a previous file. Observe the gap with `diff <(show runningconfiguration all) /etc/sonic/config_db.json`.
+
 ### 2.6 BGP on SONiC
 
-FRR runs inside the `bgp` container; CONFIG_DB BGP_NEIGHBOR entries are rendered to FRR config by `bgpcfgd` using templates. For anything beyond basic neighbours (route-maps, EVPN, unnumbered), operators either enable the FRR "unified" config mode (`frr_mgmt_framework_config`/`docker_routing_config_mode: split|unified` in DEVICE_METADATA — check current docs) and edit FRR directly with `vtysh`, or use SONiC's newer `config bgp` extensions. BGP unnumbered and EVPN VXLAN are supported in recent SONiC releases but are configured partly in CONFIG_DB (VXLAN_TUNNEL, VXLAN_TUNNEL_MAP, VRF) and partly in FRR.
+**What it is.** FRR runs inside the `bgp` container; CONFIG_DB BGP_NEIGHBOR entries are rendered to FRR config by `bgpcfgd` using templates.
+
+**Why it exists.** Templated rendering keeps BGP in the same "everything is CONFIG_DB" model, which suits simple, uniform fabrics generated by an orchestrator — but templates cover only basic neighbours.
+
+**How it works.** For anything beyond basic neighbours (route-maps, EVPN, unnumbered), operators either enable the FRR "unified" config mode (`frr_mgmt_framework_config`/`docker_routing_config_mode: split|unified` in DEVICE_METADATA — check current docs) and edit FRR directly with `vtysh`, or use SONiC's newer `config bgp` extensions. BGP unnumbered and EVPN VXLAN are supported in recent SONiC releases but are configured partly in CONFIG_DB (VXLAN_TUNNEL, VXLAN_TUNNEL_MAP, VRF) and partly in FRR. Whichever way you configure it, learned routes leave FRR through `zebra` → `fpmsyncd` → APPL_DB and follow steps 4–7 of Figure 4.4-2. Observe with `show ip bgp summary`, `docker exec -it bgp vtysh -c 'show bgp summary'`, and the APPL_DB/ASIC_DB checks in §2.2.
 
 ### 2.7 RoCE on SONiC — assembling what Cumulus does in one line
 
 *Analogy:* Cumulus's `nv set qos roce` is a pre-built kit. SONiC hands you the parts list and a screwdriver.
 
-SONiC has no single "roce lossless" command. You assemble the pieces that Cumulus's `nv set qos roce` sets for you. This is a favourite exam contrast.
+![Reference graph of SONiC CONFIG_DB QoS and buffer tables for lossless RoCE: PORT_QOS_MAP points to the DSCP, TC-to-PG, TC-to-queue and PFC maps; BUFFER_PG and QUEUE entries point to buffer, WRED and scheduler profiles; a packet pipeline shows where PFC and ECN act](diagrams/4.4-03-roce-qos-objects.svg)
+*Figure 4.4-3 — The RoCE table graph: PORT_QOS_MAP binds four maps to a port and enables PFC on priority 3; BUFFER_PG gives PG 3 lossless headroom; QUEUE attaches WRED/ECN and the scheduler. The pipeline below shows where each table acts on a packet.*
+
+**What it is.** SONiC has no single "roce lossless" command. You assemble the pieces that Cumulus's `nv set qos roce` sets for you. This is a favourite exam contrast.
 
 | Table | Purpose |
 |---|---|
@@ -116,15 +163,41 @@ SONiC has no single "roce lossless" command. You assemble the pieces that Cumulu
 | `SCHEDULER` | DWRR weights / strict priority |
 | `PFC_WD` | PFC watchdog per port |
 
-A **PFC storm** (a NIC stuck sending pause frames) can freeze a lossless queue fabric-wide. **`pfcwd`** detects a queue paused continuously longer than `detection_time` ms and takes an `action` (`drop` the queue's traffic, `forward` ignoring pause, or `alert` only), restoring after `restoration_time` ms without pause. Cumulus has the same concept (`nv set qos pfc-watchdog` / `nv set interface swpN qos pfc-watchdog` — verify object name).
+**Why it exists.** Lossless Ethernet needs four things to line up on every hop: classification (which packets are RoCE), a lossless ingress buffer with enough **headroom** to absorb what is still in flight after a PAUSE is sent, PFC on exactly that priority, and ECN marking early enough that congestion control slows senders before PFC is needed. SONiC keeps each of those as a separate, vendor-neutral table so an orchestrator can generate them per port and per platform; the platform supplies the numbers that depend on silicon (buffer sizes, headroom). Get one reference wrong and you have PFC enabled on a priority with no lossless buffer — counters never move and the host still drops (Gotcha 3).
+
+**How it works** — follow a RoCE packet through Figure 4.4-3:
+
+1. **Classify.** The port trusts DSCP; `PORT_QOS_MAP|Ethernet0` names the `DSCP_TO_TC_MAP` (`AZURE`): DSCP 26 → TC 3 (RoCE), DSCP 48 → TC 6 (CNP).
+2. **Ingress PG.** `TC_TO_PRIORITY_GROUP_MAP` puts TC 3 in **PG 3**. `BUFFER_PG|Ethernet0|3` attaches the lossless profile `pg_lossless_400000_100m_profile`, which draws from `ingress_lossless_pool`. The profile's `xoff` is the headroom reserved for in-flight bytes; when PG 3's occupancy crosses the pause threshold the port transmits PFC for priority 3, and when it drains below `xon` it resumes. `dynamic_th` sets how much of the pool's free space a PG may take (a larger value lets one PG grow at the expense of others). The name encodes speed and cable length because headroom ≈ 2 × cable delay × line rate + sender reaction time + MTUs — at 400G over 100 m that is ~50 KB of wire alone (5 ns/m × 100 m × 2 × 400 Gb/s), ~70–100 KB per PG all-in. `buffermgrd` derives these values from port speed and cable length using platform tables, which is why the walkthrough shows them as `"..."`.
+3. **PFC mapping.** `pfc_enable: "3"` turns PFC on for priority 3 only; `PFC_PRIORITY_TO_QUEUE_MAP` tells the egress side that a PAUSE received for priority 3 stops queue 3.
+4. **Egress queue.** `TC_TO_QUEUE_MAP` sends TC 3 to queue 3. `QUEUE|Ethernet0|3` attaches `WRED_PROFILE AZURE_LOSSLESS` with `ecn: ecn_all`: between `green_min_threshold` (1 MB) and `green_max_threshold` (2 MB) packets are CE-marked with rising probability up to `green_drop_probability` 5% — for ECN-capable traffic that means *marked*, not dropped. This is Cumulus's `congestion-control`.
+5. **Schedule.** `QUEUE|Ethernet0|3 → scheduler.1` (DWRR weight 50) shares bandwidth; `QUEUE|Ethernet0|6 → scheduler.0` (STRICT) sends CNPs first so rate reductions are never queued behind the data they are slowing.
+6. **Protect.** **`pfcwd`** watches each lossless queue. A **PFC storm** (a NIC stuck sending pause frames) can freeze a lossless queue fabric-wide. `pfcwd` detects a queue paused continuously longer than `detection_time` ms (with no packets leaving) and takes an `action` (`drop` the queue's traffic, `forward` ignoring pause, or `alert` only), restoring after `restoration_time` ms without pause. `POLL_INTERVAL` (100 ms in the walkthrough) is how often the watchdog samples, so detection resolution is never finer than the poll interval. Cumulus has the same concept (`nv set qos pfc-watchdog` / `nv set interface swpN qos pfc-watchdog` — verify object name).
+
+Observe: `show pfc counters` (only the PFC3 column should move), `show queue counters Ethernet0` (UC3 drops must be 0), `show priority-group watermark headroom`, `show buffer configuration`, `show pfcwd config` / `show pfcwd stats` (storms should be 0), and the tables themselves with `sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'`.
 
 ### 2.8 Images and containers
 
-SONiC keeps multiple images on disk and selects via GRUB — a true dual-image capability (unlike Cumulus's single partition). Initial installation uses ONIE exactly as Cumulus does (`onie-nos-install http://.../sonic.bin`). After install, `config_db.json` is carried over from the previous image when upgrading in place; still back it up. Restarting `swss` or `syncd` resets the data plane (like `switchd` restart on Cumulus). Restarting `bgp` or `lldp` does not. SONiC "warm reboot" (`sudo warm-reboot`) and "fast reboot" exist to upgrade with minimal data-plane impact when the platform supports it.
+**What it is.** SONiC keeps multiple images on disk and selects via GRUB — a true dual-image capability (unlike Cumulus's single partition). Initial installation uses ONIE exactly as Cumulus does (`onie-nos-install http://.../sonic.bin`). After install, `config_db.json` is carried over from the previous image when upgrading in place; still back it up. Restarting `swss` or `syncd` resets the data plane (like `switchd` restart on Cumulus). Restarting `bgp` or `lldp` does not.
 
 SONiC ZTP (`ztp` service) uses DHCP option 67 / 239 / provisioning URL to fetch a JSON ZTP spec describing ordered plugins (`firmware`, `config-db-json`, `graphservice`, `connectivity-check`, custom scripts). `show ztp status`, `sudo config ztp enable|disable|run`. Concept is the same as Cumulus; the input is a JSON document rather than a bash script.
 
+**Why it exists.** Multiple images make upgrade and rollback a boot-menu choice: `set-next-boot` tries a new image once and falls back to the default if it fails. SONiC "warm reboot" (`sudo warm-reboot`) and "fast reboot" exist to upgrade with minimal data-plane impact when the platform supports it — a normal reboot resets the ASIC and drops traffic for the whole boot time.
+
+**How it works.** `sonic-installer install` writes the new image alongside the current one and makes it the next boot. The reboot flavours differ in what keeps forwarding:
+
+- **Cold reboot** (`reboot`): everything restarts; the ASIC is reset and reprogrammed from CONFIG_DB. Longest outage.
+- **Fast reboot** (`fast-reboot`): the control plane restarts quickly while the ASIC is re-initialised; the data-plane outage is short (platform-dependent, typically tens of seconds — verify for your platform).
+- **Warm reboot** (`warm-reboot`): the ASIC is *not* reset and keeps forwarding with its existing tables while the host reboots (kexec) into the new image. Before going down, the switch saves the databases (APPL_DB, ASIC_DB including syncd's virtual-to-real OID map, STATE_DB) and BGP announces graceful restart so peers keep its routes. On the way up, syncd restores its OID map and reconciles ASIC_DB against the hardware instead of re-creating everything, orchagent re-reads APPL_DB, and only the differences are programmed. `show warm_restart state` shows each daemon's reconciliation; STATE_DB holds the warm-restart table. Warm reboot works only between supported versions and platforms — check the release notes.
+
+Observe containers with `docker ps`, `show services`, `show feature status`, and images with `sudo sonic-installer list` (Current, Next, Available).
+
 ### 2.9 Cumulus Linux vs SONiC
+
+![Side-by-side comparison of Cumulus Linux and NVIDIA SONiC on the same SN5600 across configuration model, where state lives, RoCE, AR/EVPN-MH/MLAG, images, resources and support, and best fit](diagrams/4.4-04-cumulus-vs-sonic.svg)
+*Figure 4.4-4 — Same silicon, same ONIE install path; the difference is where state lives and how you change it.*
+
+**What it is.**
 
 | Aspect | Cumulus Linux | NVIDIA SONiC |
 |---|---|---|
@@ -142,7 +215,9 @@ SONiC ZTP (`ztp` service) uses DHCP option 67 / 239 / provisioning URL to fetch 
 | Automation | `nvidia.nvue` Ansible collection, REST | `sonic-net` community Ansible roles, generic `copy` of config_db.json, gNMI |
 | Best fit | NVIDIA-centric AI fabrics following Spectrum-X RA | Multi-vendor, hyperscaler-style operations |
 
-`crm` (Critical Resource Monitoring) is SONiC's analogue of **cl-resource-query**: `crm show resources all` shows used/available for routes, nexthops, FDB, ACL, with configurable thresholds that raise syslog alerts.
+**Why it exists.** The exam frames this as a design decision, not a feature race: both run on the same Spectrum ASIC through the same SDK, so data-plane capability is bounded by the silicon; what differs is the operational model around it.
+
+**How it works.** Map each operational task across: a change is `nv set` + `nv config apply` + `save` on Cumulus and `config …` + `config save` on SONiC; "is it in hardware?" is `cl-resource-query` vs `crm show resources all`; a RoCE profile is one NVUE line vs the table graph of Figure 4.4-3. `crm` (Critical Resource Monitoring) is SONiC's analogue of **cl-resource-query**: `crm show resources all` shows used/available for routes, nexthops, FDB, ACL, with configurable thresholds that raise syslog alerts (`crm config thresholds …`), and orchagent consults the same counters before it programs a route (step 5 of Figure 4.4-2).
 
 ## 3. Live-style walkthrough — from `config_db.json` to a verified RoCE leaf
 
@@ -246,7 +321,7 @@ show buffer configuration           # effective pools and profiles after reload
 show qos                            # maps and bindings (newer releases)
 ```
 
-Now the RoCE-specific merge file. Every table maps to a Cumulus concept you already know:
+Now the RoCE-specific merge file. Every table maps to a Cumulus concept you already know, and every reference below is an arrow in Figure 4.4-3:
 
 ```json
 {
@@ -342,7 +417,7 @@ show pfc counters
  Ethernet0       0       0       0     311       0       0       0       0
 ```
 
-Only the PFC3 column moves — exactly what a correct priority-3 lossless profile looks like. Interpretation is identical to Cumulus: Tx pause on a downlink → the host is slow; Rx pause on an uplink → the spine is pausing you; rising ECN-marked counts with no PFC → congestion control working as intended.
+Only the PFC3 column moves — exactly what a correct priority-3 lossless profile looks like. Interpretation is identical to Cumulus, read from the switch port's point of view: Rx pause on a host-facing port → the host NIC is pausing the switch (a slow receiver); Tx pause on a host-facing port → the switch is pausing the host because its own buffers toward the destination are filling; Rx pause on an uplink → the spine is pausing you; rising ECN-marked counts with no PFC → congestion control working as intended.
 
 ```bash
 show pfc asymmetric
@@ -357,6 +432,8 @@ sonic-clear pfccounters; sonic-clear queuecounters   # zero before a benchmark
 
 ### Step 5 — Peek at the whiteboards
 
+Each command below reads one database of Figure 4.4-1; together they replay steps 1, 4 and 6 of Figure 4.4-2.
+
 ```bash
 redis-cli -n 4 keys 'PORT_QOS_MAP|*'                            # CONFIG_DB: intent
 sonic-db-cli CONFIG_DB hgetall 'PORT_QOS_MAP|Ethernet0'          # pfc_enable 3
@@ -367,6 +444,8 @@ redis-cli -n 1 keys 'ASIC_STATE:SAI_OBJECT_TYPE_ROUTE_ENTRY*' | wc -l   # ASIC_D
 If a route is in DB 0 but not DB 1, read `show logging orchagent` — usually a SAI error such as table-full or an unresolved next hop.
 
 ### Step 6 — Image lifecycle and containers
+
+The image commands are §2.8 in practice; `set-next-boot` is the safe way to try a new image, and `warm-reboot` (where supported) replaces the final `reboot` when traffic must keep flowing.
 
 ```bash
 sudo sonic-installer list                        # Current, Next, Available images
@@ -739,4 +818,4 @@ show runningconfiguration all | python3 -c 'import json,sys; d=json.load(sys.std
 
 ### Proving it under load (hardware only)
 
-From a host with a ConnectX/BlueField NIC set to DSCP 26 (`NCCL_IB_TC=106`, `mlnx_qos -i <if> --trust dscp --pfc 0,0,0,1,0,0,0,0`), run `ib_write_bw` toward a peer behind Ethernet4 while a second sender hammers the same destination. `show pfc counters` increments **only** PFC3 Tx on the congested downlink; `show queue counters Ethernet4` shows UC3 bytes rising with zero drops; `show pfcwd stats` stays at zero storms. That is a healthy lossless RoCE leaf.
+From a host with a ConnectX/BlueField NIC set to DSCP 26 (`NCCL_IB_TC=106`, `mlnx_qos -i <if> --trust dscp --pfc 0,0,0,1,0,0,0,0`), run `ib_write_bw` toward a peer behind Ethernet4 while a second sender hammers the same destination. `show pfc counters` increments **only** PFC3 — Tx on the two senders' ingress ports, because the switch is pausing them while the Ethernet4 egress queue is congested; `show queue counters Ethernet4` shows UC3 bytes rising with zero drops; `show pfcwd stats` stays at zero storms. That is a healthy lossless RoCE leaf.

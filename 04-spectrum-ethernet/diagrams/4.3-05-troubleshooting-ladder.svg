@@ -57,7 +57,7 @@
 </g>
 <g><title></title><rect x="372" y="646" width="1180" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
 <text x="962.0" y="683.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">nv show interface swpN counters (deltas) · qos roce counters (PFC/ECN) · netq show wjh-drop</text>
-<text x="962.0" y="705.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">WJH gives the drop REASON; PFC tx on downlink = host slow, rx on uplink = spine pausing you</text>
+<text x="962.0" y="705.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">WJH gives the drop REASON; PFC rx on a host port = slow host, rx on an uplink = spine pausing you</text>
 </g>
 <line x1="198" y1="730" x2="198" y2="746" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
 <g><title>7  Escalate</title><rect x="48" y="748" width="300" height="84" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
