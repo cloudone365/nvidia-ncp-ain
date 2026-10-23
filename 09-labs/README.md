@@ -15,6 +15,9 @@ The NCP-AIN exam adds lab exercises from 1 November 2026, and even the multiple-
 
 Honesty note: NVIDIA Air is excellent for Cumulus/NVUE/NetQ/Ansible. It does not simulate InfiniBand, UFM, ConnectX RDMA data paths, or Spectrum ASIC drop telemetry. Where a lab needs hardware, each lab file says so and gives the closest fallback.
 
+![The three lab environments side by side: an NVIDIA Air leaf-spine with oob-mgmt-server and a NetQ server for Labs 1, 4 and 5; two Linux hosts with ConnectX or Soft-RoCE plus an optional Quantum switch for Labs 2 and 3; and a Kubernetes cluster with two ConnectX nodes for Lab 6](diagrams/lab-overview-environment.svg)
+*Figure 9-0 — Course lab environments: which environment each lab runs in, and what Air does and does not simulate.*
+
 ## Getting an NVIDIA Air account and a leaf-spine topology
 
 1. Go to https://air.nvidia.com and sign up (an NVIDIA developer account works; business e-mail speeds approval). Verify in the current portal — the signup flow changes.

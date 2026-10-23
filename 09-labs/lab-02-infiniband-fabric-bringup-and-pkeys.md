@@ -14,6 +14,9 @@ InfiniBand is not simulated by NVIDIA Air or any mainstream simulator. Choose on
 
 Commands below are written for Option A/B on Linux hosts with MLNX_OFED or DOCA-Host installed (`ofed_info -s`). The cards must be in IB mode (`mlxconfig -d <dev> q | grep LINK_TYPE` → `IB(1)`; see Module 8.3 to change it).
 
+![hostA running the master opensm and hostB cabled either back to back (Option A) or through managed Quantum switches (Option B), with LIDs, SM priorities and PKey membership per host, and the SM sweep assigning LIDs and PKey tables](diagrams/lab-02-topology.svg)
+*Figure 9-2 — Lab 2 topology: Option A back to back, Option B through a managed Quantum switch, showing where the SM and the PKeys live.*
+
 ## Prerequisites
 - Modules `../02-infiniband/` and `08-troubleshooting/01-infiniband-diagnostics-and-perftest.md`.
 - Root on both hosts; `infiniband-diags`, `opensm`, `perftest` installed (`dpkg -l | grep -E 'infiniband-diags|opensm|perftest'` or `rpm -qa`).

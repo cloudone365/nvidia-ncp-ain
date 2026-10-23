@@ -11,6 +11,9 @@ Install the NVIDIA **Network Operator** with Helm, deploy a `NicClusterPolicy` t
 
 Honesty: the operator itself is simple to install anywhere; the *value* (RDMA in pods) needs real NICs. Do the mechanics tier even if that is all you have — the exam's Kubernetes domain is 5% and mostly about objects and roles.
 
+![A Kubernetes control plane running the Network Operator and its CRDs, a NicClusterPolicy reconciled into driver, RDMA shared device plugin and Multus DaemonSets on two ConnectX nodes, and perftest server and client pods with a macvlan net1 running RDMA between them](diagrams/lab-06-topology.svg)
+*Figure 9-6 — Lab 6 topology: Operator → NicClusterPolicy → DaemonSets on NIC nodes → pods with an RDMA resource and a macvlan net1.*
+
 ## Prerequisites
 - `kubectl` and `helm` configured against the cluster; cluster-admin.
 - Module `../07-kubernetes/`.

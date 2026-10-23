@@ -23,30 +23,56 @@ By the end of this module you will be able to:
 
 ### 2.1 WJH: the switch's own incident report
 
-**Analogy.** A counter is a tally mark on the wall: "4,212 packets dropped". WJH is the switch filling out an incident report for each one — *what* was dropped (headers), *where* (ingress/egress port), *when*, and the **reason** field already filled in. You stop guessing and start reading.
+**Analogy.** A counter is a tally mark on the wall: "4,212 packets dropped". WJH is the switch filling out an incident report for each one: *what* was dropped (headers), *where* (ingress/egress port), *when*, and the **reason** field already filled in. You stop guessing and start reading.
 
-**Mechanism.** **WJH** is a Spectrum ASIC feature that, for every dropped (or congestion-affected) packet, records the drop reason, ingress and egress port, timestamp and packet headers (optionally a truncated copy). On Cumulus Linux the WJH service (`nv-wjh.service` in 5.18+, `what-just-happened.service` earlier) collects these from the ASIC and aggregates them; the **NetQ** agent can forward them to a NetQ server for fabric-wide search.
+**What it is.** **WJH** (What Just Happened) is a Spectrum ASIC feature, consumed by a service on the switch CPU. Whenever the forwarding pipeline drops a packet, or a packet crosses a configured congestion/latency threshold, the ASIC hands that packet to the CPU on a dedicated drop channel, annotated with metadata: a **drop reason** code, ingress and egress port, traffic class, timestamp, and the packet headers (optionally a truncated copy of the payload). On Cumulus Linux the WJH service (`nv-wjh.service` in 5.18+, `what-just-happened.service` earlier) reads that channel, decodes and aggregates the records and serves them to NVUE and `nv-wjh-cli`; alternatively the **NetQ** agent can own the channel and ship the records to a NetQ server for fabric-wide search (Figure 8.4-1).
 
-The key exam point: WJH is **ASIC-level telemetry, not sampling and not a counter**. sFlow samples 1 in N; WJH sees every drop.
+![Spectrum ASIC forwarding pipeline making a drop decision and annotating the packet, the WJH service on the switch collecting and aggregating records, local consumers (nv show, nv-wjh-cli, PCAP export), the alternative NetQ path, streaming export, and the one-consumer rule](diagrams/8.4-01-wjh-pipeline.svg)
+*Figure 8.4-1 — The WJH pipeline: (1) the ASIC decides and annotates, (2) the service collects and aggregates, (3) you read locally, or (4) hand the channel to NetQ, or (5) stream it out. Only one consumer owns the channel.*
 
-| Category (trigger) | What it covers | Example reasons | Typical severity |
-|---|---|---|---|
-| **L1** | Port/link state and training | `Link training failure`, `Oper down`, `Port admin down`, `Autoneg failure`, `Bad signal integrity` | Error / Warning |
-| **L2** | Bridging / VLAN | `Ingress spanning tree filter`, `Port loopback filter`, `Source MAC equals destination MAC`, `Source MAC is multicast`, `Source MAC is zero`, `Ingress VLAN filter`, `MLAG port isolation` | Error / Notice |
-| **Router (L3)** | Routing | `Router: IPv4 routing table unicast miss` (no route), `Blackhole route`, `TTL exceeded`, `Non-IP packet to router`, `Multicast MAC mismatch`, `Unresolved neighbor` | Warning |
-| **Tunnel** | VXLAN encap/decap | `Overlay switch — source MAC equals destination MAC`, `Decapsulation error`, `Tunnel interface is disabled` | Warning |
-| **ACL** | Access lists | `Ingress port ACL`, `Ingress router ACL`, `Egress port ACL` — includes the matching rule ID | Notice (intentional) / Error |
-| **Buffer** | Congestion | `Tail drop` (queue full), `WRED`, `Port TC congestion threshold crossed`, `Packet latency threshold crossed`; with **PFC**, pause-storm / PFC-related buffer events | Warning |
+**Why it exists.** Traditional tools give you either a number without a story or a story without the number. `RX discards: 4212` says something went wrong but not what, to which flow, or why. sFlow samples 1 packet in N, so a rare drop (one tenant's misconfigured VLAN, a single RoCE flow landing in the wrong queue) is statistically invisible. Port mirroring needs you to know in advance where to look. WJH inverts this: the ASIC already *knows* why it discarded a packet — the drop happens at a specific pipeline stage for a specific reason — so it reports that decision directly. The key exam point: WJH is **ASIC-level drop telemetry, not sampling and not a counter**.
 
-Severity: *Error* = something is broken (loop, bad frame), *Warning* = probably misconfiguration or capacity (no route, tail drop), *Notice* = expected behavior (ACL deny) you may still want to see.
+**How it works.** Following Figure 8.4-1:
+1. **Decide and annotate.** The packet moves through parse → L2 lookup → L3 lookup → ACL → tunnel → QoS/buffer → egress. Any stage may discard it (no route, VLAN not allowed, ACL deny, queue full). Instead of discarding silently, the ASIC raises a trap tagged with the reason ID and attaches ports, TC, timestamp and header copy. Buffer (congestion) events are reported the same way when a TC's occupancy or a packet's latency crosses the configured threshold, even if the packet was not dropped.
+2. **Collect and aggregate.** The trap path to the CPU is rate-limited by policers so a drop flood cannot starve the control plane. The service keeps two views: a **raw** (per-packet) ring of individual records with full headers (`packet-buffer`), and an **aggregated** view keyed by flow and reason with a count and first/last timestamp over each `polling-interval` (5–300 s, 5.18+). Under a flood, trust the aggregate counts; individual raw records are what you open in Wireshark.
+3. **Consume locally** with `nv show system wjh …` or `nv-wjh-cli`, or export to PCAP.
+4. **Or hand the channel to NetQ**: disable the local service, enable the agent's `wjh` module, and records become searchable across the fleet with `netq show wjh-drop`.
+5. **Or stream** to external collectors (Section 2.4).
 
-For an AI RoCE fabric the Buffer category is home: `Tail drop` on a lossless class means PFC is not configured or not honored end to end; `WRED` tells you **ECN** marking thresholds are being hit (by design under congestion — but a flood of WRED *drops* on a class that should be lossless is a misconfiguration).
+**Why the exam cares.** "RX discards incrementing — which tool gives the reason and headers?" (WJH). "Is WJH sampled?" (No.)
 
-**Why the exam cares.** "Which category is `IPv4 routing table unicast miss`?" (Router). "RX discards incrementing — which tool gives the reason and headers?" (WJH).
+### 2.2 Drop categories and the reason taxonomy
 
-### 2.2 Enabling, scoping and reading WJH (NVUE)
+**What it is.** Every WJH record carries a category (also the **trigger** you scope channels with) and a reason string, plus a severity.
 
-**Mechanism.** WJH is enabled by default on Spectrum switches running Cumulus Linux. You *scope* it with channels and triggers. Syntax changed in 5.14/5.15 — prefer the newer form and verify in your release:
+| Category (trigger) | What it covers | Example reasons | What the reason implies / next command | Typical severity |
+|---|---|---|---|---|
+| **L1** | Port/link state and training | `Link training failure`, `Oper down`, `Port admin down`, `Autoneg failure`, `Bad signal integrity` | Physical layer: `mlxlink -p <port> -m -c` (Module 8.3); `Port admin down` is someone's config | Error / Warning |
+| **L2** | Bridging / VLAN | `Ingress spanning tree filter`, `Port loopback filter`, `Source MAC equals destination MAC`, `Source MAC is multicast`, `Source MAC is zero`, `Ingress VLAN filter`, `MLAG port isolation` | VLAN not allowed on the port (check bridge VLAN membership), a loop (STP blocking, loopback filter), a broken host NIC sending bad SMACs; `MLAG port isolation` is expected on peer-link traffic | Error / Notice |
+| **Router (L3)** | Routing | `Router: IPv4 routing table unicast miss` (no route), `Blackhole route`, `TTL exceeded`, `Non-IP packet to router`, `Multicast MAC mismatch`, `Unresolved neighbor` | No route: `vtysh -c "show ip route <dst>"`, then `cl-resource-query` (route in FRR but not in the ASIC); `Unresolved neighbor`: ARP/ND not answered; `TTL exceeded`: routing loop | Warning |
+| **Tunnel** | VXLAN encap/decap | `Overlay switch — source MAC equals destination MAC`, `Decapsulation error`, `Tunnel interface is disabled` | VNI/VTEP mismatch: `netq check evpn`, `nv show evpn vni` | Warning |
+| **ACL** | Access lists | `Ingress port ACL`, `Ingress router ACL`, `Egress port ACL` — includes the matching rule ID | Intended policy, or a rule too broad; the rule ID tells you which line | Notice (intentional) / Error |
+| **Buffer** | Congestion | `Tail drop` (queue full), `WRED`, `Port TC congestion threshold crossed`, `Packet latency threshold crossed`; with **PFC**, pause-storm / PFC-related buffer events | The RoCE home: see below; check the **TC** column first | Warning |
+
+**Why it exists.** A reason only helps if it points at a fix. The taxonomy maps each category to a layer and therefore to a different owner and toolset: L1 to cabling and Module 8.3, L2/Router/Tunnel to configuration, ACL to policy, Buffer to QoS and traffic engineering. Severity tells you how surprised to be: *Error* = something is broken (loop, bad frame), *Warning* = probably misconfiguration or capacity (no route, tail drop), *Notice* = expected behavior (ACL deny) you may still want to see.
+
+**How it works.** For an AI RoCE fabric the Buffer category is home. `Tail drop` on a lossless class means the queue overflowed — PFC did not stop the sender, either because PFC is not enabled on that port/priority, the host ignored the pause, or (most often) the packets were not in the lossless class at all, which the record's **TC** field reveals. `WRED` means ECN/WRED thresholds were crossed and packets were dropped rather than marked — on a class that should be lossless and ECN-marked that is a misconfiguration. `Port TC congestion threshold crossed` and `Packet latency threshold crossed` are early warnings you configure (Section 2.3): no packet was lost, but the queue is building. Read every Buffer record by asking, in order: which TC, which egress port, which flow (UDP **4791** = RoCEv2), how many.
+
+**Why the exam cares.** "Which category is `IPv4 routing table unicast miss`?" (Router). `Tail drop`/`WRED` are Buffer; `Ingress VLAN filter` is L2.
+
+### 2.3 Enabling, scoping and reading WJH (NVUE)
+
+**What it is.** WJH is configured with **channels**: a named stream of records, each subscribed to one or more trigger categories, with its own polling interval, drop filters and (for buffer channels) thresholds. It is enabled by default on Spectrum switches running Cumulus Linux. Syntax changed across releases — know both forms:
+
+| Release | Enable/disable | Local CLI |
+|---|---|---|
+| Cumulus ≤ 5.14 | `nv set system wjh enable on|off` | `what-just-happened` |
+| Cumulus 5.15 – 5.17 | `nv set system wjh state enabled|disabled` | `what-just-happened` |
+| Cumulus 5.18+ | `nv set system wjh state enabled|disabled`; `polling-interval` per channel | `nv-wjh-cli` |
+
+**Why it exists.** Without scoping, a busy leaf reports every ACL deny and every expected MLAG isolation drop, and the records you need are buried. Channels let you separate noisy categories from important ones, give buffer events their own thresholds, and filter out known-benign drops so that "zero records" actually means "nothing wrong".
+
+**How it works.**
 
 ```bash
 # Cumulus 5.15+ (state)                        # Cumulus ≤5.14 (enable on/off)
@@ -71,6 +97,8 @@ nv set system wjh channel buffer buffer-threshold latency tc all interface swp1-
 nv config apply
 ```
 
+The congestion threshold on TC 3 is how you see a RoCE queue building *before* PFC fires or anything drops; the latency threshold catches packets that waited too long even when no queue is "full".
+
 Viewing locally:
 
 ```bash
@@ -83,7 +111,7 @@ nv show system wjh l1-buffer             # layer-1 port state events
 nv action export system wjh packet-buffer   # save recent drops as PCAP to /var/run/nv-wjh/
 ```
 
-The Linux-level tool is `nv-wjh-cli` (5.18+; earlier releases used the `what-just-happened` CLI):
+The Linux-level tool is `nv-wjh-cli` (5.18+; earlier releases used the `what-just-happened` CLI). `--data drops` is the raw view, `--data aggregates` the aggregated one:
 
 ```bash
 sudo nv-wjh-cli poll --data drops --output-type table --channels forwarding
@@ -93,9 +121,13 @@ sudo nv-wjh-cli poll --data l1
 sudo nv-wjh-cli dump      # diagnostics to /var/log/nv-wjh/diags-dump/<timestamp>
 ```
 
-Older syntax you may still meet: `what-just-happened poll --aggregate`, `what-just-happened poll -o pcap`, `what-just-happened dump`. If a command is rejected, check the Cumulus version.
+Older syntax you may still meet: `what-just-happened poll --aggregate`, `what-just-happened poll -o pcap`, `what-just-happened dump`. If a command is rejected, check the Cumulus version (`nv show system version`) before assuming WJH is broken.
 
-Export destinations:
+**Why the exam cares.** `enable on` vs `state enabled`, `what-just-happened` vs `nv-wjh-cli`, and "triggers are scoped per channel".
+
+### 2.4 Exporting WJH: the one-consumer rule
+
+**What it is.** Three destinations beyond the local buffers:
 
 | Destination | How |
 |---|---|
@@ -103,11 +135,26 @@ Export destinations:
 | **PCAP** | `nv action export system wjh packet-buffer` / `nv-wjh-cli ... --output-type pcap` |
 | **Kafka / gRPC / OpenTelemetry** | Streaming export exists for external collectors; exact configuration differs by release — verify in current Cumulus docs ("Open Telemetry Export", gNMI streaming). The exam only expects you to know export beyond NetQ is possible |
 
-### 2.3 NetQ: fleet-wide health inspection vs. reading one gauge
+**Why it exists.** The ASIC drop channel is a single queue: whichever process attaches to it receives the records and removes them. Two readers would split the stream unpredictably, each seeing a fraction, so the software enforces one owner.
+
+**How it works.** In local mode the WJH service is the owner and NVUE/`nv-wjh-cli` read from it. In NetQ mode you stop the service and the NetQ agent's `wjh` module attaches instead; records flow over the management VRF to the NetQ server, where they are stored like any other time-series table (Section 2.5). Interface counters (`nv show interface swpX counters`) are a separate path and work in either mode. The failure mode is always the same: drops visible in one place and absent in the other means the wrong consumer owns the channel.
+
+### 2.5 NetQ: the troubleshooting data model
 
 **Analogy.** `nv show` on a switch is reading one gauge in one cockpit. `netq check` is the fleet maintenance department running the same inspection on every aircraft at once and handing you the list of failures.
 
-**Mechanism.** **NetQ** (Module 4.5) collects state from an agent on each Cumulus switch (and optionally Linux hosts with ConnectX/BlueField) into a server; the CLI (`netq …`) and UI query it. Three capabilities matter for troubleshooting: **validation**, **history/events**, **RoCE/WJH telemetry**.
+**What it is.** **NetQ** (Module 4.5) is a telemetry and validation system: a **netq-agent** on every Cumulus switch (and optionally on Linux hosts with ConnectX/BlueField) streams state changes to a **NetQ server** (on-premises appliance/VM, or cloud with an on-site collector), which stores them as timestamped, per-node records — interfaces, LLDP neighbors, BGP/EVPN sessions, MACs, routes, sensors, RoCE configuration and counters, WJH drops, and an event log. The `netq` CLI and UI never talk to the switches; they query that store (Figure 8.4-2).
+
+![NetQ agents on two spines, two leaves and a host pushing state over the management VRF into the NetQ server, whose data model, freshness tracking and validation engine answer the three query types netq check, netq show and netq trace](diagrams/8.4-02-netq-integration.svg)
+*Figure 8.4-2 — NetQ integration: (1) agents push state, (2) `check` runs validation suites over stored state, (3) `show` reads it, (4) `trace` computes paths from it.*
+
+**Why it exists.** Distributed faults are relationships between devices: an MTU mismatch exists only between two ports, a BGP problem between two peers, configuration drift only relative to the other leaves. Checking that by logging in to every box does not scale, and by the time you log in the transient is gone. A central, time-indexed copy of everyone's state makes cross-device comparison a query and lets you look at the fabric "as it was at 09:12" (`around`, `between`).
+
+**How it works.**
+1. **Collection.** Each agent reports changes and periodic heartbeats over the management VRF (TCP 31980 by default — verify for your release). The server records "last heard" per agent. An agent that misses heartbeats for longer than the freshness window becomes **Rotten**: its stored data is stale, and every check that touches that node is untrustworthy until it is fixed.
+2. **Validation (`netq check <suite>`).** The server runs a suite of tests against the stored records (for example, `interfaces` compares the speed/MTU/state of both ends of every LLDP-discovered link) and prints Total / Checked / Failed / **Rotten** / Warning nodes, then per-test rows with hostname, peer and reason.
+3. **Inspection (`netq show …`).** Reads the current or historical records; `between now and 24h`, `around 2h`, `json` work on most commands.
+4. **Path computation (`netq trace`).** Walks the stored FIB, MAC and LLDP state hop by hop across every ECMP branch, flagging MTU or state that would break the path. It is the Ethernet counterpart of `ibtracert` and, like it, computation from stored state, not a live probe.
 
 ```bash
 netq check agents                 # every agent fresh?
@@ -122,8 +169,6 @@ netq check bgp include 1,3        # only specific tests
 netq check interfaces around 2h   # as of two hours ago (time travel)
 ```
 
-Output lists Total / Checked / Failed / **Rotten** / Warning nodes, then per-test results with hostname, peer and reason. "Rotten" = the agent has not reported recently; fix that before trusting any other check for that node.
-
 Show and trace:
 
 ```bash
@@ -137,28 +182,6 @@ netq show inventory ; netq show sensors temp
 netq trace 10.3.1.17 from 10.9.1.5                           # L3 path (ECMP-aware) through the fabric
 netq trace 10.9.1.5 from leaf01:swp3 vrf default
 ```
-
-`netq trace` is the Ethernet equivalent of `ibtracert`: it computes path(s) from NetQ's collected FIB/MAC state across every ECMP alternative and flags where MTU or state would break the path. It is computation from collected state, not a live probe.
-
-RoCE commands and what they mean:
-
-```bash
-netq show roce-config                      # per switch: mode (lossless/lossy), PFC priority, ECN min/max, DSCP→SP map, buffer pool
-netq show roce-config hostname leaf01
-netq show roce-counters nic                # (or dpu) — host-side RoCE counters where an agent runs
-netq show roce-counters pool               # buffer pool utilization
-netq leaf01 show roce-counters             # per-switch RX/TX: PFC pause frames, ECN-marked packets, CNPs
-netq check roce                            # consistency across the fabric (verify in your release)
-```
-
-| Observation | Meaning |
-|---|---|
-| `roce-config` differs on one leaf (mode lossy, or different ECN max) | Configuration drift — the usual root cause of "one rack is slow". Fix with NVUE (`nv set qos roce mode lossless`) or Ansible |
-| **PFC** pause RX rising on a *spine* port | Downstream leaf is congested and pushing back; check its host ports for oversubscription or a slow NIC |
-| PFC pause TX on a *host-facing* port while the host shows RX drops | Host NIC not honoring PFC on that priority (`mlnx_qos -i <if>`) |
-| ECN marked counts high but no drops | Working as designed under load (DCQCN engaged) |
-| Tail drops on the RoCE traffic class | Lossless not actually configured on that port/class — WJH Buffer `Tail drop` confirms |
-| PFC pause continuously at line rate (pause storm) | Stuck receiver or PFC loop; isolate the port, check for a hung NIC/driver; WJH L1/Buffer + `nv show interface swpX counters` |
 
 WJH in NetQ:
 
@@ -176,11 +199,65 @@ netq show wjh-drop l3 src-ip 10.3.1.17 dst-ip 10.9.1.5 proto udp dst-port 4791  
 
 Filters per type: `ingress-port`, `egress-port`, `severity`, `reason`, `src-ip`/`dst-ip`, `proto`, `src-port`/`dst-port`, `src-mac`/`dst-mac`, `traffic-class`, `rule-id-acl`, `vlan`, `between … and …`, `around …`, `json`. UDP destination port **4791** is RoCEv2 — filter on it to isolate RDMA drops.
 
-When NetQ itself misbehaves: `netq show agents` (Fresh/Rotten, version, last heard); on the switch `netq config show agent`, `netq config show agent wjh`, `netq config add server 10.0.100.10 vrf mgmt port 31980` (verify port), `netq config restart agent`, `sudo systemctl status netq-agent`; `netq show agents opta` for appliance health. Rotten → management VRF reachability (`ping -I mgmt <server>`), time sync (`netq check ntp`), agent/server version compatibility.
+When NetQ itself misbehaves: `netq show agents` (Fresh/Rotten, version, last heard); on the switch `netq config show agent`, `netq config show agent wjh`, `netq config add server 10.0.100.10 vrf mgmt port 31980` (verify port), `netq config restart agent`, `sudo systemctl status netq-agent`; `netq show agents opta` for appliance health. Rotten → management VRF reachability (`ping -I mgmt <server>`), time sync (`netq check ntp` — records with skewed timestamps are discarded), agent/server version compatibility.
 
-**Why the exam cares.** Rotten agents, the WJH-to-NetQ handoff, and which `netq` command answers "is every leaf configured the same?" (`netq show roce-config` / `netq check roce`).
+**Why the exam cares.** Rotten agents, the WJH-to-NetQ handoff, `netq trace` is not a live probe, and which `netq` command answers "is every leaf configured the same?" (`netq show roce-config` / `netq check roce`).
 
-### 2.4 Cumulus-local tools when NetQ is not there
+### 2.6 RoCE telemetry: reading PFC, ECN and buffer counters
+
+**What it is.** A lossless RoCE class is held together by three mechanisms, each with its own counter: **PFC** pause frames (per priority, Rx and Tx per port), **ECN** marks (packets whose IP ECN bits the switch set when the queue crossed the ECN threshold, which the receiver NIC turns into CNPs for DCQCN), and buffer/queue occupancy and drops per traffic class. NetQ collects all of them:
+
+```bash
+netq show roce-config                      # per switch: mode (lossless/lossy), PFC priority, ECN min/max, DSCP→SP map, buffer pool
+netq show roce-config hostname leaf01
+netq show roce-counters nic                # (or dpu) — host-side RoCE counters where an agent runs
+netq show roce-counters pool               # buffer pool utilization
+netq leaf01 show roce-counters             # per-switch RX/TX: PFC pause frames, ECN-marked packets, CNPs
+netq check roce                            # consistency across the fabric (verify in your release)
+```
+
+**Why it exists.** Each mechanism works on a different timescale, so each counter answers a different question. ECN/DCQCN slows senders over several RTTs (microseconds to milliseconds) and should be the normal brake. PFC stops a link within a pause frame's flight time and is the emergency brake that prevents loss when ECN is too slow. A drop on the lossless class means both brakes failed. Reading which counter moves tells you which brake engaged.
+
+**How it works.** The direction of a pause counter tells you who is congested: a port that **transmits** PFC is telling its neighbor "stop, my ingress buffer for this priority is past XOFF"; a port that **receives** PFC is being told to stop by its neighbor.
+
+| Observation | Meaning |
+|---|---|
+| `roce-config` differs on one leaf (mode lossy, or different ECN max) | Configuration drift — the usual root cause of "one rack is slow". Fix with NVUE (`nv set qos roce mode lossless`) or Ansible |
+| **PFC** pause RX rising on a *spine* port | Downstream leaf is congested and pushing back; check its host ports for oversubscription or a slow NIC |
+| PFC pause TX on a *host-facing* port while the host shows RX drops | Host NIC not honoring PFC on that priority (`mlnx_qos -i <if>`) |
+| ECN marked counts high but no drops | Working as designed under load (DCQCN engaged) |
+| Tail drops on the RoCE traffic class | Lossless not actually configured on that port/class — WJH Buffer `Tail drop` confirms |
+| PFC pause continuously at line rate (pause storm) | Stuck receiver or PFC loop; isolate the port, check for a hung NIC/driver; WJH L1/Buffer + `nv show interface swpX counters` (Section 2.7) |
+
+**Why the exam cares.** ECN marks rising with no drops is healthy; tail drops on the lossless TC are not, and ECN tuning does not fix them.
+
+### 2.7 PFC storms: how one stuck receiver pauses a pod, and the watchdog
+
+**Analogy.** PFC is a per-lane red light. A storm is a broken red light stuck on: the lane behind it fills, then the intersection before that turns red too, until traffic that never meant to go near the broken light is stopped across town.
+
+**What it is.** A **PFC storm** is a sustained stream of pause frames from a device that has stopped draining a lossless priority — classically a NIC whose driver hung, a host stuck in a PCIe stall, or firmware that keeps its Rx buffer above XOFF. Because PFC is per-priority and hop-by-hop, the pause propagates upstream (Figure 8.4-5). A **PFC watchdog** is the switch (or NIC) feature that detects a queue paused for too long and breaks the chain.
+
+![Five devices in a row: a hung dgx-02 NIC sending PFC pause at line rate to leaf-r2-01, which stops its TC3 egress queue, fills, and pauses dgx-01 and spine-01, which in turn pauses every other leaf; with panels on the buffer math and how to see each hop](diagrams/8.4-05-pfc-storm-propagation.svg)
+*Figure 8.4-5 — PFC storm propagation: (1) the stuck NIC pauses its leaf, (2) the leaf pauses its other hosts, (3) the leaf pauses the spine, (4) the spine pauses every other leaf.*
+
+**Why it exists.** PFC is reactive and has no notion of fairness or of "who caused it". The mechanics make the propagation inevitable:
+- A pause frame carries a time per priority in **quanta** of 512 bit times. At 400 Gb/s a bit time is 2.5 ps, so one quantum is 1.28 ns and the maximum (65,535 quanta) is ~84 µs; a receiver that keeps re-sending XOFF before the timer expires holds the link paused indefinitely.
+- XOFF fires when the ingress buffer for that priority crosses a threshold; the **headroom** above it must absorb everything already in flight: the pause frame's transmission and the peer's reaction (up to a maximum-size frame plus processing) plus two cable propagation delays (~5 ns/m each way). On a 100 m link at 400 Gb/s that is about 1 µs round trip, i.e. ~50 KB per priority per port before frame allowances — which is why `nv set qos roce` takes a `cable-length`.
+- When the leaf's egress queue toward the stuck host cannot drain, the leaf's *ingress* buffers for priority 3 on every port feeding that queue fill and cross XOFF. The leaf now pauses priority 3 on its other host ports and its uplinks. The spine's egress queue to that leaf stalls, its ingress buffers fill, and it pauses priority 3 toward every leaf. Every flow on priority 3 that shares any of those queues is stopped — head-of-line blocking — including traffic destined nowhere near the stuck node. In topologies with loops in the buffer-dependency graph the same mechanism can deadlock without any stuck host at all.
+- ECN cannot help: it slows senders over RTTs, and a stuck receiver will never drain however slowly the senders send.
+
+**How it works — detect, contain, recover.**
+1. **Detect by signature.** Normal back-pressure: Tx pause rises and falls with job phases, the link still carries traffic. Storm: the pause counter climbs continuously *with the link idle* and throughput at zero. Sample `nv show interface swpX counters --view=pause` twice, 10 s apart, with no job running; any delta is suspicious. NetQ: `netq <leaf> show roce-counters` (Tx PFC pause on one host port), `netq show wjh-drop buffer` (`Port TC congestion threshold crossed` on TC 3), `netq show wjh-drop l1` (the NIC resetting). Host: `ethtool -S <if> | grep -i pause`, `dmesg` for mlx5 command timeouts or resets.
+2. **Contain with a watchdog.** A PFC watchdog polls each lossless queue; if a queue has been in the paused state with no transmit progress for longer than its detection interval (typically hundreds of milliseconds), it stops honoring pause on that queue — dropping the queued packets instead — so the back-pressure stops propagating, and it restores normal lossless behavior after a restoration interval with no further storm. Cumulus Linux exposes a PFC watchdog through NVUE (`nv set qos pfc-watchdog …` and per-interface enablement; verify exact syntax and defaults in your release). ConnectX NICs have the mirror-image protection, PFC storm prevention, which stops the NIC from sending pause indefinitely if its own receive path is stuck (`ethtool --set-tunable <if> pfc-prevention-tout <ms>` on mlx5; verify).
+3. **Recover.** Isolate the port (`nv set interface swp2 link state down; nv config apply`), reset the NIC or driver on the host, re-enable, and confirm the pause counters stay flat while idle.
+
+Containment is a deliberate trade: the watchdog converts a pod-wide stall into packet loss for the flows behind one broken host. That is the correct trade, because RDMA transports recover from loss (with retransmits) but nothing recovers from a fabric that does not move.
+
+**Why the exam cares.** "Tx pause pegged with the link idle" = storm; "pause rising and falling with job phases" = normal. Know why it spreads (per-priority, hop-by-hop, shared queues) and what a watchdog does.
+
+### 2.8 Cumulus-local tools when NetQ is not there
+
+**What it is.** The on-box toolset that answers the same questions as NetQ for one switch.
 
 ```bash
 # Interface and link
@@ -208,11 +285,15 @@ sudo tail -f /var/log/frr/frr.log ; sudo journalctl -u nv-wjh -f
 sudo cl-support                               # /var/support/cl_support_<host>_<date>.txz for NVIDIA support
 ```
 
-**cl-resource-query** (detailed in `../04-spectrum-ethernet/`) is the tool for "the route/ACL/MAC was configured but traffic is dropped": a table at 100% means the ASIC silently fails to install new entries, FRR still shows the route, and WJH reports `routing table unicast miss` for destinations that "should" be routable.
+**Why it exists.** NetQ may not be deployed (lab, early bring-up), may be the thing that is broken (Rotten agent), or may not hold the detail you need (per-lane FEC, the exact hardware table). The local tools read the device directly.
 
-### 2.5 UFM: the InfiniBand counterpart
+**How it works.** Each layer has an owner process: the ASIC is programmed by `switchd` (logs in `/var/log/switchd.log`), routing by FRR (`vtysh`), configuration by NVUE (`nv show … operational` vs `applied` columns tell you whether what you configured is what is running). **cl-resource-query** (detailed in `../04-spectrum-ethernet/`) is the tool for "the route/ACL/MAC was configured but traffic is dropped": when a hardware table is at 100 % the ASIC silently fails to install new entries, FRR still shows the route, and WJH reports `routing table unicast miss` for destinations that "should" be routable. `cl-support` collects all of it in one bundle for support.
 
-**Analogy.** NetQ is the fleet inspector for the Ethernet fleet; UFM is the same office for InfiniBand — plus it also employs the air-traffic controller (the SM).
+### 2.9 UFM: the InfiniBand counterpart
+
+**Analogy.** NetQ is the fleet inspector for the Ethernet fleet; UFM is the same office for InfiniBand — and it also employs the air-traffic controller (the SM).
+
+**What it is.** **UFM** (Unified Fabric Manager) is the management platform for Quantum InfiniBand fabrics. It runs (or monitors) the Subnet Manager and wraps the Module 8.1 diagnostics in scheduling, history and an API.
 
 | UFM function | What it gives you |
 |---|---|
@@ -224,14 +305,21 @@ sudo cl-support                               # /var/support/cl_support_<host>_<
 | **System dump** | `ufm_log_collect` (or GUI "System Dump" / `/opt/ufm/scripts/collect_logs.sh` depending on version — verify) gathers UFM logs, SM logs (`/opt/ufm/files/log/opensm.log`), ibdiagnet output and configuration |
 | **SM status** | Master/standby, sweep errors, routing engine, AR/SHARP state |
 
-Typical IB escalation bundle: UFM system dump + `ibdiagnet` directory + `ibstat`/`mlxlink -m -c` from the affected host.
+**Why it exists.** InfiniBand has no per-switch control plane to log in to: the SM computes all forwarding centrally, so the place to see fabric-wide state is the SM's host. UFM adds what raw `ibdiagnet` and `perfquery` lack — continuous polling, thresholds that raise events, history, and an audited way to act (isolate a port) that the SM is aware of.
+
+**How it works.** UFM's PerfMgr polls `PortCountersExt` on every port via PerfMgt MADs (Module 8.1, Figure 8.1-2), compares rates to thresholds and raises events; Fabric Health runs ibdiagnet on a schedule and stores the report; port isolation sets the port down through the SM so routing is recomputed around it rather than black-holing traffic. The IB methodology mirrors the Ethernet one: events → telemetry (XmitWait for congestion, symbol errors/BER for physical) → SM routing/AR state → Fabric Health after the fix. Typical IB escalation bundle: UFM system dump + `ibdiagnet` directory + `ibstat`/`mlxlink -m -c` from the affected host.
+
+**Why the exam cares.** UFM Fabric Health is the IB analogue of `netq check`; UFM port isolation and `ibportstate disable` do the same thing, but UFM is the audited way in production.
 
 ## 3. Live-style walkthrough: "NCCL is slow between two nodes"
 
-Scenario: 2-node nccl-tests busbw is 60% of reference; single-node is fine. Spectrum-X, Cumulus 5.x, RoCEv2 lossless on TC3 / switch-priority 3, DSCP 26. NetQ is deployed with WJH forwarded. Output is illustrative.
+Scenario: 2-node nccl-tests busbw is 60% of reference; single-node is fine. Spectrum-X, Cumulus 5.x, RoCEv2 lossless on TC3 / switch-priority 3, DSCP 26. NetQ is deployed with WJH forwarded. Output is illustrative. Figure 8.4-3 is the run as a decision flow: diamonds 1–2 are shared by both fabrics, then the RoCE track (left) and the InfiniBand track (right) diverge at the congestion step. Each step below names the diamond it answers.
+
+![Decision flowchart for NCCL slow between two nodes: perftest per rail and a half-rate check shared by both fabrics, then a RoCE track (roce-counters, WJH tail drop, WJH TC column, pause storm, roce config consistency) and an InfiniBand track (UFM events, perfquery XmitWait, ibtracert, AR/SHARP, telemetry), each No branch exiting to a fix](diagrams/8.4-03-nccl-slow-decision-flow.svg)
+*Figure 8.4-3 — "NCCL is slow between two nodes": the same opening move on both fabrics (diamonds 1–2), then the RoCE and InfiniBand tracks (diamonds 3–7).*
 
 ```bash
-# ---- Step 0: is it ONE link or the fabric? Same reflex as Module 8.1: perftest per rail pair.
+# ---- Step 0 (Figure 8.4-3, diamonds 1 and 2): is it ONE link or the fabric? Same reflex as Module 8.1: perftest per rail pair.
 dgx-02$ ib_write_bw -d mlx5_2 -R --report_gbits -a                 # server (RoCE: -R for rdma_cm)
 dgx-01$ for r in 0 1 2 3; do ib_write_bw -d mlx5_$r -R --report_gbits -s 1048576 -q 4 10.0.$r.2 | tail -1; done
  1048576  ... 389.9   # rail 0 fine
@@ -240,7 +328,7 @@ dgx-01$ for r in 0 1 2 3; do ib_write_bw -d mlx5_$r -R --report_gbits -s 1048576
  1048576  ... 390.0
 # Decision: rail 2 is impaired but trained correctly. On RoCE, "a bit slow" with retransmits = drops. Go to WJH.
 
-# ---- Step 1: fleet view of RoCE counters on the leaf that serves rail 2. Where are PFC and ECN firing?
+# ---- Step 1 (RoCE diamond 3; Section 2.6): fleet view of RoCE counters on the leaf that serves rail 2. Where are PFC and ECN firing?
 netq$ netq leaf-r2-01 show roce-counters
 Matching roce records:
 Hostname    Interface  Rx PFC Pause(pri3)  Tx PFC Pause(pri3)  ECN Marked  Rx RoCE pkts  Tx RoCE pkts   Last Updated
@@ -252,7 +340,7 @@ leaf-r2-01  swp49       1204                0                   0           ... 
 # Decision: PFC Tx from switch to host at this volume means the switch's TC3 queue toward dgx-02 is filling.
 # A lossless class should never DROP, though. Check WJH Buffer.
 
-# ---- Step 2: WJH buffer drops, filtered to RoCEv2 (UDP 4791) in the last hour.
+# ---- Step 2 (RoCE diamonds 4 and 5; Sections 2.1-2.2): WJH buffer drops, filtered to RoCEv2 (UDP 4791) in the last hour.
 netq$ netq show wjh-drop buffer severity warning between now and 1h
 Matching wjh records:
 Hostname    Ingress Port  Egress Port  Reason      Severity  Src IP      Dst IP      Proto  Dst Port  TC  Drop Count  Last Timestamp
@@ -264,14 +352,14 @@ leaf-r2-01  swp1          swp2         Tail drop   Warning   10.0.2.1    10.0.2.
 # Decision: this is a DSCP -> switch-priority mismatch on the dgx-01 side, not a switch QoS bug.
 #     Confirm the switch is configured as we think before touching the host.
 
-# ---- Step 3: PFC storm check while we are here — rule out a stuck receiver as the cause of the pause volume.
+# ---- Step 3 (RoCE diamond 6; Section 2.7, Figure 8.4-5): PFC storm check while we are here — rule out a stuck receiver as the cause of the pause volume.
 leaf-r2-01$ nv show interface swp2 counters --view=pause            # (view name varies; see -h)
    Rx pause (pri3)   0
    Tx pause (pri3)   318011        # climbing, but NOT continuous at line rate; it tracks job phases
 leaf-r2-01$ sudo nv-wjh-cli poll --data l1 | tail -3                 # any port flaps / signal integrity on swp1-2? none
 # Decision: not a pause storm (that would be Tx pause pegged every second with the link idle). Normal backpressure.
 
-# ---- Step 4: the switch's own RoCE config. Is leaf-r2-01 lossless on priority 3 with DSCP 26 mapped?
+# ---- Step 4 (RoCE diamond 7): the switch's own RoCE config. Is leaf-r2-01 lossless on priority 3 with DSCP 26 mapped?
 leaf-r2-01$ nv show qos roce
                     operational   applied
 ------------------  -----------   -------
@@ -296,7 +384,7 @@ netq$ netq check roce
 roce check result summary: Total nodes 12  Checked 12  Failed 0  Rotten 0
 # No drift. The fabric is consistent; the host is sending with the wrong DSCP.
 
-# ---- Step 5: the host. What DSCP/TC does dgx-01's rail-2 NIC actually stamp on RoCE?
+# ---- Step 5 (exit of diamond 5: TC 0 = host DSCP wrong): the host. What DSCP/TC does dgx-01's rail-2 NIC actually stamp on RoCE?
 dgx-01$ cat /sys/class/infiniband/mlx5_2/tc/1/traffic_class
 0                                             # default traffic class 0 -> DSCP 0 -> lossy TC0. Found it.
 dgx-01$ mlnx_qos -i ens2f0np0 | grep -A1 -i 'PFC\|enabled'
@@ -316,7 +404,7 @@ dgx-01$ export NCCL_IB_TC=106                                                   
 dgx-01$ mlnx_qos -i ens2f0np0 --trust dscp
 dgx-01$ mlnx_qos -i ens2f0np0 | grep -A2 'dscp2prio' | grep ' 26'    # expect "prio:3 dscp:26"
 
-# ---- Step 7: re-test, and prove it with the same two views we started with.
+# ---- Step 7 (the green box at the bottom of the RoCE track): re-test, and prove it with the same two views we started with.
 dgx-01$ ib_write_bw -d mlx5_2 -R --report_gbits -s 1048576 -q 4 10.0.2.2 | tail -1
  1048576  ... 389.7                                   # rail 2 now matches its siblings
 netq$ netq show wjh-drop buffer ingress-port swp1 between now and 10m
@@ -328,18 +416,18 @@ dgx-01$ mpirun -np 16 -H dgx-01:8,dgx-02:8 -x NCCL_IB_TC=106 -x NCCL_DEBUG=INFO 
 # Decision: closed. Attach: WJH row (TC 0, Tail drop), roce-counters before/after, nv show qos roce, the sysfs/env change.
 
 # ======== PARALLEL TRACK: the same complaint on an INFINIBAND fabric with UFM ========
-# Step A: UFM Events, filtered to the two nodes and the last hour.
+# Step A (IB diamond 3): UFM Events, filtered to the two nodes and the last hour.
 #   "Symbol error rate exceeded" on leaf-r2-01 port 17 (dgx-01 mlx5_2)   <- physical, Module 8.1/8.3 path
 #   or "Congestion: XmitWait threshold exceeded" on the same port        <- congestion path
-# Step B: UFM Telemetry, port leaf-r2-01/17: overlay XmitWait and bandwidth. A sawtooth of XmitWait aligned
+# Step B (IB diamonds 4 and 7): UFM Telemetry, port leaf-r2-01/17: overlay XmitWait and bandwidth. A sawtooth of XmitWait aligned
 #   with the job's all_reduce phases = credit starvation on that path. Then:
 dgx-01$ sudo perfquery -x 12 17 | grep -E 'XmitWait|XmitDiscards|Symbol'    # LID 12 = leaf-r2-01
 PortXmitWait:....................9120033                                      # high, with Symbol = 0 -> congestion, not cable
 dgx-01$ sudo ibtracert 73 81                                                 # is rail-2 -> rail-2 really one leaf hop? (Module 8.2)
-# Step C: UFM SM status: routing engine and adaptive routing state. AR off on a fat tree with this traffic = hot spot.
+# Step C (IB diamonds 5 and 6): UFM SM status: routing engine and adaptive routing state. AR off on a fat tree with this traffic = hot spot.
 #   Enable AR / check SHARP per ../02-infiniband/. If instead UFM shows High BER on the port -> UFM "isolate port",
 #   then Module 8.3 (mlxlink -m -c) and replace.
-# Step D: UFM Fabric Health report after the change: zero "Speed/Width", zero "High BER", zero routing warnings.
+# Step D (IB green box): UFM Fabric Health report after the change: zero "Speed/Width", zero "High BER", zero routing warnings.
 ```
 
 What "good" looks like (RoCE): `netq check roce` Failed 0; `netq show roce-config` identical across leaves; WJH buffer query empty for `dst-port 4791`; PFC pause counters flat or slowly rising, never pegged; ECN marks rising under load; every host NIC stamping DSCP 26 (TC 106) and trusting DSCP; perftest within ~3% of line rate on every rail.
@@ -394,11 +482,11 @@ What "good" looks like (RoCE): `netq check roce` Failed 0; `netq show roce-confi
 - AC4: a Rotten agent causes NO-GO before any other check is interpreted.
 
 ### Hint
-- Section 2.3: `netq check agents` first — Rotten invalidates everything else (AC4).
-- `netq show roce-config json` gives you one record per switch; compare the fields that matter (Section 2.3 table) and count distinct values — more than one = drift.
-- Section 2.3's WJH-in-NetQ list: `netq show wjh-drop buffer ... dst-port 4791 between now and <window>`; empty = pass.
-- For the pause-storm test, sample `nv show interface swpX counters --view=pause` twice 10 s apart with the link idle; a large delta while idle is the storm signature (Section 2.3 table).
-- Section 2.2's export table tells you exactly what "handoff working" means in two commands.
+- Section 2.5: `netq check agents` first — Rotten invalidates everything else (AC4).
+- `netq show roce-config json` gives you one record per switch; compare the fields that matter (Section 2.6 table) and count distinct values — more than one = drift.
+- Section 2.5's WJH-in-NetQ list: `netq show wjh-drop buffer ... dst-port 4791 between now and <window>`; empty = pass.
+- For the pause-storm test, sample `nv show interface swpX counters --view=pause` twice 10 s apart with the link idle; a large delta while idle is the storm signature (Section 2.7).
+- Section 2.4's export table tells you exactly what "handoff working" means in two commands.
 
 ## Appendix A — Quick command / config reference
 
@@ -543,6 +631,9 @@ sudo vtysh -c "show bgp summary" ; cl-resource-query ; sudo tail -f /var/log/swi
 ## Solution guide — Hands-on assignment
 
 ### roce-validate.md — Go/No-Go table (AC1: 10 rows, each with command and threshold)
+
+![Ten-step RoCE validation flow in two columns: agents, interfaces/MTU/BGP, WJH handoff, roce-config consistency and idle pause sample, then load test, WJH buffer drops on 4791, ECN marks before and after, link events and evidence capture, with GO only if all ten pass and a Rotten agent stopping everything](diagrams/8.4-04-roce-go-no-go.svg)
+*Figure 8.4-4 — The RoCE go/no-go flow implemented below: rows 1–10 in a fixed order; a Rotten agent in row 1 stops the run before anything else is interpreted.*
 
 ```markdown
 # RoCE pod validation — Go/No-Go

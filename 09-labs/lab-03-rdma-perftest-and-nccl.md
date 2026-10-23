@@ -24,6 +24,9 @@ ibv_devinfo -d rxe0 | grep -E 'state|link_layer|active_mtu'
 
 Expected: `rxe0` with `state: PORT_ACTIVE`, `link_layer: Ethernet`. Hosts must reach each other over `eth0` (RoCEv2 is UDP/4791 — open it in any firewall).
 
+![hostA as perftest server and hostB as client, each with an RDMA device (ConnectX or Soft-RoCE rxe0), a TCP exchange of QP and GID parameters followed by RDMA WRITE/READ/SEND traffic, and the optional GPU and nccl-tests path](diagrams/lab-03-topology.svg)
+*Figure 9-3 — Lab 3 topology: perftest server and client, TCP for connection setup, RDMA for the measured traffic.*
+
 ## Prerequisites
 - Module `08-troubleshooting/01-infiniband-diagnostics-and-perftest.md` and `../03-rdma/`.
 - Two hosts `hostA` (server) and `hostB` (client), IPs reachable (`ping`).

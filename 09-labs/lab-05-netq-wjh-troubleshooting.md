@@ -8,6 +8,9 @@ Use **NetQ** to validate the fabric (`netq check`), read events, trace a path, c
 - **Hardware alternative:** Spectrum switches with Cumulus 5.x and a NetQ OPTA appliance or NetQ Cloud.
 - **What is simulated:** NetQ agents, `netq check`, events, LLDP/BGP/EVPN state, `netq trace`, `roce-config`. **What needs hardware:** WJH drop records (the ASIC generates them) and real PFC/ECN counters. Steps that need hardware are marked **[HW]**; the lab still shows the exact commands and expected output so you can recognize them.
 
+![The Lab 1 leaf-spine with netq-agents on every switch reporting to a NetQ server over the management VRF, WJH on leaf01 handed to NetQ, and server01 traffic to an unrouted address triggering a WJH drop](diagrams/lab-05-topology.svg)
+*Figure 9-5 — Lab 5 topology: NetQ agents over VRF mgmt, WJH on leaf01, and the traffic that triggers a drop.*
+
 ## Prerequisites
 - Lab 1 fabric (or demo topology) up, with Lab 1's RoCE profile applied on both leaves.
 - Modules `../04-spectrum-ethernet/` (NetQ) and `08-troubleshooting/04-wjh-netq-and-cumulus-troubleshooting.md`.

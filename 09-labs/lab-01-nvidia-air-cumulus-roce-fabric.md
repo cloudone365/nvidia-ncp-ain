@@ -6,6 +6,9 @@ Configure a two-leaf, two-spine Cumulus Linux fabric with **NVUE**: hostnames, l
 ## Environment
 NVIDIA Air with the topology in [README.md](README.md) (Cumulus VX 5.x on all four switches, two Ubuntu servers). Cumulus VX executes the full NVUE/FRR control plane, so every command and `nv show` output here is real. The *datapath* is software: `nv set qos roce` is accepted and shown back, but there is no Spectrum ASIC to honor PFC or mark ECN at line rate. You are practicing configuration and verification syntax, which is what the exam measures.
 
+![Two spines and two leaves running Cumulus VX in NVIDIA Air, cross-connected on swp51/swp52 for BGP unnumbered, each leaf with one Ubuntu server on swp1, with the addressing plan and the RoCE profile applied in Task 4](diagrams/lab-01-topology.svg)
+*Figure 9-1 — Lab 1 topology: two-leaf, two-spine Cumulus fabric with loopbacks, ASNs, port names and server addressing.*
+
 ## Prerequisites
 - Air simulation running; console or SSH access to all nodes (`cumulus`/`cumulus` on first login, then your new password).
 - Modules `../04-spectrum-ethernet/` (Cumulus Essentials/Admin) and `../03-rdma/03-roce-a-to-z.md` read.

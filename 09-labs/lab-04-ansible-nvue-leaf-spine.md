@@ -6,6 +6,9 @@ Re-create the Lab 1 configuration from an Ansible playbook, using the NVUE REST 
 ## Environment
 NVIDIA Air, same topology as Lab 1 (fully simulated). Ansible runs from the `oob-mgmt-server` node in the simulation (or from your laptop via the Air SSH service). Cumulus 5.x switches expose the NVUE REST API on TCP 8765 over HTTPS; verify it is enabled (`nv show system api`).
 
+![The Lab 1 leaf-spine in Air with oob-mgmt-server as the Ansible control node reaching every switch over the management network through the NVUE REST API on 8765 or SSH, plus the inventory and the two transports](diagrams/lab-04-topology.svg)
+*Figure 9-4 — Lab 4 topology: Ansible on oob-mgmt-server drives each switch through NVUE REST (or rendered nv set over SSH).*
+
 ## Prerequisites
 - Lab 1 completed at least once (so you know what the result should look like). Optionally reset the switches to a clean state: `nv config apply empty -y` wipes the NVUE config (keep the management interface! — on Air the `eth0`/mgmt VRF is default, but confirm before applying).
 - On the control node: `python3 -m pip install ansible` (ansible-core 2.14+), then `ansible-galaxy collection install nvidia.nvue`.
