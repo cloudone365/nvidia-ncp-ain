@@ -26,16 +26,27 @@ By the end of this module you will be able to…
 
 *Analogy:* stock Kubernetes gives every pod one phone line (the pod network). AI workloads need a second, private express lane to the GPU fabric, plus a badge to the RDMA hardware. The Network Operator is the building manager that installs the extra lines, hands out the badges, and keeps the wiring consistent on every floor.
 
-Kubernetes assumes one network interface per pod, provisioned by a single CNI plugin, carrying ordinary TCP/IP. AI workloads need something different on every count:
+**What it is.** The **NVIDIA Network Operator** is a Kubernetes *operator*: a controller (running as a Deployment) plus a set of custom resource definitions. It installs and lifecycle-manages everything a node needs for high-performance networking: NIC drivers, RDMA device plugins, secondary-network CNIs, IPAM, PKey management and NIC telemetry. It is the networking counterpart of the **GPU Operator**, which does the same for the GPU driver, container toolkit, device plugin, DCGM and MIG.
 
-- A pod must reach an **RDMA** device (`/dev/infiniband/uverbsN`) to use ibverbs, NCCL's IB transport, or GPUDirect RDMA.
+**Why it exists.** Kubernetes assumes one network interface per pod, provisioned by a single CNI plugin, carrying ordinary TCP/IP. AI workloads need something different on every count:
+
+- A pod must reach an **RDMA** device (`/dev/infiniband/uverbsN`) to use ibverbs, NCCL's IB transport, or GPUDirect RDMA. A plain container sees none of these character devices.
 - The compute fabric is usually a *second* network (InfiniBand or dedicated RoCE Ethernet), separate from the pod network, so pods need multiple interfaces.
 - The NIC drivers (MOFED / DOCA-OFED) and firmware config (SR-IOV VF counts, link type) must be consistent across nodes, and in containers the kernel modules must match the host kernel.
 - Resources that are not CPU/memory — "an RDMA-capable NIC", "a VF on rail 3" — must be scheduled.
 
-The **NVIDIA Network Operator** uses the Kubernetes operator pattern (a controller watching custom resources) to deploy and lifecycle-manage all of these pieces consistently across the cluster. It is the networking counterpart of the **GPU Operator**, which does the same for the GPU driver, container toolkit, device plugin, DCGM and MIG.
+Doing this by hand on 128 nodes means 128 chances for drift: one node with a different OFED, one with a missing device plugin, and NCCL falls back to TCP on exactly the rank that bounds every collective (Module 1.3).
+
+**How it works.** The operator pattern is *declare, then reconcile*. You declare the desired state once in a custom resource (`NicClusterPolicy`, §2.5). The controller watches that resource and the objects it owns. It renders a DaemonSet (or Deployment) for every component the policy names, creates or patches it through the API server, and reports per-component status back into the policy. The kubelet on each selected node then runs the component pods, and those pods do the node-level work: load drivers, register devices, install CNI binaries (Figure 7.1-1). Because the controller keeps reconciling, a deleted DaemonSet comes back and a changed image version rolls out without anyone touching a node.
+
+**Why the exam cares:** the exam frames this as "which piece of Kubernetes plumbing gives the pod X". The answer is always a Network Operator component, chosen through the `NicClusterPolicy`.
 
 ### 2.2 What the Network Operator deploys
+
+**What it is.** A catalogue of node components, each delivered as its own workload and each switched on by one key in the `NicClusterPolicy` (Figure 7.1-1):
+
+![Network Operator architecture: custom resources in the control plane, the network-operator, sriov-network-operator and gpu-operator controllers reconciling them, and the per-node DaemonSets they create on a DGX worker, down to the kernel modules and hardware](diagrams/7.1-01-network-operator-architecture.svg)
+*Figure 7.1-1 — One `NicClusterPolicy` drives many DaemonSets on each worker; the GPU Operator's driver DaemonSet builds nvidia-peermem against the OFED the Network Operator provides; ib-kubernetes talks to UFM for PKeys.*
 
 | Component | Delivered as | Function | When needed |
 |---|---|---|---|
@@ -53,22 +64,55 @@ The **NVIDIA Network Operator** uses the Kubernetes operator pattern (a controll
 
 Everything above is declared in a single cluster-scoped custom resource, the **`NicClusterPolicy`**; the Helm chart with `deployCR: true` creates it from `values.yaml`.
 
+**Why it exists.** Each component closes exactly one gap from §2.1, and they are deliberately separate so you deploy only what your design needs. A DGX BasePOD with host DOCA-OFED and shared HCAs needs the RDMA shared device plugin, Multus, a CNI and IPAM, but no driver container and no ib-kubernetes. A multi-tenant SR-IOV InfiniBand cluster needs the driver container, the SR-IOV operator and ib-kubernetes, but not the shared device plugin.
+
+**How it works.** What each DaemonSet actually does on the node:
+
+| DaemonSet | On-node actions | Evidence it worked |
+|---|---|---|
+| `mofed-<os>-ds` (DOCA-OFED driver) | Privileged container: unloads inbox `mlx5_*`/`ib_*` modules, compiles (or uses precompiled) DOCA-OFED modules for `uname -r`, `modprobe`s them, and exposes the driver tree on the host so other containers can use it. Until it is Ready the operator holds the other NIC components back (a node label of the form `network.nvidia.com/operator.mofed.wait`; verify the name in your release). | `lsmod \| grep mlx5_ib` on the host shows the new version; `ofed_info -s` in the pod |
+| `nic-feature-discovery` / NFD worker | Reads PCI IDs, NIC model, firmware and link type and writes node labels such as `feature.node.kubernetes.io/pci-15b3.present=true` | `kubectl get node dgx01 --show-labels` |
+| `rdma-shared-dp-ds` | Runs a **device plugin**: discovers HCAs matching the selectors and registers an extended resource with the kubelet over gRPC (below) | Node `Allocatable` shows `rdma/<name>` |
+| `kube-multus-ds` | Copies the `multus` binary to `/opt/cni/bin` and writes a `00-multus.conf` in `/etc/cni/net.d` that wraps the cluster's primary CNI config, so Multus becomes the CNI the runtime calls | `ls /etc/cni/net.d` shows the Multus conf first |
+| `cni-plugins-ds`, `ipoib-cni-ds` | Copy CNI binaries (`macvlan`, `ipvlan`, `host-device`, `ipoib`, …) into `/opt/cni/bin`; nothing runs afterwards | Binaries present on the host |
+| `nv-ipam-node` (+ `nv-ipam-controller`) | The controller carves each `IPPool` into per-node blocks (`perNodeBlockSize`); the node agent serves the `nv-ipam` CNI from its local block, so allocation is cluster-consistent without a central lock per pod | `kubectl get ippools -o yaml` shows per-node allocations |
+| `doca-telemetry-service` | Reads NIC counters and exposes them for Prometheus | Metrics endpoint scraped |
+
+**Device-plugin registration and advertisement.** The RDMA shared device plugin (and the SR-IOV device plugin) follow the standard Kubernetes device-plugin API (`v1beta1`):
+
+1. The plugin starts a gRPC server on a Unix socket under `/var/lib/kubelet/device-plugins/`.
+2. It calls the kubelet's `Registration.Register()` on `kubelet.sock` with its socket name and resource name (`rdma/rdma_shared_device_a`).
+3. The kubelet connects back and opens a `ListAndWatch` stream. The plugin answers with a list of device IDs and their health. The shared plugin advertises **`rdmaHcaMax` virtual devices** per resource, not one per HCA, which is why a node with 8 HCAs shows `rdma/rdma_shared_device_a: 63` when `rdmaHcaMax: 63`.
+4. The kubelet copies the count into the node's `status.capacity` and `status.allocatable`. The scheduler now treats it like CPU: a pod requesting `rdma/rdma_shared_device_a: 1` fits only on nodes with a free unit.
+5. When a pod is admitted, the kubelet calls `Allocate()` with the chosen device IDs. The plugin returns the device nodes to mount (`/dev/infiniband/uverbsN`, `/dev/infiniband/rdma_cm`, and for the SR-IOV plugin the VF's devices) plus environment variables. The SR-IOV plugin passes the VF's PCI address in a `PCIDEVICE_<PREFIX>_<NAME>` variable, which the CNI later uses.
+6. If a device turns unhealthy, `ListAndWatch` sends an update and the kubelet reduces `allocatable`. Running pods are not evicted.
+
 **Why the exam cares:** it tests which component solves which problem — especially the two device plugins (shared `rdma/` vs exclusive `nvidia.com/`) and ib-kubernetes (PKeys for SR-IOV IB only).
 
 ### 2.3 Relationship to the GPU Operator
 
 *Analogy:* GPUDirect RDMA is a two-key lock. The Network Operator holds the NIC key (OFED + an RDMA device in the pod); the GPU Operator holds the GPU key (a driver built with nvidia-peermem). Turn only one and the door stays shut — silently, with data bouncing through host memory.
 
-GPUDirect RDMA inside a pod requires:
+**What it is.** Two independent operators whose outputs meet inside one kernel. The GPU Operator's driver DaemonSet (`nvidia-driver-daemonset`) installs the GPU driver; with RDMA enabled it also builds and loads **nvidia-peermem**. The Network Operator supplies the OFED `ib_core` that nvidia-peermem plugs into, plus the RDMA device in the pod.
+
+**Why it exists.** GPUDirect RDMA ([Module 1.3 §2.5](../01-ai-datacenter-design/03-gpu-to-gpu-communication-nccl-gpudirect.md)) needs the NIC driver to call into the GPU driver to pin GPU memory and return BAR1 addresses. nvidia-peermem is that bridge, so it must be compiled against the *same* OFED symbols the running `ib_core` exports. Neither operator alone can guarantee that, hence the coordination rules below. Without the bridge, NCCL still works but takes the host bounce path: no error, roughly half the inter-node bandwidth.
+
+**How it works.** GPUDirect RDMA inside a pod requires:
 1. The NVIDIA GPU driver (GPU Operator, `driver` component) with the **nvidia-peermem** module loaded — enabled in GPU Operator values by `driver.rdma.enabled=true` (and `driver.rdma.useHostMofed=true` when OFED is on the host rather than in the Network Operator's container).
 2. The OFED driver (host or Network Operator) that nvidia-peermem links against.
 3. An RDMA device exposed to the pod (RDMA shared device plugin or SR-IOV).
 
-Order matters: install the Network Operator (OFED) *first*, then the GPU Operator with `driver.rdma.enabled=true`, so the GPU driver container can find the OFED symbols when building nvidia-peermem. On DGX OS / BasePOD where both drivers are preinstalled on the host, both operators are typically deployed with `driver.enabled=false` / `ofedDriver.deploy=false` and only the device plugins and CNIs are used. See [Module 1.3](../01-ai-datacenter-design/03-gpu-to-gpu-communication-nccl-gpudirect.md) for the GPUDirect mechanics.
+Order matters: install the Network Operator (OFED) *first*, then the GPU Operator with `driver.rdma.enabled=true`, so the GPU driver container can find the OFED symbols when building nvidia-peermem. If the order is reversed, or the OFED container is later upgraded, nvidia-peermem fails to load with unknown-symbol errors and must be rebuilt by restarting the GPU driver pod. On DGX OS / BasePOD, where both drivers are preinstalled on the host, both operators are typically deployed with `driver.enabled=false` / `ofedDriver.deploy=false` and only the device plugins and CNIs are used. Then `lsmod | grep nvidia_peermem` on the host is the whole check. See [Module 1.3](../01-ai-datacenter-design/03-gpu-to-gpu-communication-nccl-gpudirect.md) for the GPUDirect mechanics. In NCCL's log inside the pod, `via NET/IB/n/GDRDMA` proves all three conditions at once.
+
+**Why the exam cares:** "GDR in pods" = Network Operator (OFED + device) + GPU Operator (`driver.rdma.enabled=true`), Network Operator first.
 
 ### 2.4 Installing with Helm
 
-Prerequisites:
+**What it is.** The Network Operator ships as a Helm chart (`nvidia/network-operator` on NGC). The chart installs the CRDs and the operator Deployment, optionally NFD and the SR-IOV Network Operator as sub-charts, and, with `deployCR: true`, a `NicClusterPolicy` rendered from your `values.yaml`.
+
+**Why it exists.** Helm gives you a versioned, repeatable install and a single file (`values.yaml`) that captures the design decisions: host or container OFED, shared or SR-IOV devices, which CNIs, which IPAM. You can diff that file in Git and upgrade with `helm upgrade`.
+
+**How it works.** Prerequisites:
 - Kubernetes 1.2x cluster (check the compatibility matrix for the operator release); `kubectl` and Helm 3.
 - Nodes with ConnectX-6/7/8 or BlueField-3 NICs; firmware supporting the desired mode; for SR-IOV, `SRIOV_EN=1` and `NUM_OF_VFS` set with **mlxconfig** and IOMMU enabled in the kernel (`intel_iommu=on iommu=pt` or AMD equivalent).
 - For InfiniBand, a running Subnet Manager (**UFM** or opensm) and, for ib-kubernetes, UFM REST credentials.
@@ -87,6 +131,8 @@ helm install network-operator nvidia/network-operator \
   -n nvidia-network-operator --create-namespace \
   --version v25.4.0 -f ./values.yaml --wait
 ```
+
+`--wait` returns when the operator Deployment is Ready. The DaemonSets roll out afterwards, which is why you watch the `NicClusterPolicy` status next (§2.5, Figure 7.1-3 steps ①–⑥).
 
 **Example `values.yaml` — RDMA shared device (InfiniBand compute fabric, host OFED)**
 
@@ -177,11 +223,26 @@ ibKubernetes:
   ufmSecret: ufm-secret         # Secret with UFM_USERNAME/UFM_PASSWORD/UFM_ADDRESS/UFM_HTTP_SCHEMA/UFM_PORT
 ```
 
+**Why the exam cares:** know which values keys switch which component on, and that `deployCR: true` is what turns `values.yaml` into a `NicClusterPolicy`.
+
 ### 2.5 The NicClusterPolicy CRD
 
 *Analogy:* the NicClusterPolicy is the building's single work order. Add a line, a crew (DaemonSet) shows up on every floor; delete a line, the crew leaves.
 
-`NicClusterPolicy` (`mellanox.com/v1alpha1`) is the operator's single source of truth. Each top-level key under `spec` corresponds to a component; the operator reconciles the DaemonSets to match. If a key is absent the component is not deployed (and is removed if it was). There is exactly one `NicClusterPolicy`, conventionally named `nic-cluster-policy`.
+**What it is.** `NicClusterPolicy` (`mellanox.com/v1alpha1`) is the operator's single source of truth. Each top-level key under `spec` corresponds to a component; the operator reconciles the DaemonSets to match. If a key is absent the component is not deployed (and is removed if it was). There is exactly one `NicClusterPolicy`, conventionally named `nic-cluster-policy`. Its `status.state` is `ready` or `notReady`, and `status.appliedStates` lists the state of each component.
+
+**Why it exists.** One cluster-scoped object makes the networking design auditable (`kubectl get nicclusterpolicy -o yaml` is the whole design) and gives the controller one thing to converge on. Per-component status localizes failures: `notReady` plus the applied states names the DaemonSet to look at.
+
+**How it works.** The reconcile loop, step by step (Figure 7.1-3, steps ①–⑥):
+
+![Deployment sequence diagram: admin installs the chart, the operator creates the NicClusterPolicy and reconciles DaemonSets, driver and device-plugin pods register resources with the kubelet, the policy goes ready, then a NAD and pod are applied and the kubelet and Multus give the pod its RDMA device and net1](diagrams/7.1-03-deployment-sequence.svg)
+*Figure 7.1-3 — Time flows down. ①–⑥: operator phase (helm → policy → DaemonSets → resources → ready). ⑦–⑪: workload phase (NAD → pod → device mount → net1 → test). The note at the bottom maps each failure to its step.*
+
+1. `helm install` creates the CRDs and the operator Deployment (①). With `deployCR: true` the chart also creates the policy (②).
+2. The controller (built on controller-runtime) receives a watch event for the `NicClusterPolicy`. It also watches the DaemonSets it owns, so any drift triggers a new pass.
+3. For each spec key it renders a manifest from built-in templates: image, version, the `config` JSON as a ConfigMap, node affinity, tolerations. It then creates or patches the DaemonSet with an owner reference back to the policy (③). Keys that were removed have their DaemonSets deleted.
+4. The scheduler places DaemonSet pods on nodes matching `nodeAffinity`/NFD labels. The driver pod loads modules (④) before the device plugin registers resources (⑤).
+5. The controller reads each DaemonSet's status: `desiredNumberScheduled == numberReady` means that component's state is ready. When every state is ready it sets `status.state: ready` (⑥). Otherwise it requeues and checks again.
 
 ```yaml
 apiVersion: mellanox.com/v1alpha1
@@ -301,11 +362,42 @@ spec:
 
 A `notReady` status almost always means one DaemonSet (usually `mofed-*`) is not running on every targeted node.
 
+**Why the exam cares:** one policy, one key per component, `ready` only when every DaemonSet is fully rolled out.
+
 ### 2.6 NetworkAttachmentDefinitions
 
 *Analogy:* a NAD is the wiring diagram for one extra phone line: which wall socket (master interface), which protocol (CNI type), and who hands out the numbers (IPAM). The `resourceName` annotation is the note saying "this line only works with badge X" — it ties the interface to the device the scheduler allocated.
 
-Multus attaches a secondary interface when a pod carries the annotation `k8s.v1.cni.cncf.io/networks: <nad-name>`. The NAD's `config` is a CNI JSON document. NVIDIA also provides higher-level CRs (`MacvlanNetwork`, `IPoIBNetwork`, `HostDeviceNetwork`) that the operator renders into NADs; the raw NAD forms are shown here because the exam may show either.
+**What it is.** A **`NetworkAttachmentDefinition`** (NAD, `k8s.cni.cncf.io/v1`, defined by the Network Plumbing Working Group) is a namespaced object whose `spec.config` is a CNI JSON document for one secondary network. Multus attaches a secondary interface when a pod carries the annotation `k8s.v1.cni.cncf.io/networks: <nad-name>`. NVIDIA also provides higher-level CRs (`MacvlanNetwork`, `IPoIBNetwork`, `HostDeviceNetwork`) that the operator renders into NADs; the raw NAD forms are shown here because the exam may show either.
+
+**Why it exists.** The primary CNI (Calico, OVN-Kubernetes, Cilium) knows nothing about InfiniBand, PKeys or SR-IOV VFs, and replacing it would break the cluster network. A meta-plugin that *adds* interfaces described by API objects lets each workload pick its fabric attachment without touching the primary network.
+
+**How it works.** Figure 7.1-2 shows the result on two nodes. The **CNI ADD sequence** that produces it:
+
+![Pod networking on two nodes: each pod gets eth0 from the default CNI and net1 from Multus delegating to the IPoIB CNI on PF ibp26s0, plus /dev/infiniband devices from the device plugin; the HCAs meet on Leaf 0 where both ports share PKey 0x7fff](diagrams/7.1-02-pod-networking.svg)
+*Figure 7.1-2 — Interface (Multus → ipoib CNI → net1), device (device plugin → /dev/infiniband) and partition (SM/UFM → PKey) come from three different places; RDMA works only when all three line up.*
+
+1. The kubelet asks the container runtime (containerd/CRI-O) to create the pod sandbox. The runtime creates a new network namespace.
+2. The runtime invokes the first CNI config in `/etc/cni/net.d` (Multus) with `CNI_COMMAND=ADD`, the container ID, the netns path and `CNI_IFNAME=eth0`.
+3. Multus **delegates** to the cluster's default network plugin first, which creates `eth0` and its pod IP.
+4. Multus reads the pod's `k8s.v1.cni.cncf.io/networks` annotation and fetches each named NAD from the API server.
+5. If the NAD has a `k8s.v1.cni.cncf.io/resourceName` annotation, Multus queries the kubelet's PodResources API for the device IDs allocated to this pod for that resource and injects them into the delegate's config (`deviceID`/runtime config). This is how `ib-sriov` knows *which* VF the scheduler gave the pod, and how the interface and the RDMA device end up on the same HCA.
+6. Multus executes the delegate binary named by `type` (`ipoib`, `ib-sriov`, `macvlan`) with `CNI_IFNAME=net1` (then `net2`, …). The delegate creates the interface: an IPoIB child of the `master` PF, or the VF netdev moved into the pod netns. It then calls the IPAM plugin (`whereabouts` or `nv-ipam`) for an address.
+7. Multus writes the result into the pod's `k8s.v1.cni.cncf.io/network-status` annotation (interface, IP, device). That is the first thing to read when net1 is missing.
+
+**RDMA network-namespace mode.** The Linux RDMA subsystem has a host-wide setting, shown by `rdma system show`:
+- **`netns shared`** (the default): every RDMA device is visible from every network namespace. The pod still needs the `/dev/infiniband` character devices mounted (the device plugin's `Allocate`), but no device has to move. This is the mode the **RDMA shared device plugin** design uses, because the PF's RDMA device stays in the host namespace while many pods use it.
+- **`netns exclusive`**: each RDMA device belongs to exactly one network namespace and is invisible elsewhere. This gives hard isolation for **SR-IOV**: the VF's RDMA device is moved into the pod's namespace along with its netdev (the RDMA CNI does this; with the SR-IOV Network Operator you request it with `rdmaMode: exclusive` in a `SriovNetworkPoolConfig`). Under exclusive mode a shared PF left in the host namespace is unreachable from pods.
+
+The mode can only be changed when no RDMA devices are in use, is not persistent across reboots by default, and must match the device-plugin design you chose (§4.1).
+
+**PKey enforcement (InfiniBand).** On InfiniBand, isolation between tenants is the **partition key**: two ports can exchange traffic only if both are members of the same PKey in the SM's partition table. The shared-PF design inherits the PF's PKeys (default `0x7fff`), so all pods on that PF are in the same partition. For SR-IOV, **ib-kubernetes** enforces per-network PKeys:
+1. The pod gets a VF; ib-kubernetes assigns or reads the VF's port GUID from the pool `pKeyGUIDPoolRangeStart`–`End`.
+2. It watches pods attached to NADs with `ibKubernetesEnabled: true` and a `pkey`.
+3. Every `periodicUpdateSeconds` it batches changes and calls the **UFM** REST API to add the pod's VF GUIDs to that PKey (or remove them when pods are deleted).
+4. UFM (the SM) pushes updated partition tables to the HCA and switch ports.
+
+The packet-level check is done by the hardware: the HCA stamps the PKey in each packet's BTH, and the receiving port drops packets whose PKey is not in its table. That is why an `Active` port with the wrong membership simply never receives anything (§4.3).
 
 **RDMA shared device over an Ethernet/RoCE PF (macvlan + NV-IPAM)**
 
@@ -442,7 +534,16 @@ Equivalent operator CR: `kind: IPoIBNetwork` with `master: ibp26s0` and the same
 
 ### 2.7 Pod specs
 
-A pod needs three things for RDMA on a secondary network: the **resource request** (gets the device), the **Multus annotation** (gets the interface), and **`IPC_LOCK`** (lets it pin memory for registrations).
+**What it is.** The pod-level contract. A pod needs three things for RDMA on a secondary network: the **resource request** (gets the device), the **Multus annotation** (gets the interface), and **`IPC_LOCK`** (lets it pin memory for registrations).
+
+**Why it exists.** The three come from three different subsystems (Figure 7.1-2), so each must be requested explicitly:
+- The device comes from the device plugin's `Allocate` (§2.2), and the scheduler only calls it for a pod that requests the resource.
+- The interface comes from Multus (§2.6), which acts only on the annotation.
+- `ibv_reg_mr()` pins pages with `mlock`-style accounting. Containers drop `CAP_IPC_LOCK` and run with a small `RLIMIT_MEMLOCK` by default, so registering NCCL's buffers fails with "Couldn't allocate MR" or `ENOMEM` unless the capability is added.
+
+GPUs add a fourth requirement: `nvidia.com/gpu` from the GPU Operator's device plugin. A large `/dev/shm` matters too, because NCCL's SHM transport and the PyTorch DataLoader use it and the container default is 64 MB.
+
+**How it works.** At admission the scheduler finds a node with free units of every requested extended resource. The kubelet calls each device plugin's `Allocate` and adds the returned device nodes and environment variables to the container spec. The runtime creates the netns and runs CNI ADD (Multus → delegates). The container starts with `eth0`, `net1`, `/dev/infiniband/*` and `/dev/nvidia*` in place.
 
 **Shared RDMA device + IPoIB**
 
@@ -504,7 +605,15 @@ spec:
 ```
 Multiple networks: `k8s.v1.cni.cncf.io/networks: "ib-sriov-tenant-a, ib-sriov-tenant-a"` attaches two VFs, or use the JSON list form to name interfaces explicitly. `/dev/shm` sizing matters for NCCL's SHM transport and PyTorch DataLoader.
 
+**Why the exam cares:** interface without resource = `net1` but no RDMA device; resource without annotation = RDMA device but no IP on the fabric; neither works without `IPC_LOCK`.
+
 ### 2.8 OpenShift differences
+
+**What it is.** The same operator on Red Hat OpenShift, installed and integrated through OpenShift's own mechanisms.
+
+**Why it exists.** OpenShift already ships several of the pieces the vanilla chart would install (Multus, NFD, an SR-IOV operator), manages node OS configuration declaratively (RHCOS + MachineConfig), and enforces stricter security (SCCs). Deploying the vanilla pieces on top would conflict with the platform's own.
+
+**How it works.**
 
 | Area | Vanilla Kubernetes | Red Hat OpenShift |
 |---|---|---|
@@ -517,9 +626,15 @@ Multiple networks: `k8s.v1.cni.cncf.io/networks: "ib-sriov-tenant-a, ib-sriov-te
 | Security | PodSecurity admission | SCCs; privileged DaemonSets need the appropriate SCC, handled by the certified operator |
 | DGX BasePOD on RHEL/OpenShift | — | Deployment guide installs host DOCA-OFED on RHEL and uses the operators without driver containers; verify in the current BasePOD RHEL guide |
 
+**Why the exam cares:** OperatorHub install, separate SR-IOV operator, built-in Multus, MachineConfig for node settings.
+
 ### 2.9 nccl-tests as a Kubernetes job
 
-Use the MPI Operator (`kubeflow.org/v2beta1 MPIJob`) or a plain StatefulSet with `mpirun`/`torchrun`. Key elements of the worker template: request `nvidia.com/gpu: 8` and 8 RDMA resources (or one shared resource), add the network annotation, set `IPC_LOCK`, mount a large `/dev/shm`, and set `NCCL_SOCKET_IFNAME=net1` (or the pod network if bootstrap runs there) and `NCCL_IB_HCA` as appropriate.
+**What it is.** The cluster-level acceptance test: the same `all_reduce_perf` from Module 1.3, launched as a Kubernetes workload whose pods carry GPUs, RDMA resources and the secondary network.
+
+**Why it exists.** `ib_write_bw` between two pods proves one HCA path. Only a collective across all GPUs and all rails proves the whole chain: every device plugin, every rail's NAD, GPUDirect in every pod, PXN, and the fabric under load.
+
+**How it works.** Use the MPI Operator (`kubeflow.org/v2beta1 MPIJob`) or a plain StatefulSet with `mpirun`/`torchrun`. The launcher pod runs `mpirun`, which starts ranks in the worker pods over SSH or the operator's exec mechanism. NCCL then bootstraps over `NCCL_SOCKET_IFNAME` and builds its rings over the RDMA devices it finds in each pod. Key elements of the worker template: request `nvidia.com/gpu: 8` and 8 RDMA resources (or one shared resource), add the network annotation, set `IPC_LOCK`, mount a large `/dev/shm`, and set `NCCL_SOCKET_IFNAME=net1` (or the pod network if bootstrap runs there) and `NCCL_IB_HCA` as appropriate.
 
 ```yaml
 apiVersion: kubeflow.org/v2beta1
@@ -588,23 +703,42 @@ spec:
 ```
 Read the output exactly as in [Module 1.3](../01-ai-datacenter-design/03-gpu-to-gpu-communication-nccl-gpudirect.md): look for `NET/IB/.../GDRDMA` in the launcher log and compare busbw with the node's NIC capacity.
 
+**Why the exam cares:** the in-cluster NCCL test is the last rung of the verification ladder (Figure 7.1-4, check ⑧).
+
 ## 3. Live-style walkthrough — helm install to ib_write_bw, end to end
 
 Let's bring RDMA to a 2-node Kubernetes cluster (`dgx01`, `dgx02`, DGX OS with host DOCA-OFED, ConnectX-7 on InfiniBand) and prove it with a pod-to-pod bandwidth test. Every command is commented with what it does and what you should see.
 
+The walkthrough follows the deployment sequence of Figure 7.1-3 (§2.5), and its verification steps are the eight numbered checks of Figure 7.1-4. Each check proves one layer; stop at the first one that fails and go to the §4 entry it points to.
+
+![Verification flow: two pods on two nodes connected through Leaf 0, with eight numbered checks from NicClusterPolicy status through node Allocatable, pod creation, interfaces, devices, ib_write_bw server and client, to an MPIJob all_reduce_perf](diagrams/7.1-04-verification-flow.svg)
+*Figure 7.1-4 — The verification ladder: checks ①–④ prove the operator and Kubernetes plumbing, ⑤–⑦ prove the RDMA path pod to pod, ⑧ proves GPUDirect and the collective. The failure map at the bottom links each check to its §4 gotcha.*
+
+| Walkthrough step | Figure 7.1-3 step(s) | Figure 7.1-4 check |
+|---|---|---|
+| 1 — host readiness | (precondition; ④ is skipped with host OFED) | — |
+| 2 — helm install | ①–② | — |
+| 3 — NicClusterPolicy converges | ③, ⑥ | ① |
+| 4 — node advertises resources | ⑤ | ② |
+| 5 — NAD | ⑦ | ③ |
+| 6 — pods | ⑧ | ③ |
+| 7 — verify inside pods | ⑨–⑩ | ④, ⑤ |
+| 8 — ib_write_bw | ⑪ | ⑥, ⑦ |
+| 9 — latency + NCCL job | ⑪ | ⑧ |
+
 **Step 1 — confirm the host is ready.** The operator cannot fix the host underneath it.
 
 ```bash
-ssh dgx01 "rdma system show"                  # RDMA subsystem network-namespace mode.
-                                              # EXPECT: "netns exclusive" for per-pod device isolation with IPoIB/SR-IOV.
-                                              # If "shared": run `rdma system set netns exclusive` BEFORE device plugins start.
+ssh dgx01 "rdma system show"                  # RDMA subsystem network-namespace mode (§2.6).
+                                              # EXPECT: "netns shared" (the default) for this RDMA shared device plugin design.
+                                              # "exclusive" is only for SR-IOV with per-pod RDMA isolation; with a shared PF it hides the HCA from pods.
 ssh dgx01 "ibdev2netdev"                      # Map HCAs to netdevs; note the compute netdev names for ifNames.
                                               # EXPECT: mlx5_0 port 1 ==> ibp26s0 (Up) ... eight IB netdevs Up.
 ssh dgx01 "lsmod | grep -E 'mlx5_ib|nvidia_peermem'"   # Host OFED loaded and peermem present (GPU Operator with rdma enabled).
                                               # EXPECT: both lines. No nvidia_peermem = GPUDirect will silently be off in pods.
 ```
 
-**Step 2 — install the operator with Helm.**
+**Step 2 — install the operator with Helm.** This is Figure 7.1-3 steps ①–②.
 
 ```bash
 helm repo add nvidia https://helm.ngc.nvidia.com/nvidia      # Add the NGC Helm repo that hosts network-operator.
@@ -617,7 +751,7 @@ helm install network-operator nvidia/network-operator \      # Release name "net
 # EXPECT: "STATUS: deployed" and NOTES describing the NicClusterPolicy created by deployCR: true.
 ```
 
-**Step 3 — watch the NicClusterPolicy converge.** This is the single status that tells you whether every component landed.
+**Step 3 — watch the NicClusterPolicy converge.** This is the single status that tells you whether every component landed: Figure 7.1-3 steps ③ and ⑥, and check ① of Figure 7.1-4. Step ④ (the `mofed-*` driver build) does not happen here because the host already runs DOCA-OFED.
 
 ```bash
 kubectl get nicclusterpolicy                                 # Cluster-scoped; exactly one object.
@@ -639,7 +773,7 @@ kubectl get nicclusterpolicy
 kubectl describe nicclusterpolicy nic-cluster-policy | sed -n '/Applied States/,$p'   # Per-component state; any "notReady" names the DaemonSet to inspect.
 ```
 
-**Step 4 — confirm the node now advertises RDMA resources.** The device plugin turned eight HCAs into a schedulable extended resource.
+**Step 4 — confirm the node now advertises RDMA resources.** The device plugin turned eight HCAs into a schedulable extended resource: the `Register()` → `ListAndWatch` exchange of §2.2, Figure 7.1-3 step ⑤ and check ② of Figure 7.1-4.
 
 ```bash
 kubectl describe node dgx01 | grep -A12 Allocatable          # Extended resources appear here once the plugin registers.
@@ -649,7 +783,7 @@ kubectl describe node dgx01 | grep -A12 Allocatable          # Extended resource
 kubectl -n nvidia-network-operator logs ds/rdma-shared-dp-ds | tail -20   # Plugin log lists matched devices and the resource it registered.
 ```
 
-**Step 5 — create the secondary network.** We use IPoIB so the pods also get an IP on the InfiniBand fabric (NCCL bootstrap, perftest addressing). The `resourceName` annotation binds it to the device-plugin resource.
+**Step 5 — create the secondary network** (Figure 7.1-3 step ⑦). We use IPoIB so the pods also get an IP on the InfiniBand fabric (NCCL bootstrap, perftest addressing). The `resourceName` annotation binds it to the device-plugin resource.
 
 ```bash
 cat <<'EOF' | kubectl apply -f -
@@ -677,7 +811,7 @@ EOF
 kubectl get net-attach-def                                   # EXPECT: ipoib-net listed.
 ```
 
-**Step 6 — launch two test pods, one per node.**
+**Step 6 — launch two test pods, one per node** (Figure 7.1-3 step ⑧, check ③). Admission triggers the device plugin's `Allocate()` and the CNI ADD sequence of §2.6.
 
 ```bash
 for i in 1 2; do
@@ -708,7 +842,7 @@ done
 kubectl get pods -o wide                                     # EXPECT: both Running, one on each node.
 ```
 
-**Step 7 — verify inside the pods.** Two separate things must be true: the interface exists (Multus), and the device exists (device plugin).
+**Step 7 — verify inside the pods.** Two separate things must be true: the interface exists (Multus, Figure 7.1-3 step ⑩, check ④), and the device exists (device plugin, step ⑨, check ⑤).
 
 ```bash
 kubectl exec rdma-test-1 -- ip -br addr                      # Interfaces in the pod netns.
@@ -716,14 +850,14 @@ kubectl exec rdma-test-1 -- ip -br addr                      # Interfaces in the
 # net1         UP   10.60.0.3/16            <- IPoIB child from the NAD. "good": has an address from the whereabouts range.
 kubectl describe pod rdma-test-1 | grep -A6 'network-status'  # Multus records what it attached and the device it used.
 kubectl exec rdma-test-1 -- ls /dev/infiniband               # EXPECT: rdma_cm uverbs0 (plus more uverbsN if several HCAs matched).
-                                                             # Empty here with net1 present = netns mode "shared" (Section 4.1).
+                                                             # Empty here with net1 present = the rdma/ resource was not requested or not allocated (Section 4.1).
 kubectl exec rdma-test-1 -- ibstat                           # EXPECT: "State: Active", "Physical state: LinkUp", "Rate: 400", a LID, link_layer InfiniBand.
 kubectl exec rdma-test-1 -- ibv_devinfo | grep -E 'hca_id|state|active_mtu'   # libibverbs view: PORT_ACTIVE, MTU 4096.
 kubectl exec rdma-test-2 -- ip -4 -br addr show net1         # Note pod 2's net1 IP for the client side below.
 # net1   UP   10.60.0.4/16
 ```
 
-**Step 8 — ib_write_bw across the fabric.** Server in pod 1, client in pod 2, addressed over the IPoIB `net1` IPs; the data path itself is RDMA on the HCA, not IPoIB.
+**Step 8 — ib_write_bw across the fabric** (Figure 7.1-4 checks ⑥ and ⑦). Server in pod 1, client in pod 2, addressed over the IPoIB `net1` IPs; the data path itself is RDMA on the HCA, not IPoIB.
 
 ```bash
 kubectl exec rdma-test-1 -- ib_write_bw -d mlx5_0 -a --report_gbits -F &   # Server: -d device, -a all message sizes, Gb/s units,
@@ -762,7 +896,7 @@ kubectl exec rdma-test-2 -- ib_write_bw -d mlx5_0 -a --report_gbits -F 10.60.0.3
 
 *Instructor note:* `Transport type: IB`, two LIDs (the SM assigned them — this is the fabric, not a loopback), and ~390 Gb/s at large messages on a 400G NDR link. That is "good": ~97 % of line rate. ~195 Gb/s means a port negotiated at 200; ~100 Gb/s or a hang at "Waiting for client" usually means the two pods are in different **PKey** partitions (Section 4.3) or the server pod's net1 IP was wrong.
 
-**Step 9 — latency and the NCCL job.**
+**Step 9 — latency and the NCCL job** (Figure 7.1-4 check ⑧).
 
 ```bash
 kubectl exec rdma-test-1 -- ib_write_lat -d mlx5_0 -F &      # Server for latency test.
@@ -775,20 +909,22 @@ If step 8 passes and step 9 shows `GDRDMA`, the Network Operator, the GPU Operat
 
 ## 4. Troubleshooting / common gotchas
 
-### 4.1 Pod has `net1` with an IP, but `/dev/infiniband` is empty and `ibstat` finds nothing
+### 4.1 Pod has `net1` with an IP, but `/dev/infiniband` is empty or `ibstat` finds nothing
 
-**Symptom.** `ip addr` in the pod shows `net1` with an IPoIB address; `ls /dev/infiniband` is empty; `ibstat` says "No IB devices found".
+**Symptom.** `ip addr` in the pod shows `net1` with an IPoIB address, but either `ls /dev/infiniband` is empty, or it lists `uverbs0`/`rdma_cm` and `ibstat`/`ibv_devices` still say "No IB devices found".
 
-**Why it happens.** The host's RDMA subsystem is in `shared` netns mode. The IPoIB CNI created the interface, but the device plugin cannot isolate an RDMA device into the pod's network namespace unless the host is in `exclusive` mode. Interface and device are delivered by different components.
+**Why it happens.** Interface and device are delivered by different components (§2.6, Figure 7.1-2): Multus/IPoIB CNI made `net1`; only the device plugin's `Allocate()` mounts `/dev/infiniband`. Two causes:
+- **`/dev/infiniband` empty:** the pod did not request the `rdma/` resource (or requested a resource name the plugin does not serve), so `Allocate()` was never called for it.
+- **Devices mounted but invisible:** the host RDMA subsystem is in `exclusive` netns mode while you use the RDMA *shared* device plugin. In exclusive mode each RDMA device belongs to one network namespace; the shared PF stays in the host namespace, so libibverbs inside the pod's namespace sees no device even though the character files exist. The shared-device design needs the default `shared` mode; `exclusive` is for SR-IOV with per-pod RDMA isolation.
 
 **How to debug.**
 ```bash
-ssh dgx01 "rdma system show"                           # EXPECT "netns exclusive". "netns shared" is the fault.
+ssh dgx01 "rdma system show"                           # Shared-device design: EXPECT "netns shared". "exclusive" is the fault.
 kubectl -n nvidia-network-operator logs ds/rdma-shared-dp-ds | grep -i netns   # Plugin may log a warning about the mode.
 kubectl get pod rdma-test-1 -o jsonpath='{.spec.containers[0].resources}'      # Confirm the rdma/ resource was actually requested.
 ```
 
-**Fix.** On every node, with no RDMA devices in use: `rdma system set netns exclusive`, persisted via udev/systemd (or a `MachineConfig` on OpenShift), then restart the device plugin DaemonSet and recreate the pod.
+**Fix.** Add the `rdma/<name>: 1` request to the pod. For the netns case: on every node, with no RDMA devices in use, `rdma system set netns shared` (persisted via a modprobe option or systemd unit, or a `MachineConfig` on OpenShift; verify the persistence method for your OS), then restart the device plugin DaemonSet and recreate the pod. Use `exclusive` only with SR-IOV and the RDMA CNI (`rdmaMode: exclusive` in a `SriovNetworkPoolConfig`).
 
 ### 4.2 Pod stays `Pending` with `Insufficient rdma/rdma_shared_device_a`
 
@@ -890,7 +1026,8 @@ kubectl -n nvidia-network-operator get sriovnetworknodestates -o yaml | grep -A5
 mlxconfig -d /dev/mst/mt4129_pciconf0 set SRIOV_EN=1 NUM_OF_VFS=8     # then reboot
 mlxconfig -d /dev/mst/mt4129_pciconf0 q | grep -E 'SRIOV_EN|NUM_OF_VFS|LINK_TYPE'
 rdma system show                 # netns shared|exclusive
-rdma system set netns exclusive  # required for per-pod RDMA device isolation (SR-IOV / IPoIB)
+rdma system set netns shared     # default; required by the RDMA shared device plugin
+rdma system set netns exclusive  # SR-IOV + RDMA CNI only: hard per-pod RDMA isolation
 cat /proc/meminfo | grep -i huge
 lsmod | grep -E 'mlx5_ib|nvidia_peermem'
 
@@ -918,7 +1055,7 @@ cat /sys/class/infiniband/mlx5_0/ports/1/pkeys/0      # PKey held by the device
 - RDMA shared device plugin → `rdma/<name>`, many pods per HCA, selectors by `vendors`, `deviceIDs`, `ifNames`, `linkTypes`. SR-IOV device plugin → `nvidia.com/<name>`, one VF per pod, VFs created by `SriovNetworkNodePolicy`. Know which prefix and which use case.
 - The Multus annotation attaches an *interface*; the resource request attaches the *RDMA device*. Both are needed for RDMA on a secondary network. IPoIB CNI provides IP over InfiniBand, not RDMA by itself.
 - GPUDirect RDMA in pods = Network Operator (OFED + RDMA device) + GPU Operator (`driver.rdma.enabled=true`, nvidia-peermem). Install order: Network Operator → GPU Operator when OFED comes from a container.
-- `rdma system set netns exclusive` is a *host* setting applied before the device plugin starts; in `shared` mode pods see all or no RDMA devices.
+- RDMA netns mode is a *host* setting applied before the device plugins start: `shared` (default) for the RDMA shared device plugin; `exclusive` for SR-IOV with per-pod RDMA isolation. Exclusive mode with a shared PF hides the HCA from every pod.
 - ib-kubernetes manages PKeys via UFM for *SR-IOV IB* only; irrelevant to RDMA shared device deployments.
 - `IPC_LOCK` is required in nearly every RDMA pod; its absence shows as memory-registration failures, not a scheduling error.
 - `rdmaHcaMax` caps how many pods can share one HCA; a surprisingly small Allocatable value is usually this setting.
@@ -928,9 +1065,9 @@ cat /sys/class/infiniband/mlx5_0/ports/1/pkeys/0      # PKey held by the device
 
 ## Appendix C — Knowledge check
 
-1. A pod requests `rdma/rdma_shared_device_a: 1` and has the annotation `k8s.v1.cni.cncf.io/networks: ipoib-net`. `ip addr` inside the pod shows `net1` with an address, but `/dev/infiniband` is empty and `ibstat` finds no devices. Which setting is most likely wrong?  
+1. A pod requests `rdma/rdma_shared_device_a: 1` and has the annotation `k8s.v1.cni.cncf.io/networks: ipoib-net`. `ip addr` inside the pod shows `net1` with an address and `/dev/infiniband` lists `uverbs0` and `rdma_cm`, but `ibstat` finds no devices. Which setting is most likely wrong?  
    A. The IPoIB NAD's `master` interface  
-   B. The host RDMA subsystem netns mode (should be `exclusive`)  
+   B. The host RDMA subsystem netns mode (it is `exclusive`; the shared device plugin needs `shared`)  
    C. The Multus version  
    D. The pod's `IPC_LOCK` capability
 
@@ -977,7 +1114,7 @@ cat /sys/class/infiniband/mlx5_0/ports/1/pkeys/0      # PKey held by the device
    D. `maxParallelUpgrades` set to 1
 
 ### Answer key
-1. B — With the RDMA subsystem in `shared` netns mode the device plugin cannot isolate devices per pod namespace; `rdma system set netns exclusive` on the host is required.
+1. B — In `exclusive` netns mode the shared PF's RDMA device stays bound to the host namespace, so the pod's libibverbs sees nothing even though the device files are mounted; the shared device plugin needs the default `shared` mode.
 2. A — GDR needs the OFED stack and an RDMA device in the pod (Network Operator) plus nvidia-peermem from the GPU Operator's RDMA-enabled driver.
 3. B — Port state is fine, so the partition is the issue: PKey must exist in the SM and the VF GUIDs must be members, which ib-kubernetes programs via UFM.
 4. B — Resource names are `<prefix>/<name>`; the SR-IOV plugin here uses `nvidia.com`.

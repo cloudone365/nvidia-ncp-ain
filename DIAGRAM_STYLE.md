@@ -62,6 +62,6 @@ python3 tools/render_diagrams.py --check  # validate only (CI)
 `--check` only catches XML/font problems. Layout bugs (text overflowing a box or the canvas, labels colliding with arrows, crossed lines obscuring text) are only visible when rendered. For every diagram you create or touch:
 1. Render it: `python3 -c "import cairosvg; cairosvg.svg2png(url='X.svg', write_to='<scratch>/X.png', output_width=1600)"`
 2. Open the PNG and look at it.
-3. Fix: text running past its box or the 1600-px canvas (shorten, wrap into two `<tspan>` lines, or widen the box); labels sitting on top of lines (move the label or add a white `paint-order="stroke"` halo: `stroke="#ffffff" stroke-width="6" paint-order="stroke"`); arrows passing through text.
+3. Fix: text running past its box or the 1600-px canvas (shorten, wrap into two `<tspan>` lines, or widen the box); labels sitting on top of lines (move the label, or put a white underlay behind it — a white `<rect>` or a duplicate white-stroked `<text>` drawn first; do NOT rely on `paint-order`, which cairosvg ignores and renders as solid white text); arrows passing through text.
 4. Re-render and re-check until clean.
 Approximate text width at 20px Inter ≈ 0.55 × font-size × characters — budget box widths from that.
