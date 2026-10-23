@@ -5,66 +5,75 @@
 <g><title>Responder hostB (app + HCA)</title><rect x="1000.0" y="140" width="360" height="64" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="1180.0" y="167.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">Responder hostB (app + HCA)</text>
 <text x="1180.0" y="192.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">QP 0x00c4, RTS</text>
-<line x1="420" y1="204" x2="420" y2="1040" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
-<line x1="1180" y1="204" x2="1180" y2="1040" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="420" y1="204" x2="420" y2="925" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="1180" y1="204" x2="1180" y2="925" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
 <path d="M300,240 h-10 v230 h10" fill="none" stroke="#5f6b7a" stroke-width="2"/>
 <text x="284" y="360.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#5f6b7a" text-anchor="end">SEND / RECV (channel semantics)</text>
 <g><rect x="1010" y="238" width="400" height="44" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1022" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">ibv_post_recv: RECV WQE {buf, len, lkey} into RQ</text>
 <circle cx="980" cy="260" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="980" y="266" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<rect x="430" y="276" width="868" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="420" y1="310" x2="1180" y2="310" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<text x="434" y="301" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">ibv_post_send(IBV_WR_SEND, SGE{addr,len,lkey}) -&gt; SEND packets (BTH opcode SEND, PSN n..n+k)</text>
+<text x="434" y="292" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">ibv_post_send(IBV_WR_SEND, SGE{addr,len,lkey}) -&gt; SEND packets (BTH opcode SEND, PSN n..n+k)</text>
 <circle cx="390" cy="310" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="390" y="316" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<rect x="460" y="329" width="251" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="1180" y1="354" x2="420" y2="354" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="434" y="345" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">ACK (BTH opcode ACK, AETH)</text>
-<g><rect x="1010" y="382" width="400" height="44" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="464" y="345" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">ACK (BTH opcode ACK, AETH)</text>
+<g><rect x="1010" y="382" width="480" height="44" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1022" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">CQE: IBV_WC_RECV, byte_len, wr_id (RECV consumed)</text>
 <circle cx="980" cy="404" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="980" y="410" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
 <g><rect x="250" y="382" width="340" height="44" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="262" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">CQE: IBV_WC_SEND (if SIGNALED)</text>
+<rect x="430" y="439" width="214" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="420" y1="464" x2="1180" y2="464" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<text x="434" y="455" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">SEND arrives, RQ empty</text>
+<text x="434" y="455" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">SEND arrives, RQ empty</text>
+<rect x="460" y="475" width="943" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="1180" y1="500" x2="420" y2="500" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
-<text x="434" y="491" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#d93025" text-anchor="start">RNR NAK (AETH: timer code = min_rnr_timer) -&gt; requester waits, retries up to rnr_retry (7 = forever)</text>
+<text x="464" y="491" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#d93025" text-anchor="start">RNR NAK (AETH: timer code = min_rnr_timer) -&gt; requester waits, retries up to rnr_retry (7 = forever)</text>
 <circle cx="390" cy="500" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="390" y="506" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
 <path d="M300,560 h-10 v190 h10" fill="none" stroke="#5f6b7a" stroke-width="2"/>
 <text x="284" y="660.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#5f6b7a" text-anchor="end">RDMA WRITE (memory semantics)</text>
+<rect x="430" y="536" width="934" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="420" y1="570" x2="1180" y2="570" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<text x="434" y="561" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">ibv_post_send(IBV_WR_RDMA_WRITE, wr.rdma{remote_addr, rkey}) -&gt; RDMA WRITE First/Middle/Last + RETH</text>
+<text x="434" y="552" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">ibv_post_send(IBV_WR_RDMA_WRITE, wr.rdma{remote_addr, rkey}) -&gt; RDMA WRITE First/Middle/Last + RETH</text>
 <circle cx="390" cy="570" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="390" y="576" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
 <g><rect x="1010" y="600" width="400" height="54" rx="6" fill="#eeeeee" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1022" y="624" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">HCA checks rkey/PD/access, DMAs into memory</text>
 <text x="1022" y="643" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">no CPU, no RQ, no CQE on hostB</text>
+<rect x="460" y="645" width="36" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="1180" y1="670" x2="420" y2="670" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="434" y="661" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">ACK</text>
-<g><rect x="250" y="690" width="340" height="44" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="464" y="661" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">ACK</text>
+<g><rect x="250" y="690" width="400" height="44" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="262" y="714" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">CQE: IBV_WC_RDMA_WRITE on hostA only</text>
 <circle cx="220" cy="712" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="220" y="718" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
+<rect x="430" y="756" width="1046" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="420" y1="790" x2="1180" y2="790" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<text x="434" y="781" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">IBV_WR_RDMA_WRITE_WITH_IMM (imm_data 32b) -&gt; same, but consumes a RECV and hostB gets IBV_WC_RECV_RDMA_WITH_IMM</text>
+<text x="434" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">IBV_WR_RDMA_WRITE_WITH_IMM (imm_data 32b) -&gt; same, but consumes a RECV and hostB gets IBV_WC_RECV_RDMA_WITH_IMM</text>
 <circle cx="390" cy="790" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="390" y="796" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text>
 <path d="M300,860 h-10 v170 h10" fill="none" stroke="#5f6b7a" stroke-width="2"/>
-<text x="284" y="950.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#5f6b7a" text-anchor="end">RDMA READ</text>
+<text x="284" y="900" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#5f6b7a" text-anchor="end">RDMA READ</text>
+<rect x="430" y="836" width="737" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="420" y1="870" x2="1180" y2="870" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<text x="434" y="861" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">ibv_post_send(IBV_WR_RDMA_READ, remote_addr, rkey) -&gt; RDMA READ Request + RETH</text>
+<text x="434" y="852" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">ibv_post_send(IBV_WR_RDMA_READ, remote_addr, rkey) -&gt; RDMA READ Request + RETH</text>
 <circle cx="390" cy="870" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="390" y="876" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text>
+<rect x="460" y="895" width="878" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="1180" y1="920" x2="420" y2="920" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<text x="434" y="911" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">RDMA READ Response First/Middle/Last carrying the data (bounded by max_rd_atomic outstanding)</text>
-<g><rect x="250" y="950" width="400" height="44" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="464" y="911" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">RDMA READ Response First/Middle/Last carrying the data (bounded by max_rd_atomic outstanding)</text>
+<g><rect x="250" y="950" width="460" height="44" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="262" y="974" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">CQE: IBV_WC_RDMA_READ; data now in local buffer</text>
 <circle cx="220" cy="972" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="220" y="978" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">9</text>
 <text x="60" y="1085" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">1 responder pre-posts RECV  2 SEND  3 both sides complete  4 missing RECV -&gt; RNR NAK  5 WRITE needs remote addr + rkey  6 only requester completes</text>
 <text x="60" y="1105" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">7 WRITE_WITH_IMM notifies the responder (NCCL&#x27;s pattern)  8 READ pulls  9 READ data returns in Response packets. Atomics behave like READ (64-bit).</text>
-<g><rect x="1130" y="930" width="430" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<g><rect x="1130" y="930" width="430" height="122" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1144" y="950" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
 <line x1="1144" y1="972" x2="1204" y2="972" stroke="#2f6fdb" stroke-width="4"/>
 <text x="1216" y="978" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (IB / RDMA payload)</text>

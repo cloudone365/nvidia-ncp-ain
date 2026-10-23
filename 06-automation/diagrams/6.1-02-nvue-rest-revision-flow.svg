@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" role="img">
-<title>NVUE REST revision flow: create revision → PATCH objects → apply → poll → save</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="100%" role="img">
+<title>NVUE REST revision flow: create → PATCH → apply → poll → save</title>
 <defs>
 <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
 <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
@@ -9,62 +9,97 @@
 <marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
 <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
 </defs>
-<rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/>
-<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">NVUE REST revision flow: create revision → PATCH objects → apply → poll → save</text>
-<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Writes outside a revision are not persistent. Every automation tool (nvidia.nvue, NetQ LCM profiles, Air) performs exactly this sequence on port 8765</text>
-<g><title>Client curl / nvidia.nvue.config</title><rect x="50" y="150" width="300" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="200.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Client</text>
-<text x="200.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">curl / nvidia.nvue.config</text>
+<rect x="0" y="0" width="1600" height="1200" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">NVUE REST revision flow: create → PATCH → apply → poll → save</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">Writes only land inside a revision; nvidia.nvue, NetQ LCM profiles and Air all drive this sequence on port 8765</text>
+<g><title>Client</title>
+<rect x="40.0" y="150" width="320" height="80" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="200" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Client</text>
+<text x="200" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">curl · Ansible httpapi</text>
 </g>
-<g><title>NVUE API (nvued) https://leaf01:8765/nvue_v1</title><rect x="470" y="150" width="300" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="620.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">NVUE API (nvued)</text>
-<text x="620.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">https://leaf01:8765/nvue_v1</text>
+<line x1="200" y1="230" x2="200" y2="1030" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>nvued</title>
+<rect x="440.0" y="150" width="320" height="80" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="600" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">nvued</text>
+<text x="600" y="211" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">https://leaf01:8765</text>
 </g>
-<g><title>Revision store pending changesets, history</title><rect x="870" y="150" width="300" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="1020.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Revision store</text>
-<text x="1020.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">pending changesets, history</text>
+<line x1="600" y1="230" x2="600" y2="1030" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>Revision store</title>
+<rect x="840.0" y="150" width="320" height="80" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1000" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Revision store</text>
+<text x="1000" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">pending changesets</text>
 </g>
-<g><title>System ifupdown2 · FRR · switchd</title><rect x="1270" y="150" width="260" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="1400.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">System</text>
-<text x="1400.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">ifupdown2 · FRR · switchd</text>
+<line x1="1000" y1="230" x2="1000" y2="1030" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>System</title>
+<rect x="1230.0" y="150" width="300" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1380" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">System</text>
+<text x="1380" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ifupdown2 · FRR · switchd</text>
 </g>
-<line x1="200" y1="220" x2="200" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
-<line x1="620" y1="220" x2="620" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
-<line x1="1020" y1="220" x2="1020" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
-<line x1="1400" y1="220" x2="1400" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
-<line x1="200" y1="280" x2="620" y2="280" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="410.0" y="302.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">GET /nvue_v1/qos/roce?rev=applied   (rev = applied | pending | operational | startup)</text>
-<g><title>Step 1</title><circle cx="230" cy="256" r="16" fill="#1f2937"/><text x="230" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
-<line x1="200" y1="350" x2="620" y2="350" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="410.0" y="372.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">POST /nvue_v1/revision  → 201 {"changeset/cumulus/2026-10-19_09.40.11_ABCD": {state: pending}}</text>
-<g><title>Step 2</title><circle cx="230" cy="326" r="16" fill="#1f2937"/><text x="230" y="332" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
-<line x1="620" y1="420" x2="1020" y2="420" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="820.0" y="442.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">new detached revision REV (per user; another user's pending set → 409 Conflict on apply)</text>
-<g><title>Step 3</title><circle cx="650" cy="396" r="16" fill="#1f2937"/><text x="650" y="402" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
-<line x1="200" y1="490" x2="620" y2="490" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="410.0" y="512.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">PATCH /nvue_v1/interface/swp1/link?rev=REV  {"mtu": 9216}   (repeat per object; JSON mirrors the YAML tree)</text>
-<g><title>Step 4</title><circle cx="230" cy="466" r="16" fill="#1f2937"/><text x="230" y="472" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
-<line x1="200" y1="560" x2="620" y2="560" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="410.0" y="582.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">PATCH /nvue_v1/revision/REV  {"state":"apply","auto-prompt":{"ays":"ays_yes"}}</text>
-<g><title>Step 5</title><circle cx="230" cy="536" r="16" fill="#1f2937"/><text x="230" y="542" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
-<line x1="1020" y1="630" x2="1400" y2="630" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1210.0" y="652.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">validate → render /etc/network/interfaces, frr.conf → ifreload, FRR reload, switchd programs ASIC</text>
-<g><title>Step 6</title><circle cx="1050" cy="606" r="16" fill="#1f2937"/><text x="1050" y="612" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
-<line x1="200" y1="700" x2="620" y2="700" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="410.0" y="722.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">GET /nvue_v1/revision/REV → state: applied | apply_fail (+ error text) — poll until not 'applying'</text>
-<g><title>Step 7</title><circle cx="230" cy="676" r="16" fill="#1f2937"/><text x="230" y="682" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
-<line x1="200" y1="770" x2="620" y2="770" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="410.0" y="792.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">PATCH /nvue_v1/revision/applied {"state":"save"}   (== nv config save; without it a reboot reverts)</text>
-<g><title>Step 8</title><circle cx="230" cy="746" r="16" fill="#1f2937"/><text x="230" y="752" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text></g>
-<g><title>history: GET /nvue_v1/revision lists revs; rollback = new revision from an old rev → apply</title><rect x="730" y="816" width="580" height="48" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="1020.0" y="843.7" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1f2937" text-anchor="middle">history: GET /nvue_v1/revision lists revs; rollback = new revision from an old rev → apply</text>
+<line x1="1380" y1="230" x2="1380" y2="1030" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<polyline points="200,300 600,300" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 1</title><circle cx="224" cy="276" r="16" fill="#1f2937"/>
+<text x="224" y="282" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<text x="250" y="288" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">GET /nvue_v1/qos/roce?rev=applied</text>
+<text x="250" y="288" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">GET /nvue_v1/qos/roce?rev=applied</text>
+<polyline points="200,370 600,370" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 2</title><circle cx="224" cy="346" r="16" fill="#1f2937"/>
+<text x="224" y="352" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<text x="250" y="358" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">POST /nvue_v1/revision</text>
+<text x="250" y="358" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">POST /nvue_v1/revision</text>
+<polyline points="600,440 1000,440" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 3</title><circle cx="624" cy="416" r="16" fill="#1f2937"/>
+<text x="624" y="422" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<text x="650" y="428" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">new pending changeset (per user)</text>
+<text x="650" y="428" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">new pending changeset (per user)</text>
+<polyline points="600,510 200,510" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 4</title><circle cx="224" cy="486" r="16" fill="#1f2937"/>
+<text x="224" y="492" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<text x="250" y="498" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">200: {"changeset/cumulus/&lt;ts&gt;": …}</text>
+<text x="250" y="498" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">200: {"changeset/cumulus/&lt;ts&gt;": …}</text>
+<polyline points="200,600 600,600" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 5</title><circle cx="224" cy="576" r="16" fill="#1f2937"/>
+<text x="224" y="582" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<text x="250" y="588" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">body = JSON subtree (repeat)</text>
+<text x="250" y="588" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">body = JSON subtree (repeat)</text>
+<text x="250" y="566" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">PATCH /nvue_v1/&lt;path&gt;?rev=&lt;REV&gt;</text>
+<text x="250" y="566" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">PATCH /nvue_v1/&lt;path&gt;?rev=&lt;REV&gt;</text>
+<polyline points="200,690 600,690" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 6</title><circle cx="224" cy="666" r="16" fill="#1f2937"/>
+<text x="224" y="672" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<text x="250" y="678" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">{"state":"apply", auto-prompt yes}</text>
+<text x="250" y="678" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">{"state":"apply", auto-prompt yes}</text>
+<text x="250" y="656" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">PATCH /nvue_v1/revision/&lt;REV&gt;</text>
+<text x="250" y="656" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">PATCH /nvue_v1/revision/&lt;REV&gt;</text>
+<polyline points="600,760 1000,760" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 7</title><circle cx="624" cy="736" r="16" fill="#1f2937"/>
+<text x="624" y="742" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<text x="650" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">validate · lock · state: applying</text>
+<text x="650" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">validate · lock · state: applying</text>
+<polyline points="1000,830 1380,830" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 8</title><circle cx="1024" cy="806" r="16" fill="#1f2937"/>
+<text x="1024" y="812" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text></g>
+<text x="1050" y="818" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">render files → ifreload / FRR reload</text>
+<text x="1050" y="818" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">render files → ifreload / FRR reload</text>
+<polyline points="200,910 600,910" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 9</title><circle cx="224" cy="886" r="16" fill="#1f2937"/>
+<text x="224" y="892" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">9</text></g>
+<text x="250" y="898" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">until applied (or a *_fail state)</text>
+<text x="250" y="898" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">until applied (or a *_fail state)</text>
+<text x="250" y="876" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">GET /nvue_v1/revision/&lt;REV&gt; → poll .state</text>
+<text x="250" y="876" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">GET /nvue_v1/revision/&lt;REV&gt; → poll .state</text>
+<polyline points="200,990 600,990" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 10</title><circle cx="224" cy="966" r="16" fill="#1f2937"/>
+<text x="224" y="972" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">10</text></g>
+<text x="250" y="978" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">save to startup (nv config save)</text>
+<text x="250" y="978" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">save to startup (nv config save)</text>
+<g><title>GET is read-only; PATCH merges (like nv set); DELETE unsets; revision ids contain '/' — URL-encode them.</title>
+<rect x="48" y="1060" width="1000" height="120" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="62" y="1103" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">GET is read-only; PATCH merges (like nv set); DELETE unsets; revision ids contain '/' — URL-encode them.</text>
+<text x="62" y="1125" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">409 / conflict: another revision is applying or a stale pending set holds the lock.</text>
+<text x="62" y="1147" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Auth: HTTP basic with a Linux user (cumulus); self-signed cert by default.</text>
 </g>
-<g><title>Step 9</title><circle cx="705" cy="840" r="16" fill="#1f2937"/><text x="705" y="846" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">9</text></g>
-<g><title>Note</title><rect x="60" y="905" width="1000" height="80" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
-<text x="72" y="927" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Semantics: GET is safe; PATCH merges (like nv set); DELETE unsets; PUT replaces a subtree (like nv config replace at that path).</text>
-<text x="72" y="945" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Idempotency: a PATCH identical to applied state yields an empty diff — the revision applies as a no-op. Basic auth = Linux user; self-signed cert by default.</text>
-<g><title>Legend</title><rect x="1110" y="905" width="430" height="52" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
-<line x1="1124" y1="931" x2="1184" y2="931" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1198" y="937" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<g><title>Legend</title><rect x="1100" y="1080" width="452" height="54" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1116" y1="1106" x2="1176" y2="1106" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1192" y="1112" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">REST call / internal step</text>
 </g>
 </svg>

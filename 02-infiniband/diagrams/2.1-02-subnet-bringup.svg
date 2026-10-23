@@ -11,59 +11,73 @@
 <g><title>gpu01 HCA mlx5_0</title><rect x="1205.0" y="140" width="250" height="64" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="1330.0" y="167.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">gpu01 HCA mlx5_0</text>
 <text x="1330.0" y="192.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">SMA, ConnectX-7 NDR</text>
-<line x1="230" y1="204" x2="230" y2="1010" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
-<line x1="620" y1="204" x2="620" y2="1010" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
-<line x1="940" y1="204" x2="940" y2="1010" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
-<line x1="1330" y1="204" x2="1330" y2="1010" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="230" y1="204" x2="230" y2="995" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="620" y1="204" x2="620" y2="995" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="940" y1="204" x2="940" y2="995" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="1330" y1="204" x2="1330" y2="995" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<rect x="240" y="219.5" width="560" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="230" y1="250" x2="620" y2="250" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="241" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnGet(NodeInfo, PortInfo) directed-route SMP, DLID 0xFFFF</text>
+<text x="244" y="235.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnGet(NodeInfo, PortInfo) directed-route SMP, DLID 0xFFFF</text>
 <circle cx="200" cy="250" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="200" y="256" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<rect x="270" y="269" width="737" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="620" y1="294" x2="230" y2="294" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="285" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">GetResp: 64 ports, node GUID 0x0c42a10300e4f3a0, port states Initialize/LinkUp</text>
+<text x="274" y="285" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">GetResp: 64 ports, node GUID 0x0c42a10300e4f3a0, port states Initialize/LinkUp</text>
+<rect x="240" y="307.5" width="728" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="230" y1="338" x2="940" y2="338" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="329" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnGet via path [0,31] through ib-sw-01 — hop by hop discovery of every node</text>
+<text x="244" y="323.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnGet via path [0,31] through ib-sw-01 — hop by hop discovery of every node</text>
+<rect x="240" y="357" width="672" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="230" y1="382" x2="1330" y2="382" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="373" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnGet(NodeInfo) to every HCA: GUIDs, PKey table size, MTU cap, VL cap</text>
-<g><rect x="60" y="418" width="340" height="58" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
-<text x="72" y="442" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Discovery complete: topology DB keyed by GUID.</text>
-<text x="72" y="462" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Sweep is re-run on every trap (port up/down).</text>
+<text x="244" y="373" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnGet(NodeInfo) to every HCA: GUIDs, PKey table size, MTU cap, VL cap</text>
+<g><rect x="60" y="400" width="420" height="58" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="72" y="424" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Discovery complete: topology DB keyed by GUID.</text>
+<text x="72" y="444" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Sweep is re-run on every trap (port up/down).</text>
+<rect x="240" y="467.5" width="728" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="230" y1="498" x2="620" y2="498" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="489" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(PortInfo): LID 1 for switch port 0 (guid2lid cache reused if present)</text>
+<text x="244" y="483.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(PortInfo): LID 1 for switch port 0 (guid2lid cache reused if present)</text>
 <circle cx="200" cy="498" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="200" y="504" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<rect x="240" y="513" width="232" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="230" y1="538" x2="940" y2="538" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="529" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(PortInfo): LID 2</text>
+<text x="244" y="529" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(PortInfo): LID 2</text>
+<rect x="240" y="553" width="840" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="230" y1="578" x2="1330" y2="578" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="569" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(PortInfo): Base LID 3, LMC 0, MTU 4096, SM LID 1 — state goes Initialize -&gt; Armed</text>
+<text x="244" y="569" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(PortInfo): Base LID 3, LMC 0, MTU 4096, SM LID 1 — state goes Initialize -&gt; Armed</text>
+<rect x="240" y="603.5" width="784" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="230" y1="634" x2="620" y2="634" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="625" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(LinearForwardingTable): 64 LIDs per block; dst LID 4 -&gt; port 31 ... (ftree)</text>
+<text x="244" y="619.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(LinearForwardingTable): 64 LIDs per block; dst LID 4 -&gt; port 31 ... (ftree)</text>
 <circle cx="200" cy="634" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="200" y="640" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<rect x="240" y="649" width="616" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="230" y1="674" x2="940" y2="674" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="665" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(LFT) + SubnSet(MulticastForwardingTable) for IPoIB groups</text>
+<text x="244" y="665" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(LFT) + SubnSet(MulticastForwardingTable) for IPoIB groups</text>
+<rect x="240" y="699.5" width="634" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="230" y1="730" x2="620" y2="730" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="721" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(SLtoVLMappingTable, VLArbitrationTable, PKeyTable) per port</text>
+<text x="244" y="715.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(SLtoVLMappingTable, VLArbitrationTable, PKeyTable) per port</text>
 <circle cx="200" cy="730" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="200" y="736" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<rect x="240" y="745" width="700" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="230" y1="770" x2="1330" y2="770" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="761" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(PKeyTable): 0xffff, 0x8a01 ...; SubnSet(PortInfo) PortState=Active</text>
+<text x="244" y="761" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(PKeyTable): 0xffff, 0x8a01 ...; SubnSet(PortInfo) PortState=Active</text>
 <g><rect x="1205" y="798" width="250" height="50" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1217" y="822" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">ibstat: State: Active</text>
 <text x="1217" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Base lid: 3  SM lid: 1</text>
+<rect x="270" y="859" width="747" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="1330" y1="884" x2="230" y2="884" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="875" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SA PathRecord GET (GMP on QP1): &#x27;how do I reach GID X?&#x27;  -&gt; DLID, SL, MTU, rate</text>
+<text x="274" y="875" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SA PathRecord GET (GMP on QP1): &#x27;how do I reach GID X?&#x27;  -&gt; DLID, SL, MTU, rate</text>
 <circle cx="200" cy="884" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="200" y="890" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<rect x="240" y="903" width="691" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="230" y1="928" x2="1330" y2="928" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="244" y="919" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">PathRecord response — used by ibping, IPoIB neighbour resolution, RDMA CM</text>
+<text x="244" y="919" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">PathRecord response — used by ibping, IPoIB neighbour resolution, RDMA CM</text>
+<rect x="270" y="963" width="896" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="940" y1="988" x2="230" y2="988" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
-<text x="244" y="979" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#d93025" text-anchor="start">Trap 128 (port state change) when a cable is pulled -&gt; SM re-sweeps (sweep_interval also polls)</text>
+<text x="274" y="979" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#d93025" text-anchor="start">Trap 128 (port state change) when a cable is pulled -&gt; SM re-sweeps (sweep_interval also polls)</text>
 <circle cx="200" cy="988" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="200" y="994" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
 <text x="60" y="1050" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">Steps: 1 Discovery   2 LID assignment   3 LFT/MFT programming   4 Port tables (SL2VL, VLArb, PKey, MTU) -&gt; Active</text>
 <text x="60" y="1070" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">       5 SA path resolution (GMP, QP1)   6 Traps trigger a re-sweep; sweep_interval polls as a fallback</text>
-<g><rect x="1130" y="1000" width="420" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<g><rect x="1130" y="1000" width="420" height="92" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1144" y="1020" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
 <line x1="1144" y1="1042" x2="1204" y2="1042" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
 <text x="1216" y="1048" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (SM MADs, REST, CM)</text>

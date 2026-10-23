@@ -72,7 +72,7 @@
 <text x="60" y="704" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">entropy per QP; ToS = DSCP (PFC/ETS class) + ECN bits (DCQCN). GRH hop_limit -&gt; IP TTL.</text>
 <text x="60" y="724" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">tcpdump: udp port 4791; tos 0x6a = marked data, 0x6b = CE-marked data, 0xc0 = CNP.</text>
 <text x="60" y="744" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Overhead at 4096 B payload: 78 B of headers -&gt; ~98 % efficiency; at 1024 B (1500 MTU) ~93 % and 4x pps.</text>
-<g><rect x="1130" y="640" width="430" height="94" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<g><rect x="1130" y="640" width="430" height="97" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1144" y="660" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
 <rect x="1144" y="671" width="60" height="22" rx="5" fill="#ffe9cc" stroke="#e07b00" stroke-width="2"/>
 <text x="1216" y="688" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Ethernet / IP / UDP (switch sees)</text>

@@ -18,8 +18,8 @@
 <text x="60" y="360" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">Uplinks 400G NDR:</text>
 <text x="60" y="382" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">leaf port 31 -&gt; spine-01</text>
 <text x="60" y="404" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">leaf port 32 -&gt; spine-02</text>
-<text x="520" y="390" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">p31</text>
-<text x="600" y="390" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">p32</text>
+<text x="512" y="390" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">p31</text>
+<text x="652" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">p32</text>
 <g><title>gpu01</title><rect x="300" y="560" width="160" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="380.0" y="585.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">gpu01</text>
 <text x="380.0" y="607.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">LID 5</text>

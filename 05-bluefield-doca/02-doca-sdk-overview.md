@@ -21,11 +21,14 @@ By the end of this module you will be able to…
 
 ## 2. Key technical concepts
 
-### 2.1 What DOCA is
+### 2.1 What DOCA is — the layered stack
 
 *Analogy:* DOCA is to a BlueField what CUDA is to a GPU — the drivers that make it work, the libraries that let you program its accelerators, and a set of ready-made applications, all shipped under one version number.
 
-**DOCA** (Data Center Infrastructure-on-a-Chip Architecture) is NVIDIA's software framework for BlueField DPUs/SuperNICs and ConnectX NICs. It is best understood as three layers that ship together:
+![DOCA stack drawn twice: on the host, applications over DOCA libraries over DOCA-OFED drivers over NIC firmware; on the BlueField Arm, DOCA services over the Arm build of the libraries over the BSP and DOCA runtime over BFB-bundled firmware, joined by Comm Channel and RShim](diagrams/5.2-01-doca-stack.svg)
+*Figure 5.2-1 — The DOCA stack on the host (left) and on the BlueField Arm (right). The layers ship under one version number; Comm Channel and RShim connect the two sides.*
+
+**What it is.** **DOCA** (Data Center Infrastructure-on-a-Chip Architecture) is NVIDIA's software framework for BlueField DPUs/SuperNICs and ConnectX NICs. It is best understood as three layers that ship together, sitting on top of the NIC firmware:
 
 | Layer | Contents | Who uses it |
 |---|---|---|
@@ -33,20 +36,40 @@ By the end of this module you will be able to…
 | **Libraries (SDK)** | C/C++ APIs that expose hardware accelerators: DOCA Flow, DOCA RDMA, DOCA DMA, DOCA DPA, DOCA Comm Channel, DOCA Telemetry, DOCA App Shield, DOCA Firefly, DOCA Compress, DOCA Crypto/IPsec, DOCA RegEx (BF-2) | Developers building offloaded applications |
 | **Services** | Ready-to-run containers for the BlueField Arm: HBN, Telemetry Service (DTS), Firefly (PTP), Flow Inspector, BlueMan (UI), UROM, SNAP (storage emulation, separate license) | Operators deploying DPU functions without coding |
 
+**Why it exists.** Before DOCA, the driver stack (MLNX_OFED), the Arm OS image, the SDKs for each accelerator and the reference applications were separate deliverables with separate versions, and nothing guaranteed that a given host driver, Arm image and firmware worked together. DOCA puts them on one release train: one version number, one compatibility matrix, one repository, and the same library APIs on the host (x86) and on the Arm (aarch64). The cost is coupling — you upgrade the layers together or you test the combination yourself.
+
+**How it works** (Figure 5.2-1, bottom to top):
+
+1. **Firmware** on the NIC implements the hardware objects (queues, flow tables, DPA images) and advertises capabilities.
+2. **Drivers / runtime** (`mlx5_core`, `mlx5_ib`, `rdma-core`) expose those objects to Linux as netdevs, RDMA devices (`mlx5_0`) and devlink/eSwitch controls; MFT talks to the firmware directly through `/dev/mst`.
+3. **Libraries** sit on the runtime. Each DOCA library opens a `doca_dev`, queries capabilities at runtime (`doca_*_cap_*` functions) and creates contexts, tasks and pipes that map onto hardware objects — a DOCA Flow pipe becomes eSwitch steering rules; a DOCA DPA kernel becomes code loaded onto DPA threads.
+4. **Services** are containers on the Arm that link the libraries (HBN uses DOCA Flow for its data plane; DTS uses DOCA Telemetry).
+5. Host and Arm halves talk over **Comm Channel** (a PCIe-based control channel between a host app and a DPU app) and, for management, **RShim**.
+
+**Why the exam cares:** drivers (DOCA-OFED) vs libraries vs services — know which layer a named component belongs to.
+
 ### 2.2 DOCA-OFED replaces MLNX_OFED
 
-Through 2023, NVIDIA host networking drivers were distributed as **MLNX_OFED** (`mlnxofedinstall`). Starting with DOCA 2.x (MLNX_OFED's last release was 23.10), the same drivers are delivered as the **DOCA-OFED** profile inside the DOCA repository. For an administrator this means:
+**What it is.** Through 2023, NVIDIA host networking drivers were distributed as **MLNX_OFED** (`mlnxofedinstall`). Starting with DOCA 2.x (MLNX_OFED's last release was 23.10), the same drivers are delivered as the **DOCA-OFED** profile inside the DOCA repository.
+
+**Why it exists.** Running two driver distributions (MLNX_OFED for hosts, DOCA for DPUs) for the same `mlx5` code base doubled release and qualification work and let host and DPU drift apart. Folding the drivers into DOCA gives one matrix for host and card. Inbox (distro) drivers remain an option for basic connectivity but lack the newest features and firmware tooling; NVIDIA reference designs assume DOCA-OFED.
+
+**How it works.** For an administrator this means:
 - You add the DOCA apt/yum repo and install a *profile* package instead of running `mlnxofedinstall`.
 - `ofed_info -s` still works and prints something like `OFED-internal-24.x` / `MLNX_OFED_LINUX-24.xx` even on a DOCA install, because the underlying packages keep their names.
-- Inbox (distro) drivers remain an option for basic connectivity but lack the newest features and firmware tooling; NVIDIA reference designs assume DOCA-OFED.
+- The DOCA kernel modules are built for the running kernel (DKMS on Ubuntu); a kernel upgrade without matching modules silently falls back to inbox `mlx5_core` — check `modinfo mlx5_core | grep ^version` after every kernel update.
+- `/etc/init.d/openibd restart` (or a reboot) swaps the loaded inbox modules for the DOCA ones.
 
 Exam phrasing: "MLNX_OFED is end-of-life; install DOCA (the `doca-ofed` or `doca-all` profile) on hosts."
 
-### 2.3 Profiles
+### 2.3 Profiles and the installation decision
 
 *Analogy:* a profile is a meal deal. `doca-ofed` is the sandwich (drivers and tools); `doca-all` is the sandwich, the drink, the dessert and the cookbook.
 
-A **profile** is a meta-package that pulls in a curated set of DOCA packages. Names below reflect DOCA 2.x–3.x documentation; the set has shifted between releases, so verify against the "DOCA Profiles" page for your version.
+![Decision flow: from "Where is DOCA going?", the host branch adds the doca-host repo, chooses doca-ofed, doca-networking or doca-all, then restarts openibd and verifies; the DPU branch installs the matching BFB, enables services from NGC and verifies; both branches feed a compatibility gate](diagrams/5.2-02-doca-install-decision.svg)
+*Figure 5.2-2 — Installing DOCA: the host gets a repository plus one profile (steps 1–4 left); the Arm gets a whole BFB plus services (steps 1–4 right); both must pass the same compatibility gate.*
+
+**What it is.** A **profile** is a meta-package that pulls in a curated set of DOCA packages. Names below reflect DOCA 2.x–3.x documentation; the set has shifted between releases, so verify against the "DOCA Profiles" page for your version.
 
 | Profile | Contents | Install on |
 |---|---|---|
@@ -56,9 +79,22 @@ A **profile** is a meta-package that pulls in a curated set of DOCA packages. Na
 | `doca-roce` | Lean driver profile aimed at RoCE-only hosts (introduced in later releases — verify existence/name) | Minimal GPU hosts |
 | `doca-devel` / `doca-sdk` / `doca-runtime` style sub-profiles | Finer-grained SDK vs runtime splits in newer releases | Verify in current docs |
 
-The `doca-host` .deb/.rpm only installs the *repository*; the profile is the real install. On the BlueField Arm the BFB already contains DOCA; updating DOCA on the Arm is normally done by installing a new BFB (Module 5.1) rather than `apt upgrade`, to keep BSP, firmware and DOCA aligned. Container services are pulled from NGC (`nvcr.io/nvidia/doca/...`).
+**Why it exists.** A production GPU node wants the smallest attack surface and the fewest moving parts — drivers and tools only. A developer host wants headers, samples and libraries. Profiles let one repository serve both without hand-picking dozens of packages, and make the install reproducible across a fleet (the profile name *is* the bill of materials).
+
+**How it works** (Figure 5.2-2):
+
+1. Decide where DOCA is going: an x86/Arm *host*, or the BlueField *Arm*.
+2. Host: `dpkg -i doca-host_<ver>.deb` (or `rpm -i`) — this installs *only* the repository definition and GPG key. Arm: install the matching BFB (Module 5.1); it already contains DOCA.
+3. Host: `apt install <profile>` pulls the real packages. Arm: enable services (HBN, DTS) as containers from NGC (`nvcr.io/nvidia/doca/...`) via their kubelet pod specs.
+4. Load and verify: `/etc/init.d/openibd restart`, then `ofed_info -s`, `ibstat`, `mlxfwmanager --query` on the host; `cat /etc/mlnx-release` and `crictl ps` on the Arm. Both sides then pass the compatibility gate (§2.7).
+
+The `doca-host` .deb/.rpm only installs the *repository*; the profile is the real install. On the BlueField Arm the BFB already contains DOCA; updating DOCA on the Arm is normally done by installing a new BFB (Module 5.1) rather than `apt upgrade`, to keep BSP, firmware and DOCA aligned.
+
+**Why the exam cares:** "repo added, nothing works" (no profile) and "which profile for a production GPU host" (`doca-ofed`) are both direct questions.
 
 ### 2.4 Libraries overview
+
+**What it is.**
 
 | Library | What it offloads / provides | Typical use |
 |---|---|---|
@@ -74,26 +110,60 @@ The `doca-host` .deb/.rpm only installs the *repository*; the profile is the rea
 | DOCA Compress | Deflate/LZ4 engines | Storage/analytics |
 | DOCA UROM / GPUNetIO | Unified Resource and Offload Manager; GPU-initiated networking (GPUDirect Async) | HPC/AI collective and GPU-driven packet processing |
 
+**Why it exists.** Each accelerator on the card has its own low-level programming model (steering rules, DPA ELF images, DMA queues). The libraries hide that behind a common object model so an application written once runs on a host or the Arm and on several hardware generations, using capability queries instead of hard-coding what the firmware supports.
+
+**How it works.** Every library follows the same pattern: open a device (`doca_devinfo` → `doca_dev`), check capabilities, create a context (DMA, RDMA, Flow port), submit *tasks* or install *pipes*, and collect completions through a progress engine. DOCA Flow is the one operators meet indirectly — OVS-DOCA and HBN translate their rules into Flow pipes that become eSwitch entries; DOCA DPA is the one Spectrum-X depends on — the congestion-control algorithm is a DPA program woken per event.
+
 You are not expected to program these for the exam; you are expected to match a library to its purpose and recognise that DOCA Flow + DPA are the pieces that make DPU/SuperNIC datapath features programmable.
 
-### 2.5 Services: DTS and HBN
+### 2.5 DOCA Telemetry Service (DTS)
 
-**DTS** (DOCA Telemetry Service) runs as a container on the Arm and collects NIC/port counters, RoCE/PFC/ECN statistics, DPA metrics, thermal/power, and application metrics via the DOCA Telemetry API, exporting them via Prometheus endpoint, Fluent Bit, OpenTelemetry, or to NetQ. Configuration lives in `/opt/mellanox/doca/services/telemetry/config/dts_config.ini` (path indicative; verify). In a Spectrum-X deployment DTS on the SuperNIC side plus NetQ/WJH on the switch side give end-to-end congestion visibility.
+![Sequence diagram: DTS on the Arm reads dts_config.ini, providers poll NIC and DPA counters, applications publish through the DOCA Telemetry API, DTS aggregates and exposes metrics or pushes via Fluent Bit or OTLP, NetQ or Grafana ingests and correlates with switch PFC counters, and the operator acts](diagrams/5.2-03-dts-telemetry-flow.svg)
+*Figure 5.2-3 — DTS data flow (steps 1–8): collect on the card, export from the Arm, correlate with the switch view, act on ECN thresholds or the slow host rather than on PFC.*
+
+**What it is.** **DTS** (DOCA Telemetry Service) runs as a container on the Arm and collects NIC/port counters, RoCE/PFC/ECN statistics, DPA metrics, thermal/power, and application metrics via the DOCA Telemetry API, exporting them via Prometheus endpoint, Fluent Bit, OpenTelemetry, or to NetQ. Configuration lives in `/opt/mellanox/doca/services/telemetry/config/dts_config.ini` (path indicative; verify).
+
+**Why it exists.** RoCE problems are two-ended: the switch sees PFC pauses sent and ECN marks applied; only the NIC sees CNPs sent and handled, out-of-sequence packets and its own pause reception. Collecting those on the host needs an agent on a tenant-owned OS; collecting them on the Arm keeps telemetry in the provider's domain and off the GPU host's CPU. In a Spectrum-X deployment DTS on the SuperNIC side plus NetQ/WJH on the switch side give end-to-end congestion visibility.
+
+**How it works** (Figure 5.2-3):
+
+1. DTS reads its config: which *providers* (NIC counters, DPA, system sensors) to poll and which *exporters* to enable.
+2. Providers poll hardware counters at the configured interval — `rx_prio3_pause`, `np_cnp_sent`, `rp_cnp_handled`, ECN marks, temperatures.
+3. Applications on the Arm (HBN, custom DOCA apps) publish their own records through the DOCA Telemetry library.
+4. DTS aggregates into its schema and can buffer on the card if the collector is down.
+5. Exporters expose a Prometheus `/metrics` endpoint or push via Fluent Bit / OTLP.
+6. NetQ or Grafana ingests per rail, per tenant.
+7. The operator correlates: switch PFC transmit on `swp12` against `rx_prio3_pause` on `dgx01` in the same second.
+8. Action follows the evidence: fix the slow receiver or tune ECN thresholds — PFC is the symptom, not the knob.
+
+Observe: `crictl ps | grep -i telemetry`; `curl -s http://localhost:9100/metrics | grep -iE 'pfc|ecn|cnp'` (port per config). Failure modes: container running but exporters disabled in the config → empty endpoint; DTS version not matching the Arm's DOCA → container fails to start.
+
+### 2.6 Host-Based Networking (HBN)
 
 *Analogy:* **HBN** turns the DPU into a top-of-rack switch *inside* the server — the leaf moved one hop closer to the GPU.
 
-**HBN** (Host-Based Networking) packages the Cumulus Linux networking stack — FRR routing, NVUE, VXLAN/EVPN, ECMP — into a DOCA container on the BlueField Arm:
+![HBN on a DPU: host OS with a plain NIC, BlueField-3 in DPU mode with host-side and uplink-side ports around an HBN container running NVUE and FRR, peering BGP unnumbered and EVPN with an SN5600 leaf that learns the node's /32](diagrams/5.2-04-hbn-on-dpu.svg)
+*Figure 5.2-4 — HBN data path: host frame to the host-PF port (1), routed/encapsulated by the HBN container whose decisions are offloaded to the eSwitch (2), out of p0 to the leaf (3); BGP/EVPN runs between the container and the leaf.*
+
+**What it is.** **HBN** (Host-Based Networking) packages the Cumulus Linux networking stack — FRR routing, NVUE, VXLAN/EVPN, ECMP — into a DOCA container on the BlueField Arm:
 - The host sees a normal NIC. The DPU runs BGP (often unnumbered) to the real leaf switches and terminates VXLAN/EVPN; tenant separation (VRF/VNI) happens on the DPU.
 - Configuration uses **NVUE** — the same `nv set interface ...`, `nv set router bgp ...`, `nv set evpn ...` syntax as a Spectrum switch (Modules 4.1–4.2) — so one skill set and one automation toolchain (Module 6.1) covers switch and DPU.
 - Hardware acceleration: routing/VXLAN decisions made by FRR are offloaded to the ConnectX eswitch via DOCA Flow/OVS, so forwarding runs at line rate.
 
-Why it matters for AI clouds: HBN pushes the L3 boundary to the server, enabling per-tenant EVPN overlays that start at the DPU, host-level route advertisement (each GPU node advertises its /32 — simplifies multi-rail routing), and removes MLAG/L2 from the leaf layer. Deployment is a `docker`/containerd pod on the Arm pulled from NGC with a YAML spec under `/etc/kubelet.d/` (Kubelet-managed), plus an HBN-specific `bf.cfg` that creates the required SFs and bridges. Verify current steps in the DOCA HBN Service Guide.
+**Why it exists.** HBN pushes the L3 boundary to the server, enabling per-tenant EVPN overlays that start at the DPU, host-level route advertisement (each GPU node advertises its /32 — simplifies multi-rail routing), and removes MLAG/L2 from the leaf layer. Because the routing stack runs on the provider-controlled Arm, a tenant with root on the host cannot change VRFs, routes or encapsulation. The trade-off: the Arm is now in the control and slow path, so HBN needs DPU mode, switchdev, and a correctly sized Arm/OVS configuration.
 
-Other services: Firefly (PTP), Flow Inspector (export sampled packets to telemetry), BlueMan (web dashboard for a DPU), UROM, and SNAP (NVMe/virtio-blk emulation). DPF (Module 5.1) deploys these as Kubernetes workloads across many DPUs.
+**How it works** (Figure 5.2-4):
 
-### 2.6 Versioning and compatibility
+1. The HBN-specific `bf.cfg` (applied at BFB install) creates scalable functions and OVS bridges so that every relevant port has an interface *inside* the container: uplink-side (`p0_if`, `p1_if`) and host-side (`pf0hpf_if`, `pf0vfN_if`) — names per the HBN guide for your release; verify.
+2. The container is started by the Arm's standalone kubelet from a pod spec in `/etc/kubelet.d/` (image pulled from NGC).
+3. Inside it, NVUE writes FRR and ifupdown2 configuration exactly as on a switch; FRR peers with the leaf over `p0_if` (BGP unnumbered, IPv6 link-local next hops) and exchanges EVPN routes.
+4. Host traffic arrives on the host-side interface (step 1), is routed in the right VRF and VXLAN-encapsulated (step 2), and leaves on the uplink (step 3). The first packets of a flow are handled in software; the resulting forwarding state is programmed into the eSwitch via DOCA Flow/OVS, so steady-state traffic never touches the Arm.
 
-DOCA releases are numbered `major.minor.patch` (2.5, 2.7, 2.9, 3.0, …) roughly quarterly. Each release has a **compatibility matrix**:
+Observe: `crictl ps | grep -i hbn`; inside the container `nv show vrf default router bgp neighbor` (Established to the leaf), `nv show evpn vni`; on the leaf, the DPU appears as a BGP peer and its `/32` as a route. Failure modes: BFB installed without the HBN `bf.cfg` → interfaces missing in the container; DPU in NIC mode → no eSwitch control, HBN cannot forward. Other services: Firefly (PTP), Flow Inspector (export sampled packets to telemetry), BlueMan (web dashboard for a DPU), UROM, and SNAP (NVMe/virtio-blk emulation). DPF (Module 5.1) deploys these as Kubernetes workloads across many DPUs.
+
+### 2.7 Versioning, ABI and compatibility
+
+**What it is.** DOCA releases are numbered `major.minor.patch` (2.5, 2.7, 2.9, 3.0, …) roughly quarterly. Each release has a **compatibility matrix**:
 
 | Item | Constraint |
 |---|---|
@@ -103,13 +173,15 @@ DOCA releases are numbered `major.minor.patch` (2.5, 2.7, 2.9, 3.0, …) roughly
 | CUDA / GPU driver | For GPUDirect RDMA and GPUNetIO, the DOCA release notes name tested CUDA versions |
 | Container services | HBN/DTS container tags are tied to the DOCA version on the Arm |
 
-Rules: upgrade the BFB (which upgrades BSP + DOCA + firmware on the card) and the host DOCA profile together; keep all SuperNICs in a cluster on the same firmware; never run a host DOCA major version ahead of the card's BSP without checking the matrix. `ofed_info -s`, `dpkg -l | grep doca`, `mlxfwmanager --query` and `cat /etc/mlnx-release` (on the Arm) are the four commands to collect when checking alignment.
+**Why it exists.** Three independently updatable pieces must agree on the same hardware objects: firmware defines them, the driver/BSP exposes them, and the libraries and DPA images use them. A newer library may request a feature (a Flow action, a DPA capability) the firmware does not implement; a newer driver may expect a firmware command an old card does not answer. DOCA libraries check capabilities at runtime, so mismatch shows up as "not supported" errors or a service that will not start rather than a crash — subtle, which is why the exam emphasises alignment. Applications built against one DOCA release should be treated as compatible only with that release line unless the release notes promise otherwise; rebuild them when you move the runtime.
 
-### 2.7 SuperNIC functions — where each setting lives
+**How it works.** Rules: upgrade the BFB (which upgrades BSP + DOCA + firmware on the card) and the host DOCA profile together; keep all SuperNICs in a cluster on the same firmware; never run a host DOCA major version ahead of the card's BSP without checking the matrix. `ofed_info -s`, `dpkg -l | grep doca`, `mlxfwmanager --query` and `cat /etc/mlnx-release` (on the Arm) are the four commands to collect when checking alignment. A rolling upgrade is: read the target release's matrix → stage the BFB and host packages in a local mirror → per node, drain the GPU job, install the BFB, install the host profile, power cycle, verify the four commands → return to service.
+
+### 2.8 SuperNIC functions — where each setting lives
 
 *Analogy:* the RoCE class is a relay baton. NCCL hands TOS 106 to the NIC, the NIC marks DSCP 26 on the wire, the switch maps DSCP 26 to switch-priority 3. Drop the baton at any hand-off and GPU traffic lands in the best-effort lane.
 
-The NCP-AIN blueprint lists "install DOCA and configure SuperNIC functions". In practice that decomposes into: install the right DOCA profile on each GPU host; ensure firmware/BSP match; set the SuperNIC's firmware parameters for Ethernet, RoCE and Spectrum-X; configure host RoCE QoS so DSCP/PFC/ECN line up with the switch; configure the matching switch side (Module 4.1); verify end to end.
+**What it is.** The NCP-AIN blueprint lists "install DOCA and configure SuperNIC functions". In practice that decomposes into: install the right DOCA profile on each GPU host; ensure firmware/BSP match; set the SuperNIC's firmware parameters for Ethernet, RoCE and Spectrum-X; configure host RoCE QoS so DSCP/PFC/ECN line up with the switch; configure the matching switch side (Module 4.1); verify end to end. The functions themselves are drawn in Figure 5.1-2 of [`01-bluefield-dpu-administration.md`](01-bluefield-dpu-administration.md).
 
 | Function | Switch side (Cumulus/NVUE) | NIC side |
 |---|---|---|
@@ -120,11 +192,15 @@ The NCP-AIN blueprint lists "install DOCA and configure SuperNIC functions". In 
 | Performance isolation | Per-tenant VRF/VNI, TC separation | Per-QP/flow rate limiting by the CC engine |
 | Telemetry | NetQ/WJH, histograms | DTS exporting RoCE counters |
 
-For a *lossy* Spectrum-X deployment, skip `--pfc` on the host and rely on ECN + the Spectrum-X CC algorithm; the switch is set to `nv set qos roce mode lossy`. Host and switch profiles must agree — `netq show roce-config` (switch) plus `mlnx_qos -i` (host) is the comparison the exam expects.
+**Why it exists.** Spectrum-X is a cooperating pair: every switch-side behaviour has a NIC-side counterpart, and each half configured alone is either useless (telemetry nobody reacts to) or harmful (spraying into a NIC that treats reordering as loss). The settings live in three places with three lifetimes — firmware (NVRAM, survives reinstall, needs a reset), host runtime (sysfs/`mlnx_qos`, lost on reboot unless persisted) and switch (NVUE, saved to `startup.yaml`) — which is why drift between them is the commonest field failure.
+
+**How it works.** Configure in dependency order: (1) firmware — `LINK_TYPE_P1=2`, NIC mode, CNP DSCP/priority and the AR/CC parameters from the Spectrum-X host guide, then `mlxfwreset` or power cycle; (2) host runtime — trust DSCP, PFC on priority 3 (lossless profile only), ECN RP/NP on priority 3, TOS 106 for RDMA-CM, RoCEv2 mode, persisted by a boot-time script or the Network Operator; (3) application — `NCCL_IB_TC=106`, correct `NCCL_IB_GID_INDEX`; (4) switch — `nv set qos roce mode lossless|lossy`, AR global + per uplink. For a *lossy* Spectrum-X deployment, skip `--pfc` on the host and rely on ECN + the Spectrum-X CC algorithm; the switch is set to `nv set qos roce mode lossy`. Host and switch profiles must agree — `netq show roce-config` (switch) plus `mlnx_qos -i` (host) is the comparison the exam expects. Failure modes: TOS/DSCP confusion (`NCCL_IB_TC=26`), PFC on one end only (pause frames ignored or never sent), AR on the switch without SuperNIC out-of-order support (§4 Gotcha 4).
 
 ## 3. Live-style walkthrough — install `doca-all`, verify, enable HBN and DTS, align RoCE
 
 ### Step 1 — Install DOCA on the GPU host (Ubuntu 22.04)
+
+This is the left branch of Figure 5.2-2, steps 2–4.
 
 ```bash
 # 1. The doca-host package installs ONLY the repo definition and GPG key. Use the exact URL from the DOCA download page.
@@ -161,10 +237,10 @@ A healthy install: `mlx5_core` from the DOCA package, RDMA devices Active in `ib
 
 ### Step 3 — On the Arm: HBN and DTS
 
-The BFB already carries DOCA. Verify, then enable the two services (exact steps per the DOCA HBN/DTS service guides):
+The BFB already carries DOCA (right branch of Figure 5.2-2). Verify, then enable the two services (exact steps per the DOCA HBN/DTS service guides). The HBN block below configures the container in Figure 5.2-4; the DTS block is steps 1 and 5 of Figure 5.2-3:
 
 ```bash
-ssh ubuntu@192.168.100.2
+ssh ubuntu192.168.100.2
 cat /etc/mlnx-release                           # DOCA_2.9.x_BSP_4.9.x_... — must match the host's major.minor
 dpkg -l | grep -i doca | wc -l                   # runtime + services present
 
@@ -178,7 +254,7 @@ nv show system
 nv set interface lo ip address 10.0.1.11/32      # the DPU's own loopback — this GPU node's /32
 nv set router bgp autonomous-system 65111
 nv set router bgp router-id 10.0.1.11
-nv set vrf default router bgp neighbor p0_sf remote-as external     # unnumbered to the leaf over the p0 SF (name per HBN guide)
+nv set vrf default router bgp neighbor p0_if remote-as external     # unnumbered to the leaf over the uplink SF (p0_if; name per HBN guide — verify)
 nv set vrf default router bgp address-family ipv4-unicast network 10.0.1.11/32
 nv config apply -y && nv config save
 nv show vrf default router bgp neighbor          # Established to the leaf — the leaf sees the DPU as a BGP peer
@@ -268,7 +344,7 @@ nv show router adaptive-routing
 netq show roce-config; netq check roce
 ```
 
-Reading the host counters: `rx_prio3_pause`/`tx_prio3_pause` rising indicates PFC exchange; `np_cnp_sent`/`rp_cnp_handled` indicate ECN-driven congestion control; `out_of_sequence` growing with AR enabled and *no* throughput loss is expected on a SuperNIC with DDP, and a warning sign on a non-SuperNIC.
+These are the NIC-side counters DTS exports in Figure 5.2-3, step 2. Reading the host counters: `rx_prio3_pause`/`tx_prio3_pause` rising indicates PFC exchange; `np_cnp_sent`/`rp_cnp_handled` indicate ECN-driven congestion control; `out_of_sequence` growing with AR enabled and *no* throughput loss is expected on a SuperNIC with DDP, and a warning sign on a non-SuperNIC.
 
 ## 4. Troubleshooting / common gotchas
 
@@ -305,7 +381,7 @@ tcpdump -i ens3f0np0 -nn -c5 udp port 4791 -v | grep -i tos      # tos 0x6a = 10
 **How to debug:**
 ```bash
 ofed_info -s; dpkg -l | grep doca-ofed             # host
-ssh ubuntu@192.168.100.2 cat /etc/mlnx-release     # card
+ssh ubuntu192.168.100.2 cat /etc/mlnx-release     # card
 mlxfwmanager --query                               # firmware vs matrix
 ```
 
@@ -501,7 +577,7 @@ fi
 log "ofed_info: $(ofed_info -s)"
 modinfo mlx5_core | grep -q '^version:.*OFED' || { log "WARN mlx5_core is not the DOCA build"; }
 mapfile -t MAP < <(ibdev2netdev | awk '{print $1":"$5}')         # mlx5_0:ens3f0np0 ...
-[ "${#MAP[@]}" -ge 8 ] || { log "FAIL expected 8 RDMA devices, found ${#MAP[@]}"; fail=1; }
+[ "${#MAP[]}" -ge 8 ] || { log "FAIL expected 8 RDMA devices, found ${#MAP[]}"; fail=1; }
 
 # ---- R3: firmware --------------------------------------------------------------------------
 if mlxfwmanager --query 2>/dev/null | grep -q 'Update required'; then
@@ -510,7 +586,7 @@ fi
 
 # ---- R4 + R5: per-NIC QoS and firmware parameters ----------------------------------------
 printf '\n%-8s %-12s %-12s %-6s %-5s %-5s %-4s\n' DEV NETDEV FW LINK PFC3 ECN3 TOS
-for entry in "${MAP[@]}"; do
+for entry in "${MAP[]}"; do
   dev=${entry%%:*}; nd=${entry##*:}
   state=$(ibv_devinfo -d "$dev" 2>/dev/null | awk '/state:/{print $2; exit}')
   ll=$(ibv_devinfo -d "$dev" 2>/dev/null | awk '/link_layer:/{print $2; exit}')
@@ -551,7 +627,7 @@ for entry in "${MAP[@]}"; do
 done
 
 # ---- R6: /etc/nccl.conf -------------------------------------------------------------------
-hcas=$(printf '%s\n' "${MAP[@]}" | cut -d: -f1 | paste -sd,)
+hcas=$(printf '%s\n' "${MAP[]}" | cut -d: -f1 | paste -sd,)
 gid=$(show_gids 2>/dev/null | awk '/v2/ && /mlx5_0/ && $5 ~ /\./ {print $3; exit}'); gid=${gid:-3}
 tmp=$(mktemp)
 cat > "$tmp" <<EOF

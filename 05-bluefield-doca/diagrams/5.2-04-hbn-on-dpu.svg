@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1010" width="100%" role="img">
+<title>HBN on the DPU: a Cumulus-style leaf inside the server</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="1010" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">HBN on the DPU: a Cumulus-style leaf inside the server</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">FRR + NVUE run in a DOCA container on the Arm; BGP unnumbered to the real leaf; VXLAN/EVPN terminates on the DPU</text>
+<g><title>DGX / GPU server</title><rect x="40" y="140" width="840" height="760" rx="12" fill="#ffffff" fill-opacity="0.0" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
+<text x="56" y="170" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">DGX / GPU server</text>
+<g><title>Host OS</title>
+<rect x="80" y="190" width="360" height="120" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="260" y="231" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">Host OS</text>
+<text x="260" y="261" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ens3f0np0 = plain NIC</text>
+<text x="260" y="283" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">no BGP, no VXLAN here</text>
+</g>
+<g><title>BlueField-3 (DPU mode)</title><rect x="70" y="350" width="790" height="530" rx="12" fill="#e9ddff" fill-opacity="0.3" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 6"/></g>
+<text x="86" y="380" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">BlueField-3 (DPU mode)</text>
+<g><title>Host-side ports</title>
+<rect x="100" y="410" width="330" height="100" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="265" y="452" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">Host-side ports</text>
+<text x="265" y="482" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">pf0hpf_if · pf0vf0_if</text>
+</g>
+<g><title>Uplink-side ports</title>
+<rect x="500" y="410" width="330" height="100" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="665" y="452" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">Uplink-side ports</text>
+<text x="665" y="482" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">p0_if · p1_if</text>
+</g>
+<g><title>HBN container (doca-hbn, kubelet-managed)</title>
+<rect x="100" y="580" width="730" height="270" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="465" y="663" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">HBN container (doca-hbn, kubelet-managed)</text>
+<text x="465" y="692" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set interface lo ip address 10.0.1.11/32</text>
+<text x="465" y="714" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set router bgp autonomous-system 65111</text>
+<text x="465" y="737" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set vrf default router bgp neighbor p0_if</text>
+<text x="465" y="759" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">    remote-as external</text>
+<text x="465" y="781" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">FRR routes → DOCA Flow / OVS → eSwitch at line rate</text>
+</g>
+<polyline points="390,310 390,410" fill="none" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)" marker-start="url(#arrow-orange)"/>
+<g><title>Step 1</title><circle cx="420" cy="360" r="16" fill="#1f2937"/>
+<text x="420" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<polyline points="260,510 260,580" fill="none" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)" marker-start="url(#arrow-orange)"/>
+<g><title>Step 2</title><circle cx="230" cy="545" r="16" fill="#1f2937"/>
+<text x="230" y="551" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<polyline points="660,580 660,510" fill="none" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)" marker-start="url(#arrow-orange)"/>
+<g><title>Step 3</title><circle cx="690" cy="545" r="16" fill="#1f2937"/>
+<text x="690" y="551" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><title>leaf01 (SN5600)</title>
+<rect x="990" y="390" width="350" height="160" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1165" y="440" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01 (SN5600)</text>
+<text x="1165" y="469" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">AS 65011, BGP unnumbered</text>
+<text x="1165" y="492" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">peers with the DPU</text>
+<text x="1165" y="514" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">learns 10.0.1.11/32</text>
+</g>
+<g><title>spines</title>
+<rect x="1400" y="390" width="152" height="160" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1476" y="462" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">spines</text>
+<text x="1476" y="492" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">AS 65000</text>
+</g>
+<polyline points="830,435 990,435" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<text x="937" y="422" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="middle" aria-hidden="true">BGP · EVPN</text>
+<text x="937" y="422" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">BGP · EVPN</text>
+<polyline points="830,490 990,490" fill="none" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)" marker-start="url(#arrow-orange)"/>
+<text x="937" y="520" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="middle" aria-hidden="true">p0 · 400G</text>
+<text x="937" y="520" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">p0 · 400G</text>
+<polyline points="1340,470 1400,470" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<g><title>Why HBN in AI clouds</title>
+<rect x="920" y="600" width="632" height="170" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5"/>
+<text x="1236" y="655" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">Why HBN in AI clouds</text>
+<text x="1236" y="684" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">L3 boundary moves into the server: node advertises a /32</text>
+<text x="1236" y="707" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">no L2 / MLAG on leaves; tenant VRF / VNI starts at the DPU</text>
+<text x="1236" y="729" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">host cannot tamper (restricted host); one NVUE skill set</text>
+</g>
+<g><title>Verify inside the container</title>
+<rect x="920" y="800" width="632" height="100" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1236" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">Verify inside the container</text>
+<text x="1236" y="872" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv show vrf default router bgp neighbor</text>
+</g>
+<text x="48" y="930" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">1 host frame → host-PF port · 2 HBN routes / encapsulates (VRF, VXLAN) · 3 egress via p0</text>
+<text x="48" y="954" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">Interface names (p0_if, pf0hpf_if) follow the HBN guide for your DOCA release — verify.</text>
+<g><title>Legend</title><rect x="1100" y="916" width="452" height="84" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1116" y1="942" x2="1176" y2="942" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1192" y="948" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
+<line x1="1116" y1="972" x2="1176" y2="972" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1192" y="978" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN)</text>
+</g>
+</svg>

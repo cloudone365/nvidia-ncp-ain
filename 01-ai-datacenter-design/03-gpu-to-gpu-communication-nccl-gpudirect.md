@@ -26,7 +26,7 @@ By the end of this module you will be able to…
 
 *Analogy:* a collective is a group chat where nobody can leave until everyone has read the message. All-reduce is "everyone totals the bill and everyone gets the total"; all-gather is "everyone shares their receipt and everyone ends up with the whole stack."
 
-Distributed training is built on a handful of collective communication primitives. The **NVIDIA Collective Communications Library (NCCL, pronounced "nickel")** implements them for GPUs over NVLink, PCIe, InfiniBand and RoCE.
+**What it is.** A **collective** is a communication operation that every rank (one process per GPU) in a *communicator* calls together, with a defined result on every rank. The **NVIDIA Collective Communications Library (NCCL, pronounced "nickel")** implements them for GPUs over NVLink, PCIe, InfiniBand and RoCE. In the table, N is the number of ranks and S is each rank's buffer size in bytes.
 
 | Collective | Semantics (N ranks, each with buffer of size S) | Data moved per rank (ring) | Typical use |
 |---|---|---|---|
@@ -40,7 +40,9 @@ Distributed training is built on a handful of collective communication primitive
 
 Note that AllReduce = ReduceScatter + AllGather; NCCL's ring AllReduce literally runs these two phases back-to-back, which is why its data volume is 2 × S × (N−1)/N.
 
-**Which parallelism uses which collective**
+**Why it exists.** Distributed training is a bulk-synchronous loop (Module 1.1): every GPU computes on its shard, then they must agree on a shared result before the next step. If each GPU sent its gradients to a central parameter server, that server's single link would carry N × S per step and become the bottleneck at any scale. Collectives spread the work so every link carries roughly the same amount, and the per-rank traffic stays close to 2S *regardless of N*. The cost is coupling: the step finishes only when the slowest rank's slowest link finishes, so one degraded port slows every GPU.
+
+**How it works.** The application (PyTorch `torch.distributed`, JAX, NeMo) calls, for example, `ncclAllReduce(sendbuf, recvbuf, count, ncclFloat, ncclSum, comm, stream)`. The call is asynchronous: NCCL enqueues a CUDA kernel on the given stream; that kernel moves data between GPUs (directly over NVLink, or through proxy threads that drive the NIC) and performs the reduction arithmetic on the GPU's SMs. Which parallelism you choose decides which collective dominates and over which links it runs:
 
 | Parallelism | What is split | Dominant collective | Where it should run |
 |---|---|---|---|
@@ -50,39 +52,84 @@ Note that AllReduce = ReduceScatter + AllGather; NCCL's ring AllReduce literally
 | **Expert parallel (EP, MoE)** | Experts across GPUs | AllToAll to route tokens to experts and back | Across nodes — stresses the fabric with many-to-many traffic, highest entropy |
 | **Sequence/context parallel** | Long sequences | AllToAll or ring Send/Recv | Mixed |
 
+The bandwidth gap explains the placement rule. An H100 has 18 NVLink 4 links at 25 GB/s per direction = 450 GB/s per direction (900 GB/s bidirectional) to the NVSwitch fabric, but only one 400 Gb/s NDR NIC = 50 GB/s per direction to the scale-out fabric. That is a 9:1 ratio. TP, which communicates inside every layer, would run 9× slower over the fabric, so it stays on NVLink.
+
 **Why the exam cares:** *the most communication-intensive dimension (TP) stays inside NVLink; DP and PP cross the scale-out fabric; EP's AllToAll is the hardest pattern for the fabric because it is not rail-friendly.*
 
 ### 2.2 Ring versus tree algorithms
 
-*Analogy:* a ring is a bucket brigade — every person is busy all the time, but the water takes N steps to get across. A tree is a phone tree — the message reaches everyone in log₂(N) calls, but some people sit idle.
+*Analogy:* a ring is a bucket brigade: every person is busy all the time, but the water takes N steps to get across. A tree is a phone tree: the message reaches everyone in log₂(N) calls, but some people sit idle.
 
-**Ring.** Ranks form a logical ring; each rank sends to its right neighbor and receives from its left. For AllReduce, the buffer is split into N chunks; in N−1 steps of ReduceScatter each rank accumulates one fully reduced chunk, then N−1 steps of AllGather distribute them.
+**What it is.** The *algorithm* is the communication pattern NCCL uses to implement a collective: which rank sends which chunk to which peer, in what order. NCCL's main algorithms are **Ring**, **Tree** (double binary tree), **CollNet** (in-network reduction with SHARP, §2.6; variants `CollnetDirect` and `CollnetChain`) and **NVLS** (NVLink SHARP, reduction inside the NVSwitch on Hopper/Blackwell). Each algorithm runs with one of three *protocols*: **LL**, **LL128** or **Simple** (below).
+
+**Why it exists.** No single pattern is best at every message size. Use the standard α–β cost model: α is the fixed per-step latency (kernel launch, a network round trip, roughly microseconds) and B is the per-link bandwidth.
+
+- Ring AllReduce time ≈ 2(N−1)·α + 2·(N−1)/N · S/B. The bandwidth term is optimal: every rank sends and receives 2(N−1)/N × S, which no algorithm can beat without in-network reduction. The latency term grows *linearly* with N.
+- Tree AllReduce time ≈ 2·log₂(N)·α + (about) S/B per tree, with the buffer split over two trees. The latency term grows *logarithmically*.
+
+Worked example at N = 1,024 ranks with α = 5 µs: ring latency ≈ 2 × 1,023 × 5 µs ≈ 10 ms before a single byte of bandwidth term; tree ≈ 2 × 10 × 5 µs = 0.1 ms. For a 4 KB gradient bucket the ring is entirely latency-bound and the tree wins by about 100×. For an 8 GB buffer at 50 GB/s the bandwidth term (≈ 320 ms) dominates and the ring's perfect link utilization wins.
+
+**How it works.**
+
+![Ring AllReduce on 4 GPUs: three ReduceScatter steps pass and add one chunk per step around the ring, then three AllGather steps forward the fully reduced chunks](diagrams/1.3-02-ring-allreduce.svg)
+*Figure 1.3-2 — Ring AllReduce: steps ①–③ (ReduceScatter) leave each GPU owning one fully reduced chunk; steps ④–⑥ (AllGather) circulate those chunks. Each GPU sends 6 × S/4 = 2·S·(N−1)/N.*
+
+**Ring.** Ranks form a logical ring; each rank sends to its right neighbour and receives from its left (Figure 1.3-2). The buffer is split into N chunks. In step ① every rank sends one chunk and adds the chunk it receives into its own copy. After N−1 such steps (①–③) each rank holds one chunk that is fully reduced across all ranks: that is ReduceScatter. N−1 more steps (④–⑥) forward those reduced chunks without arithmetic: that is AllGather. Each step moves S/N per link, so the total is 2(N−1)·S/N.
 - Bandwidth-optimal: every link is used in both directions throughout.
-- Latency grows linearly with N (2 × (N−1) steps) — bad for small messages at large scale.
-- NCCL builds multiple rings (one per NIC/NVLink lane) to use all available links in parallel.
+- Latency grows linearly with N (2 × (N−1) steps), which hurts small messages at large scale.
+- NCCL builds multiple rings (one per NIC/NVLink lane) to use all available links in parallel. Each ring is a **channel** (§2.3).
+- In practice NCCL also *pipelines*: chunks are cut into slices (sized by `NCCL_BUFFSIZE`, default 4 MiB per channel) so step k+1 of slice 1 overlaps step k of slice 2.
 
-**Tree.** NCCL (since 2.4) also builds **double binary trees**: two complementary trees so that every rank is an interior node in one and a leaf in the other, balancing load. Reduction goes up the tree, broadcast comes down.
-- Latency grows as log₂(N) — much better at large N for small/medium messages.
-- Slightly lower peak bandwidth than ring on some topologies.
-- NCCL auto-selects: tree for latency-bound (small) messages and very large rank counts, ring for bandwidth-bound (large) messages, using an internal cost model tuned per topology. `NCCL_ALGO=Ring|Tree|CollnetDirect|CollnetChain|NVLS` forces a choice for testing; leave unset in production.
+![Double binary tree over 8 ranks: tree 0 rooted at rank 0 and a mirrored tree 1 rooted at rank 7, so every rank is interior in one tree and a leaf in the other](diagrams/1.3-03-tree-allreduce.svg)
+*Figure 1.3-3 — Double binary tree: ① partial sums flow child → parent to the root, ② the result is broadcast back down. Half the buffer goes through each tree so no rank carries the interior-node load twice.*
 
-**NVLS and CollNet.** **NVLS** (NVLink SHARP): on Hopper/Blackwell with NVSwitch, the NVSwitch performs in-switch reductions for intra-node collectives. **CollNet / SHARP**: in-network reductions on the InfiniBand fabric (Section 2.6).
+**Tree.** NCCL (since 2.4) also builds **double binary trees** (Figure 1.3-3): two complementary trees so that every rank is an interior node in one and a leaf in the other, which balances load. Reduction goes up the tree (①), broadcast comes down (②), and the two phases are pipelined chunk by chunk so the broadcast of chunk 1 overlaps the reduction of chunk 2. Inside a node NCCL chains the 8 GPUs over NVLink; the binary tree is built across nodes, one rank per node per tree.
+- Latency grows as log₂(N), which is much better at large N for small and medium messages.
+- Peak bandwidth is slightly below the ring on some topologies.
+- NCCL auto-selects: tree for latency-bound (small) messages and very large rank counts, ring for bandwidth-bound (large) messages, using an internal cost model tuned per topology. `NCCL_ALGO=Ring|Tree|CollnetDirect|CollnetChain|NVLS` forces a choice for testing; leave it unset in production.
+
+**Protocols.** The protocol decides how a receiver knows data has arrived:
+| Protocol | Mechanism | Payload efficiency | Use |
+|---|---|---|---|
+| **LL** (low latency) | 8-byte stores, each carrying 4 bytes of data + a 4-byte flag; the receiver spins on the flag, no memory fence needed | ~50 % | Smallest messages |
+| **LL128** | 128-byte lines with an 8-byte flag; relies on 128-byte store atomicity (NVLink-class paths) | ~94 % | Small–medium, intra-node and some networks |
+| **Simple** | Large chunks; a memory fence and a separate flag signal completion | ~100 % | Large messages |
+
+The tuner computes `time = latency(algo, proto) + size / bandwidth(algo, proto)` for every combination and picks the minimum per collective call. `NCCL_PROTO` forces a protocol (testing only).
+
+**NVLS and CollNet.** **NVLS** (NVLink SHARP): on Hopper/Blackwell with NVSwitch, the NVSwitch performs in-switch reductions for intra-node collectives, so each GPU sends its buffer once into the switch. **CollNet / SHARP**: in-network reductions on the InfiniBand fabric (Section 2.6).
+
+**Why the exam cares:** ring = bandwidth-optimal, O(N) latency; tree = O(log N) latency; NCCL picks per message size, and forcing `NCCL_ALGO` is a test tool, not a tuning knob.
 
 ### 2.3 NCCL transport selection
 
 *Analogy:* NCCL is a courier choosing the fastest route for every parcel: hand it across the desk (NVLink), walk it down the hall (PCIe), leave it in the mailroom (shared memory), or ship it (network). It never ships what it could hand over.
 
-At `ncclCommInitRank` NCCL discovers the hardware topology (`/sys` PCIe tree, NVLink, NUMA, NICs) and builds a graph; it then picks, for every pair of ranks, the fastest available transport:
+**What it is.** A **transport** is the mechanism NCCL uses to move bytes between two specific ranks. NCCL has three built-in transports (P2P, SHM, NET) plus the CollNet path through an external plugin (Figure 1.3-1). The choice is made per *peer pair* and per *channel* at communicator creation (`ncclCommInitRank`), not per call.
 
-1. **P2P over NVLink** — same node, GPUs connected by NVLink/NVSwitch. Highest bandwidth.
-2. **P2P over PCIe** — same node, no NVLink path (or NVLink disabled). Falls back to PCIe peer-to-peer if the IOMMU/ACS allow it.
-3. **SHM (shared memory)** — same node, when P2P is not possible (e.g. across sockets with ACS enabled); data is staged through host memory.
-4. **NET** — different nodes, via a network plugin:
-   - The built-in **IB plugin** (`NCCL_NET=IB`) uses ibverbs and handles both InfiniBand and RoCE.
-   - The **Socket** plugin (`NCCL_NET=Socket`) uses TCP; dramatically slower, used only when no RDMA device is usable — seeing `NET/Socket` in `NCCL_DEBUG=INFO` output on an RDMA cluster is a red flag.
-   - External plugins (e.g. `libnccl-net.so` for SHARP/CollNet, AWS EFA, etc.).
+![NCCL software stack: application calls into NCCL core (bootstrap, topology graph, tuner, protocols, channels), which routes each peer pair to P2P, SHM, NET/IB, NET/Socket or CollNet, each down to its driver and hardware, with the environment variables that steer each layer](diagrams/1.3-01-nccl-software-stack.svg)
+*Figure 1.3-1 — The NCCL stack: the core picks a transport per peer pair; each transport has its own driver path to hardware. The sidebar maps the environment variables to the layer they control.*
 
-Over the NET transport, NCCL further decides whether to use **GPUDirect RDMA** (NIC DMAs straight to/from GPU memory) or to bounce through host memory, controlled by `NCCL_NET_GDR_LEVEL` and the PCIe distance between GPU and NIC.
+**Why it exists.** The same job contains pairs of ranks connected in very different ways: two GPUs on one NVSwitch (450 GB/s per direction), two GPUs on the same PCIe Gen5 switch without NVLink (~64 GB/s per direction for x16), two GPUs on different CPU sockets (traffic crosses the inter-socket link), and two GPUs on different nodes (50 GB/s per direction per NDR NIC). Using one mechanism for all would either waste NVLink or fail across nodes. NCCL therefore measures the topology and uses the fastest working path for each pair.
+
+**How it works.** The sequence at `ncclCommInitRank`:
+
+1. **Bootstrap.** Rank 0 creates an `ncclUniqueId` that contains its TCP listen address; the framework distributes it out of band (MPI broadcast, the PyTorch rendezvous store). Every rank connects to rank 0 over TCP on the interface chosen by `NCCL_SOCKET_IFNAME`, and the ranks form a bootstrap ring. All later setup data (QP numbers, LIDs/GIDs, memory keys) travels over this TCP channel. A wrong interface here hangs init before any GPU work.
+2. **Topology discovery.** Each rank reads the PCI hierarchy from `/sys`, NVLink state from NVML, NUMA affinity, and the NIC list from the network plugin, and builds an XML graph (dump it with `NCCL_TOPO_DUMP_FILE`). It classifies every GPU↔GPU and GPU↔NIC path by type, from closest to farthest: `LOC`, `NVL` (direct NVLink), `NVB` (NVLink through an intermediate GPU), `PIX` (same PCIe switch), `PXB` (several PCIe switches, no root complex), `PXN` (through an NVLink peer to its NIC, §2.7), `PHB` (through the CPU root complex), `SYS` (across the inter-socket link).
+3. **Graph search.** NCCL searches for ring, tree, CollNet and NVLS graphs that maximize per-channel bandwidth over those paths, decides the number of channels, and assigns a NIC to each inter-node hop (preferring the NIC closest to the GPU).
+4. **Transport per pair, in fixed preference order:**
+   1. **P2P over NVLink** — same node, GPUs connected by NVLink/NVSwitch. Highest bandwidth. Logged as `P2P/CUMEM` (CUDA VMM handles) or `P2P/IPC` (CUDA IPC handles); used if the path type is within `NCCL_P2P_LEVEL`.
+   2. **P2P over PCIe** — same node, no NVLink path (or NVLink disabled). Falls back to PCIe peer-to-peer if the IOMMU/ACS allow it.
+   3. **SHM (shared memory)** — same node, when P2P is not possible (e.g. across sockets with ACS enabled); data is staged through host memory. Disable with `NCCL_SHM_DISABLE=1` for diagnosis.
+   4. **NET** — different nodes, via a network plugin:
+      - The built-in **IB plugin** (`NCCL_NET=IB`) uses ibverbs and handles both InfiniBand and RoCE.
+      - The **Socket** plugin (`NCCL_NET=Socket`) uses TCP; dramatically slower, used only when no RDMA device is usable. Seeing `NET/Socket` in `NCCL_DEBUG=INFO` output on an RDMA cluster is a red flag.
+      - External plugins (e.g. `libnccl-net.so` for SHARP/CollNet, AWS EFA, etc.).
+5. **Connection setup.** For NET/IB, each channel to each peer gets its own **RC queue pair** (or several, with `NCCL_IB_QPS_PER_CONNECTION`). Data moves as RDMA writes into the peer's pre-registered receive buffers, with a small write-with-immediate or flag to signal completion. The QP timeout is 4.096 µs × 2^`NCCL_IB_TIMEOUT`; at the value 18 that is about 1.07 s per retry, and `NCCL_IB_RETRY_CNT` (maximum 7) retries are allowed before the QP errors with "transport retry counter exceeded" (§4.4).
+
+Over the NET transport, NCCL further decides whether to use **GPUDirect RDMA** (the NIC DMAs straight to/from GPU memory) or to bounce through host memory. That is controlled by `NCCL_NET_GDR_LEVEL` and the PCIe distance between GPU and NIC (§2.5).
+
+**Channels.** A **channel** is one instance of the chosen ring or tree, with its own buffers, its own CUDA thread block (so it uses SMs) and its own connections. NCCL splits each collective's buffer across channels so they run in parallel over different links: on a DGX H100 you typically see 16 or more channels, two per NIC, spread across all 8 rails. More channels give more parallelism but take SMs away from compute; `NCCL_MIN_NCHANNELS`/`NCCL_MAX_NCHANNELS` bound the count. A **proxy thread** on the CPU of each rank drives the network side of each channel: it posts the RDMA work requests and polls the completion queues on behalf of the GPU kernel.
 
 **Key environment variables**
 
@@ -104,18 +151,24 @@ Over the NET transport, NCCL further decides whether to use **GPUDirect RDMA** (
 | `NCCL_IB_DISABLE=1` | Force Socket transport | Diagnostic only |
 | `NCCL_NET_GDR_LEVEL=PIX|PXB|PHB|SYS` (or `LOC`) | Maximum GPU↔NIC PCIe distance at which GPUDirect RDMA is used | Default is `PXB` in current releases (verify); on DGX each GPU/NIC pair is PIX/PXB so GDR is on by default |
 | `NCCL_NET_GDR_READ=1` | Also use GDR for sends (reads from GPU memory) | Default on for recent GPUs |
+| `NCCL_P2P_LEVEL`, `NCCL_P2P_DISABLE=1` | Maximum path type for intra-node P2P / disable P2P entirely | Diagnostic; forcing P2P off on a DGX pushes traffic to SHM |
 | `NCCL_CROSS_NIC=0|1|2` | Whether rings may use different NICs on sender and receiver (i.e. cross rails) | 0 = keep same NIC (rail-aligned) when possible; 1 = allow; 2 = auto (default) |
 | `NCCL_PXN_DISABLE=1` | Disable PXN | Diagnostic only |
 | `NCCL_COLLNET_ENABLE=1` | Enable the CollNet (SHARP) plugin | Requires the SHARP net plugin and AM — Section 2.6 |
 | `NCCL_ALGO`, `NCCL_PROTO=LL,LL128,Simple` | Force algorithm / protocol | Testing only |
 | `NCCL_MIN_NCHANNELS`, `NCCL_MAX_NCHANNELS` | Channels (parallel rings) | Tuning |
+| `NCCL_BUFFSIZE` | Per-channel buffer size (default 4 MiB) | Rarely changed; shows as `buffSize 4194304` in the log |
 | `NCCL_NET_PLUGIN=` | Pick a specific `libnccl-net-<name>.so` | e.g. `sharp` |
 
-**Why the exam cares:** the two variables it tests most are `NCCL_SOCKET_IFNAME` (bootstrap path) and `NCCL_IB_HCA` (RDMA path); setting only one does not fix the other.
+**Why the exam cares:** the two variables it tests most are `NCCL_SOCKET_IFNAME` (bootstrap path) and `NCCL_IB_HCA` (RDMA path); setting only one does not fix the other. Know the transport order (P2P → SHM → NET) and that `NET/Socket` on an RDMA cluster always means "no usable RDMA device".
 
 ### 2.4 nccl-tests and reading the output
 
-**nccl-tests** (github.com/NVIDIA/nccl-tests) is the standard benchmark and acceptance test. Build with `make MPI=1 MPI_HOME=/path/to/mpi CUDA_HOME=/usr/local/cuda` to get the MPI launcher.
+**What it is.** **nccl-tests** (github.com/NVIDIA/nccl-tests) is the standard benchmark and acceptance test: one binary per collective (`all_reduce_perf`, `all_gather_perf`, `reduce_scatter_perf`, `alltoall_perf`, `sendrecv_perf`, …) that sweeps message sizes and prints time, **algorithm bandwidth** and **bus bandwidth** per size. Build with `make MPI=1 MPI_HOME=/path/to/mpi CUDA_HOME=/usr/local/cuda` to get the MPI launcher.
+
+**Why it exists.** Application throughput mixes compute and communication, so it cannot tell you whether the fabric is healthy. nccl-tests isolates the communication library on the real topology, and its **busbw** figure is normalized so you can compare it directly with hardware link rates at any rank count. That is what makes it an acceptance criterion: "busbw within X % of injection bandwidth on every SU".
+
+**How it works.** Launch one process per GPU (`-g 1`) with MPI or Slurm, or one process driving several GPUs (`-g 8`) on a single node:
 
 ```bash
 # Single node, 8 GPUs, AllReduce from 8 B to 8 GB, doubling
@@ -136,30 +189,57 @@ Common flags: `-b` begin size, `-e` end size, `-f` size multiplication factor, `
 ```text
 #       size   count    type  redop  root   time  algbw  busbw #wrong   time  algbw  busbw #wrong
 #        (B)  (elements)                   (us)  (GB/s) (GB/s)         (us)  (GB/s) (GB/s)
-  8589934592  2147483648  float   sum    -1  46213  185.9  371.8      0  46180  186.0  372.0      0
-# Avg bus bandwidth    : 350.12
+  8589934592  2147483648  float   sum    -1  46213  185.9  348.5      0  46180  186.0  348.8      0
+# Avg bus bandwidth    : 344.05
 ```
 
-- **algbw (algorithm bandwidth)** = data size / time. What the application perceives: "an 8 GB all-reduce took 46 ms, so 186 GB/s."
-- **busbw (bus bandwidth)** = algbw × correction factor that reflects the data each rank's links actually carried. For AllReduce the factor is 2 × (N−1)/N; for AllGather/ReduceScatter it is (N−1)/N; for Broadcast/Reduce it is 1. busbw is therefore comparable to hardware link bandwidth regardless of rank count and is the number you compare against NVLink or NIC line rate.
+The first block of columns is *out-of-place* (separate send and receive buffers), the second *in-place* (the same buffer). The two formulas:
+
+- **algbw (algorithm bandwidth)** = S / t, where S is the buffer size in the `size` column and t the measured time. It is what the application perceives: "an 8 GB all-reduce took 46 ms, so 186 GB/s."
+- **busbw (bus bandwidth)** = algbw × a fixed correction factor that reflects the data each rank's links actually carried. For AllReduce the factor is 2 × (N−1)/N; for AllGather/ReduceScatter it is (N−1)/N; for AllToAll (N−1)/N; for Broadcast/Reduce/SendRecv it is 1. busbw is therefore comparable to hardware link bandwidth regardless of rank count and is the number you compare against NVLink or NIC line rate.
+
+Worked check for the row above with N = 16 ranks: 8,589,934,592 B ÷ 46,213 µs = 185.9 GB/s; × 2 × 15/16 = 348.5 GB/s. The factor assumes a ring-style data volume. With SHARP or NVLS the switch performs the reduction and each rank really moves only about S, so busbw computed with the ring factor can legitimately *exceed* link rate. That is not an error: it is the in-network reduction showing up in the number.
 
 Rules of thumb for acceptance (verify against your RA's validated figures):
 - Intra-node H100 (NVLink 4 + NVSwitch): AllReduce busbw ~ 350–480 GB/s at large sizes.
 - Inter-node over 8 × NDR 400G: each node injects 8 × 50 GB/s = 400 GB/s; expect busbw in the high 300s GB/s for large messages across a full SU, with a modest drop with more nodes.
 - A single node far below its peers → check `nvidia-smi topo -m`, `ibstat` rates, and the NCCL log for `NET/Socket` or `GDR disabled`.
 
+**Why the exam cares:** compare busbw, not algbw, with link capacity; algbw for AllReduce is roughly half of busbw at large N.
+
 ### 2.5 GPUDirect
 
 *Analogy:* without GPUDirect RDMA, every parcel from the GPU goes to the CPU's loading dock before the truck (NIC) picks it up. With it, the truck backs up to the GPU's own door.
 
-**GPUDirect RDMA.** Without it, a NIC can only DMA to host memory; sending GPU data requires a `cudaMemcpy` to a host bounce buffer, then the NIC reads it — doubling PCIe traffic and adding CPU work and latency. **GPUDirect RDMA** lets the NIC (ConnectX, BlueField) read and write GPU memory directly over PCIe. Requirements:
+**What it is.** **GPUDirect** is a family of technologies that let devices other than the CPU read and write GPU memory directly:
 
-- GPU and NIC under the same PCIe root complex or close enough (`NCCL_NET_GDR_LEVEL`). DGX places each NIC next to its GPU for this reason.
-- A kernel mechanism to pin GPU memory and expose it to the NIC driver:
-  - **nvidia-peermem** kernel module (shipped with the NVIDIA driver; successor to `nv_peer_mem`). `lsmod | grep nvidia_peermem` must show it loaded on MOFED/DOCA-OFED systems.
-  - **DMA-BUF**: the upstream mechanism (Linux 5.12+, open-kernel NVIDIA driver, recent rdma-core). NCCL uses it automatically when available; `NCCL_DEBUG=INFO` prints `GDRDMA ... dmabuf` or `peermem`.
+- **GPUDirect RDMA** — a NIC (ConnectX, BlueField) DMAs directly to and from GPU HBM over PCIe. This is the one that matters for the compute fabric.
+- **GPUDirect Storage (GDS)** — the same idea for storage traffic (`cuFile` API, `nvidia-fs` module).
+- **GPUDirect P2P** — GPU-to-GPU memory access inside a node over NVLink or PCIe; the mechanism behind NCCL's P2P transport. Not to be confused with GPUDirect RDMA (NIC↔GPU).
+
+![GPUDirect RDMA path versus host bounce-buffer path in a DGX H100 PCIe topology: path A goes HCA to GPU through the PCIe switch; path B goes GPU to root complex to host DRAM and back down to the HCA](diagrams/1.3-04-gpudirect-rdma-path.svg)
+*Figure 1.3-4 — Path A (blue, ①): the HCA DMAs HBM through the PCIe switch, one crossing and no copies. Path B (red, ②–⑤): GPU → root complex → pinned host DRAM, CPU posts the send, HCA reads DRAM back down: two crossings plus a copy.*
+
+**Why it exists.** Without GPUDirect RDMA a NIC can only DMA to host memory. Sending GPU data then requires a `cudaMemcpy` to a host bounce buffer (Figure 1.3-4, steps ②–③), the CPU proxy posts the send (④), and the NIC reads the bounce buffer back down (⑤). Every byte crosses the PCIe hierarchy twice and the CPU root port once in each direction, and it competes with everything else on that root port. Typical effect on a DGX: inter-node busbw roughly halves (≈ 190 GB/s instead of ≈ 370 GB/s) and small-message latency grows by several microseconds. With GPUDirect RDMA (step ①) the PCIe switch forwards the NIC's DMA transactions straight to the GPU. A PCIe Gen5 x16 link carries ≈ 64 GB/s per direction, more than the 50 GB/s a 400G port needs, so the network link, not PCIe, becomes the bottleneck. That is the goal.
+
+**How it works.** Step by step for NCCL's IB transport:
+
+1. **Allocate.** NCCL allocates its receive and send buffers in GPU memory (`cudaMalloc` or CUDA VMM).
+2. **Register.** NCCL calls `ibv_reg_mr()` (or `ibv_reg_dmabuf_mr()`) on the GPU virtual address. The RDMA core in the kernel must turn that address into bus addresses the NIC can DMA to. It cannot use the normal page-pinning path, because the memory is not host RAM, so one of two mechanisms steps in:
+   - **Peer memory (`nvidia-peermem`)** — a kernel module shipped with the NVIDIA driver (successor to `nv_peer_mem`) that registers as a *peer-memory client* of the MOFED/DOCA-OFED `ib_core`. When `ib_core` sees an address it does not own, it asks the peer clients. nvidia-peermem claims it, pins the GPU pages with `nvidia_p2p_get_pages()`, and returns their physical addresses. `lsmod | grep nvidia_peermem` must show it loaded on MOFED/DOCA-OFED systems.
+   - **DMA-BUF** — the upstream Linux mechanism (RDMA support in kernel 5.12+, the NVIDIA *open* kernel driver, recent rdma-core). CUDA exports the allocation as a dma-buf file descriptor, and the RDMA stack imports it with `ibv_reg_dmabuf_mr()`. No out-of-tree module is needed. NCCL uses it automatically when available; `NCCL_DEBUG=INFO` prints `GDRDMA ... dmabuf` or `peermem`.
+3. **Map through BAR1.** The addresses returned point into the GPU's **BAR1** aperture, the PCIe window through which outside devices see GPU memory. Data-center GPUs expose a BAR1 large enough to map their HBM. Consumer GPUs often expose only 256 MB, which caps how much memory can be registered for GDR. Check with `nvidia-smi -q | grep -A3 BAR1`.
+4. **Program the NIC.** The bus addresses go into the NIC's memory translation table (MTT) under the memory region's key (`lkey`/`rkey`). The remote side learns the `rkey` and address during NCCL connection setup over the bootstrap channel.
+5. **DMA peer-to-peer.** When a remote RDMA write arrives, the ConnectX turns it into PCIe memory-write TLPs addressed to the GPU's BAR1. The PCIe switch routes them directly to the GPU's downstream port (Figure 1.3-4, path A). For sends (`NCCL_NET_GDR_READ=1`) the NIC issues PCIe reads to BAR1 instead.
+
+Requirements and pitfalls:
+
+- GPU and NIC under the same PCIe root complex or close enough (`NCCL_NET_GDR_LEVEL`). DGX places each NIC next to its GPU for this reason: `nvidia-smi topo -m` shows `PIX` for GPU *n* ↔ `mlx5_n`. A `PHB`/`SYS` pair exceeds the default level and GDR is silently skipped.
+- A kernel mechanism to pin GPU memory and expose it to the NIC driver: nvidia-peermem or DMA-BUF, as above.
 - `NCCL_NET_GDR_LEVEL` permitting the GPU↔NIC distance; `NCCL_NET_GDR_READ` for the send side.
-- With PCIe ACS enabled on switches/root ports, P2P can be forced through the root complex and GDR may fail; DGX OS disables ACS, and the Troubleshooting modules show `setpci` checks.
+- **ACS (Access Control Services).** With PCIe ACS enabled on switches/root ports, *Request Redirect* forces every peer-to-peer TLP up to the root complex for an IOMMU check, so P2P can be forced through the root complex and GDR may fail or crawl. DGX OS disables ACS, and the Troubleshooting modules show `setpci` checks.
+- **IOMMU.** With the IOMMU translating DMA addresses, peer addresses must be mapped as well; bare-metal GPU nodes run with the IOMMU off or in passthrough (`iommu=pt`). Inside VMs the hypervisor must support P2P (ATS/ACS configuration). Verify for your platform.
+- In containers the pod must see the RDMA device (`/dev/infiniband/*`) and the host must have nvidia-peermem or DMA-BUF support. That is why Kubernetes needs both the GPU Operator and the Network Operator ([Module 7.1](../07-kubernetes/01-network-operator-rdma-infiniband.md)).
 
 Verification:
 ```bash
@@ -171,19 +251,42 @@ ib_write_bw -d mlx5_0 --use_cuda=0 -a   # perftest built with CUDA: GPU-memory R
 
 **GPUDirect Storage (GDS).** Extends the same idea to storage: the NVMe or NIC (for NFS-over-RDMA, Lustre, GPFS, WEKA) DMAs file data straight into GPU memory via the `cuFile` API and the `nvidia-fs` kernel module. Benefits: lower CPU use and higher throughput for dataset loading and checkpoints. Check with `gdscheck -p` (part of the CUDA toolkit's GDS package). GDS traffic rides the *storage* fabric on the BlueField-3 ports, not the compute fabric.
 
-**GPUDirect P2P.** Intra-node GPU-to-GPU memory access over NVLink or PCIe; the mechanism behind NCCL's P2P transport. Not to be confused with GPUDirect RDMA (NIC↔GPU).
+**GPUDirect P2P.** Intra-node GPU-to-GPU memory access over NVLink or PCIe; the mechanism behind NCCL's P2P transport (`P2P/CUMEM`, `P2P/IPC` in the log).
+
+**Why the exam cares:** GDR needs *both* a pinning mechanism (nvidia-peermem or DMA-BUF) *and* a short GPU↔NIC PCIe path. If either is missing, NCCL falls back silently, and the only symptoms are a missing `GDRDMA` suffix and half the bandwidth.
 
 ### 2.6 SHARP: in-network reductions
 
 *Analogy:* instead of every student passing their exam score around the room to compute the class average, the teacher at the front (the switch) collects them all, adds them up once, and announces the result.
 
-**SHARP (Scalable Hierarchical Aggregation and Reduction Protocol)** moves the reduction step of AllReduce from the GPUs into the InfiniBand switch ASICs (Quantum/Quantum-2/Quantum-X800). Instead of each rank sending data around a ring, every rank sends its buffer once to its leaf; the leaf reduces, forwards partial results up a reduction tree to the spine (and root), and the result is multicast back down. Benefits: data crossing each link drops from ~2× to ~1× the buffer size, and latency is near-constant with rank count.
+**What it is.** **SHARP (Scalable Hierarchical Aggregation and Reduction Protocol)** moves the reduction step of AllReduce from the GPUs into the InfiniBand switch ASICs (Quantum/Quantum-2/Quantum-X800). Each switch contains **aggregation nodes (ANs)**: ALU and buffer resources that can sum data arriving on several ports and forward one result. A job's ranks are mapped onto a **SHARP tree**, a spanning tree over the fabric's switches (leaves at the bottom, a spine as the root). NCCL reaches SHARP through its **CollNet** algorithm.
 
 Components:
 - **SHARP Aggregation Manager (AM)** — runs with the Subnet Manager (on the UFM appliance or the opensm host, `sharp_am` service) and allocates aggregation trees and switch resources.
 - **SHARP daemon (`sharpd`)** on each compute node — brokers job requests to the AM.
 - **libsharp / libsharp_coll** — user-space library.
 - **NCCL SHARP (CollNet) plugin** — `nccl-rdma-sharp-plugins` provides `libnccl-net.so`; NCCL loads it and exposes the CollNet algorithm.
+
+**Why it exists.** A ring AllReduce makes every NIC send and receive 2(N−1)/N × S, nearly 2S, and its step count grows with N. With in-network reduction every host sends its buffer *once* (S) up to the leaf and receives the result *once* (S): the data crossing each host link drops from ~2× to ~1× the buffer size, and the number of steps is fixed by the tree depth (2–3 switch levels), not by N. For latency-bound small messages at thousands of ranks that is the dominant gain. For large messages it raises achievable algbw toward line rate. The trade-off is that switch resources are finite: the number of concurrent trees and outstanding operations per AN are limited, so only one or a few jobs can hold SHARP resources on a given tree (verify the limits per switch generation). SHARP helps reductions only: it does nothing for AllToAll.
+
+**How it works.** Figure 1.3-5 shows the order of events.
+
+![SHARP sequence: NCCL rank loads the CollNet plugin, sharp_coll_init goes to sharpd, which requests a tree from sharp_am, which programs leaf and spine aggregation nodes; then each rank sends once to the leaf AN, the leaf reduces and sends a partial up, the root reduces and multicasts the result down to every rank](diagrams/1.3-05-sharp-flow.svg)
+*Figure 1.3-5 — SHARP control setup (①–⑤, once per communicator) and data path (⑥–⑨, every AllReduce). Each rank's link carries S up and S down.*
+
+Setup, once per communicator:
+1. At `ncclCommInitRank`, NCCL finds the SHARP net plugin and enables CollNet (`NCCL_COLLNET_ENABLE=1`) (①).
+2. The plugin calls `sharp_coll_init` with the job's ranks and PKey; libsharp contacts the local `sharpd` (②).
+3. `sharpd` asks `sharp_am` for an aggregation tree (③). The AM checks that the job's partition (**PKey**) is allowed and that resources are free.
+4. The AM programs the leaf and spine ANs with management datagrams (④) and returns a tree handle and resource quota, such as outstanding operations and buffers (⑤).
+
+Data path, every AllReduce:
+1. Inside each node NCCL first reduces over NVLink (or NVLS), so each NIC carries one stream for its rail.
+2. Each rank sends its buffer once to its leaf AN with RDMA (⑥).
+3. The leaf reduces its inputs and forwards one partial result up the tree (⑦); the root reduces the partials.
+4. The result is multicast back down (⑧) and every rank receives the final sum (⑨).
+
+Small messages use the low-latency path; large buffers use **Streaming Aggregation (SAT)**, which pipelines the payload through the tree at line rate on Quantum-2 and later.
 
 Enable in NCCL:
 ```bash
@@ -201,20 +304,34 @@ Check with `NCCL_DEBUG=INFO` for lines mentioning `SHARP` / `CollNet` and with `
 
 *Analogy:* you need to post a letter to apartment 3 in the next building. Rather than walking to the central post office, you hand it to your neighbor in apartment 3 (over NVLink), who drops it in the apartment-3 mailbox that goes straight next door.
 
-**The problem.** On a rail-optimized fabric ([Module 1.2](02-dgx-superpod-basepod-reference-architectures.md)), GPU *n* of every node sits on leaf *n*. If NCCL's ring on node A exits via NIC 0 but the next hop ring position on node B is GPU 3 (NIC 3), the packet must cross a spine (leaf 0 → spine → leaf 3). Do that for every ring and the spine load returns.
+**What it is.** **PXN (PCI × NVLink)**, introduced in NCCL 2.12, lets a GPU send data to a *different* GPU's NIC in the same node over NVLink first, then out that NIC. It appears in the topology as the `PXN` path type and in the log as `NET/IB/<nic>(<origin-gpu>)`.
 
-**PXN (PCI × NVLink)**, introduced in NCCL 2.12, lets a GPU send data to a *different* GPU's NIC in the same node over NVLink first, then out that NIC. So GPU 3 on node A, needing to reach GPU 3 on node B, always sends through NIC 3 → leaf 3 → NIC 3 on node B — one hop — even if the ring logically runs through other GPUs. NCCL aggregates messages for the same destination rail on the NVLink side as well, reducing the number of network messages. Effects:
+**Why it exists.** On a rail-optimized fabric ([Module 1.2](02-dgx-superpod-basepod-reference-architectures.md)), GPU *n* of every node sits on leaf *n*. Any inter-node hop between *different* GPU indices is a cross-rail hop. If NCCL's ring on node A exits via NIC 7 but the next ring position on node B is GPU 0 (NIC 0), the packet must cross a spine: leaf 7 → spine → leaf 0, three switch hops instead of one (Figure 1.3-6, red path ①–④). Do that for every ring and the spine load returns, along with the extra latency and congestion exposure the rail design was meant to remove. AllToAll makes it worse: every GPU talks to every GPU index on every other node.
+
+**How it works.**
+
+![PXN path: GPU 7 on dgx01 moves data over NVLink to GPU 0, which sends via NIC 0 to Leaf 0 and NIC 0 on dgx02, one switch hop; the red dotted alternative goes NIC 7, Leaf 7, spine, Leaf 0, three hops](diagrams/1.3-06-pxn-path.svg)
+*Figure 1.3-6 — With PXN (green ① then blue ②–④), GPU 7's data crosses NVLink to GPU 0's memory and leaves on rail 0: one switch hop. Without PXN (red ①–④) it leaves on NIC 7 and crosses a spine.*
+
+1. NCCL decides that the destination (GPU 0 on dgx02) is on rail 0.
+2. GPU 7 writes the data over NVLink into a buffer in GPU 0's memory on its own node (Figure 1.3-6, green ①).
+3. The proxy thread responsible for NIC 0 posts the RDMA write from that buffer using GPUDirect RDMA (blue ②).
+4. The packet crosses Leaf 0 only (③) and lands in GPU 0 on dgx02 (④).
+
+So GPU 7 on node A, needing to reach GPU 0 on node B, always sends through NIC 0 → leaf 0 → NIC 0 on node B, one hop, even if the ring logically runs through other GPUs. NCCL also aggregates messages for the same destination rail on the NVLink side, which reduces the number of network messages. Effects:
 - Inter-node traffic stays on its rail; spine utilization drops.
-- Fewer, larger network sends; better small-message performance.
+- Fewer, larger network sends; better small-message and AllToAll performance.
 - Requires NVLink between the GPUs in the node (true on DGX/HGX) and the NIC-per-GPU layout.
 
 `NCCL_CROSS_NIC=0` further tells NCCL to prefer rings whose endpoints use the same NIC index on both ends. On a rail-optimized fabric, `NCCL_DEBUG=INFO` with `NCCL_DEBUG_SUBSYS=GRAPH` shows rings with matching NIC indices and `PXN` in the channel description.
 
 **Why this matters for you.** If PXN is off (older NCCL, NVLink down, `NCCL_PXN_DISABLE=1`) or rails are mis-cabled (NIC 2 of one node landing on leaf 5), you will see unexpected spine traffic and lower busbw even though every link is up. A topology check that cabling matches the rail plan (`iblinkinfo` per leaf, or NetQ topology) is a prerequisite before blaming NCCL.
 
+**Why the exam cares:** PXN = NVLink first, then the destination rail's NIC; it is what makes a rail-optimized fabric one hop for any GPU pair, and it depends on healthy NVLink.
+
 ## 3. Live-style walkthrough — all_reduce_perf with NCCL_DEBUG=INFO, line by line
 
-Let's run a two-node, 16-GPU all-reduce on an InfiniBand SU and read the log the way an instructor would at the whiteboard. Every block of output below is annotated: what the line means, and what "good" looks like.
+Let's run a two-node, 16-GPU all-reduce on an InfiniBand SU and read the log the way an instructor would at the whiteboard. Every block of output below is annotated: what the line means, and what "good" looks like. Keep the §2 figures open: the log walks top to bottom through Figure 1.3-1 (bootstrap → topology → transports), then shows the rings and trees of Figures 1.3-2 and 1.3-3, the GPUDirect path of Figure 1.3-4 and the PXN hop of Figure 1.3-6.
 
 **Step 1 — pre-flight on both nodes.** Never launch NCCL before you know what the hardware looks like.
 
@@ -249,21 +366,21 @@ mpirun -np 16 -H dgx01:8,dgx02:8 --bind-to none \         # 16 ranks: 8 per node
 ```text
 dgx01:21034:21034 [0] NCCL INFO Bootstrap : Using enp225s0np0:10.10.1.11<0>
 ```
-*Instructor note:* NCCL picked the bootstrap interface you named and shows its IP. If this line shows `docker0` or `lo`, `NCCL_SOCKET_IFNAME` is wrong and the job will hang at init — the single most common NCCL failure.
+*Instructor note:* this is the bootstrap box at the top of Figure 1.3-1 (§2.3, step 1). NCCL picked the bootstrap interface you named and shows its IP. If this line shows `docker0` or `lo`, `NCCL_SOCKET_IFNAME` is wrong and the job will hang at init — the single most common NCCL failure.
 
 ```text
 dgx01:21034:21034 [0] NCCL INFO NET/Plugin : No plugin found (libnccl-net.so), using internal implementation
 dgx01:21034:21034 [0] NCCL INFO cudaDriverVersion 12040
 dgx01:21034:21034 [0] NCCL INFO NCCL version 2.21.5+cuda12.4
 ```
-*Note:* no external plugin loaded. That is expected here; on a SHARP-enabled run you would instead see `NET/Plugin: Loaded net plugin SHARP`.
+*Note:* no external plugin loaded. That is expected here; on a SHARP-enabled run you would instead see `NET/Plugin: Loaded net plugin SHARP`, which is step ① of Figure 1.3-5, followed by the CollNet setup ②–⑤.
 
 ```text
 dgx01:21034:21034 [0] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB [1]mlx5_1:1/IB [2]mlx5_2:1/IB [3]mlx5_3:1/IB [4]mlx5_4:1/IB [5]mlx5_5:1/IB [6]mlx5_6:1/IB [7]mlx5_7:1/IB [RO]; OOB enp225s0np0:10.10.1.11<0>
 dgx01:21034:21034 [0] NCCL INFO Using non-device net plugin version 0
 dgx01:21034:21034 [0] NCCL INFO Using network IB
 ```
-*Watch this line.* Eight HCAs, indices 0–7, all `/IB` (link layer InfiniBand; on Spectrum-X they would read `/RoCE`). The `^mlx5_8,mlx5_9` exclusion worked: no BlueField ports listed. `[RO]` indicates PCIe relaxed ordering enabled. **If this line said `NET/Socket`**, NCCL found no usable RDMA device — stop and check `/dev/infiniband`, drivers, or your `NCCL_IB_HCA` string.
+*Watch this line.* This is NCCL choosing the NET / IB plugin column of Figure 1.3-1. Eight HCAs, indices 0–7, all `/IB` (link layer InfiniBand; on Spectrum-X they would read `/RoCE`). The `^mlx5_8,mlx5_9` exclusion worked: no BlueField ports listed. `[RO]` indicates PCIe relaxed ordering enabled. **If this line said `NET/Socket`**, NCCL found no usable RDMA device — stop and check `/dev/infiniband`, drivers, or your `NCCL_IB_HCA` string.
 
 **Step 4 — the topology and graph block.** This is where NCCL tells you which transport it chose for every pair.
 
@@ -274,7 +391,7 @@ dgx01:21034:21101 [0] NCCL INFO Setting affinity for GPU 0 to 0-55,112-167
 dgx01:21034:21101 [0] NCCL INFO NVLS multicast support is available on dev 0
 dgx01:21034:21101 [0] NCCL INFO comm 0x55d1c8f0 rank 0 nRanks 16 nNodes 2 localRanks 8 localRank 0 MNNVL 0
 ```
-*Note:* `nNodes 2 localRanks 8` confirms the launcher placed 8 ranks per node. `NVLS multicast support is available` means NVSwitch in-switch reduction is on for the intra-node phase. `MNNVL 0` = no multi-node NVLink (that would be GB200 NVL72).
+*Note:* this is the topology-discovery step (§2.3, step 2). `nNodes 2 localRanks 8` confirms the launcher placed 8 ranks per node. `NVLS multicast support is available` means NVSwitch in-switch reduction is on for the intra-node phase. `MNNVL 0` = no multi-node NVLink (that would be GB200 NVL72).
 
 ```text
 dgx01:21034:21101 [0] NCCL INFO Channel 00/16 :    0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
@@ -282,19 +399,19 @@ dgx01:21034:21101 [0] NCCL INFO Channel 01/16 :    0   7   6   5   4   3   2   1
 ...
 dgx01:21034:21101 [0] NCCL INFO Trees [0] 1/8/-1->0->-1 [1] 1/-1/-1->0->8 ...
 ```
-*Instructor note:* 16 channels (rings). Channel 00 runs 0→1→…→7 inside dgx01, then crosses to 8 (dgx02 GPU 0) and continues. Watch the inter-node hop: rank 7 → rank 8. Without PXN, GPU 7 would send on NIC 7 to GPU 0's NIC 0 on dgx02 — a cross-rail spine hop. The `Trees` line shows the double binary tree: rank 0's parent is −1 (root) in tree 0 with children 1 and 8.
+*Instructor note:* 16 channels (rings), each one a copy of the ring in Figure 1.3-2 running on its own slice of the buffer. Channel 00 runs 0→1→…→7 inside dgx01, then crosses to 8 (dgx02 GPU 0) and continues. Watch the inter-node hop: rank 7 → rank 8. Without PXN, GPU 7 would send on NIC 7 to GPU 0's NIC 0 on dgx02 — a cross-rail spine hop. The `Trees` line shows the double binary tree of Figure 1.3-3, in the format `children->rank->parent`: in tree 0 rank 0 has children 1 and 8 and parent −1 (it is the root); in tree 1 its child is 1 and its parent is 8.
 
 ```text
 dgx01:21034:21101 [0] NCCL INFO Channel 00/0 : 0[0] -> 1[1] via P2P/CUMEM
 dgx01:21034:21101 [0] NCCL INFO Channel 01/0 : 0[0] -> 7[7] via P2P/CUMEM
 ```
-*Good.* Intra-node pairs use `P2P/CUMEM` — NVLink with CUDA VMM memory. `P2P/IPC` on older stacks is also fine. `SHM` here would mean NVLink or PCIe P2P is broken (ACS, IOMMU, or a failed NVLink).
+*Good.* Intra-node pairs use `P2P/CUMEM`, the P2P column of Figure 1.3-1: NVLink with CUDA VMM memory. `P2P/IPC` on older stacks is also fine. `SHM` here would mean NVLink or PCIe P2P is broken (ACS, IOMMU, or a failed NVLink).
 
 ```text
 dgx02:18877:18940 [0] NCCL INFO Channel 00/0 : 7[7] -> 8[0] [receive] via NET/IB/0/GDRDMA
 dgx01:21034:21108 [7] NCCL INFO Channel 00/0 : 7[7] -> 8[0] [send] via NET/IB/0(7)/GDRDMA
 ```
-*This is the line the whole module is about.* Rank 7 (GPU 7 on dgx01) sends to rank 8 (GPU 0 on dgx02) via `NET/IB/0(7)` — NIC index **0**, but the `(7)` tells you the data originates on GPU 7. That is **PXN**: GPU 7 moved the data over NVLink to GPU 0's NIC so it leaves on rail 0 and arrives on rail 0 — a one-hop path on a rail-optimized fabric. On the receive side dgx02 shows `NET/IB/0/GDRDMA`: NIC 0 is DMA-ing directly into GPU 0's memory. Both sides say `GDRDMA`. If either said just `NET/IB/0` with no `GDRDMA`, GPUDirect is off on that side — check `nvidia_peermem` and `NCCL_NET_GDR_LEVEL`.
+*This is the line the whole module is about.* Rank 7 (GPU 7 on dgx01) sends to rank 8 (GPU 0 on dgx02) via `NET/IB/0(7)` — NIC index **0**, but the `(7)` tells you the data originates on GPU 7. That is **PXN**, exactly Figure 1.3-6: GPU 7 moved the data over NVLink to GPU 0 (green ①), NIC 0 sends it (blue ②) across Leaf 0 only (③) into GPU 0 on dgx02 (④). It leaves on rail 0 and arrives on rail 0, a one-hop path on a rail-optimized fabric. On the receive side dgx02 shows `NET/IB/0/GDRDMA`: NIC 0 is DMA-ing directly into GPU 0's memory, path A (①) of Figure 1.3-4. Both sides say `GDRDMA`. If either said just `NET/IB/0` with no `GDRDMA`, GPUDirect is off on that side and traffic is taking the bounce path ②–⑤ of Figure 1.3-4 — check `nvidia_peermem` and `NCCL_NET_GDR_LEVEL`.
 
 ```text
 dgx01:21034:21101 [0] NCCL INFO Connected all rings
@@ -314,11 +431,11 @@ dgx01:21034:21101 [0] NCCL INFO comm 0x55d1c8f0 rank 0 nranks 16 ... - Init COMP
   1073741824   268435456  float   sum    -1   5978  179.6  336.8      0   5961  180.1  337.7      0
   2147483648   536870912  float   sum    -1  11712  183.4  343.8      0  11690  183.7  344.5      0
   4294967296  1073741824  float   sum    -1  23201  185.1  347.1      0  23160  185.5  347.8      0
-  8589934592  2147483648  float   sum    -1  46213  185.9  371.8      0  46180  186.0  372.0      0
+  8589934592  2147483648  float   sum    -1  46213  185.9  348.5      0  46180  186.0  348.8      0
 # Out of bounds values : 0 OK
-# Avg bus bandwidth    : 350.12
+# Avg bus bandwidth    : 344.05
 ```
-*Instructor note:* take the 8 GB row. algbw 185.9 GB/s is what the application feels. busbw = algbw × 2(N−1)/N = 185.9 × 2 × 15/16 = 348.6 — the tool prints 371.8 because its correction is computed per the exact algorithm mix (and NVLS changes the intra-node share); treat the printed busbw as authoritative. Compare busbw to the per-node injection ceiling: 8 × 50 GB/s = 400 GB/s. 372 GB/s is 93 % — this is "good" for 2 nodes. `#wrong 0` means `-c` correctness passed. If busbw were ~190, suspect GDR off (host bounce buffers halve it). If it were ~40, you are on `NET/Socket`.
+*Instructor note:* take the 8 GB row. algbw = 8,589,934,592 B ÷ 46,213 µs = 185.9 GB/s, what the application feels. busbw = algbw × 2(N−1)/N = 185.9 × 2 × 15/16 = 348.5, exactly what the tool prints: nccl-tests applies the fixed per-collective factor from §2.4 and does not model NVLS or the intra/inter-node split. Compare busbw to the per-node injection ceiling: 8 × 50 GB/s = 400 GB/s. 348.5 GB/s is 87 %, above the 85 % acceptance line — "good" for 2 nodes, and every row climbs toward it as messages grow, which is the ring's bandwidth term taking over from its latency term (§2.2). `#wrong 0` means `-c` correctness passed. If busbw were ~190, suspect GDR off (host bounce buffers halve it). If it were ~40, you are on `NET/Socket`.
 
 **Step 6 — prove rail alignment from the log alone.**
 
@@ -331,7 +448,7 @@ grep -h 'GDRDMA' /var/log/nccl/dgx0*.log | wc -l ; grep -h 'via NET/IB' /var/log
 # EXPECT: the two counts are equal — every network channel is GPUDirect.
 ```
 
-That is the complete read: bootstrap interface, 8 IB HCAs, `P2P` intra-node, `NET/IB/n/GDRDMA` inter-node with PXN rail alignment, `Init COMPLETE`, busbw within ~10 % of injection bandwidth.
+That is the complete read: bootstrap interface, 8 IB HCAs, `P2P` intra-node, `NET/IB/n/GDRDMA` inter-node with PXN rail alignment, `Init COMPLETE`, busbw within ~15 % of injection bandwidth. Mapped to the figures: Figure 1.3-1 top to bottom for init, Figures 1.3-2/1.3-3 for the channel and tree lines, Figure 1.3-4 path A and Figure 1.3-6 steps ①–④ for every inter-node channel.
 
 ## 4. Troubleshooting / common gotchas
 

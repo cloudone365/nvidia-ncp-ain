@@ -14,48 +14,59 @@
 <g><title>switches + HCAs</title><rect x="1340.0" y="140" width="220" height="64" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="1450.0" y="167.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#1f2937" text-anchor="middle">switches + HCAs</text>
 <text x="1450.0" y="192.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="400" fill="#5f6b7a" text-anchor="middle">QM9700, nlp01 mlx5_0</text>
-<line x1="200" y1="204" x2="200" y2="940" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
-<line x1="560" y1="204" x2="560" y2="940" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
-<line x1="880" y1="204" x2="880" y2="940" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
-<line x1="1180" y1="204" x2="1180" y2="940" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
-<line x1="1450" y1="204" x2="1450" y2="940" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="200" y1="204" x2="200" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="560" y1="204" x2="560" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="880" y1="204" x2="880" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="1180" y1="204" x2="1180" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<line x1="1450" y1="204" x2="1450" y2="900" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<rect x="210" y="219.5" width="644" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="200" y1="250" x2="560" y2="250" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="214" y="241" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">POST /ufmRest/app/tokens  (basic auth once) -&gt; token for later calls</text>
+<text x="214" y="235.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">POST /ufmRest/app/tokens  (basic auth once) -&gt; token for later calls</text>
 <circle cx="170" cy="250" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="170" y="256" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<rect x="210" y="265.5" width="971" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="200" y1="296" x2="560" y2="296" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="214" y="287" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">POST /ufmRest/resources/pkeys {pkey:0x0a02, ip_over_ib:true, mtu_limit:4, guids:[...], membership:full}</text>
+<text x="214" y="281.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">POST /ufmRest/resources/pkeys {pkey:0x0a02, ip_over_ib:true, mtu_limit:4, guids:[...], membership:full}</text>
 <circle cx="170" cy="296" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="170" y="302" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<rect x="570" y="311.5" width="569" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="560" y1="342" x2="880" y2="342" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="574" y="333" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">validate (hex GUIDs without 0x), write partition to model DB</text>
+<text x="574" y="327.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">validate (hex GUIDs without 0x), write partition to model DB</text>
+<rect x="890" y="357.5" width="616" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="880" y1="388" x2="1180" y2="388" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="894" y="379" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">regenerate /opt/ufm/files/conf/opensm/partitions.conf + signal SM</text>
+<text x="894" y="373.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">regenerate /opt/ufm/files/conf/opensm/partitions.conf + signal SM</text>
 <circle cx="850" cy="388" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="850" y="394" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<rect x="1190" y="403.5" width="354" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="1180" y1="434" x2="1450" y2="434" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1194" y="425" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet(PKeyTable) to member ports; SubnSet(MFT) for the IPoIB multicast group</text>
+<text x="1194" y="419.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">SubnSet PKeyTable + MFT (IPoIB mcast)</text>
 <circle cx="1150" cy="434" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="1150" y="440" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<rect x="1220" y="455" width="288" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="1450" y1="480" x2="1180" y2="480" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1194" y="471" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">GetResp — tables programmed within one sweep (seconds)</text>
+<text x="1224" y="471" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">GetResp: done within one sweep</text>
+<rect x="240" y="501" width="560" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="560" y1="526" x2="200" y2="526" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="214" y="517" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">HTTP 200/201 (returned as soon as the DB write is accepted)</text>
+<text x="244" y="517" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">HTTP 200/201 (returned as soon as the DB write is accepted)</text>
 <g><rect x="1320" y="568" width="260" height="70" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1332" y="592" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">nlp01$ cat .../ports/1/pkeys/*</text>
 <text x="1332" y="611" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">0x8a02 now present</text>
 <text x="1332" y="630" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">echo 0x8a02 &gt; ib0/create_child</text>
+<rect x="210" y="635.5" width="653" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="200" y1="666" x2="560" y2="666" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="214" y="657" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">GET /ufmRest/resources/pkeys/0x0a02?guids_data=true  — verify members</text>
+<text x="214" y="651.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">GET /ufmRest/resources/pkeys/0x0a02?guids_data=true  — verify members</text>
 <circle cx="170" cy="666" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="170" y="672" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<rect x="210" y="681.5" width="812" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="200" y1="712" x2="560" y2="712" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="214" y="703" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">GET /ufmRest/resources/ports | resources/links | app/events  — inventory, peers, audit</text>
+<text x="214" y="697.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">GET /ufmRest/resources/ports | resources/links | app/events  — inventory, peers, audit</text>
+<rect x="210" y="727.5" width="896" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="200" y1="758" x2="560" y2="758" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="214" y="749" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">POST /ufmRest/actions {action:disable_port, object_ids:[guid_port]}  — same path for operations</text>
+<text x="214" y="743.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">POST /ufmRest/actions {action:disable_port, object_ids:[guid_port]}  — same path for operations</text>
 <circle cx="170" cy="758" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="170" y="764" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
+<rect x="890" y="779" width="457" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="880" y1="804" x2="1450" y2="804" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="894" y="795" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">in-band MAD (PortInfo PortState=Down) or MLNX-OS call for managed switches</text>
+<text x="894" y="795" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">PortInfo PortState=Down via MAD (or MLNX-OS CLI)</text>
 <text x="60" y="950" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">1 authenticate  2 create partition  3 UFM regenerates the SM config  4 SM programs tables in one sweep  5 read back  6 actions use the same API</text>
 </svg>

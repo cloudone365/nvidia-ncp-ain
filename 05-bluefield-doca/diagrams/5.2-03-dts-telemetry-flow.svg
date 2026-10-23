@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1120" width="100%" role="img">
+<title>DOCA Telemetry Service (DTS): NIC counters exported from the Arm</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="1120" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">DOCA Telemetry Service (DTS): NIC counters exported from the Arm</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">DTS collects on the card and exports via Prometheus, Fluent Bit or OpenTelemetry — the NIC half of the congestion story</text>
+<g><title>ConnectX-7 + DPA</title>
+<rect x="40.0" y="150" width="320" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="200" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">ConnectX-7 + DPA</text>
+<text x="200" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">counters on the SuperNIC</text>
+</g>
+<line x1="200" y1="230" x2="200" y2="950" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>DTS container (Arm)</title>
+<rect x="440.0" y="150" width="320" height="80" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="600" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">DTS container (Arm)</text>
+<text x="600" y="211" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">doca-telemetry</text>
+</g>
+<line x1="600" y1="230" x2="600" y2="950" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>Exporters</title>
+<rect x="840.0" y="150" width="320" height="80" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1000" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Exporters</text>
+<text x="1000" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">Prometheus · Fluent Bit · OTLP</text>
+</g>
+<line x1="1000" y1="230" x2="1000" y2="950" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>NetQ / Grafana</title>
+<rect x="1230.0" y="150" width="300" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1380" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">NetQ / Grafana</text>
+<text x="1380" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">fleet view</text>
+</g>
+<line x1="1380" y1="230" x2="1380" y2="950" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>config: dts_config.ini</title>
+<rect x="410" y="262" width="380" height="64" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="600" y="288" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">config: dts_config.ini</text>
+<text x="600" y="310" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">(providers, export targets)</text>
+</g>
+<g><title>Step 1</title><circle cx="384" cy="294" r="16" fill="#1f2937"/>
+<text x="384" y="300" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<polyline points="200,410 600,410" fill="none" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>Step 2</title><circle cx="224" cy="386" r="16" fill="#1f2937"/>
+<text x="224" y="392" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<text x="250" y="398" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">pause · CNP · ECN · thermal</text>
+<text x="250" y="398" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">pause · CNP · ECN · thermal</text>
+<text x="250" y="376" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">providers poll NIC + DPA counters:</text>
+<text x="250" y="376" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">providers poll NIC + DPA counters:</text>
+<g><title>apps (e.g. HBN) publish through</title>
+<rect x="410" y="440" width="380" height="64" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="600" y="466" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">apps (e.g. HBN) publish through</text>
+<text x="600" y="488" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">the DOCA Telemetry API</text>
+</g>
+<g><title>Step 3</title><circle cx="384" cy="472" r="16" fill="#1f2937"/>
+<text x="384" y="478" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<g><title>aggregate into a schema;</title>
+<rect x="410" y="530" width="380" height="64" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="600" y="556" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">aggregate into a schema;</text>
+<text x="600" y="578" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">optional on-card buffering</text>
+</g>
+<g><title>Step 4</title><circle cx="384" cy="562" r="16" fill="#1f2937"/>
+<text x="384" y="568" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<polyline points="600,670 1000,670" fill="none" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>Step 5</title><circle cx="624" cy="646" r="16" fill="#1f2937"/>
+<text x="624" y="652" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<text x="650" y="658" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">(Fluent Bit, OTLP)</text>
+<text x="650" y="658" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">(Fluent Bit, OTLP)</text>
+<text x="650" y="636" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">expose /metrics or push</text>
+<text x="650" y="636" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">expose /metrics or push</text>
+<polyline points="1000,750 1380,750" fill="none" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>Step 6</title><circle cx="1024" cy="726" r="16" fill="#1f2937"/>
+<text x="1024" y="732" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<text x="1050" y="738" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">scrape / ingest, per rail</text>
+<text x="1050" y="738" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">scrape / ingest, per rail</text>
+<g><title>correlate: switch PFC tx on swp12</title>
+<rect x="1100" y="780" width="452" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1326" y="806" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">correlate: switch PFC tx on swp12</text>
+<text x="1326" y="828" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">↔ host rx_prio3_pause, same second</text>
+</g>
+<g><title>Step 7</title><circle cx="1074" cy="812" r="16" fill="#1f2937"/>
+<text x="1074" y="818" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<polyline points="1380,910 200,910" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 8</title><circle cx="224" cy="886" r="16" fill="#1f2937"/>
+<text x="224" y="892" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text></g>
+<text x="250" y="898" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">action: fix the slow host, or tune ECN thresholds — not PFC</text>
+<text x="250" y="898" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">action: fix the slow host, or tune ECN thresholds — not PFC</text>
+<g><title>DTS is a DOCA service (container on the Arm); DOCA Telemetry is the library apps publish with.</title>
+<rect x="48" y="980" width="1000" height="120" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="62" y="1023" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">DTS is a DOCA service (container on the Arm); DOCA Telemetry is the library apps publish with.</text>
+<text x="62" y="1045" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Check: crictl ps | grep -i telemetry · curl -s localhost:9100/metrics | grep -iE 'pfc|ecn|cnp'</text>
+<text x="62" y="1067" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Config paths and the metrics port are release-specific — verify in the DTS guide.</text>
+</g>
+<g><title>Legend</title><rect x="1100" y="990" width="452" height="84" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1116" y1="1016" x2="1176" y2="1016" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1192" y="1022" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Telemetry</text>
+<line x1="1116" y1="1046" x2="1176" y2="1046" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1192" y="1052" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Operator action</text>
+</g>
+</svg>

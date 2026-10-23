@@ -4,43 +4,45 @@
 <g><title>ibv_context  —  ibv_open_device(mlx5_0): /dev/infiniband/uverbs0, doorbell page mapped</title><rect x="70" y="200" width="1060" height="620" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="0.45"/></g>
 <text x="86" y="230" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">ibv_context  —  ibv_open_device(mlx5_0): /dev/infiniband/uverbs0, doorbell page mapped</text>
 <g><title>Protection Domain (PD)  ibv_alloc_pd — the fence: objects from two PDs cannot be mixed</title><rect x="100" y="250" width="640" height="540" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="0.45"/></g>
-<text x="116" y="280" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start">Protection Domain (PD)  ibv_alloc_pd — the fence: objects from two PDs cannot be mixed</text>
+<text x="116" y="280" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start">Protection Domain (PD) — ibv_alloc_pd: the fence</text>
 <g><title>Memory Region (MR)</title><rect x="130" y="300" width="280" height="130" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="270.0" y="330.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">Memory Region (MR)</text>
-<text x="270.0" y="353.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_reg_mr(pd, buf, len, access)</text>
-<text x="270.0" y="373.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">lkey (local SGEs)</text>
-<text x="270.0" y="393.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">rkey (handed to peers)</text>
-<text x="270.0" y="413.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">pins pages, builds MTT</text>
+<text x="270.0" y="353.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_reg_mr(pd,buf,len,access)</text>
+<text x="270.0" y="373.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">lkey (local SGEs)</text>
+<text x="270.0" y="393.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">rkey (handed to peers)</text>
+<text x="270.0" y="413.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">pins pages, builds MTT</text>
 <g><title>Queue Pair (QP)</title><rect x="430" y="300" width="280" height="130" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="570.0" y="330.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">Queue Pair (QP)</text>
-<text x="570.0" y="353.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_create_qp: SQ + RQ</text>
-<text x="570.0" y="373.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">QPN 24-bit, type RC/UC/UD</text>
-<text x="570.0" y="393.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">state machine RESET..RTS</text>
-<text x="570.0" y="413.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ordering is per QP</text>
+<text x="570.0" y="353.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_create_qp: SQ + RQ</text>
+<text x="570.0" y="373.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">QPN 24-bit, type RC/UC/UD</text>
+<text x="570.0" y="393.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">state machine RESET..RTS</text>
+<text x="570.0" y="413.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ordering is per QP</text>
 <g><title>Shared Receive Queue (SRQ)</title><rect x="130" y="460" width="280" height="100" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="270.0" y="495.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">Shared Receive Queue (SRQ)</text>
-<text x="270.0" y="518.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">one RQ for many QPs</text>
-<text x="270.0" y="538.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">needed by XRC; UCX/MPI use it</text>
+<text x="270.0" y="518.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">one RQ for many QPs</text>
+<text x="270.0" y="538.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">needed by XRC; UCX/MPI use it</text>
 <g><title>Address Handle (AH)</title><rect x="430" y="460" width="280" height="100" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="570.0" y="495.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">Address Handle (AH)</text>
-<text x="570.0" y="518.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_create_ah: DLID/DGID, SL, port</text>
-<text x="570.0" y="538.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">UD destinations only</text>
+<text x="570.0" y="518.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_create_ah: DLID/DGID, SL</text>
+<text x="570.0" y="538.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">UD destinations only</text>
 <g><title>Work Requests -&gt; WQEs</title><rect x="130" y="590" width="580" height="170" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
-<text x="420.0" y="640.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">Work Requests -&gt; WQEs</text>
-<text x="420.0" y="663.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_post_send / ibv_post_recv write a WQE into the SQ/RQ ring:</text>
-<text x="420.0" y="683.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">opcode, SGE list {addr, length, lkey}, flags (SIGNALED, INLINE, FENCE),</text>
-<text x="420.0" y="703.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">for RDMA: wr.rdma {remote_addr, rkey}; for UD: wr.ud {ah, remote_qpn, qkey}</text>
-<text x="420.0" y="723.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">then ring the doorbell (one MMIO write)</text>
+<text x="420.0" y="626" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">Work Requests -&gt; WQEs</text>
+<text x="420" y="662" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_post_send / ibv_post_recv write a WQE into the SQ / RQ ring:</text>
+<text x="420" y="682" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">opcode, SGE list {addr, length, lkey},</text>
+<text x="420" y="702" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">flags (SIGNALED, INLINE, FENCE);</text>
+<text x="420" y="722" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">RDMA ops add wr.rdma {remote_addr, rkey};</text>
+<text x="420" y="742" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">UD adds wr.ud {ah, remote_qpn, qkey}; then ring the doorbell</text>
 <g><title>Completion Queue (CQ)</title><rect x="770" y="300" width="340" height="160" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="940.0" y="345.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">Completion Queue (CQ)</text>
-<text x="940.0" y="368.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_create_cq(ctx, cqe, ...)</text>
-<text x="940.0" y="388.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">HCA writes CQEs: status, opcode,</text>
-<text x="940.0" y="408.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">byte_len, wr_id, imm_data</text>
-<text x="940.0" y="428.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_poll_cq reads them (no syscall)</text>
+<text x="940.0" y="368.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_create_cq(ctx, cqe, ...)</text>
+<text x="940.0" y="388.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">HCA writes CQEs: status, opcode,</text>
+<text x="940.0" y="408.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">byte_len, wr_id, imm_data</text>
+<text x="940.0" y="428.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_poll_cq reads them (no syscall)</text>
 <g><title>Completion Channel</title><rect x="770" y="500" width="340" height="100" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="940.0" y="535.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">Completion Channel</text>
-<text x="940.0" y="558.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">fd for blocking wait:</text>
-<text x="940.0" y="578.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_req_notify_cq + ibv_get_cq_event</text>
+<text x="940.0" y="558.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">fd for blocking wait:</text>
+<text x="940.0" y="578.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ibv_req_notify_cq + ibv_get_cq_event</text>
+<rect x="718" y="334" width="43" height="21" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="710" y1="365" x2="770" y2="365" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
 <text x="740" y="350" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">CQEs</text>
 <line x1="940" y1="500" x2="940" y2="460" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>

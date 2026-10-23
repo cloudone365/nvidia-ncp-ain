@@ -10,105 +10,102 @@
 <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
 </defs>
 <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
-<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Cumulus management plane: eth0 in the mgmt VRF, AAA, NTP/syslog/SNMP, NetQ agent</text>
-<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Every out-of-band service must be told 'vrf mgmt'; the default VRF holds the fabric routing table and never carries management traffic</text>
-<g><title>leaf01 (Cumulus Linux 5.x)</title><rect x="60" y="150" width="760" height="620" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
-<text x="74" y="178" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">leaf01 (Cumulus Linux 5.x)</text>
-<g><title>VRF mgmt routing table: mgmt</title><rect x="90" y="200" width="330" height="230" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="255.0" y="271.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">VRF mgmt</text>
-<text x="255.0" y="293.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">routing table: mgmt</text>
-<text x="255.0" y="319.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">eth0 10.10.1.11/24</text>
-<text x="255.0" y="337.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">default route via 10.10.1.1</text>
-<text x="255.0" y="355.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">ip vrf exec mgmt &lt;cmd&gt;</text>
-<text x="255.0" y="373.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv show vrf mgmt router rib ipv4</text>
+<text x="48" y="72" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">Cumulus management plane: eth0 in the mgmt VRF, AAA, NTP/syslog/SNMP, NetQ agent</text>
+<text x="48" y="104" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">Every out-of-band service must be told 'vrf mgmt'; the default VRF holds the fabric routing table and never carries management traffic</text>
+<rect x="48" y="140" width="800" height="628" rx="12" fill="none" stroke="#6b7280" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="66" y="172" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#5f6b7a" text-anchor="start">leaf01 (Cumulus Linux 5.x) — one kernel, separate l3mdev routing tables</text>
+<g><title>VRF default (+ tenant VRFs)</title><rect x="70" y="192" width="360" height="200" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="250.0" y="244.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">VRF default (+ tenant VRFs)</text>
+<text x="250.0" y="267.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">main table + one table per VRF</text>
+<text x="250.0" y="289.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1…swp64, lo 10.0.0.11</text>
+<text x="250.0" y="311.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">BGP unnumbered, EVPN, RoCE</text>
+<text x="250.0" y="333.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">a leaked 0/0 here can never</text>
+<text x="250.0" y="355.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">hijack SSH: eth0 is not in it</text>
 </g>
-<g><title>VRF default (+ tenant VRFs) fabric routing table</title><rect x="460" y="200" width="330" height="230" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="625.0" y="271.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">VRF default (+ tenant VRFs)</text>
-<text x="625.0" y="293.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">fabric routing table</text>
-<text x="625.0" y="319.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1…swp64, lo 10.0.0.11</text>
-<text x="625.0" y="337.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">BGP unnumbered, EVPN, RoCE</text>
-<text x="625.0" y="355.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">a leaked 0/0 here can never</text>
-<text x="625.0" y="373.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">hijack SSH: eth0 is not in it</text>
+<g><title>VRF mgmt (l3mdev device)</title><rect x="466" y="192" width="360" height="200" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="646.0" y="244.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">VRF mgmt (l3mdev device)</text>
+<text x="646.0" y="267.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">routing table 1001 (mgmt)</text>
+<text x="646.0" y="289.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">eth0 10.10.1.11/24 enslaved to it</text>
+<text x="646.0" y="311.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">0.0.0.0/0 via 10.10.1.1</text>
+<text x="646.0" y="333.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ip vrf exec mgmt &lt;cmd&gt;</text>
+<text x="646.0" y="355.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv show vrf mgmt router rib ipv4</text>
 </g>
-<g><title>sshd / NVUE API TCP 22 / 8765</title><rect x="90" y="470" width="220" height="80" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="200.0" y="504.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">sshd / NVUE API</text>
-<text x="200.0" y="524.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">TCP 22 / 8765</text>
+<text x="448" y="432" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">Daemons and the VRF their sockets bind to (systemd &lt;svc&gt;@mgmt / ip vrf exec)</text>
+<g><title>switchd · frr</title><rect x="70" y="452" width="242" height="100" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="191.0" y="486.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">switchd · frr</text>
+<text x="191.0" y="508.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">data-plane daemons</text>
+<text x="191.0" y="530.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">→ VRF default</text>
 </g>
-<g><title>tacplus / pam_radius AAA client</title><rect x="330" y="470" width="220" height="80" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="440.0" y="494.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">tacplus / pam_radius</text>
-<text x="440.0" y="514.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">AAA client</text>
-<text x="440.0" y="538.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set system aaa tacacs vrf mgmt</text>
+<g><title>sshd / NVUE API</title><rect x="327" y="452" width="242" height="100" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="448.0" y="486.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">sshd / NVUE API</text>
+<text x="448.0" y="508.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">TCP 22 / 8765</text>
+<text x="448.0" y="530.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">→ VRF mgmt</text>
 </g>
-<g><title>chrony · rsyslog · snmpd per-VRF listeners</title><rect x="570" y="470" width="220" height="80" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="680.0" y="494.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">chrony · rsyslog · snmpd</text>
-<text x="680.0" y="514.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">per-VRF listeners</text>
-<text x="680.0" y="538.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set service &lt;svc&gt; mgmt …</text>
+<g><title>tacplus / pam_radius</title><rect x="584" y="452" width="242" height="100" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="705.0" y="486.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">tacplus / pam_radius</text>
+<text x="705.0" y="508.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">aaa tacacs vrf mgmt</text>
+<text x="705.0" y="530.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">→ VRF mgmt</text>
 </g>
-<g><title>netq-agent TCP 31980</title><rect x="90" y="580" width="220" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="200.0" y="604.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">netq-agent</text>
-<text x="200.0" y="624.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">TCP 31980</text>
-<text x="200.0" y="648.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">netq config add server … vrf mgmt</text>
+<g><title>chrony · rsyslog · snmpd</title><rect x="70" y="572" width="242" height="100" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="191.0" y="606.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">chrony · rsyslog · snmpd</text>
+<text x="191.0" y="628.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set service &lt;svc&gt; mgmt</text>
+<text x="191.0" y="650.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">→ VRF mgmt</text>
 </g>
-<g><title>ztp first boot only</title><rect x="330" y="580" width="220" height="80" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="440.0" y="604.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">ztp</text>
-<text x="440.0" y="624.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">first boot only</text>
-<text x="440.0" y="648.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">DHCP option 239 on eth0</text>
+<g><title>netq-agent</title><rect x="327" y="572" width="242" height="100" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="448.0" y="606.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">netq-agent</text>
+<text x="448.0" y="628.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">TCP 31980 · … vrf mgmt</text>
+<text x="448.0" y="650.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">→ VRF mgmt</text>
 </g>
-<g><title>switchd · frr data-plane daemons</title><rect x="570" y="580" width="220" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="680.0" y="604.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">switchd · frr</text>
-<text x="680.0" y="624.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">data-plane daemons</text>
-<text x="680.0" y="648.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">unaffected by mgmt VRF</text>
+<g><title>ztp (first boot only)</title><rect x="584" y="572" width="242" height="100" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="705.0" y="606.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">ztp (first boot only)</text>
+<text x="705.0" y="628.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">DHCP option 239 on eth0</text>
+<text x="705.0" y="650.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">→ VRF mgmt</text>
 </g>
-<line x1="255" y1="470" x2="255" y2="430" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<rect x="151" y="439" width="209" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="255" y="455" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">all five bind to VRF mgmt</text>
-<line x1="680" y1="470" x2="680" y2="430" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<rect x="630" y="439" width="101" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="680" y="455" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">default VRF</text>
-<g><title>OOB management switch (1GbE, separate network)</title><rect x="900" y="160" width="640" height="60" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="1220.0" y="195.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">OOB management switch (1GbE, separate network)</text>
+<text x="70" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">Shell commands run in the default VRF: ping 10.10.0.5 fails,</text>
+<text x="70" y="736" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">ip vrf exec mgmt ping 10.10.0.5 works.</text>
+<line x1="826" y1="296" x2="896" y2="296" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="861" y="322" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">eth0</text>
+<g><title>OOB management switch (1GbE, separate network)</title><rect x="900" y="262" width="652" height="66" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1226.0" y="302.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">OOB management switch (1GbE, separate network)</text>
 </g>
-<polyline points="255,200 255,185 760,185 900,190" fill="none" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<rect x="487" y="164" width="147" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="560" y="180" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">eth0 (1GbE) → OOB</text>
-<g><title>TACACS+ / RADIUS 10.10.0.5 / .6</title><rect x="940" y="250" width="600" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="1240.0" y="278.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">TACACS+ / RADIUS 10.10.0.5 / .6</text>
-<text x="1240.0" y="303.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">TCP 49 / UDP 1812</text>
+<line x1="920" y1="328" x2="920" y2="736" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5"/>
+<line x1="920" y1="381" x2="956" y2="381" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>TACACS+ / RADIUS 10.10.0.5 / .6</title><rect x="960" y="350" width="592" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1256.0" y="376.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">TACACS+ / RADIUS 10.10.0.5 / .6</text>
+<text x="1256.0" y="399.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">TCP 49 / UDP 1812</text>
 </g>
-<line x1="900" y1="285" x2="940" y2="285" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<g><title>NTP 10.10.0.10 · DNS 10.10.0.53</title><rect x="940" y="338" width="600" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="1240.0" y="366.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">NTP 10.10.0.10 · DNS 10.10.0.53</text>
-<text x="1240.0" y="391.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">UDP 123 / 53</text>
+<line x1="920" y1="453" x2="956" y2="453" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>NTP 10.10.0.10 · DNS 10.10.0.53</title><rect x="960" y="422" width="592" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1256.0" y="448.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">NTP 10.10.0.10 · DNS 10.10.0.53</text>
+<text x="1256.0" y="471.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">UDP 123 / 53</text>
 </g>
-<line x1="900" y1="373" x2="940" y2="373" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<g><title>syslog SIEM 10.10.0.20</title><rect x="940" y="426" width="600" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="1240.0" y="454.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">syslog SIEM 10.10.0.20</text>
-<text x="1240.0" y="479.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">UDP 514</text>
+<line x1="920" y1="525" x2="956" y2="525" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>syslog SIEM 10.10.0.20</title><rect x="960" y="494" width="592" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1256.0" y="520.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">syslog SIEM 10.10.0.20</text>
+<text x="1256.0" y="543.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">UDP 514</text>
 </g>
-<line x1="900" y1="461" x2="940" y2="461" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<g><title>SNMP manager 10.10.0.30</title><rect x="940" y="514" width="600" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="1240.0" y="542.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">SNMP manager 10.10.0.30</text>
-<text x="1240.0" y="567.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">UDP 161 / traps 162</text>
+<line x1="920" y1="597" x2="956" y2="597" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>SNMP manager 10.10.0.30</title><rect x="960" y="566" width="592" height="62" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1256.0" y="592.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">SNMP manager 10.10.0.30</text>
+<text x="1256.0" y="615.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">UDP 161 / traps 162</text>
 </g>
-<line x1="900" y1="549" x2="940" y2="549" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<g><title>NetQ server 10.10.0.100</title><rect x="940" y="602" width="600" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="1240.0" y="630.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">NetQ server 10.10.0.100</text>
-<text x="1240.0" y="655.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">TCP 31980 (agents) · 443 (UI)</text>
+<line x1="920" y1="669" x2="956" y2="669" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>NetQ server 10.10.0.100</title><rect x="960" y="638" width="592" height="62" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1256.0" y="664.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">NetQ server 10.10.0.100</text>
+<text x="1256.0" y="687.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">TCP 31980 (agents) · 443 (UI)</text>
 </g>
-<line x1="900" y1="637" x2="940" y2="637" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<g><title>Provisioning server 10.10.0.50</title><rect x="940" y="690" width="600" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="1240.0" y="718.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Provisioning server 10.10.0.50</text>
-<text x="1240.0" y="743.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">ZTP script, NVUE YAML, images (HTTP)</text>
+<line x1="920" y1="741" x2="956" y2="741" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>Provisioning server 10.10.0.50</title><rect x="960" y="710" width="592" height="62" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="1256.0" y="736.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Provisioning server 10.10.0.50</text>
+<text x="1256.0" y="759.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ZTP script, NVUE YAML, images (HTTP)</text>
 </g>
-<line x1="900" y1="725" x2="940" y2="725" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<line x1="900" y1="220" x2="900" y2="725" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5"/>
-<g><title>Note</title><rect x="60" y="790" width="760" height="70" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
-<text x="72" y="813" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Rule: eth0 lives in VRF mgmt (default on 4.x/5.x). Any service that reaches out of band needs a VRF knob;</text>
-<text x="72" y="832" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">if it 'silently does nothing', the VRF is the first thing to check (TACACS timeouts, Rotten NetQ agents, NTP '?').</text>
-<g><title>Legend</title><rect x="1110" y="790" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
-<line x1="1124" y1="816" x2="1184" y2="816" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<text x="1198" y="822" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
-<line x1="1124" y1="846" x2="1184" y2="846" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1198" y="852" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<g><title>Rule</title><rect x="48" y="790" width="1030" height="90" rx="8" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="64" y="822" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Rule: eth0 lives in VRF mgmt (default on 4.x/5.x). Every service that reaches out of band needs a VRF knob;</text>
+<text x="64" y="850" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">if it 'silently does nothing', check the VRF first (TACACS timeouts, rotten NetQ agents, NTP sources '?').</text>
+<g><title>Legend</title><rect x="1100" y="790" width="452" height="90" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1114" y1="816" x2="1170" y2="816" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1184" y="822" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / OOB traffic</text>
+<rect x="1114" y="835" width="56" height="20" rx="4" fill="#ffe9cc" stroke="#e07b00" stroke-width="2"/>
+<text x="1184" y="852" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Fabric / default VRF</text>
 </g>
 </svg>

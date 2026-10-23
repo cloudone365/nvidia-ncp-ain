@@ -71,11 +71,11 @@
 </g>
 <g><title>bridge VLAN table</title><rect x="48" y="650" width="600" height="226" rx="8" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
 <text x="64" y="678" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">nv show bridge domain br_default vlan (illustrative)</text>
-<text x="64" y="710" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">VLAN   Flags  Member ports</text>
-<text x="64" y="740" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">1      PVID   swp2s0        ← native</text>
-<text x="64" y="770" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">10     PVID   swp3, bond1   ← access</text>
-<text x="64" y="800" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">10,20         swp2s0        ← tagged</text>
-<text x="64" y="830" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">20     PVID   storage bond  ← access</text>
+<text x="64" y="710" font-family="'DejaVu Sans Mono', 'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">VLAN   Flags  Member ports</text>
+<text x="64" y="740" font-family="'DejaVu Sans Mono', 'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">1      PVID   swp2s0        ← native</text>
+<text x="64" y="770" font-family="'DejaVu Sans Mono', 'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">10     PVID   swp3, bond1   ← access</text>
+<text x="64" y="800" font-family="'DejaVu Sans Mono', 'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">10,20         swp2s0        ← tagged</text>
+<text x="64" y="830" font-family="'DejaVu Sans Mono', 'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">20     PVID   storage bond  ← access</text>
 <g><title>VRR and MLAG rules</title><rect x="664" y="650" width="640" height="226" rx="8" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
 <text x="680" y="680" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">VRR (active-active): both leaves own 10.1.10.254 + virtual</text>
 <text x="680" y="705" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">MAC; whichever leaf the host bond hashes to answers.</text>

@@ -134,8 +134,8 @@
 <text x="530" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
 </g>
 <text x="556" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">switchd sees netlink changes</text>
-<g><title>step 5</title><circle cx="800" cy="872" r="16" fill="#1f2937"/>
-<text x="800" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<g><title>step 5</title><circle cx="830" cy="872" r="16" fill="#1f2937"/>
+<text x="830" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
 </g>
-<text x="826" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">SDK programs tables; nv show reads operational state back</text>
+<text x="856" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">SDK programs tables; nv show reads operational state back</text>
 </svg>

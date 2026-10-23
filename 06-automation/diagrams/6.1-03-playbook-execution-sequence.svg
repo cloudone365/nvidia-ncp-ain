@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" role="img">
-<title>Playbook execution: VLAN + RoCE/AR rollout across leaves with serial: 1, check mode and NetQ validation</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1220" width="100%" role="img">
+<title>Playbook execution: serial rollout, check mode, NetQ gate</title>
 <defs>
 <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
 <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
@@ -9,67 +9,101 @@
 <marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
 <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
 </defs>
-<rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/>
-<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Playbook execution: VLAN + RoCE/AR rollout across leaves with serial: 1, check mode and NetQ validation</text>
-<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Thermostat pattern: render → replace/patch → diff → apply only when the diff is non-empty → detach otherwise → save → validate</text>
-<g><title>Ansible controller serial: 1</title><rect x="50" y="150" width="260" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="180.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Ansible controller</text>
-<text x="180.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">serial: 1</text>
+<rect x="0" y="0" width="1600" height="1220" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">Playbook execution: serial rollout, check mode, NetQ gate</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">Thermostat pattern: render → replace/patch → diff → apply only when the diff is non-empty → save → validate</text>
+<g><title>Ansible controller</title>
+<rect x="40.0" y="150" width="320" height="80" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="200" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Ansible controller</text>
+<text x="200" y="211" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">serial: 1</text>
 </g>
-<g><title>leaf01 SN5600 · Cumulus</title><rect x="430" y="150" width="260" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="560.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
-<text x="560.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">SN5600 · Cumulus</text>
+<line x1="200" y1="230" x2="200" y2="1050" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>leaf01</title>
+<rect x="440.0" y="150" width="320" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="600" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
+<text x="600" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600 · Cumulus</text>
 </g>
-<g><title>leaf02 SN5600 · Cumulus</title><rect x="770" y="150" width="260" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="900.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">leaf02</text>
-<text x="900.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">SN5600 · Cumulus</text>
+<line x1="600" y1="230" x2="600" y2="1050" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>leaf02</title>
+<rect x="840.0" y="150" width="320" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1000" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">leaf02</text>
+<text x="1000" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600 · Cumulus</text>
 </g>
-<g><title>NetQ server netq check … json</title><rect x="1210" y="150" width="260" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="1340.0" y="179.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">NetQ server</text>
-<text x="1340.0" y="200.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">netq check … json</text>
+<line x1="1000" y1="230" x2="1000" y2="1050" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>NetQ server</title>
+<rect x="1230.0" y="150" width="300" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1380" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">NetQ server</text>
+<text x="1380" y="211" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">netq check … json</text>
 </g>
-<line x1="180" y1="220" x2="180" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
-<line x1="560" y1="220" x2="560" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
-<line x1="900" y1="220" x2="900" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
-<line x1="1340" y1="220" x2="1340" y2="930" stroke="#9ca3af" stroke-width="2" stroke-dasharray="6 6"/>
-<g><title>template: leaf01.yaml from host_vars</title><rect x="30" y="248" width="300" height="44" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="180.0" y="273.7" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1f2937" text-anchor="middle">template: leaf01.yaml from host_vars</text>
+<line x1="1380" y1="230" x2="1380" y2="1050" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>template → nvue-desired.yaml</title>
+<rect x="40" y="262" width="320" height="42" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="200" y="288" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">template → nvue-desired.yaml</text>
 </g>
-<g><title>Step 1</title><circle cx="5" cy="270" r="16" fill="#1f2937"/><text x="5" y="276" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
-<line x1="180" y1="330" x2="560" y2="330" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="370.0" y="352.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">scp nvue-desired.yaml · nv config replace &amp;&amp; nv config diff   (check_mode: false)</text>
-<g><title>Step 2</title><circle cx="210" cy="306" r="16" fill="#1f2937"/><text x="210" y="312" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
-<line x1="560" y1="400" x2="180" y2="400" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="370.0" y="422.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">diff: non-empty → changed_when true   (empty → ok, detach)</text>
-<g><title>Step 3</title><circle cx="530" cy="376" r="16" fill="#1f2937"/><text x="530" y="382" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
-<line x1="180" y1="470" x2="560" y2="470" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="370.0" y="492.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config apply --assume-yes   (skipped under --check) · async 600 / poll 15 — AR may restart switchd ≤5.12</text>
-<g><title>Step 4</title><circle cx="210" cy="446" r="16" fill="#1f2937"/><text x="210" y="452" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
-<g><title>rev N applied: VLAN 300/VNI 10300, qos roce lossless, AR on swp61-64</title><rect x="390" y="518" width="340" height="44" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="560.0" y="543.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#1f2937" text-anchor="middle">rev N applied: VLAN 300/VNI 10300, qos roce lossless, AR on swp61-64</text>
+<g><title>Step 1</title><circle cx="386" cy="283" r="16" fill="#1f2937"/>
+<text x="386" y="289" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<polyline points="200,390 600,390" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 2</title><circle cx="224" cy="366" r="16" fill="#1f2937"/>
+<text x="224" y="372" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<text x="250" y="378" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">(check_mode: false)</text>
+<text x="250" y="378" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">(check_mode: false)</text>
+<text x="250" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">nv config replace &amp;&amp; nv config diff</text>
+<text x="250" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">nv config replace &amp;&amp; nv config diff</text>
+<polyline points="600,470 200,470" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 3</title><circle cx="224" cy="446" r="16" fill="#1f2937"/>
+<text x="224" y="452" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<text x="250" y="458" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">non-empty → changed</text>
+<text x="250" y="458" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">non-empty → changed</text>
+<text x="250" y="436" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">diff text: empty → ok + detach</text>
+<text x="250" y="436" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">diff text: empty → ok + detach</text>
+<polyline points="200,560 600,560" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 4</title><circle cx="224" cy="536" r="16" fill="#1f2937"/>
+<text x="224" y="542" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<text x="250" y="548" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">skipped in --check · async / poll</text>
+<text x="250" y="548" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">skipped in --check · async / poll</text>
+<text x="250" y="526" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">nv config apply --assume-yes</text>
+<text x="250" y="526" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">nv config apply --assume-yes</text>
+<g><title>applied: VLAN 300, RoCE, AR</title>
+<rect x="420" y="590" width="360" height="42" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="600" y="616" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">applied: VLAN 300, RoCE, AR</text>
 </g>
-<g><title>Step 5</title><circle cx="365" cy="540" r="16" fill="#1f2937"/><text x="365" y="546" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
-<line x1="180" y1="600" x2="560" y2="600" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="370.0" y="622.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config save   (apply is not persistent)</text>
-<g><title>Step 6</title><circle cx="210" cy="576" r="16" fill="#1f2937"/><text x="210" y="582" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
-<line x1="180" y1="670" x2="900" y2="670" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="540.0" y="692.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">next host (serial: 1): same tasks on leaf02 — second run of the play: diff empty everywhere → changed=0</text>
-<g><title>Step 7</title><circle cx="210" cy="646" r="16" fill="#1f2937"/><text x="210" y="652" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
-<line x1="180" y1="740" x2="1340" y2="740" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="760.0" y="762.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">play 3: netq check bgp|evpn|interfaces|roce json</text>
-<g><title>Step 8</title><circle cx="210" cy="716" r="16" fill="#1f2937"/><text x="210" y="722" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text></g>
-<line x1="560" y1="800" x2="1340" y2="800" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<text x="950.0" y="822.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">agents report new VNI / RoCE state after one collection interval (~60 s)</text>
-<line x1="1340" y1="860" x2="180" y2="860" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="760.0" y="882.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">summary.failedNodeCount == 0 → play passes; &gt;0 → failed_when fires, rollout stops (git revert → replace)</text>
-<g><title>Step 9</title><circle cx="1310" cy="836" r="16" fill="#1f2937"/><text x="1310" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">9</text></g>
-<g><title>Note</title><rect x="60" y="915" width="1000" height="70" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
-<text x="72" y="936" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1f2937" text-anchor="start">Why not 'command: nv set …'? It always reports changed (light switch). The diff task is the thermostat; guard apply with 'diff.changed and not ansible_check_mode'.</text>
-<text x="72" y="952" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#1f2937" text-anchor="start">Do not run nv with become: true; end every play with save; nvidia.nvue.config state: new → apply (wait) → save is the REST equivalent.</text>
-<g><title>Legend</title><rect x="1110" y="915" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
-<line x1="1124" y1="941" x2="1184" y2="941" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1198" y="947" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
-<line x1="1124" y1="971" x2="1184" y2="971" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<text x="1198" y="977" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
+<g><title>Step 5</title><circle cx="394" cy="611" r="16" fill="#1f2937"/>
+<text x="394" y="617" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<polyline points="200,700 600,700" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 6</title><circle cx="224" cy="676" r="16" fill="#1f2937"/>
+<text x="224" y="682" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<text x="250" y="688" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">nv config save</text>
+<text x="250" y="688" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">nv config save</text>
+<polyline points="200,780 1000,780" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 7</title><circle cx="224" cy="756" r="16" fill="#1f2937"/>
+<text x="224" y="762" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<text x="250" y="768" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">serial: 1 → same tasks on leaf02</text>
+<text x="250" y="768" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">serial: 1 → same tasks on leaf02</text>
+<polyline points="200,860 1380,860" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 8</title><circle cx="224" cy="836" r="16" fill="#1f2937"/>
+<text x="224" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text></g>
+<text x="250" y="848" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">netq check bgp | evpn | interfaces | roce json</text>
+<text x="250" y="848" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">netq check bgp | evpn | interfaces | roce json</text>
+<polyline points="600,940 1380,940" fill="none" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>Step 9</title><circle cx="624" cy="916" r="16" fill="#1f2937"/>
+<text x="624" y="922" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">9</text></g>
+<text x="650" y="928" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">agents report new state (~1 interval)</text>
+<text x="650" y="928" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">agents report new state (~1 interval)</text>
+<polyline points="1380,1020 200,1020" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 10</title><circle cx="224" cy="996" r="16" fill="#1f2937"/>
+<text x="224" y="1002" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">10</text></g>
+<text x="250" y="1008" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">failedNodeCount == 0 → pass; &gt; 0 → failed_when fires, rollout stops</text>
+<text x="250" y="1008" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">failedNodeCount == 0 → pass; &gt; 0 → failed_when fires, rollout stops</text>
+<g><title>command: nv set … always reports changed (a light switch); the diff task is the thermostat.</title>
+<rect x="48" y="1080" width="1000" height="120" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="62" y="1123" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">command: nv set … always reports changed (a light switch); the diff task is the thermostat.</text>
+<text x="62" y="1145" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Guard apply with: diff.changed and not ansible_check_mode. Never become: true for nv.</text>
+<text x="62" y="1167" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">REST equivalent: nvidia.nvue.config state: new → typed module (merged) → state: apply.</text>
+</g>
+<g><title>Legend</title><rect x="1100" y="1100" width="452" height="84" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1116" y1="1126" x2="1176" y2="1126" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1192" y="1132" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control (SSH / REST / check)</text>
+<line x1="1116" y1="1156" x2="1176" y2="1156" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1192" y="1162" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
 </g>
 </svg>

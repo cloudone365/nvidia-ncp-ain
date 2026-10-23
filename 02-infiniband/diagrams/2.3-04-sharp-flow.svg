@@ -84,7 +84,7 @@
 <text x="52" y="874" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">3 Each GPU sends its buffer ONCE to its leaf (sharpd brokered the job with sharp_am).  4 Leaves reduce 4:1, spine reduces 2:1.</text>
 <text x="52" y="894" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">5 Root multicasts the final result down the tree. Data crossing the fabric ~halves vs ring all-reduce; GPUs do no reduction math.</text>
 <text x="52" y="914" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Generations: v1 Switch-IB 2, v2 Quantum (SAT streaming), v3 Quantum-2 (multi-tenant), v4 Quantum-X800 (800G).</text>
-<g><rect x="1130" y="830" width="430" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<g><rect x="1130" y="830" width="430" height="122" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1144" y="850" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
 <line x1="1144" y1="872" x2="1204" y2="872" stroke="#2f6fdb" stroke-width="4"/>
 <text x="1216" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (IB / RDMA payload)</text>

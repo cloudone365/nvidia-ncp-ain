@@ -1,28 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 940" width="100%" role="img" aria-label="Flow of a signaled RDMA WRITE from ibv_post_send through the send queue ring doorbell HCA segmentation across the wire to the remote HCA DMA and ACK and back to a completion queue entry"><title>Life of a work request: post_send -&gt; WQE -&gt; doorbell -&gt; HCA -&gt; wire -&gt; remote HCA -&gt; CQE</title><defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker><marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker><marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker><marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker><marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker><marker id="arrow-yellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c9a400"/></marker></defs><rect x="0" y="0" width="1600" height="940" fill="#ffffff"/><text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Life of a work request: post_send -&gt; WQE -&gt; doorbell -&gt; HCA -&gt; wire -&gt; remote HCA -&gt; CQE</text><text x="48" y="108" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Nothing in this path is a syscall; the HCA reads the WQE and the MTT, segments to path MTU, and reports once via the CQ</text>
 <g><title>app: ibv_post_send(qp, &amp;wr)</title><rect x="60" y="190" width="300" height="170" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="210.0" y="240.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">app: ibv_post_send(qp, &amp;wr)</text>
-<text x="210.0" y="263.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">wr_id 42, opcode RDMA_WRITE</text>
-<text x="210.0" y="283.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SGE{addr,len,lkey}</text>
-<text x="210.0" y="303.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">wr.rdma{remote_addr, rkey}</text>
-<text x="210.0" y="323.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">IBV_SEND_SIGNALED</text>
+<text x="210.0" y="263.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">wr_id 42, opcode RDMA_WRITE</text>
+<text x="210.0" y="283.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SGE{addr,len,lkey}</text>
+<text x="210.0" y="303.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">wr.rdma{remote_addr, rkey}</text>
+<text x="210.0" y="323.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">IBV_SEND_SIGNALED</text>
 <g><title>SQ ring (host memory)</title><rect x="420" y="190" width="300" height="170" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="570.0" y="240.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">SQ ring (host memory)</text>
-<text x="570.0" y="263.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">WQE written into the next</text>
-<text x="570.0" y="283.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">slot (max_send_wr deep)</text>
-<text x="570.0" y="303.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">unsignaled WQEs still</text>
-<text x="570.0" y="323.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">occupy slots</text>
+<text x="570.0" y="263.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">WQE written into the next</text>
+<text x="570.0" y="283.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">slot (max_send_wr deep)</text>
+<text x="570.0" y="303.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">unsignaled WQEs still</text>
+<text x="570.0" y="323.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">occupy slots</text>
 <g><title>doorbell (UAR MMIO write)</title><rect x="780" y="190" width="300" height="170" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="930.0" y="240.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">doorbell (UAR MMIO write)</text>
-<text x="930.0" y="263.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">tells the HCA &#x27;new WQE&#x27;</text>
-<text x="930.0" y="283.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">the only I/O on the fast path</text>
-<text x="930.0" y="303.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">BlueFlame: WQE inline in</text>
-<text x="930.0" y="323.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">the doorbell for tiny msgs</text>
+<text x="930.0" y="263.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">tells the HCA &#x27;new WQE&#x27;</text>
+<text x="930.0" y="283.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">the only I/O on the fast path</text>
+<text x="930.0" y="303.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">BlueFlame: WQE inline in</text>
+<text x="930.0" y="323.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">the doorbell for tiny msgs</text>
 <g><title>ConnectX-7 HCA (requester)</title><rect x="1140" y="190" width="300" height="170" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="1290.0" y="240.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">ConnectX-7 HCA (requester)</text>
-<text x="1290.0" y="263.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">fetch WQE by DMA, lookup</text>
-<text x="1290.0" y="283.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">MTT by lkey, read payload,</text>
-<text x="1290.0" y="303.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">segment to path MTU 4096:</text>
-<text x="1290.0" y="323.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">WRITE First/Middle/Last + RETH</text>
+<text x="1290.0" y="263.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">fetch WQE by DMA, lookup</text>
+<text x="1290.0" y="283.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">MTT by lkey, read payload,</text>
+<text x="1290.0" y="303.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">segment to path MTU 4096:</text>
+<text x="1290.0" y="323.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">WRITE First/Middle/Last + RETH</text>
 <line x1="360" y1="275" x2="420" y2="275" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
 <circle cx="390" cy="250" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="390" y="256" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
@@ -37,31 +37,32 @@
 <text x="1375" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
 <text x="1395" y="405" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="start">wire: PSN n, n+1, ...</text>
 <line x1="1200" y1="440" x2="1200" y2="360" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<circle cx="1165" cy="400" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="1165" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
-<text x="1180" y="420" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#6b7280" text-anchor="end">ACK (AETH), coalesced</text>
+<circle cx="1170" cy="400" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1170" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<text x="1214" y="394" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#6b7280" text-anchor="start">ACK (AETH),</text>
+<text x="1214" y="413" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#6b7280" text-anchor="start">coalesced</text>
 <g><title>remote HCA (responder)</title><rect x="1140" y="440" width="300" height="150" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="1290.0" y="480.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">remote HCA (responder)</text>
-<text x="1290.0" y="503.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">check PKey, QPN, PSN order,</text>
-<text x="1290.0" y="523.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">rkey + PD + access + range,</text>
-<text x="1290.0" y="543.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">DMA into remote buffer,</text>
-<text x="1290.0" y="563.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">no remote CPU</text>
-<path d="M1140,340 L1000,340 L1000,515 L720,515" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
-<circle cx="1000" cy="440" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="1000" y="446" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
-<text x="1020" y="445" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">HCA writes CQE after the ACK</text>
+<text x="1290.0" y="503.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">check PKey, QPN, PSN order,</text>
+<text x="1290.0" y="523.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">rkey + PD + access + range,</text>
+<text x="1290.0" y="543.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">DMA into remote buffer,</text>
+<text x="1290.0" y="563.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">no remote CPU</text>
+<path d="M1140,345 L1110,345 L1110,515 L720,515" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<circle cx="1110" cy="430" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1110" y="436" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
+<text x="1092" y="485" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="end">HCA writes CQE after the ACK</text>
 <g><title>CQ ring (host memory)</title><rect x="420" y="440" width="300" height="150" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="570.0" y="480.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">CQ ring (host memory)</text>
-<text x="570.0" y="503.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">HCA writes CQE: status,</text>
-<text x="570.0" y="523.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">opcode IBV_WC_RDMA_WRITE,</text>
-<text x="570.0" y="543.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">wr_id 42, byte_len</text>
-<text x="570.0" y="563.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">retires this + earlier unsignaled</text>
+<text x="570.0" y="503.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">HCA writes CQE: status,</text>
+<text x="570.0" y="523.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">opcode IBV_WC_RDMA_WRITE,</text>
+<text x="570.0" y="543.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">wr_id 42, byte_len</text>
+<text x="570.0" y="563.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">retires this + earlier unsignaled</text>
 <g><title>app: ibv_poll_cq / get_cq_event</title><rect x="60" y="440" width="300" height="150" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="210.0" y="480.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">app: ibv_poll_cq / get_cq_event</text>
-<text x="210.0" y="503.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">memory read of the CQ ring</text>
-<text x="210.0" y="523.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">(or fd wait via completion</text>
-<text x="210.0" y="543.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">channel); SQ slots freed</text>
-<text x="210.0" y="563.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">-&gt; §4.1 ENOMEM if never signaled</text>
+<text x="210.0" y="503.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">memory read of the CQ ring</text>
+<text x="210.0" y="523.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">(or fd wait via completion</text>
+<text x="210.0" y="543.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">channel); SQ slots freed</text>
+<text x="210.0" y="563.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">-&gt; ENOMEM if never signaled (§4)</text>
 <line x1="420" y1="515" x2="360" y2="515" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
 <circle cx="390" cy="490" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="390" y="496" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text>
@@ -70,7 +71,7 @@
 <text x="72" y="683" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">IBV_WC_RETRY_EXC_ERR and QP -&gt; ERR. Responder with no RECV posted answers RNR NAK with min_rnr_timer (encoded 0-31; 12 ~ 0.64 ms); requester retries rnr_retry times.</text>
 <text x="72" y="702" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Inline (IBV_SEND_INLINE, &lt;= max_inline_data): payload copied into the WQE at step 1, no lkey/DMA read at step 3 -&gt; ~1 us 8-byte latency.</text>
 <text x="60" y="790" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">1 WQE into SQ  2 doorbell  3 HCA builds packets  4 wire  5 ACK  6 CQE written  7 app polls, slots reclaimed</text>
-<g><rect x="1130" y="760" width="430" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<g><rect x="1130" y="760" width="430" height="122" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1144" y="780" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
 <line x1="1144" y1="802" x2="1204" y2="802" stroke="#2f6fdb" stroke-width="4"/>
 <text x="1216" y="808" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (IB / RDMA payload)</text>

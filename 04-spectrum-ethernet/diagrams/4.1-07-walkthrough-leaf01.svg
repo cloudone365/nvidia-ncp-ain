@@ -52,7 +52,7 @@
 <line x1="740" y1="560" x2="430" y2="700" stroke="#e07b00" stroke-width="4"/>
 <line x1="860" y1="560" x2="1170" y2="700" stroke="#e07b00" stroke-width="4"/>
 <text x="800" y="616" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1 (800G) → breakout 2 × 400G</text>
-<text x="800" y="644" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">nv set interface swp1 link breakout 2x</text>
+<text x="800" y="644" font-family="'DejaVu Sans Mono', 'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">nv set interface swp1 link breakout 2x</text>
 <text x="500" y="660" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="end">swp1s0</text>
 <text x="1100" y="660" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">swp1s1</text>
 <g><title>BlueField-3 SuperNIC</title><rect x="250" y="700" width="360" height="82" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>

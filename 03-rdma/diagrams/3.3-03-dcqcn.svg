@@ -28,8 +28,8 @@
 <text x="1132" y="442" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">CNP timer: at most 1 CNP per N us per QP</text>
 <circle cx="1090" cy="424" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="1090" y="430" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
-<line x1="1300" y1="478" x2="300" y2="478" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
 <rect x="320" y="450" width="755" height="23" fill="#ffffff" fill-opacity="0.92"/>
+<line x1="1300" y1="478" x2="300" y2="478" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
 <text x="324" y="466" font-family="'JetBrains Mono', Consolas, monospace" font-size="17" font-weight="500" fill="#d93025" text-anchor="start">CNP (BTH opcode 0x81, DSCP 48 -&gt; TC6 strict) for that QP — np_cnp_sent++</text>
 <circle cx="270" cy="478" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="270" y="484" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>

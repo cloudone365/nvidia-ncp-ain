@@ -25,6 +25,11 @@ By the end of this module you will be able to…
 
 *Analogy:* a DPU is a mini-server bolted onto the back of a NIC. The host sees a network card; what it does not see is a 16-core Linux machine sitting between its PCIe slot and the wire, able to inspect, route, encrypt or block everything that passes.
 
+![BlueField-3 block diagram: host PCIe Gen5 x16 into a ConnectX-7 engine with embedded eSwitch, ports p0/p1 to an SN5600 leaf, the Arm complex and DDR5 above, the DPA below, and RShim, BMC and eMMC/UART management blocks along the bottom](diagrams/5.1-01-bluefield3-internals.svg)
+*Figure 5.1-1 — BlueField-3 internals. The data path runs left to right (host → PCIe → ConnectX-7 engine/eSwitch → p0/p1 → leaf); the Arm complex hangs off the eSwitch through representors, the DPA hangs off the engine for per-packet work, and the management plane (RShim, BMC, boot media) is independent of both.*
+
+**What it is.** BlueField-3 is one chip (PCI vendor:device `15b3:a2dc`, MST device `mt41692`) with four functional blocks that matter to an administrator:
+
 | Block | Detail | Why it matters |
 |---|---|---|
 | Arm subsystem | 16 Arm Cortex-A78 cores (8 on some SKUs), running Ubuntu/other Linux from an eMMC/NVMe | Runs infrastructure software (OVS, firewall, storage target, HBN routing, telemetry) *off* the host CPU and *outside* the host's trust domain |
@@ -35,13 +40,30 @@ By the end of this module you will be able to…
 | Accelerators | Crypto (IPsec/TLS inline), compression, regex, SHA | Zero-trust and storage offloads at line rate |
 | Management | **RShim** (over PCIe or USB), BMC with its own 1GbE OOB port, UART console | Out-of-band control even when the host or Arm OS is down |
 
-Think of it as three personalities sharing one card: a NIC the host sees; a Linux server (the Arm side) sitting in the network path between the host and the wire; and a management controller.
+The DPA is commonly described as 16 hyper-threaded RISC-V cores exposing 256 hardware threads (verify against the datasheet for your SKU); each thread can be woken by a packet or completion event, which is why per-flow congestion-control code fits there and not on the Arm.
+
+**Why it exists.** At 400 Gb/s a minimum-size packet arrives every few nanoseconds. A general-purpose CPU — the host's or the Arm's — cannot make a forwarding decision per packet at that rate, so the card is split by time budget: the **ConnectX-7 engine and its embedded eSwitch** do everything that must happen per packet in fixed-function hardware; the **DPA** runs small programmable handlers per packet or per event (microseconds); the **Arm** makes slow, rich decisions per *flow* (OVS lookups, BGP, firewall policy) and programs the result into the hardware. The bandwidth arithmetic also works: PCIe Gen5 is 32 GT/s per lane, so x16 ≈ 512 Gb/s raw, about 63 GB/s per direction after encoding — enough headroom for one 400G port, which is why a 400G SuperNIC needs Gen5 and a 400G card in a Gen4 slot cannot reach line rate. Remove the Arm and you have a ConnectX-7; remove the eSwitch offload and the Arm becomes a 400G bottleneck it cannot possibly serve.
+
+**How it works.** Follow a host packet through Figure 5.1-1:
+
+1. The host driver (`mlx5_core`) posts a descriptor; the engine DMAs the frame across PCIe Gen5 from host memory.
+2. The frame enters the **eSwitch**, a hardware match/action table (the FDB) keyed on L2–L4 headers, VLAN/VXLAN and the source vport. In NIC mode the eSwitch is owned by the host and simply forwards PF/VF traffic to the uplink. In DPU mode it is owned by the Arm, and a miss sends the packet to the Arm through a *representor* (§2.4).
+3. On a hit the action list runs in hardware (rewrite, encap/decap, count, meter, forward to p0) at line rate.
+4. RoCE packets are additionally handled by the RDMA engine (transport state, DDP placement into GPU memory); congestion events are handed to DPA threads that compute a new send rate (§2.2).
+5. The management plane (RShim, BMC, UART) talks to the Arm and the firmware over separate paths and keeps working when the host is down or the Arm OS is broken.
+
+Observe the blocks from the host with `lspci -nn | grep -i 15b3` (the PF functions and, in DPU mode, the RShim/management function), `mst status -v` (the `mt41692_pciconf0` device node), `mlxfwmanager --query` (firmware) and `lspci -vv -s <bdf> | grep LnkSta` (should read `Speed 32GT/s, Width x16`).
+
+**Why the exam cares:** know which block does what — DPA = congestion control/datapath code, Arm = services, eSwitch = offloaded forwarding, RShim/BMC = management — and the device identifiers `mt41692` / `15b3:a2dc`.
 
 ### 2.2 DPU vs SuperNIC
 
 *Analogy:* same car, two trims. The DPU trim is the delivery van — big cargo bay (Arm cores doing services). The SuperNIC trim is the sports model — same chassis, tuned purely for speed on one road (RoCE to GPUs).
 
-Both are BlueField-3 silicon; the difference is firmware personality, form factor and intended role:
+![SuperNIC role in Spectrum-X: DGX node with eight BlueField-3 SuperNICs exchanging RoCE with an SN5600 leaf, the four SuperNIC functions (DDP, DPA congestion control, isolation, GPUDirect), and the mismatched versus matched pair outcomes](diagrams/5.1-02-supernic-in-spectrum-x.svg)
+*Figure 5.1-2 — The SuperNIC is the NIC half of Spectrum-X: the switch sprays one flow across all uplinks (1) so packets return out of order (2); the SuperNIC places them directly (3) and sets the send rate on the DPA from switch telemetry (4). Without a SuperNIC the same reordering looks like loss.*
+
+**What it is.** Both are BlueField-3 silicon; the difference is firmware personality, form factor and intended role:
 
 | | BlueField-3 **DPU** | BlueField-3 **SuperNIC** |
 |---|---|---|
@@ -51,17 +73,27 @@ Both are BlueField-3 silicon; the difference is firmware personality, form facto
 | Key features | DOCA services, zero-trust host isolation, PCIe switch | **RoCE adaptive routing** support with out-of-order tolerance (Direct Data Placement), programmable congestion control, performance isolation, low-profile/power-optimised |
 | Pairs with | Any Ethernet switch; Spectrum for best telemetry | Spectrum-4 (SN5600) switches running Spectrum-X RoCE AR/CC |
 
-The SuperNIC exists because, in Spectrum-X, the switch sprays packets of one flow over all paths (Module 4.1). A conventional NIC reassembles RoCE messages in order; the SuperNIC's DDP engine places each arriving packet directly at its final memory address, so order no longer matters. It also terminates the switch-to-NIC telemetry that drives congestion control. These capabilities are enabled by firmware/DOCA configuration on the card plus matching switch configuration — see [`02-doca-sdk-overview.md`](02-doca-sdk-overview.md) and [`../04-spectrum-ethernet/01-spectrum-x.md`](../04-spectrum-ethernet/01-spectrum-x.md).
+**Why it exists.** In Spectrum-X the switch sprays packets of one flow over all paths (Module 4.1). A conventional NIC reassembles RoCE messages in order: a PSN gap triggers a NAK and go-back-N retransmission, so spraying turns into self-inflicted loss. The SuperNIC's DDP engine places each arriving packet directly at its final memory address, so order no longer matters, and its DPA terminates the switch-to-NIC telemetry that drives congestion control. A general DPU optimises for running services on the Arm; a SuperNIC optimises for per-GPU bandwidth, power and the Spectrum-X feature pair. In an AI data center you typically find *both*: SuperNICs on the compute (GPU) fabric and DPUs on the north-south/storage/management side of the same servers.
 
-In an AI data center you typically find *both*: SuperNICs on the compute (GPU) fabric and DPUs on the north-south/storage/management side of the same servers.
+**How it works** (numbered steps in Figure 5.1-2):
 
-**Why the exam cares:** "customer wants BlueField-3 to behave exactly like ConnectX-7" → NIC mode. "Provider must control the card, tenant controls the host" → restricted host.
+1. NCCL on the DGX posts RDMA writes on QPs whose traffic class is set by `NCCL_IB_TC=106` (TOS 106 = DSCP 26 with ECT); the SuperNIC emits RoCEv2 (UDP 4791) that the leaf maps to switch-priority 3.
+2. The leaf's adaptive-routing engine sends each packet to the least-loaded uplink; the far leaf delivers them out of order.
+3. The receiving SuperNIC writes each payload to its target address (DDP) and completes the message once all bytes are present — no reorder buffer, no NAK.
+4. Switch telemetry stamped in flight is reflected to the sender, whose DPA thread recomputes that flow's rate.
 
-### 2.3 Modes of operation
+These capabilities are enabled by firmware/DOCA configuration on the card plus matching switch configuration — see [`02-doca-sdk-overview.md`](02-doca-sdk-overview.md) and [`../04-spectrum-ethernet/01-spectrum-x.md`](../04-spectrum-ethernet/01-spectrum-x.md). Observe it with `ethtool -S <if> | grep out_of_sequence` (rising without throughput loss on a SuperNIC) and `nv show router adaptive-routing` on the switch.
+
+**Why the exam cares:** "customer wants BlueField-3 to behave exactly like ConnectX-7" → NIC mode. "Provider must control the card, tenant controls the host" → restricted host. "AR enabled, ConnectX-6 hosts slow" → missing SuperNIC half of the pair.
+
+### 2.3 Modes of operation and the data path
 
 *Analogy:* DPU mode puts the mini-server *in the hallway* between the host and the door — every packet walks past it. NIC mode moves it into a closet — the hallway is clear and the host walks straight to the door. Restricted host mode locks the closet and takes the host's key.
 
-Mode is a firmware setting changed with **mlxconfig** (from MFT or DOCA tools) and takes effect after a power cycle.
+![Side-by-side data paths: in DPU mode a host frame enters the eSwitch, the first packet misses and is sent to ovs-vswitchd on the Arm via pf0hpf, the rule is installed and later packets go straight to p0; in NIC mode the host frame goes straight through the ConnectX-7 engine to p0 and the Arm is out of the path](diagrams/5.1-03-dpu-vs-nic-mode.svg)
+*Figure 5.1-3 — DPU mode (left, steps 1–4) puts the Arm-owned eSwitch and OVS between host and wire; NIC mode (right, steps 1–2) gives the eSwitch back to the host. The mode is one firmware parameter, `INTERNAL_CPU_OFFLOAD_ENGINE`.*
+
+**What it is.** The mode decides *who owns the eSwitch* (the embedded CPU function, ECPF, on the Arm, or the host PF). It is a firmware setting changed with **mlxconfig** (from MFT or DOCA tools) and takes effect after a power cycle.
 
 | Mode | Who owns the network | Host sees | Use |
 |---|---|---|---|
@@ -70,32 +102,125 @@ Mode is a firmware setting changed with **mlxconfig** (from MFT or DOCA tools) a
 | **Zero-trust / Restricted host mode** | The Arm side, and additionally the host is *blocked* from RShim access, from changing firmware/mlxconfig and from reaching the Arm OS | Standard NIC with no management privileges | Bare-metal cloud where the tenant owns the host but the provider owns the DPU |
 | Separated host mode (legacy) | Both host and Arm have independent PFs to the wire | Two independent NICs | Older designs; check current support |
 
-Exam framing: NIC mode = "make it a ConnectX"; DPU mode = "Arm in the path"; restricted host = "host loses management rights". SuperNICs ship/operate in NIC mode.
+**Why it exists.** The same card serves two incompatible goals. A cloud provider wants every host packet to pass a policy point the tenant cannot touch — that requires the Arm to own the eSwitch (DPU mode), and for bare-metal tenants it also requires stripping the host's management rights (restricted host). A GPU cluster wants the shortest, most predictable RoCE path with zero extra hops or Arm dependencies — that requires the host to own the eSwitch (NIC mode). The trade-off is explicit: DPU mode adds an Arm-managed slow path for the first packet of every flow and an operational dependency on the Arm OS (if OVS on the Arm is down, the host has no network); NIC mode removes both but also removes isolation and services.
 
-### 2.4 Software stack: BSP, BFB and DOCA
+**How it works** (Figure 5.1-3):
+
+- *DPU mode, steps 1–4.* (1) The host frame enters the eSwitch from the host PF vport. (2) No rule matches: the eSwitch delivers the packet to the Arm on the **representor** for that vport, `pf0hpf`. (3) `ovs-vswitchd` looks it up in its OpenFlow tables (default bridge `ovsbr1` = `p0` + `pf0hpf`), forwards it out of the `p0` representor, and installs a matching rule into the eSwitch. (4) Every later packet of the flow hits in hardware and goes to `p0` without touching the Arm (§2.5).
+- *NIC mode, steps 1–2.* The host PF owns the eSwitch; the frame goes straight from PCIe to `p0`. There are no representors on the Arm, OVS on the Arm is not in the path, and the Arm may not even be reachable. SuperNIC functions (DDP, DPA CC) still work — they live in the engine and DPA, not on the Arm.
+- *Restricted host.* Set from the Arm with `mlxprivhost -d <dev> r ...`; the host keeps its PF/VFs but loses RShim, firmware flashing, `mlxconfig` and counter access. Only the Arm (or the BMC) can undo it.
+
+Changing mode: `mlxconfig -d /dev/mst/mt41692_pciconf0 s INTERNAL_CPU_OFFLOAD_ENGINE=1` (NIC) or `=0` (DPU), then a cold power cycle; verify the *Current* column of `mlxconfig -q`. Exam framing: NIC mode = "make it a ConnectX"; DPU mode = "Arm in the path"; restricted host = "host loses management rights". SuperNICs ship/operate in NIC mode.
+
+**Why the exam cares:** the parameter name, its values (0 = DPU, 1 = NIC), the power-cycle requirement, and that restricted mode is set *from the Arm*.
+
+### 2.4 The eSwitch, representors, and switchdev vs legacy
+
+*Analogy:* representors are intercoms. Every host-side port (PF or VF) has a matching intercom on the Arm side; what the host says into its port comes out of the intercom, and OVS decides where it goes next.
+
+**What it is.** The eSwitch is the embedded hardware switch inside the ConnectX engine. Every function attached to it is a *vport*: the uplink (wire), each host PF, each host VF, and each Arm scalable function (SF). In **switchdev** mode the eSwitch manager (the Arm in DPU mode) gets one Linux netdev — a **representor** — per vport. Interface naming on the **Arm**:
+
+| Arm interface | Represents |
+|---|---|
+| `p0`, `p1` | The physical uplink ports (wire side) |
+| `pf0hpf`, `pf1hpf` | "Host PF" representors: the host's physical function on port 0/1 — traffic the host sends arrives here |
+| `pf0vf0`…`pf0vfN` | Representors for each host VF (when SR-IOV is enabled) |
+| `pf0sf0`… | Scalable function representors (DPU-side SFs for services) |
+| `en3f0pf0sf0` style names | SF netdevs usable by Arm applications |
+| `oob_net0` | The 1GbE out-of-band management port |
+| `tmfifo_net0` | Virtual NIC over RShim to the host |
+
+On the **host**, the interfaces are plain ConnectX netdevs (`ens3f0np0`, `ens3f1np1`, and VFs); the host cannot see representors or OVS. The host's only view into the DPU is RShim (unless restricted).
+
+**Why it exists.** A representor gives Linux tools a handle for traffic that never touches the Linux kernel. Whatever is attached to a representor (an OVS bridge port, a TC rule, a DOCA Flow pipe) controls the corresponding hardware vport: transmit on `pf0hpf` and the packet arrives at the host PF; a packet the eSwitch cannot match from the host PF arrives on `pf0hpf`. **Legacy** mode is the classic SR-IOV model: the eSwitch does simple MAC/VLAN L2 forwarding between VFs and the uplink, there are no representors, and nothing on the Arm can see or steer per-flow — fine for basic VF networking, useless for OVS offload, firewalling or HBN.
+
+**How it works.**
+
+1. Check the mode: `devlink dev eswitch show pci/0000:03:00.0` → `mode switchdev inline-mode none encap-mode basic`. The BSP sets switchdev by default in DPU mode.
+2. To change it: `devlink dev eswitch set pci/0000:03:00.0 mode switchdev`. Do this before creating VFs (`sriov_numvfs` must be 0), because representors are created per vport when the mode is entered.
+3. List vports and their representors: `devlink port show` (flavour `physical` = p0, `pcipf` = pf0hpf, `pcivf` = pf0vfN, `pcisf` = SFs).
+4. The default BSP creates two bridges, `ovsbr1` (p0 + pf0hpf) and `ovsbr2` (p1 + pf1hpf), so host traffic flows transparently from first boot.
+
+Failure modes: eSwitch in `legacy` → no `pf0hpf`, OVS bridge ports missing, host has no connectivity in DPU mode; VFs created before switching modes → missing `pf0vfN` representors until VFs are recreated.
+
+**Why the exam cares:** representors exist only on the Arm, only in switchdev; `pf0hpf` is "what the host PF sent"; `p0` is the wire.
+
+### 2.5 OVS hardware offload (ASAP² / OVS-DOCA) and the flow lifecycle
+
+*Analogy:* the Arm is the traffic court that rules on the first case; the eSwitch is the clerk who applies the precedent to every identical case afterwards without bothering the judge.
+
+![Sequence diagram of OVS offload: packet 1 misses in the eSwitch, is upcalled to ovs-vswitchd on pf0hpf, forwarded in software, and a rule is installed; packets 2 to N hit in hardware at line rate; the rule ages out after the idle timeout](diagrams/5.1-04-ovs-offload-flow-lifecycle.svg)
+*Figure 5.1-4 — Lifecycle of one offloaded flow: miss (1–2), upcall (3), software decision (4–5), rule install (6), hardware fast path (7), aging (8).*
+
+**What it is.** **ASAP²** (Accelerated Switching and Packet Processing) is NVIDIA's name for offloading the Open vSwitch datapath into the eSwitch. OVS keeps its control logic (OpenFlow tables, `ovs-vswitchd`) on the Arm, but instead of forwarding every packet in software it translates each datapath flow into a hardware rule. Two back-ends exist: *OVS-kernel*, which offloads through the Linux TC subsystem (`tc flower` rules marked `in_hw`), and **OVS-DOCA**, which programs the eSwitch through DOCA Flow and is NVIDIA's current direction (enabled with `other_config:doca-init=true` on recent BSPs — verify for your release). Either way the switch is `other_config:hw-offload=true`.
+
+**Why it exists.** Without offload, every packet between host and wire is copied to the Arm, processed by `ovs-vswitchd`/the kernel datapath and copied back — a few tens of Gb/s at best, with the Arm cores at 100 %. With offload, the Arm sees only the first packet(s) of each flow; the remaining packets run at 400G in hardware. The trade-off is flow-setup latency (the first packet takes the slow path) and finite hardware table capacity, so workloads with very high new-flow rates (port scans, short-lived UDP) stress the Arm and the rule-insertion rate rather than bandwidth.
+
+**How it works** (Figure 5.1-4):
+
+1. Packet 1 of a new 5-tuple arrives from the host PF.
+2. The eSwitch has no matching rule → miss.
+3. The packet is delivered to the Arm on the `pf0hpf` representor (an upcall).
+4. `ovs-vswitchd` runs the OpenFlow pipeline for `ovsbr1` and produces a datapath (megaflow) rule: match fields + actions (output `p0`, maybe VLAN push or VXLAN encap).
+5. Packet 1 is forwarded in software out of the `p0` representor.
+6. The rule is installed into the eSwitch (TC flower → `in_hw`, or DOCA Flow pipe entry).
+7. Packets 2…N hit in hardware and go straight to `p0`; Arm CPU stays idle and the hardware counters increment.
+8. When the flow is idle longer than `other_config:max-idle` (10 s by default) OVS removes it from hardware; the next packet starts at step 1 again.
+
+Observe it: `ovs-appctl dpctl/dump-flows type=offloaded` (non-empty, `packets:` climbing), `ovs-appctl dpctl/dump-flows type=ovs` (flows still in software), `tc -s filter show dev pf0hpf ingress` (`in_hw` with hit counters on OVS-kernel), and `top` on the Arm (`ovs-vswitchd` low). Failure modes: `hw-offload` not set or eSwitch in `legacy` → everything in software, Arm pegged (Gotcha 2); action not supported in hardware (some match/action combinations) → that flow stays in software while others offload — look for it in `type=ovs`.
+
+**Why the exam cares:** the first-packet slow path, `hw-offload=true` + switchdev as the two prerequisites, and `dump-flows type=offloaded` as the proof.
+
+### 2.6 Software stack: BSP, BFB, DOCA and the boot flow
+
+![BFB install sequence: host checks mst and rshim, writes bf.cfg, runs bfb-install to /dev/rshim0/boot, the card resets into RShim boot through BL2/BL31/UEFI, the installer writes eMMC and NIC firmware, reports Installation finished, and the host logs in over tmfifo_net0](diagrams/5.1-05-bfb-install-flow.svg)
+*Figure 5.1-5 — Installing a BFB over RShim (steps 1–9). The same file can be pushed from a BMC over Redfish or, at scale, by DPF.*
+
+**What it is.**
 
 - **BlueField BSP** (Board Support Package, "BlueField Software") — the Arm-side OS image: Ubuntu (default) with kernel, drivers, firmware, OVS, MFT, DOCA runtime and tools. Versioned (e.g., BSP 4.x) and bundled with a DOCA version.
-- **BFB** (BlueField Boot stream) — the single installable file (`*.bfb`) containing boot loader, kernel, root filesystem and (optionally) NIC firmware. Pushed to the card over RShim.
+- **BFB** (BlueField Boot stream) — the single installable file (`*.bfb`) containing boot loader, kernel, root filesystem and (optionally) NIC firmware. Pushed to the card over RShim. Internally it is a concatenation of boot images the card's boot ROM can consume directly: Arm Trusted Firmware stages (BL2, BL31), UEFI, an installer kernel + initramfs, the root filesystem image to write, and optional firmware payloads.
 - **DOCA** — the SDK/runtime for developing on and operating BlueField; it also provides the host drivers (DOCA-OFED). Covered in Module 5.2.
 - **NIC firmware** — separate from the BSP but usually bundled in the BFB (`bfb-install` will update it if the BFB carries firmware). Managed with `mlxfwmanager`.
 
-Compatibility: a given DOCA release matches a BSP release and a minimum firmware. Mixing a new DOCA host driver with an old BFB causes subtle problems (missing mlx5 features, DPA image mismatch). Check the DOCA release notes compatibility table.
+**Why it exists.** A DPU is a server you cannot put a USB stick into, often in a host you are not allowed to touch. The BFB format lets one file, pushed over a management channel, replace everything from the bootloaders up, and the bundling guarantees that BSP, DOCA and firmware come from one tested combination. Compatibility: a given DOCA release matches a BSP release and a minimum firmware. Mixing a new DOCA host driver with an old BFB causes subtle problems (missing mlx5 features, DPA image mismatch). Check the DOCA release notes compatibility table.
 
-### 2.5 RShim
+**How it works** (Figure 5.1-5):
+
+1. Host: `mst status -v` confirms `mt41692`; `cat /dev/rshim0/misc` shows `DEV_NAME` bound to this card.
+2. Host: write `bf.cfg` (password hash, optional cloud-init user-data, BMC/OOB settings).
+3. Host: `bfb-install --bfb <file>.bfb --config bf.cfg --rshim rshim0` writes the stream into `/dev/rshim0/boot` (with `bf.cfg` appended).
+4. The RShim driver issues a soft reset so the boot ROM boots *from RShim* instead of eMMC and streams the ~1 GiB image over PCIe.
+5. The console prints the boot chain: `INFO[BL2]`, `INFO[BL31]`, `INFO[UEFI]`.
+6. The installer kernel partitions the eMMC/NVMe, writes the root filesystem and applies `bf.cfg`.
+7. If the BFB carries firmware, the installer flashes the NIC (`Updating NIC firmware... NIC firmware update done`).
+8. `Installation finished` → reboot; `BOOT_MODE` returns to 1 (eMMC).
+9. Host logs in over `tmfifo_net0` and records `/etc/mlnx-release`.
+
+New NIC firmware written in step 7 is active only after the next firmware reset; the installer's reboot of the Arm is not always a full NIC reset, so follow the BSP release notes (often a host power cycle) before trusting `mlxfwmanager --query`.
+
+**Why the exam cares:** BFB = whole Arm image + optional firmware, installed with `bfb-install` through `/dev/rshim0/boot`; update DOCA on the Arm by installing a new BFB, not by `apt upgrade`.
+
+### 2.7 RShim
 
 *Analogy:* RShim is the service hatch on the mini-server: a serial console, a slot to feed in a new OS image, and a tiny private network cable between host and Arm — all working even when the Arm's real network is down.
 
-**RShim** is a management channel between host and BlueField exposed by the `rshim` driver as a directory `/dev/rshim0/` containing:
+**What it is.** **RShim** is a management channel between host and BlueField exposed by the `rshim` driver as a directory `/dev/rshim0/` containing:
 - `boot` — write a BFB here to install it,
 - `console` — the Arm's serial console,
 - `misc` — control/status (`cat /dev/rshim0/misc` shows boot mode, device name; `echo "SW_RESET 1" > /dev/rshim0/misc` resets the Arm),
+- `rshim` — raw register access used by tools,
 - a virtual network interface `tmfifo_net0` on the host paired with one on the Arm. Host 192.168.100.1 ↔ Arm 192.168.100.2 is a well-known exam fact.
 
-`bf.cfg` is a shell-style file passed with `--config` to `bfb-install` to customise first boot: set `ubuntu_PASSWORD` (hashed), enable/disable the BMC/OOB, choose `grub` options, or embed a cloud-init `user-data`. The BSP image uses **cloud-init**; `/var/lib/cloud/seed/nocloud-net/user-data` on the Arm can set users, SSH keys, packages and run commands. This is how fleets of DPUs are provisioned identically.
+**Why it exists.** Every other path to the Arm depends on something that may be broken: SSH over `oob_net0` needs a working Arm OS and cabling; in-band needs OVS and the eSwitch. RShim needs only the PCIe link (or USB cable) and the card's hardware, so it is the recovery path for a blank or broken card. Because it is so powerful, restricted host mode disables RShim from the host.
 
-### 2.6 mlxconfig key parameters
+**How it works.** RShim is a hardware block on the BlueField with a small FIFO (the TMFIFO). The host-side `rshim` service maps it over PCIe (the management function shown in `lspci`) or USB and multiplexes it into the files above: bytes written to `boot` go to the boot FIFO, console bytes are a virtio-console, and `tmfifo_net0` is a virtio-net carried over the same FIFO — slow (tens of Mb/s), but enough for SSH and small file copies. Only one host process can own an RShim at a time; if the BMC's RShim (over its internal USB) is active, the host's may be idle. `bf.cfg` is a shell-style file passed with `--config` to `bfb-install` to customise first boot: set `ubuntu_PASSWORD` (hashed), enable/disable the BMC/OOB, choose `grub` options, or embed a cloud-init `user-data`. The BSP image uses **cloud-init**; `/var/lib/cloud/seed/nocloud-net/user-data` on the Arm can set users, SSH keys, packages and run commands. This is how fleets of DPUs are provisioned identically.
 
-**mlxconfig** reads and writes non-volatile NIC configuration (takes effect after reset/power cycle).
+Observe/debug: `systemctl status rshim`, `journalctl -u rshim -b`, `cat /dev/rshim0/misc` (BOOT_MODE, DEV_NAME), `ip addr show tmfifo_net0`.
+
+### 2.8 mlxconfig key parameters and when a firmware reset is required
+
+**What it is.** **mlxconfig** reads and writes non-volatile NIC configuration (takes effect after reset/power cycle).
 
 | Parameter | Meaning |
 |---|---|
@@ -110,27 +235,22 @@ Compatibility: a given DOCA release matches a BSP release and a minimum firmware
 
 The device path `/dev/mst/mt41692_pciconf0` is BlueField-3 (41692 is its PCI device ID; BlueField-2 is 41686, ConnectX-7 is 4129). You may also address devices by PCI BDF: `mlxconfig -d 0000:03:00.0 q`.
 
-### 2.7 Host ↔ DPU interfaces and OVS offload
+**Why it exists.** These parameters shape what the device *is* at power-on: how many PCI functions it enumerates, what protocol the port speaks, who owns the eSwitch. The OS cannot change them at runtime because the PCI topology the BIOS and kernel see is derived from them. So mlxconfig writes to NVRAM, and the firmware reads NVRAM only when it boots.
 
-*Analogy:* representors are intercoms. Every host-side port (PF or VF) has a matching intercom on the Arm side; what the host says into its port comes out of the intercom, and OVS decides where it goes next.
+**How it works.**
 
-In DPU mode the Arm side runs Open vSwitch with hardware offload. Interface naming on the **Arm**:
+1. `mlxconfig -d <dev> q [PARAM...]` prints three columns: *Default*, *Current* (what the running firmware uses) and *Next Boot* (what is in NVRAM). After `s`, only *Next Boot* changes — your proof that the change is staged.
+2. Activation requires a firmware reset. `mlxfwreset -d <dev> reset` resets the NIC firmware and re-enumerates PCI without rebooting the OS, and is enough for most parameters (SR-IOV counts, CNP/RoCE CC values, link type) where the platform supports it — the tool tells you if it does not.
+3. Parameters that change the card's personality or PCI topology — above all `INTERNAL_CPU_OFFLOAD_ENGINE`, and often `NUM_OF_PF` — need a full cold power cycle of the host (AC/IPMI `chassis power cycle`); a warm reboot does not reset the DPU.
+4. After the reset, re-query: *Current* must equal *Next Boot*.
 
-| Arm interface | Represents |
-|---|---|
-| `p0`, `p1` | The physical uplink ports (wire side) |
-| `pf0hpf`, `pf1hpf` | "Host PF" representors: the host's physical function on port 0/1 — traffic the host sends arrives here |
-| `pf0vf0`…`pf0vfN` | Representors for each host VF (when SR-IOV is enabled) |
-| `pf0sf0`… | Scalable function representors (DPU-side SFs for services) |
-| `en3f0pf0sf0` style names | SF netdevs usable by Arm applications |
-| `oob_net0` | The 1GbE out-of-band management port |
-| `tmfifo_net0` | Virtual NIC over RShim to the host |
+Failure modes: changed but not reset (most common — Gotcha 1); changed from the host while in restricted mode (refused); `mlxconfig -d` pointed at the wrong card in an eight-NIC DGX (use the BDF from `ibdev2netdev -v`).
 
-The default BSP creates two bridges, `ovsbr1` (p0 + pf0hpf) and `ovsbr2` (p1 + pf1hpf), so host traffic flows transparently. With offload, the first packet of a flow hits OVS in software and the resulting rule is pushed to the ConnectX eswitch (ASAP²), after which the flow runs in hardware without touching the Arm CPU. If `devlink dev eswitch show` reports `legacy` instead of `switchdev`, representors do not exist and offload cannot work; the BSP sets switchdev by default in DPU mode.
+**Why the exam cares:** "change made, nothing happened" → reset/power cycle; know which parameter controls mode, link type and VFs.
 
-On the **host**, the interfaces are plain ConnectX netdevs (`ens3f0np0`, `ens3f1np1`, and VFs); the host cannot see representors or OVS. The host's only view into the DPU is RShim (unless restricted).
+### 2.9 Management paths
 
-### 2.8 Management paths
+**What it is.**
 
 | Path | Reaches | When |
 |---|---|---|
@@ -142,7 +262,13 @@ On the **host**, the interfaces are plain ConnectX netdevs (`ens3f0np0`, `ens3f1
 
 The BMC and OOB port often share the 1GbE RJ45 via NC-SI depending on card SKU; check the hardware guide.
 
-### 2.9 Use cases in AI data centers
+**Why it exists.** A provider-owned DPU must remain manageable when the tenant owns (and may have wiped) the host. Layering the paths means losing one never strands the card: the BMC needs only standby power and the OOB network; RShim needs the host or a USB cable; SSH needs a running Arm OS.
+
+**How it works.** Day 0: BMC Redfish or RShim installs the BFB (Figure 5.1-5). Day 1: `bf.cfg`/cloud-init set credentials and addresses; `oob_net0` takes DHCP. Day 2: SSH over OOB for operations; RShim/BMC only for recovery. In restricted host mode, only the BMC, USB RShim and OOB SSH remain.
+
+### 2.10 Use cases in AI data centers
+
+**What it is.** Six deployment patterns, each pairing a personality (SuperNIC or DPU, §2.2–2.3) with a software stack:
 
 1. **East-west GPU fabric (SuperNIC)** — RoCE AR/DDP, congestion control, per-tenant isolation with Spectrum-X; 8 SuperNICs per node in rail-optimized design.
 2. **Storage** — NVMe-oF initiator/target offload, GPUDirect Storage path, SNAP (emulating NVMe/virtio devices to the host) so the host sees "local" disks served over the network.
@@ -151,9 +277,15 @@ The BMC and OOB port often share the 1GbE RJ45 via NC-SI depending on card SKU; 
 5. **Kubernetes** — the Network Operator and DOCA Platform Framework deploy and manage DPUs as cluster resources (Module 7.x).
 6. **DPF (DPU Provisioning Framework / DOCA Platform Framework)** — a Kubernetes-native system that discovers BlueFields via their BMCs, installs BFBs, applies DPU "flavors" and deploys DOCA services (HBN, OVN-Kubernetes offload) declaratively across hundreds of nodes. For the exam: DPF is how you provision DPUs at scale instead of running `bfb-install` host by host.
 
+**Why it exists.** A GPU server has three networks with different owners and goals: the compute fabric (bandwidth, tail latency — SuperNIC in NIC mode), the storage/north-south network (services and isolation — DPU mode), and the provider's management boundary (zero-trust — restricted host). One silicon family covering all three means one driver stack (DOCA), one firmware toolchain (MFT) and one provisioning system (DPF).
+
+**How it works.** Decide per card: GPU-rail cards → NIC mode + Spectrum-X host baseline (Module 5.2); north-south/storage card → DPU mode + OVS-DOCA or HBN + DTS; tenant-facing bare metal → DPU mode + `mlxprivhost r`. Provision with `bfb-install` for a handful of hosts, DPF for a fleet, and verify each class with the commands in §3.
+
+**Why the exam cares:** match the use case to the personality (SuperNIC vs DPU) and the provisioning tool (`bfb-install` per host vs DPF at scale).
+
 ## 3. Live-style walkthrough — rshim → bfb-install → console → OVS offload → mode switch
 
-A fresh BlueField-3 has just been installed in a GPU host. We bring it up end to end.
+A fresh BlueField-3 has just been installed in a GPU host. We bring it up end to end. Steps 2–4 are Figure 5.1-5 in practice, Step 7 is Figure 5.1-4, and Step 8 moves the card from the left to the right half of Figure 5.1-3.
 
 ### Step 1 — Does the host see it?
 
@@ -211,7 +343,7 @@ INFO[MISC]: Installation finished
 INFO[MISC]: Rebooting...
 ```
 
-"Installation finished" plus the firmware lines is what good looks like. Over the **BMC** you can also push a BFB via Redfish/`scp` without a host — useful for rack-scale provisioning and when the host is in restricted mode.
+"Installation finished" plus the firmware lines is what good looks like — these are steps 5–8 of Figure 5.1-5. Over the **BMC** you can also push a BFB via Redfish/`scp` without a host — useful for rack-scale provisioning and when the host is in restricted mode.
 
 ### Step 4 — Connect to the Arm
 
@@ -221,7 +353,7 @@ minicom -D /dev/rshim0/console            # or: screen /dev/rshim0/console 11520
 
 # Network over the RShim virtual NIC — DOCA packages often configure this automatically
 ip addr add 192.168.100.1/30 dev tmfifo_net0      # host side
-ssh ubuntu@192.168.100.2                          # Arm side default address
+ssh ubuntu192.168.100.2                          # Arm side default address
 
 # Day-2: the DPU's 1GbE OOB port (oob_net0 on the Arm) takes DHCP; SSH to that from the management network
 ```
@@ -292,7 +424,7 @@ ovs-appctl dpctl/dump-flows type=offloaded
 ovs-dpctl dump-flows type=offloaded             # same, older syntax
 ```
 
-A non-empty `type=offloaded` list with packet counters climbing is the proof. Empty list plus high Arm CPU = not offloaded (see Gotcha 2).
+A non-empty `type=offloaded` list with packet counters climbing is the proof — you are watching step 7 of Figure 5.1-4. Run the dump twice a few seconds apart: `packets:` must grow while `top` shows `ovs-vswitchd` near idle. Empty list plus high Arm CPU = not offloaded (see Gotcha 2).
 
 ### Step 8 — Switch to NIC mode (SuperNIC personality) and back
 
@@ -398,7 +530,7 @@ mlxconfig -d <dev> q LINK_TYPE_P1; mlxfwmanager --query; ofed_info -s; ethtool -
 
 **Acceptance criteria**
 - Console log shows `Installation finished` and a firmware update line.
-- `ssh ubuntu@192.168.100.2` works and `/etc/mlnx-release` matches the BFB version.
+- `ssh ubuntu192.168.100.2` works and `/etc/mlnx-release` matches the BFB version.
 - At least one offloaded flow captured in DPU mode.
 - After step 5, `INTERNAL_CPU_OFFLOAD_ENGINE` reads NIC mode (1) and `ibdev2netdev -v` shows `mlx5_0 ... (Up)`.
 - After step 7, `ip -br link` on the Arm lists `pf0hpf` again and `devlink` shows `switchdev`.
@@ -426,7 +558,7 @@ mlxprivhost -d <dev> p                                                      # pr
 # Image / console / network
 bfb-install --bfb <file.bfb> [--config bf.cfg] --rshim rshim0
 minicom -D /dev/rshim0/console
-ip addr add 192.168.100.1/30 dev tmfifo_net0; ssh ubuntu@192.168.100.2
+ip addr add 192.168.100.1/30 dev tmfifo_net0; ssh ubuntu192.168.100.2
 cat /dev/rshim0/misc; echo "SW_RESET 1" > /dev/rshim0/misc
 
 # Firmware
@@ -473,7 +605,7 @@ mlxlink -d <dev> -p 1; mlxlink -d <dev> -m; mlxlink -d <dev> -e
    A. `mlxfwmanager -u -i image.bfb`
    B. `bfb-install --bfb image.bfb --rshim rshim0`
    C. `flint -i image.bfb b`
-   D. `scp image.bfb ubuntu@192.168.100.2:`
+   D. `scp image.bfb ubuntu192.168.100.2:`
 
 3. From the host, which address reaches the DPU's Arm OS over the RShim virtual network interface by default?
    A. 192.168.100.1
@@ -572,7 +704,7 @@ Criterion 1 satisfied by those three lines. Redact the hash before submitting `b
 
 ```bash
 ip addr add 192.168.100.1/30 dev tmfifo_net0 2>/dev/null
-ssh ubuntu@192.168.100.2
+ssh ubuntu192.168.100.2
 ```
 On the Arm:
 ```bash
@@ -621,7 +753,7 @@ mlxconfig -d $DEV q INTERNAL_CPU_OFFLOAD_ENGINE
 #  INTERNAL_CPU_OFFLOAD_ENGINE  ... DISABLED(1)  DISABLED(1)     <- NIC mode: criterion 4a
 ibdev2netdev -v
 # 0000:03:00.0 mlx5_0 (MT41692 - ...) fw 32.43.1014 port 1 (ACTIVE) ==> ens3f0np0 (Up)   <- criterion 4b
-ssh ubuntu@192.168.100.2 ovs-vsctl show      # may still answer, but p0/pf0hpf are not in the host's path now
+ssh ubuntu192.168.100.2 ovs-vsctl show      # may still answer, but p0/pf0hpf are not in the host's path now
 ```
 
 ### R6 — Link type, SR-IOV
@@ -640,7 +772,7 @@ echo 8 > /sys/class/net/ens3f0np0/device/sriov_numvfs; ip -br link | grep -c 'en
 mlxconfig -d $DEV s INTERNAL_CPU_OFFLOAD_ENGINE=0
 # power cycle
 mlxconfig -d $DEV q INTERNAL_CPU_OFFLOAD_ENGINE      # ENABLED(0)
-ssh ubuntu@192.168.100.2 'ip -br link | grep -E "pf0hpf|pf0vf"; devlink dev eswitch show pci/0000:03:00.0'
+ssh ubuntu192.168.100.2 'ip -br link | grep -E "pf0hpf|pf0vf"; devlink dev eswitch show pci/0000:03:00.0'
 # pf0hpf UP ... pf0vf0..pf0vf7 UP
 # pci/0000:03:00.0: mode switchdev          <- criterion 5
 mlxconfig -d $DEV q INTERNAL_CPU_OFFLOAD_ENGINE LINK_TYPE_P1 SRIOV_EN NUM_OF_VFS > /tmp/mlxconfig-after-dpu.txt

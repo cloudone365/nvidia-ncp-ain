@@ -71,7 +71,7 @@
 <text x="772" y="804" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">3 sharpd requests tree/quota from sharp_am.  4 sharp_am got topology from the SM.</text>
 <text x="772" y="824" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">5 sharp_am programs aggregation nodes.  6 data flows on the SHARP SL/VL.</text>
 <text x="772" y="844" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Test bottom-up: sharp_hello -d mlx5_0:1, then nccl-tests with NCCL_DEBUG=INFO.</text>
-<g><rect x="40" y="820" width="480" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<g><rect x="40" y="820" width="480" height="122" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="54" y="840" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
 <line x1="54" y1="862" x2="114" y2="862" stroke="#2f6fdb" stroke-width="4"/>
 <text x="126" y="868" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (IB / RDMA payload)</text>

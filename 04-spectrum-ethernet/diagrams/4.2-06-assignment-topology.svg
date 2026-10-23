@@ -42,8 +42,11 @@
 <text x="1120.0" y="213.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">10.0.0.2 · AS 65000</text>
 <text x="1120.0" y="235.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1 → leaf01, swp2 → leaf02</text>
 </g>
-<rect x="655.0" y="284.8" width="290.0" height="20.8" fill="#ffffff"/>
-<text x="800" y="300" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">BGP unnumbered · remote-as external</text>
+<text x="48" y="300" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">Fabric links:</text>
+<text x="48" y="322" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">BGP unnumbered ·</text>
+<text x="48" y="344" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">remote-as external ·</text>
+<text x="48" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">loopbacks + redistribute</text>
+<text x="48" y="388" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">connected</text>
 <line x1="660" y1="470" x2="940" y2="470" stroke="#e07b00" stroke-width="4"/>
 <line x1="660" y1="494" x2="940" y2="494" stroke="#e07b00" stroke-width="4"/>
 <text x="800" y="458" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">peerlink swp49, swp50</text>
@@ -59,7 +62,6 @@
 <text x="1160.0" y="505.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">eth0 192.168.200.12 (vrf mgmt)</text>
 <text x="1160.0" y="527.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlan10 10.1.10.2/24 · VRR 10.1.10.254</text>
 </g>
-<text x="800" y="520" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">loopbacks + redistribute connected</text>
 <line x1="440" y1="542" x2="700" y2="700" stroke="#e07b00" stroke-width="4"/>
 <line x1="1160" y1="542" x2="900" y2="700" stroke="#e07b00" stroke-width="4"/>
 <text x="800" y="578" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlag mac 44:38:39:BE:EF:AA · peer-ip linklocal · backup via mgmt</text>

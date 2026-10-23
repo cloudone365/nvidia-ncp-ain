@@ -10,7 +10,7 @@
 <text x="650.0" y="283.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">VL1 buffer</text>
 <text x="650.0" y="303.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">free: 12 x 64 B blocks</text>
 <line x1="310" y1="250" x2="540" y2="250" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<text x="425.0" y="240.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#2f6fdb" text-anchor="middle">data on VL1 — only while credits &gt; 0</text>
+<text x="425.0" y="232" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#2f6fdb" text-anchor="middle">data on VL1 — only while credits &gt; 0</text>
 <circle cx="425" cy="290" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="425" y="296" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
 <line x1="540" y1="310" x2="310" y2="310" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
@@ -35,7 +35,7 @@
 <text x="1420.0" y="283.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">prio 3 ingress buffer</text>
 <text x="1420.0" y="303.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">XOFF threshold + headroom</text>
 <line x1="1090" y1="250" x2="1300" y2="250" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<text x="1195.0" y="240.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#e07b00" text-anchor="middle">RoCE data, priority 3 (DSCP 26)</text>
+<text x="1195.0" y="232" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#e07b00" text-anchor="middle">RoCE data, priority 3 (DSCP 26)</text>
 <circle cx="1195" cy="290" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="1195" y="296" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
 <line x1="1300" y1="310" x2="1090" y2="310" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>

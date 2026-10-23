@@ -11,9 +11,9 @@
 <line x1="300" y1="204" x2="300" y2="920" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
 <line x1="800" y1="204" x2="800" y2="920" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
 <line x1="1300" y1="204" x2="1300" y2="920" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4 6"/>
+<rect x="310" y="219.5" width="840" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="300" y1="250" x2="800" y2="250" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<rect x="310" y="225" width="840" height="23" fill="#ffffff" fill-opacity="0.92"/>
-<text x="314" y="241" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">rdma_resolve_addr(id, NULL, server_ip, 2000ms): IP -&gt; RDMA device, port, source GID index</text>
+<text x="314" y="235.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">rdma_resolve_addr(id, NULL, server_ip, 2000ms): IP -&gt; RDMA device, port, source GID index</text>
 <circle cx="270" cy="250" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="270" y="256" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
 <g><rect x="140" y="280" width="560" height="40" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
@@ -22,18 +22,18 @@
 <text x="152" y="354" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">ibv_alloc_pd, ibv_create_cq, ibv_reg_mr, rdma_create_qp -&gt; INIT</text>
 <circle cx="110" cy="350" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="110" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<rect x="310" y="365.5" width="971" height="23" fill="#ffffff" fill-opacity="0.92"/>
 <line x1="300" y1="396" x2="800" y2="396" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<rect x="310" y="371" width="971" height="23" fill="#ffffff" fill-opacity="0.92"/>
-<text x="314" y="387" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">rdma_resolve_route: IB = SA PathRecord GET (DLID, SL, MTU, rate); RoCE = kernel route + neighbour (MAC)</text>
+<text x="314" y="381.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">rdma_resolve_route: IB = SA PathRecord GET (DLID, SL, MTU, rate); RoCE = kernel route + neighbour (MAC)</text>
 <circle cx="270" cy="396" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="270" y="402" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
-<line x1="800" y1="436" x2="300" y2="436" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <rect x="340" y="411" width="186" height="23" fill="#ffffff" fill-opacity="0.92"/>
+<line x1="800" y1="436" x2="300" y2="436" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <text x="344" y="427" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">path record / route</text>
 <g><rect x="140" y="462" width="620" height="40" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="152" y="486" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">event ROUTE_RESOLVED  (ROUTE_ERROR = no SM, PKey mismatch, no route)</text>
-<line x1="300" y1="532" x2="1300" y2="532" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <rect x="310" y="507" width="793" height="23" fill="#ffffff" fill-opacity="0.92"/>
+<line x1="300" y1="532" x2="1300" y2="532" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <text x="314" y="523" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">rdma_connect(id, &amp;param) -&gt; CM REQ: QPN, PSN, private_data, retry / rnr_retry counts</text>
 <circle cx="270" cy="532" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="270" y="538" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
@@ -43,11 +43,11 @@
 <text x="972" y="636" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">rdma_create_qp, ibv_post_recv x N, rdma_accept(id, &amp;cp)</text>
 <circle cx="930" cy="632" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="930" y="638" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
-<line x1="1300" y1="678" x2="300" y2="678" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <rect x="340" y="653" width="476" height="23" fill="#ffffff" fill-opacity="0.92"/>
+<line x1="1300" y1="678" x2="300" y2="678" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <text x="344" y="669" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">CM REP (server QPN, PSN) — client QP -&gt; RTR -&gt; RTS</text>
-<line x1="300" y1="718" x2="1300" y2="718" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <rect x="310" y="693" width="382" height="23" fill="#ffffff" fill-opacity="0.92"/>
+<line x1="300" y1="718" x2="1300" y2="718" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <text x="314" y="709" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">CM RTU (ready to use) — server QP -&gt; RTS</text>
 <circle cx="270" cy="718" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="270" y="724" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
@@ -55,13 +55,13 @@
 <text x="152" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">event ESTABLISHED on both ids</text>
 <g><rect x="1140" y="748" width="320" height="40" rx="6" fill="#e4f1cc" stroke="#76b900" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1152" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">event ESTABLISHED</text>
-<line x1="300" y1="818" x2="1300" y2="818" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
 <rect x="310" y="793" width="934" height="23" fill="#ffffff" fill-opacity="0.92"/>
+<line x1="300" y1="818" x2="1300" y2="818" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
 <text x="314" y="809" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#2f6fdb" text-anchor="start">verbs data path: ibv_post_send / ibv_poll_cq exactly as with raw verbs (rkeys came in private_data)</text>
 <circle cx="270" cy="818" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="270" y="824" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text>
-<line x1="300" y1="878" x2="1300" y2="878" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <rect x="310" y="853" width="812" height="23" fill="#ffffff" fill-opacity="0.92"/>
+<line x1="300" y1="878" x2="1300" y2="878" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <text x="314" y="869" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="500" fill="#6b7280" text-anchor="start">rdma_disconnect -&gt; CM DREQ/DREP; event DISCONNECTED; rdma_destroy_qp / rdma_destroy_id</text>
 <circle cx="270" cy="878" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="270" y="884" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text>
