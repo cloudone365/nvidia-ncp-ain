@@ -21,11 +21,14 @@ By the end of this module you will be able to…
 
 ## 2. Key technical concepts
 
-### 2.1 NVUE as an API
+### 2.1 NVUE as an API — the architecture
 
 *Analogy:* the `nv` CLI is a receptionist typing your request into a web form. Automation skips the receptionist and submits the form directly — same form, same fields, port 8765.
 
-Everything the `nv` CLI does is a call to the NVUE REST API served by `nvued` on TCP **8765** (HTTPS, self-signed certificate by default, basic auth with a Linux user). The CLI tree *is* the URL tree:
+![Automation architecture: git repository feeds the Ansible controller, which reaches leaf01 either over REST on 8765 to nvued or over SSH to the nv CLI; nvued manages revisions that render ifupdown2 and FRR files, switchd programs the Spectrum-4 ASIC, netq-agent streams state to NetQ whose checks gate the pipeline, and an Air twin rehearses the same playbook](diagrams/6.1-01-automation-architecture.svg)
+*Figure 6.1-1 — Where each automation component sits (steps 1–7): git holds intent, Ansible transports it over REST or SSH, nvued turns a revision into Linux and ASIC state, and NetQ validates the result.*
+
+**What it is.** Everything the `nv` CLI does is a call to the NVUE REST API served by `nvued` on TCP **8765** (HTTPS, self-signed certificate by default, basic auth with a Linux user). The CLI tree *is* the URL tree:
 
 | CLI | REST |
 |---|---|
@@ -37,39 +40,100 @@ Everything the `nv` CLI does is a call to the NVUE REST API served by `nvued` on
 
 `rev=applied`, `rev=pending`, `rev=operational`, `rev=startup` select which view you read — the same three-plus-one states as the CLI (Module 4.2). The REST API is what the `nvidia.nvue` Ansible collection, NetQ LCM configuration profiles and NVIDIA Air use. Enable/verify the API with `nv show system api` and `nv set system api state enabled` (on by default on 5.x; verify object name). Replace the self-signed cert via `nv set system api certificate ...` for production.
 
+**Why it exists.** Screen-scraping CLI output is fragile: the text changes between releases and errors hide in prose. A single API with a schema gives automation typed reads, structured errors and the same transactional model as an operator at the CLI — so there is exactly one way configuration enters the switch, whatever the tool. That is also why NVUE is declarative: the API holds a *desired state document*, and `nvued` computes how to reach it.
+
+**How it works** (Figure 6.1-1):
+
+1. CI renders a per-switch NVUE YAML from templates and variables.
+2. Ansible pushes it — either as REST calls into a revision on 8765 (the `nvidia.nvue` collection over httpapi) or over SSH, where `nv config replace` is itself a client of the same `nvued`.
+3. `nvued` diffs the revision against the applied configuration; an empty diff means nothing to do.
+4. On apply, `nvued` renders the Linux configuration (ifupdown2 `/etc/network/interfaces`, FRR `frr.conf`, and others) and reloads the affected daemons.
+5. `switchd` mirrors kernel state (links, bridges, routes, neighbours) into the Spectrum ASIC through the SDK; some features (AR, breakout) need a `switchd` restart on older releases.
+6. `netq-agent` streams the resulting operational state to the NetQ server on 31980.
+7. `netq check …` decides whether the pipeline continues.
+
 **Why the exam cares:** port 8765 and `/nvue_v1/` versus NetQ's 31980 and the UI's 443 is a standard distractor set; and "a bare PATCH to an object without `rev=` does nothing persistent" is the subtle one.
 
-### 2.2 NVUE YAML structure
+### 2.2 REST semantics and the revision lifecycle
 
-`nv config show -o yaml` emits the applied configuration as a list containing one `set` mapping (and, when relevant, `unset`). The hierarchy mirrors the CLI. Observations: leaf values that are "present" are empty mappings (`10.0.0.11/32: {}`); ranges like `swp61-64` are valid keys; numbers that are keys (`'100'`) are quoted; enumerations use CLI words (`on`, `external`, `lossless`). The simplest way to learn the exact schema for anything is to configure it once by hand and read `nv config show -o yaml`.
+*Analogy:* a revision is a shopping basket. You put changes in (PATCH), the store checks the basket at the till (apply), and only then does stock move. Abandoned baskets block the till for the next customer.
 
-### 2.3 Replace vs patch
+![Sequence diagram of the NVUE REST revision flow: GET applied state, POST to create a revision, PATCH objects into it, PATCH the revision state to apply, nvued validates and the system renders and reloads, the client polls the revision state until applied, then saves to startup](diagrams/6.1-02-nvue-rest-revision-flow.svg)
+*Figure 6.1-2 — One REST transaction (steps 1–10): read, open a revision, write into it, apply, poll, save.*
+
+**What it is.** NVUE's REST verbs map onto configuration operations: `GET` reads (safe, any `rev=` view), `PATCH` merges a JSON subtree into a revision (like `nv set`), `DELETE` removes a subtree from a revision (like `nv unset`), and `PATCH` on `/nvue_v1/revision/<id>` changes the *revision's* state (apply). A revision is a named, per-user changeset: `POST /nvue_v1/revision` returns an id such as `changeset/cumulus/2026-10-19_09.40.11_ABCD`. Because the id contains `/`, you must URL-encode it when it appears in a path or query string. States you will see while polling: `pending` → `applying` → `applied`, or a failure state (`apply_fail` and related `*_fail` values — verify the exact names for your release).
+
+**Why it exists.** A switch configuration change is rarely one object: a VLAN needs a bridge entry, an SVI, a VNI mapping and a BGP redistribute. Revisions make that set atomic — validated together, applied together, recorded together in `nv config history` — and let several operators stage work without trampling each other. The price is state you must manage: open revisions hold a lock on apply, so a crashed script leaves a stale changeset (409 Conflict on the next apply).
+
+**How it works** (Figure 6.1-2):
+
+1. `GET /nvue_v1/qos/roce?rev=applied` — read current state first (idempotent automation always reads before writing).
+2. `POST /nvue_v1/revision` — create a changeset.
+3. `nvued` records it as pending for your user.
+4. The response body's key is the revision id.
+5. `PATCH /nvue_v1/<path>?rev=<id>` with a JSON body mirroring the YAML subtree — repeat per object; nothing is live yet.
+6. `PATCH /nvue_v1/revision/<id>` with `{"state":"apply","auto-prompt":{"ays":"ays_yes"}}`. The `auto-prompt` field answers the interactive "are you sure?" prompts that the CLI would ask (the REST equivalent of `nv config apply -y`); `nvidia.nvue.config` exposes this as `force: true`.
+7. `nvued` validates the whole revision (schema and dependencies — an SVI whose VLAN is not on the bridge fails here) and moves it to `applying`.
+8. It renders files and reloads ifupdown2/FRR; `switchd` programs the ASIC.
+9. Poll `GET /nvue_v1/revision/<id>` until `.state` is `applied` or a failure; the response carries the error text on failure. Apply is asynchronous — a 200 on step 6 means "accepted", not "done".
+10. Save to `startup.yaml` (`nv config save`). Apply alone is not persistent unless your release has auto-save enabled (`nv set system config auto-save` — check the default on your version; this course assumes an explicit save).
+
+Authentication is HTTP basic with a local Linux account (`cumulus` or an NVUE user role); use HTTPS with a CA-signed certificate in production. Observe: `nv config history` (revisions applied, by whom), `GET /nvue_v1/revision` (all revisions and their states), `journalctl -u nvued`.
+
+### 2.3 NVUE YAML schema
+
+**What it is.** `nv config show -o yaml` emits the applied configuration as a list containing one `set` mapping (and, when relevant, `unset`). The hierarchy mirrors the CLI and the REST URL tree: `interface → swp1 → link → mtu`. Observations: leaf values that are "present" are empty mappings (`10.0.0.11/32: {}`); ranges like `swp61-64` are valid keys; numbers that are keys (`'100'`) are quoted; enumerations use CLI words (`on`, `external`, `lossless`).
+
+**Why it exists.** One schema serves three front ends — CLI, REST JSON and YAML files — so a template author, an API caller and an operator all describe the same object the same way. Collection-type nodes (IP addresses, VLANs, VNIs) are dictionaries keyed by the value, which makes merges deterministic: adding `10.0.0.12/32: {}` never duplicates an existing entry.
+
+**How it works.** The YAML file is a desired-state document: `- set: {…}` adds/overrides, `- unset: {…}` removes. `nv config replace` treats the file as the whole truth; `nv config patch` merges it (§2.4). Validation happens at apply time against the release's schema, so an attribute renamed between releases (the AR keyword `enable on` vs `state enabled` on 5.15+) fails apply rather than render. The simplest way to learn the exact schema for anything is to configure it once by hand and read `nv config show -o yaml`.
+
+### 2.4 Replace vs patch
 
 *Analogy:* `replace` hands the switch a complete new blueprint — anything not on it gets demolished. `patch` is a sticky note added to the existing blueprint.
+
+**What it is.**
 
 | Command | Semantics | Use |
 |---|---|---|
 | `nv config replace <file>` | pending := exactly this file (declarative; removes anything not in it) | Full-device configs from git/Ansible |
 | `nv config patch <file>` | merge into pending (add/override only; cannot remove unless the file carries `- unset:`) | Targeted features (RoCE, AR, a VLAN) |
 
-`replace` is idempotent and complete: running it twice with the same file produces no diff. Both are followed by `nv config diff`, `nv config apply -y`, `nv config save`.
+**Why it exists.** Two ownership models need two operations. If git owns the whole device, any hand-made change is drift and should disappear on the next run — `replace`. If several teams own different subtrees (fabric team: BGP; storage team: a VLAN), each must change only its part — `patch`. The trade-off: `replace` with an incomplete template deletes things (management VRF, users) you forgot to template; `patch` never cleans up removed items.
 
-### 2.4 Ansible idempotency — a thermostat, not a light switch
+**How it works.** Both load into the pending revision; neither touches the running switch. `nv config diff` shows pending vs applied; `nv config apply -y` applies; `nv config save` persists. `replace` is idempotent and complete: running it twice with the same file produces no diff. Always include management essentials (hostname, `mgmt` VRF, users, API settings) in a `replace` template.
+
+### 2.5 Jinja2 rendering
+
+**What it is.** Jinja2 templates (`*.yaml.j2`) plus per-host and per-group variables produce one NVUE YAML per switch. Ansible's `template` module and the standalone `jinja2` CLI use the same engine.
+
+**Why it exists.** Thirty-two leaves share 95 % of their configuration; the differences (hostname, loopback, ASN, tenant VLANs) are data. Templates keep the structure in one reviewed file and the differences in small variable files, so a fabric-wide change is one template edit and a new leaf is one `host_vars` file.
+
+**How it works.** Rendering is pure text: `{% for u in uplinks %}` loops emit YAML blocks, `{{ loopback }}` substitutes values. Because YAML is whitespace-sensitive, indentation inside loops is the main failure mode — the rendered file must parse (`yaml.safe_load`) *before* it reaches a switch. Render offline in CI, commit the rendered output under `rendered/`, and review the diff of `rendered/`, which shows the actual device change. Quote numeric keys (`'{{ v.id }}'`), keep `{}` for presence-only leaves, and use `| default()` for optional variables so a missing var fails loudly or falls back deliberately.
+
+### 2.6 Ansible connection model — httpapi vs SSH
 
 *Analogy:* a light switch toggles every time you press it. A thermostat looks at the room and only turns the heating on if it is cold. Ansible should be a thermostat: `command: nv set …` is a light switch (reports "changed" every run); `nv config replace` + `nv config diff` with `changed_when` on a non-empty diff is a thermostat.
 
-Two connection styles work with Cumulus:
+**What it is.** Two connection styles work with Cumulus:
 
 | Style | Inventory settings | Pros / cons |
 |---|---|---|
 | **SSH** (`ansible_connection: ssh`, run `nv` commands or copy YAML) | `ansible_user: cumulus`, `ansible_become: false` (nv needs no sudo) | Simple, works everywhere, also lets you run Linux tasks (apt, files). Config pushed via `nv config replace` + `apply` |
-| **REST** via the `nvidia.nvue` collection | `ansible_connection: local` (modules call the API from the controller) with `ansible_host`, API credentials as module parameters / vars | Structured, no shell parsing, revision-aware. Requires port 8765 reachable from the controller |
+| **httpapi** via the `nvidia.nvue` collection | `ansible_connection: ansible.netcommon.httpapi`, `ansible_network_os: nvidia.nvue.httpapi`, `ansible_httpapi_use_ssl: true`, `ansible_httpapi_port: 8765`, `ansible_httpapi_validate_certs`, credentials in `ansible_user`/`ansible_password` (verify variable names against the collection README) | Structured, no shell parsing, revision-aware. Requires port 8765 reachable from the controller |
 
 `ansible_network_os` is not required for Cumulus when using plain SSH (it is a Debian host); with `network_cli` you would set `ansible_network_os: cumulus` only for legacy NCLU modules, which are deprecated. Install the collection: `ansible-galaxy collection install nvidia.nvue`.
 
-### 2.5 The `nvidia.nvue` collection
+**Why it exists.** SSH treats the switch as a Linux server — maximum flexibility, but idempotency and error handling are your problem (parse `nv config diff`, check return codes). httpapi treats it as an API endpoint: the modules run on the controller, open a persistent HTTPS session per host, speak JSON, and return structured results — but only for what the modules model.
 
-Modules (as published in the collection; confirm the current list with `ansible-doc -l nvidia.nvue`):
+**How it works.** With SSH, Ansible copies a small Python payload to the switch and runs `nv` there (no `become`, because `nv` authorises through `nvued`, and root's PATH may not include it). With httpapi, nothing runs on the switch: the controller's httpapi plugin authenticates to 8765 and each task becomes the REST calls of §2.2. Mixed plays are common — httpapi for configuration, SSH for file backups and upgrades.
+
+### 2.7 The `nvidia.nvue` collection — states, revid, apply
+
+![Playbook execution sequence across an Ansible controller, two leaves and NetQ: render, replace and diff with check_mode false, decide changed or ok, apply with async and poll unless in check mode, save, repeat on the next host because of serial 1, then run netq check and stop the rollout on any failed node](diagrams/6.1-03-playbook-execution-sequence.svg)
+*Figure 6.1-3 — A serial rollout (steps 1–10): diff decides change, apply runs only outside check mode, save persists, NetQ gates. The REST path replaces steps 2–6 with `nvidia.nvue.config state: new` → typed module `state: merged` → `config state: apply`.*
+
+**What it is.** Modules (as published in the collection; confirm the current list with `ansible-doc -l nvidia.nvue`):
 
 | Module | Purpose |
 |---|---|
@@ -85,21 +149,70 @@ Modules (as published in the collection; confirm the current list with `ansible-
 
 Note: there is no dedicated `nvidia.nvue.qos` or `config_apply` module at the time of writing — QoS/RoCE is driven through `nvidia.nvue.api` (path `qos`) or the CLI, and apply is `nvidia.nvue.config` with `state: apply`. Typed modules take `state` (`merged` to set, `gathered` to read, `deleted` to unset), `revid` (the revision to write into) and `data` (the same structure as the YAML under that tree). The pattern is always: create revision → write into it → apply → (save).
 
-### 2.6 Validation, upgrades, git and CI
+**Why it exists.** Typed modules turn each subtree into an Ansible resource with the standard network-resource states, so a play reads like desired state rather than a script. `revid` exists because several tasks must land in *one* revision to be applied atomically — without it each task would open and apply its own revision, and a half-finished play would leave a half-configured switch.
 
-Configuration success ≠ operational success. Close the loop with NetQ (`netq check bgp|evpn|interfaces|mtu|roce`, Module 4.5); snapshots before/after are the audit record. Upgrades: `nv action upgrade` for minor versions (syntax varies by release; verify), ONIE image install + `nv config replace` for major jumps (Module 4.3), or **NetQ LCM** — a valid exam answer when the question stresses "minimal scripting".
+**How it works.**
 
-Recommended repository layout:
-```text
-fabric-config/
-├── inventory/hosts.ini
-├── group_vars/{cumulus,leaves,spines}.yml
-├── host_vars/leaf01.yml ...
-├── templates/spectrumx-leaf.yaml.j2, spine.yaml.j2
-├── rendered/           # CI artefact: one NVUE YAML per switch (committed for review)
-└── playbooks/
-```
-Pipeline: (1) lint/render — `ansible-lint`, render, `yamllint`, diff `rendered/` so reviewers see the *device* change; (2) simulate — spin up an NVIDIA Air twin via API, `--check --diff` then apply, `netq check` in the twin (control plane only); (3) deploy — on merge, run with `serial`, then `netq check` and snapshot compare; (4) drift detection — nightly `nv config show -o yaml` per switch compared with `rendered/`. NVUE's declarative `replace` is what makes git the source of truth: a revert in git is a rollback in the fabric. Keep secrets in Ansible Vault.
+1. `nvidia.nvue.config: state: new` → POST `/revision`; the result's `revid` is registered.
+2. Typed modules with `state: merged`, `revid: "{{ rev.revid }}"`, `data: …` → PATCH into that revision; `state: deleted` → DELETE the subtree; `state: gathered` → GET (reads, writes nothing, reports `ok`).
+3. `nvidia.nvue.config: state: apply`, `revid`, `force: true` (answer prompts / override other pending sets — coordinate), `wait: <seconds>` (poll until the revision leaves `applying`).
+4. Save to startup (the collection's save state or `nv config save` — verify which your collection version supports).
+
+Idempotency on this path comes from NVUE itself: a revision identical to the applied state applies as a no-op. Observe with `-vvv` (the REST calls), `nv config history` on the switch, and `GET /nvue_v1/revision`.
+
+### 2.8 Idempotency, check mode and diff
+
+**What it is.** An idempotent play converges: run twice, the second run reports `changed=0`. Ansible's `--check` asks tasks to predict changes without making them; `--diff` asks them to show what would change.
+
+**Why it exists.** A pipeline that reports "changed" every time cannot detect drift or prove a no-op, and an operator cannot review an unpredicted change. NVUE already computes the exact change (`nv config diff`); the play just has to surface it instead of guessing.
+
+**How it works** (Figure 6.1-3, steps 2–6):
+
+1. Load desired state into pending and diff: `nv config replace <file> && nv config diff` with `changed_when: diff.stdout | trim | length > 0` and `check_mode: false` (so it also runs under `--check` — it only touches pending, not the running config).
+2. Show the diff when `ansible_diff_mode` is true.
+3. Apply only `when: diff.changed and not ansible_check_mode`; wrap in `async`/`poll` because AR or breakout can restart `switchd`.
+4. Otherwise `nv config detach` so no stale pending set holds the lock.
+5. Save only when apply changed something.
+
+Failure modes: `command: nv set …` (always changed); diff task without `check_mode: false` (skipped under `--check`, so you preview nothing); `become: true` (`nv` not found or wrong user context).
+
+### 2.9 Validation and upgrades
+
+**What it is.** Configuration success ≠ operational success. Close the loop with NetQ (`netq check bgp|evpn|interfaces|mtu|roce`, Module 4.5); snapshots before/after are the audit record. Upgrades: `nv action upgrade` for minor versions (syntax varies by release; verify), ONIE image install + `nv config replace` for major jumps (Module 4.3), or **NetQ LCM** — a valid exam answer when the question stresses "minimal scripting".
+
+**Why it exists.** An apply can succeed while a BGP session stays down (wrong ASN), an MTU mismatches on the far end, or RoCE settings disagree with the hosts. Only a fabric-wide view of *operational* state catches that, and it must run after every change.
+
+**How it works.** A validation play runs `netq check <x> json` on the NetQ server and fails on `summary.failedNodeCount > 0`; allow one agent collection interval (~60 s) after apply before checking. For upgrades: save, back up `startup.yaml` off-box, upgrade one switch at a time (`serial: 1`), reboot, confirm the version, re-run validation before the next switch.
+
+### 2.10 Git, CI/CD gates and rollback
+
+![CI/CD pipeline with seven stages: commit, lint and render, check mode, simulate in NVIDIA Air, deploy on merge, validate with netq check, and rollback or drift detection, with a failure path from validation back to a git revert](diagrams/6.1-04-cicd-pipeline.svg)
+*Figure 6.1-4 — The pipeline: every stage produces a reviewable artefact or a pass/fail gate; a failure at validation becomes a git revert and a redeploy of the previous declarative state.*
+
+**What it is.** Git is the source of truth; CI turns a commit into a validated device change. Recommended repository layout:
+
+| Path | Contents |
+|---|---|
+| `fabric-config/inventory/hosts.ini` | Switch inventory and groups (`spines`, `leaves`, `cumulus`) |
+| `fabric-config/group_vars/{cumulus,leaves,spines}.yml` | Shared values (MTU, `roce_mode`, `ar_threshold`, connection settings) |
+| `fabric-config/host_vars/leaf01.yml …` | Per-device data (hostname, loopback, ASN, ports, tenants) |
+| `fabric-config/templates/spectrumx-leaf.yaml.j2`, `spine.yaml.j2` | Jinja2 templates per device role |
+| `fabric-config/rendered/` | CI artefact: one NVUE YAML per switch, committed for review |
+| `fabric-config/playbooks/` | Plays for deploy, feature patches, validation, upgrades |
+
+**Why it exists.** Network changes fail in predictable ways — a typo in a variable, a template indentation bug, a dependency the schema rejects, a correct config with a wrong operational result. Each pipeline stage catches one class earlier and more cheaply than production. NVUE's declarative `replace` is what makes git the source of truth: a revert in git is a rollback in the fabric. Keep secrets in Ansible Vault.
+
+**How it works** (Figure 6.1-4):
+
+1. **Commit/PR** — the change is a diff of variables or templates.
+2. **Lint + render** — `ansible-lint`, render, `yamllint`, `yaml.safe_load`; diff `rendered/` so reviewers see the *device* change.
+3. **Check mode** — `--check --diff` against the real switches: NVUE computes the true diff; nothing is applied; `nv config history` unchanged.
+4. **Simulate** — spin up an NVIDIA Air twin via API, apply, `netq check` in the twin (control plane only; no RoCE/AR/PFC behaviour).
+5. **Deploy** — on merge, run with `serial: 1` (or a canary group), async around AR/breakout.
+6. **Validate** — `netq check … json`, snapshot compare; on hardware, `ib_write_bw`/NCCL tests prove the data plane.
+7. **Rollback / drift** — on failure, `git revert` and redeploy: `replace` restores the previous state exactly. Nightly, compare `nv config show -o yaml` per switch with `rendered/` to catch hand edits. For an emergency on one box, `nv config history` plus re-applying a previous revision is the local equivalent — then fix git so the next run does not undo it.
+
+**Why the exam cares:** declarative replace = git revert is a rollback; check mode needs `check_mode: false` on the diff task; Air validates control plane only.
 
 ## 3. Live-style walkthrough — template → render → replace → playbook → check → apply → validate
 
@@ -111,19 +224,20 @@ curl -sk -u cumulus:'P@ss' https://leaf01:8765/nvue_v1/interface/swp1/link | jq 
 curl -sk -u cumulus:'P@ss' "https://leaf01:8765/nvue_v1/qos/roce?rev=applied" | jq .
 curl -sk -u cumulus:'P@ss' "https://leaf01:8765/nvue_v1/vrf/default/router/bgp/neighbor?rev=operational" | jq .
 
-# Write: 1) create a revision (pending changeset), 2) PATCH into it, 3) apply it
+# Write: 1) create a revision (pending changeset), 2) PATCH into it, 3) apply it   (Figure 6.1-2, steps 2-9)
 REV=$(curl -sk -u cumulus:'P@ss' -X POST https://leaf01:8765/nvue_v1/revision | jq -r 'keys[0]')
 echo $REV                                                            # e.g. changeset/cumulus/2026-10-19_09.40.11_ABCD
+REV_ENC=$(jq -rn --arg r "$REV" '$r|@uri')                           # the id contains '/': URL-encode it for paths and queries
 curl -sk -u cumulus:'P@ss' -X PATCH -H 'Content-Type: application/json' \
-  "https://leaf01:8765/nvue_v1/interface/swp1/link?rev=${REV}" -d '{"mtu": 9216}'
+  "https://leaf01:8765/nvue_v1/interface/swp1/link?rev=${REV_ENC}" -d '{"mtu": 9216}'    # staged, not live
 curl -sk -u cumulus:'P@ss' -X PATCH -H 'Content-Type: application/json' \
-  "https://leaf01:8765/nvue_v1/revision/${REV}" -d '{"state":"apply","auto-prompt":{"ays":"ays_yes"}}'
-# Poll until state is "applied"
-curl -sk -u cumulus:'P@ss' "https://leaf01:8765/nvue_v1/revision/${REV}" | jq .state
-# "applied"
+  "https://leaf01:8765/nvue_v1/revision/${REV_ENC}" -d '{"state":"apply","auto-prompt":{"ays":"ays_yes"}}'   # answers "are you sure?"
+# Apply is asynchronous: poll until state leaves "applying"
+curl -sk -u cumulus:'P@ss' "https://leaf01:8765/nvue_v1/revision/${REV_ENC}" | jq .state
+# "applied"            <- anything ending in _fail carries the error text in the same response
 ```
 
-Watch the three-step shape: *revision → patch → apply*. Every automation tool below does exactly this under the hood.
+Watch the three-step shape: *revision → patch → apply*, then *poll*. Every automation tool below does exactly this under the hood (Figure 6.1-2).
 
 ### Step 2 — Variables for one leaf (`host_vars/leaf01.yml`)
 
@@ -381,7 +495,7 @@ mtu: 9216
       when: apply is changed
 ```
 
-Idempotency comes from `nv config replace` + `nv config diff`: an identical desired state yields an empty diff, no apply, no change reported. An alternative is `ansible.builtin.uri` calling the REST endpoints in Step 1 — same semantics, no SSH.
+Idempotency comes from `nv config replace` + `nv config diff`: an identical desired state yields an empty diff, no apply, no change reported. These tasks are steps 1–6 of Figure 6.1-3. An alternative is `ansible.builtin.uri` calling the REST endpoints in Step 1 — same semantics, no SSH.
 
 ### Step 8 — Playbook A: VLANs, SVIs and bonds with the `nvidia.nvue` collection (REST)
 
@@ -390,25 +504,21 @@ Idempotency comes from `nv config replace` + `nv config diff`: an identical desi
 - name: Rollout tenant VLANs, SVIs and host bonds on leaves
   hosts: leaves
   gather_facts: false
-  connection: local                                   # modules call the API from the controller
-  vars:
-    api: &api
-      provider:
-        host: "{{ ansible_host }}"
-        port: "{{ nvue_api_port }}"
-        username: "{{ nvue_api_user }}"
-        password: "{{ nvue_api_password }}"
-        validate_certs: false                         # lab; install a CA-signed cert in production
+  vars:                                               # httpapi: modules run on the controller and call port 8765
+    ansible_connection: ansible.netcommon.httpapi     # (often set in group_vars instead; verify names in the collection README)
+    ansible_network_os: nvidia.nvue.httpapi
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_port: "{{ nvue_api_port }}"
+    ansible_httpapi_validate_certs: false             # lab; install a CA-signed cert in production
+    # credentials: ansible_user / ansible_password from group_vars (Vault)
   tasks:
     - name: Open a new NVUE revision                    # == POST /nvue_v1/revision
       nvidia.nvue.config:
-        <<: *api
         state: new
       register: rev
 
     - name: Define VLANs on the VLAN-aware bridge       # writes into /bridge in revision rev.revid
       nvidia.nvue.bridge:
-        <<: *api
         state: merged
         revid: "{{ rev.revid }}"
         data:
@@ -418,7 +528,6 @@ Idempotency comes from `nv config replace` + `nv config diff`: an identical desi
 
     - name: Host-facing bonds and SVIs                  # writes into /interface
       nvidia.nvue.interface:
-        <<: *api
         state: merged
         revid: "{{ rev.revid }}"
         data: >-
@@ -429,15 +538,13 @@ Idempotency comes from `nv config replace` + `nv config diff`: an identical desi
 
     - name: Apply the revision (waits for completion)   # == PATCH /nvue_v1/revision/<rev> state apply
       nvidia.nvue.config:
-        <<: *api
         state: apply
         revid: "{{ rev.revid }}"
         force: true                                     # overwrite other pending sets — coordinate
         wait: 90
 
-    - name: Save to startup
+    - name: Save to startup                             # verify your collection version supports state: save
       nvidia.nvue.config:
-        <<: *api
         state: save
 ```
 ```yaml
@@ -554,7 +661,7 @@ TASK [Discard pending when nothing to apply or in check mode] ****
 ok: [leaf01]
 ```
 
-That printed diff is the *exact* change the switch would make — a safer preview than Ansible's own diff of the YAML file. Now for real:
+That printed diff (Figure 6.1-3, steps 2–3) is the *exact* change the switch would make — a safer preview than Ansible's own diff of the YAML file. Now for real:
 
 ```bash
 ansible-playbook -i inventory/hosts.ini playbooks/leaf-full.yml --limit leaf01
@@ -575,7 +682,7 @@ Close the loop:
       failed_when: (checks.stdout | from_json).summary.failedNodeCount | default(0) > 0
 ```
 
-A pipeline that applies config and then fails on `netq check bgp` failures catches the mis-typed ASN before users do.
+A pipeline that applies config and then fails on `netq check bgp` failures catches the mis-typed ASN before users do. This is stage 6 of Figure 6.1-4.
 
 ### Step 11 — Upgrade automation
 
@@ -804,17 +911,15 @@ nv action upgrade system packages to-version <ver> use-vrf mgmt    # verify synt
 
 ### Layout
 
-```text
-fabric-config/
-├── inventory/hosts.ini
-├── group_vars/cumulus.yml  leaves.yml  spines.yml
-├── host_vars/leaf01.yml leaf02.yml spine01.yml spine02.yml
-├── roles/nvue_fabric/
-│   ├── tasks/main.yml
-│   └── templates/leaf.yaml.j2  spine.yaml.j2
-├── playbooks/site.yml  vlan-roce.yml  validate.yml
-└── rendered/
-```
+| Path | Contents |
+|---|---|
+| `fabric-config/inventory/hosts.ini` | Groups `spines`, `leaves`, `cumulus`, `netq_server` |
+| `fabric-config/group_vars/cumulus.yml`, `leaves.yml`, `spines.yml` | Shared values and `device_role` |
+| `fabric-config/host_vars/leaf01.yml`, `leaf02.yml`, `spine01.yml`, `spine02.yml` | Per-device data |
+| `fabric-config/roles/nvue_fabric/tasks/main.yml` | Render → replace → diff → apply → detach → save |
+| `fabric-config/roles/nvue_fabric/templates/leaf.yaml.j2`, `spine.yaml.j2` | Role templates selected by `device_role` |
+| `fabric-config/playbooks/site.yml`, `vlan-roce.yml`, `validate.yml` | The three plays |
+| `fabric-config/rendered/` | Committed per-switch NVUE YAML |
 
 ### Inventory and vars
 
