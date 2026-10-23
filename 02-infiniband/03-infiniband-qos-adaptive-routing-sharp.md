@@ -26,27 +26,37 @@ By the end of this module you will be able to…
 
 **Analogy:** think of a physical link as a motorway. A **VL** is a dedicated lane with its own on-ramp meter (credits). The **SL** is the sticker on the vehicle saying which kind of lane it is allowed to use — the sticker is applied at the factory (the sending application) and stays on for the whole journey. **SL2VL** is the sign at each junction saying "sticker 3 → lane 3". **VL arbitration** is the traffic officer at the merge deciding how many cars from each lane go through per cycle.
 
-Ethernet QoS is about *classification* (DSCP/PCP) → *queues* (traffic classes) → *scheduling* (strict/WRR). InfiniBand has the same three stages with its own names, and — because the **SM** programs every port — it is configured once centrally rather than per switch.
+**What it is.** Ethernet QoS is about *classification* (DSCP/PCP) → *queues* (traffic classes) → *scheduling* (strict/WRR). InfiniBand has the same three stages with its own names, and — because the **SM** programs every port — it is configured once centrally rather than per switch. Figure 2.3-1 shows the pipeline at one output port.
 
-**Virtual Lanes (VLs).** A **VL** is a separate buffer and credit pool on a physical link. Each port supports up to 15 data VLs (VL0–VL14) plus **VL15**, which is reserved for subnet management traffic (SMPs) and is never flow-controlled. Real hardware supports fewer: ConnectX/Quantum ports are typically configured for 8 data VLs (`max_op_vls`). Because flow control is per VL, traffic on VL1 can stall without blocking VL0 — this is how IB avoids head-of-line blocking between classes and why deadlock-free routing engines (torus-2QoS) use VLs for loop breaking.
+![QoS pipeline at one IB output port: incoming packet with SL in the LRH, SL2VL table selecting one of eight VL buffers with their own credits, VL arbitration high and low tables with high_limit, and the credit-gated 400G output link](diagrams/2.3-01-sl-vl-pipeline.svg)
+*Figure 2.3-1 — SL → SL2VL → per-VL buffer and credits → VL arbitration → output link. No stage drops packets.*
 
-**Service Levels (SLs).** The **SL** is a 4-bit field (0–15) in the Local Route Header. It is the *end-to-end* class marker chosen by the application when it creates a connection (via the path record from the SA or an explicit QP attribute). SL is to IB what DSCP is to IP: it travels with the packet across the whole subnet.
+- **Virtual Lanes (VLs).** A **VL** is a separate buffer and credit pool on a physical link. Each port supports up to 15 data VLs (VL0–VL14) plus **VL15**, which is reserved for subnet management traffic (SMPs) and is never flow-controlled. Real hardware supports fewer: ConnectX/Quantum ports are typically configured for 8 data VLs (`max_op_vls`). Because flow control is per VL, traffic on VL1 can stall without blocking VL0 — this is how IB avoids head-of-line blocking between classes and why deadlock-free routing engines (torus-2QoS) use VLs for loop breaking.
+- **Service Levels (SLs).** The **SL** is a 4-bit field (0–15) in the Local Route Header. It is the *end-to-end* class marker chosen by the application when it creates a connection (via the path record from the SA or an explicit QP attribute). SL is to IB what DSCP is to IP: it travels with the packet across the whole subnet.
+- **SL2VL mapping.** At each switch port (and HCA port), an **SL2VL table** maps the 16 SLs to the operational VLs on the *output* port. The SM programs these tables; the default is identity (SL n → VL n) truncated to the available VLs. Different ports can have different tables (e.g. a torus routing engine uses this to switch VLs mid-path), but in a fat-tree the mapping is uniform.
+- **VL arbitration.** Each output port has a **VL arbitration table** with two sub-tables, **high priority** and **low priority**, plus a **high-limit** value:
+  - Each entry is `VL:weight`. The arbiter scans the active table round-robin, letting a VL transmit up to `weight × 64 bytes` before moving on (weight 0 = skip; the exact byte granularity is an IB-spec detail — "verify in current docs" if asked precisely).
+  - The **high-priority table** is served first. `high_limit` bounds how many high-priority bytes (in units of 4 KiB; 255 = unlimited) can be sent before the arbiter must service the low-priority table once, which prevents starvation.
+  - Entries can repeat a VL to increase its share.
 
-**SL2VL mapping.** At each switch port (and HCA port), an **SL2VL table** maps the 16 SLs to the operational VLs on the *output* port. The SM programs these tables; the default is identity (SL n → VL n) truncated to the available VLs. Different ports can have different tables (e.g. a torus routing engine uses this to switch VLs mid-path), but in a fat-tree the mapping is uniform.
+**Why it exists.** A GPU cluster carries traffic with very different needs on the same links: NCCL bulk transfers that want bandwidth, SHARP aggregation and small control messages that want latency, storage that must never be starved, and IPoIB management. Without classes, one 400 Gb/s all-reduce burst sits in front of everything else. Because IB is lossless, the failure mode is not drops but *blocking*: a congested class holding credits would stall every other class if they shared one buffer. Per-VL buffers and credits make the stall class-local; arbitration weights turn "class" into a bandwidth guarantee. Doing it in the SM rather than per switch means every port in the fabric agrees, which Ethernet operators achieve only with careful automation (Module 3.3).
 
-**VL arbitration.** Each output port has a **VL arbitration table** with two sub-tables, **high priority** and **low priority**, plus a **high-limit** value:
+**How it works.** Follow the numbered steps in Figure 2.3-1:
 
-- Each entry is `VL:weight`. The arbiter scans the active table round-robin, letting a VL transmit up to `weight × 64 bytes` before moving on (weight 0 = skip; the exact byte granularity is an IB-spec detail — "verify in current docs" if asked precisely).
-- The **high-priority table** is served first. `high_limit` bounds how many high-priority bytes (in units of 4 KiB; 255 = unlimited) can be sent before the arbiter must service the low-priority table once, which prevents starvation.
-- Entries can repeat a VL to increase its share.
+1. **Mark.** The sender's QP carries an SL (from the SA path record, `NCCL_IB_SL`, `ib_write_bw -S`, or the partition's `sl=`). The HCA writes it into the 4-bit **SL** field of the 8-byte LRH, and writes the 4-bit **VL** field from its *own* SL2VL table. SL never changes in flight.
+2. **Map per hop.** At every switch the packet is classified by SL and the **output** port's SL2VL table picks the VL for the next link. The switch rewrites the LRH VL field — which is why the per-hop **VCRC** (16-bit, covers the LRH and changes every hop) is recomputed, while the end-to-end **ICRC** (32-bit) is not (it treats VL as invariant).
+3. **Queue and credit.** The packet waits in that VL's buffer until the downstream receiver has granted credits on that VL (§2.3). A VL with no credits is simply ineligible; the others are not affected.
+4. **Arbitrate.** When the port is free, the arbiter walks the high table (up to 64 entries; each weight is 8 bits, 0–255, in 64-byte units), letting each listed VL with data and credits send up to its weight; after `high_limit × 4 KiB` of high-priority data it must serve one low-table entry. The low table is a weighted round-robin among its entries. VL15 bypasses arbitration and is always served first.
 
-So: SL picks the class, SL2VL picks the queue, VLArb decides bandwidth share and priority. Note there is no "drop" anywhere — IB QoS shapes who goes first, not who gets discarded.
+So: SL picks the class, SL2VL picks the queue, VLArb decides bandwidth share and priority. Note there is no "drop" anywhere — IB QoS shapes who goes first, not who gets discarded. Observe the programmed state with `smpquery SL2VL -L <lid> <port>` and `smpquery VLArb -L <lid> <port>`; on the HCA, `ibv_devinfo -v` shows `max_vl_num`.
+
+**Failure modes.** `qos FALSE` (or a stock SM ignoring the keys) leaves identity SL2VL and all-equal arbitration, so two SLs share bandwidth 1:1 regardless of intent (§4.1). An SL that maps to a VL above `qos_max_vls` lands on a truncated VL — often VL0 — silently merging classes. A high-table VL with `high_limit 255` and continuous traffic starves the low table completely.
 
 **Why the exam cares:** "SL is end-to-end and application-chosen; VL is per-link and table-chosen" is tested directly, as is the strict-priority behaviour of the high table with `high_limit 255`.
 
 ### 2.2 Expressing QoS in opensm.conf
 
-OpenSM/MLNXSM has a simple global QoS block plus optional per-port-type overrides (`qos_ca_*`, `qos_sw0_*`, `qos_swe_*`, `qos_rtr_*` for HCA ports, switch port 0, switch external ports, routers). The policy that *assigns* SLs to flows lives in a separate `qos-policy.conf` file (or is left to applications).
+**What it is.** OpenSM/MLNXSM has a simple global QoS block plus optional per-port-type overrides (`qos_ca_*`, `qos_sw0_*`, `qos_swe_*`, `qos_rtr_*` for HCA ports, switch port 0, switch external ports, routers). The policy that *assigns* SLs to flows lives in a separate `qos-policy.conf` file (or is left to applications).
 
 ```text
 # ---- /etc/opensm/opensm.conf : QoS section ----
@@ -66,7 +76,11 @@ qos_sl2vl 0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7
 qos_policy_file /etc/opensm/qos-policy.conf
 ```
 
-Reading the example: SL7→VL7 is placed only in the high table with a large weight, so anything sent on SL 7 (e.g. latency-sensitive control traffic or SHARP aggregation traffic) pre-empts everything else; SL0–SL6 share bandwidth on the low table with VL0 getting the largest weight. In GPU clusters a very common simpler design is two classes: default compute traffic on SL0 and storage on SL1 with a smaller weight, or NCCL on one SL and SHARP on another.
+**Why it exists.** Two different people own QoS: the fabric team decides *what each class gets* (VL tables, the same on every port of a given type), and the application owner decides *which class a flow belongs to* (the SL). Keeping the port tables in `opensm.conf` and the SL assignment in applications or `qos-policy.conf` keeps those decisions separate — and lets one SM restart push identical tables to thousands of ports.
+
+**How it works.** Reading the example: SL7→VL7 is placed only in the high table with a large weight, so anything sent on SL 7 (e.g. latency-sensitive control traffic or SHARP aggregation traffic) pre-empts everything else; SL0–SL6 share bandwidth on the low table with VL0 getting the largest weight. In GPU clusters a very common simpler design is two classes: default compute traffic on SL0 and storage on SL1 with a smaller weight, or NCCL on one SL and SHARP on another.
+
+The arithmetic of the low table is simple proportional sharing among *backlogged* VLs: with weights VL1:128 and VL2:64 both busy on one 400G link, VL1 gets 128/(128+64) ≈ 2/3 (~260 Gb/s) and VL2 ≈ 1/3 (~130 Gb/s); if VL2 goes idle, VL1 takes the whole link — weights are minimum shares, not caps. At start-up and on every heavy sweep the SM sends `SubnSet(SLtoVLMappingTable)` and `SubnSet(VLArbitrationTable)` (the latter in four 32-entry blocks: low 0–31, low 32–63, high 0–31, high 32–63) to every port, using the per-port-type override if present.
 
 **How applications select an SL** — because the SL rides with the connection, the host stack chooses it:
 
@@ -78,37 +92,59 @@ Reading the example: SL7→VL7 is placed only in the high table with a large wei
 | **RDMA CM** applications | SL taken from the SA path record; policy can be set in `qos-policy.conf` by PKey, ULP or service ID; or `rdma_set_option(..., RDMA_OPTION_ID_TOS)` maps to SL via `cma_roce_tos`-style mapping on RoCE |
 | **IPoIB** | `sl=` in the partition definition (partitions.conf) |
 
-A quick functional test of QoS: run two `ib_write_bw` streams on different SLs across the same oversubscribed link and compare throughput against the configured weights.
+A quick functional test of QoS: run two `ib_write_bw` streams on different SLs across the same oversubscribed link and compare throughput against the configured weights (§3 Step 4).
 
 ### 2.3 Flow control and congestion control in IB
 
 **Analogy:** credit-based flow control is a parking garage that only opens the gate when a space has actually freed up — a car can never be turned away at the top of a full ramp. **PFC** on Ethernet is a red light at the ramp that someone switches on when the garage is nearly full and hopes the cars already on the ramp fit in the remaining space (headroom). Congestion control is the radio message telling drivers across the city to slow down because one garage is filling.
 
-**Credit-based flow control (lossless by design).** On every link, for every data VL, the receiver advertises **credits** (free buffer in 64-byte units) to the transmitter in flow-control packets. The transmitter may only send what fits. There is no equivalent of "send and hope" followed by pause frames; buffer overflow simply cannot happen at the link level. Consequences:
+**What it is.** Two separate mechanisms. **Credit-based flow control** is a link-level, per-VL protocol between neighbours that makes buffer overflow impossible. **Congestion control** (IB CC, and NVIDIA's programmable PCC) is an end-to-end mechanism that slows the *sources* of a hot spot. Figure 2.3-2 contrasts the link-level part with Ethernet PFC.
 
-- Loss in an IB fabric comes only from *bit errors* (bad cables; packets fail CRC and are dropped, visible as `PortRcvErrors`/`SymbolErrors`) or from *lifetime/HoQ time-outs* when a packet sits too long at the head of a queue (`PortXmitDiscards`).
+![Two panels: InfiniBand per-VL credit flow control where the receiver returns FCCL credits and the transmitter sends only while credits are positive, versus Ethernet PFC where the transmitter sends freely until a pause frame for priority 3 arrives and headroom absorbs data in flight](diagrams/2.3-02-credit-vs-pfc.svg)
+*Figure 2.3-2 — IB grants before sending (proactive, per VL); PFC stops after sending (reactive, per priority) and needs headroom.*
+
+**Why it exists.** RDMA transports recover from loss expensively (go-back-N retransmission, Module 3.2), so the fabric must not drop under congestion. IB's designers made losslessness a property of the link itself rather than something you configure. But pure back-pressure has a cost: **congestion spreading**: a slow receiver throttles the link into its leaf, which fills, throttles the spine, and so on ("tree saturation" / victim flows). Congestion control exists to counter this by slowing only the flows that cause the hot spot.
+
+**How it works — credits (steps ① and ② of Figure 2.3-2).** On every link, for every data VL, the receiver advertises **credits** (free buffer in 64-byte units) to the transmitter in flow-control packets. The transmitter may only send what fits. There is no equivalent of "send and hope" followed by pause frames; buffer overflow simply cannot happen at the link level.
+
+- The transmitter keeps **FCTBS** (Flow Control Total Blocks Sent, 12-bit, counting 64-byte blocks); the receiver returns **FCCL** (Flow Control Credit Limit, 12-bit) = blocks received so far plus free blocks. Available credit is `(FCCL − FCTBS) mod 4096`; a packet may be sent only if its block count fits.
+- Flow-control packets are small link packets sent per VL periodically and whenever buffer frees up (the spec bounds the interval; verify the exact figure if asked). They are not routed and never leave the link.
+- **Buffer sizing.** To keep a link at line rate, each VL's receive buffer must cover the credit round trip: bandwidth × (2 × propagation + processing). At 400 Gb/s over 100 m of fibre (~5 ns/m) that is 400 Gb/s × ~1 µs ≈ 50 KB per VL. A smaller buffer does not lose packets — it just cannot sustain line rate over long cables, which is why IB long-haul links need deep-buffer switches. Compare PFC headroom (Module 3.3): the same math, but on Ethernet too little headroom means *drops*.
+
+Consequences:
+
+- Loss in an IB fabric comes only from *bit errors* (bad cables; packets fail CRC and are dropped, visible as `PortRcvErrors`/`SymbolErrors`) or from *lifetime/HoQ time-outs* when a packet sits too long at the head of a queue (`PortXmitDiscards`). The head-of-queue lifetime is per port (`HOQLife`, 4.096 µs × 2^n), set by the SM; it is the IB safety valve that breaks a credit deadlock by discarding.
 - Compare RoCE ([Module 3.3](../03-rdma/03-roce-a-to-z.md)): Ethernet is lossy by default and needs **PFC** (802.1Qbb) configured on every hop and every host to approximate losslessness, plus careful buffer headroom math. IB gives you that for free and on a per-VL basis.
-- The downside of pure back-pressure is **congestion spreading**: a slow receiver throttles the link into its leaf, which fills, throttles the spine, and so on ("tree saturation" / victim flows). Congestion control exists to counter this.
+- Observe it with **`PortXmitWait`** (ticks during which the port had data on some VL but no credit to send it): the direct measurement of back-pressure, readable with `perfquery -x` or UFM Telemetry.
 
-**IB congestion control (CC) and PCC.** The IB specification defines a **Congestion Control** mechanism: switches mark packets with a FECN bit when a port's queue crosses a threshold; the destination HCA returns BECN; the source HCA reduces its injection rate for that flow using a per-QP rate table (CCT). The SM distributes the CC parameters (`congestion_control` settings; MLNXSM has a `ccmgr`/congestion-control manager — parameter names "verify in current docs").
+**How it works — IB congestion control (CC) and PCC.** The IB specification defines a **Congestion Control** mechanism: switches mark packets with a FECN bit when a port's queue crosses a threshold; the destination HCA returns BECN; the source HCA reduces its injection rate for that flow using a per-QP rate table (CCT). The SM distributes the CC parameters (`congestion_control` settings; MLNXSM has a `ccmgr`/congestion-control manager — parameter names "verify in current docs"). Mechanically: FECN and BECN are single bits in the BTH; each BECN raises the flow's index into the Congestion Control Table (CCTI), each entry of which encodes an inter-packet delay, and a timer decays the index back down when marking stops — a multiplicative-slowdown, gradual-recovery loop very similar in shape to DCQCN.
 
 Quantum-2 and ConnectX-7 introduce **Programmable Congestion Control (PCC)** — the congestion algorithm runs on firmware-programmable engines in the HCA, so NVIDIA can ship improved algorithms (and customers can tune them) without new silicon. NVIDIA refers to the Quantum-2-era HCA algorithm as **ZTR** (Zero-Touch RoCE on the Ethernet side; on IB the same PCC infrastructure runs NVIDIA's IB congestion algorithm). For the exam: know that CC is end-to-end rate limiting triggered by switch marking, that it complements (does not replace) credit-based FC, and that PCC makes it programmable in the NIC firmware. **DCQCN** is the RoCE analogue and is covered in Module 3.3.
+
+**Why the exam cares:** "IB does not need PFC or ECN" (credits are intrinsic), "`PortXmitWait` = congestion, not errors", and "CC complements credit flow control" are recurring distractor pairs.
 
 ### 2.4 Adaptive Routing
 
 **Analogy:** static routing is a GPS that always sends you up the same motorway on-ramp regardless of traffic. **Adaptive routing** lets each junction glance at the queue on each equivalent on-ramp and send your car up the emptiest one. The price: cars from the same convoy may arrive out of order, so the destination has to be able to re-assemble them.
 
-**The problem: static routing in a Clos.** With `ftree`, every destination LID has exactly one output port at each switch (the LFT is a static table). Traffic from many sources to a spine is spread by *destination*, not by *flow*. Two heavy flows whose destinations happen to map to the same uplink will share it even though a sibling uplink is idle. In AI training with a handful of very large "elephant" flows per GPU (NCCL rings/trees), these collisions are frequent and cost 20–40 % of achievable all-reduce bandwidth on a statically routed fabric. The same phenomenon on Ethernet is ECMP hash collision, which Spectrum-X addresses with its own adaptive routing (Module 4.1).
+**What it is.** **Adaptive routing** lets the switch choose, per packet, among a *group* of equivalent output ports based on their current queue occupancy (local congestion). Figure 2.3-3 shows the static failure case next to the AR fix.
 
-**What AR does.** **Adaptive routing** lets the switch choose, per packet, among a *group* of equivalent output ports based on their current queue occupancy (local congestion). Components:
+![Two panels: static ftree routing sends flows A and B from leaf-01 up the same uplink p31 while p32 sits idle, versus adaptive routing where the AR group {p31,p32} lets the ASIC spread packets of both flows across both uplinks and the receiving HCA tolerates reordering](diagrams/2.3-03-adaptive-routing.svg)
+*Figure 2.3-3 — Static LFT collision vs adaptive routing: ① the AR group on the leaf, ② per-packet uplink choice, ③ out-of-order placement at the receiving HCA.*
 
-- **AR groups** — for each destination, the set of ports that are valid next hops (in a fat-tree: all uplinks leading toward a spine that can reach the destination). The SM computes these and programs an **AR LFT** (ARLFT) and **AR group table** into Quantum switches, in addition to the regular LFT.
+**Why it exists — static routing in a Clos.** With `ftree`, every destination LID has exactly one output port at each switch (the LFT is a static table). Traffic from many sources to a spine is spread by *destination*, not by *flow*. Two heavy flows whose destinations happen to map to the same uplink will share it even though a sibling uplink is idle. In AI training with a handful of very large "elephant" flows per GPU (NCCL rings/trees), these collisions are frequent and cost 20–40 % of achievable all-reduce bandwidth on a statically routed fabric. The same phenomenon on Ethernet is ECMP hash collision, which Spectrum-X addresses with its own adaptive routing (Module 4.1).
+
+**How it works.** Components, matching the numbers in Figure 2.3-3:
+
+- **① AR groups** — for each destination, the set of ports that are valid next hops (in a fat-tree: all uplinks leading toward a spine that can reach the destination). The SM computes these and programs an **AR LFT** (ARLFT) and **AR group table** into Quantum switches, in addition to the regular LFT. Each ARLFT entry holds the destination's *group number*, its *mode*, and a default port (used when AR is off or the group is unusable); each group-table entry is a bitmask of member ports. Many destinations share one group (on a leaf every remote host typically maps to "all uplinks"), so the group table is small compared with the 48K-entry LFT — `smparquery ARInfo` reports group capacity and usage.
+- **② Per-packet choice** — for a packet whose destination has an active AR entry, the ASIC looks up the group and picks the member port with the lowest egress queue occupancy (subject to the mode). The decision is local and takes nanoseconds; no SM involvement after programming.
 - **AR modes** per destination/entry:
   - **Static** — behave like the normal LFT (no AR for this destination).
   - **Free** — pick the least-loaded port in the group for every packet; maximum balancing, maximum reordering.
   - **Bounded** — "sticky" selection: keep using the same port for a flow while it is not congested, move only when its queue crosses a threshold; a compromise that limits reordering. Also called *limited* in some docs.
   - (Quantum-2 docs also describe time-bound / "fast" variants; verify names in the AR guide for your MLNXSM version.)
-- **Out-of-order handling** — packets of one RC connection may now arrive out of order. ConnectX-5 and later HCAs support **out-of-order RDMA** (OOO) for RC and UD: the receiver places RDMA WRITE/READ data directly by address and tolerates reordering within a window, so the transport does not retransmit. SENDs with ordering semantics are more constrained, which is why AR is typically enabled for RC and UD transports and the HCA advertises the capability (`enable_ar_by_device_cap`). The SM records which SLs are allowed to be reordered in the **OOO SL mask**.
+- **③ Out-of-order handling** — packets of one RC connection may now arrive out of order. ConnectX-5 and later HCAs support **out-of-order RDMA** (OOO) for RC and UD: the receiver places RDMA WRITE/READ data directly by address and tolerates reordering within a window, so the transport does not retransmit. SENDs with ordering semantics are more constrained, which is why AR is typically enabled for RC and UD transports and the HCA advertises the capability (`enable_ar_by_device_cap`). The SM records which SLs are allowed to be reordered in the **OOO SL mask**. Without OOO support a reordered PSN looks like loss: the responder NAKs with a PSN sequence error and the requester go-back-N retransmits — AR would then *reduce* throughput.
+- **SM controls.** `ar_sl_mask` (16-bit, one bit per SL) selects which SLs get AR; `ar_transport_mask` selects transports (bit1 = RC, bit3 = UD). The routing engine must be AR-capable (`ar_ftree` in MLNXSM/UFM); stock OpenSM `ftree` writes only static LFTs.
 
 **AR and NCCL.** NCCL benefits strongly from AR on IB. Relevant knobs:
 
@@ -116,7 +152,7 @@ Quantum-2 and ConnectX-7 introduce **Programmable Congestion Control (PCC)** —
 - **`NCCL_IB_SL`** must be an SL present in `ar_sl_mask` for NCCL traffic to be adaptively routed.
 - **`NCCL_IB_QPS_PER_CONNECTION`** / **`NCCL_IB_SPLIT_DATA_ON_QPS`** — spreading a connection over multiple QPs is an older way of fighting static hash collisions; with AR it is usually unnecessary and left at 1.
 
-Symptom of AR being *off* on a large NDR fabric: nccl-tests all-reduce bus bandwidth plateaus well below line rate (e.g. 250–300 Gb/s per GPU instead of ~390 Gb/s on NDR) with high `PortXmitWait` on some spine uplinks and near-zero on others — the signature of hash collisions.
+**Failure modes and how to observe them.** Symptom of AR being *off* on a large NDR fabric: nccl-tests all-reduce bus bandwidth plateaus well below line rate (e.g. 250–300 Gb/s per GPU instead of ~390 Gb/s on NDR) with high `PortXmitWait` on some spine uplinks and near-zero on others — the signature of hash collisions. `smparquery ARInfo` showing `AR Status: disabled` despite `ar_mode` set means the engine fell back (bad `root_guid_file`, non-fat-tree wiring — check the SM log for "falling back to minhop"). Rising `out_of_sequence`/`packet_seq_err` counters on hosts with AR on means an SL is in `ar_sl_mask` for traffic whose HCA or transport cannot reorder.
 
 **Why the exam cares:** AR requires MLNXSM/UFM and Quantum switches (stock OpenSM `ftree` is static), `ar_sl_mask` controls which SLs may be reordered, and `NCCL_IB_AR_THRESHOLD` is a message size — not an on/off switch.
 
@@ -124,7 +160,10 @@ Symptom of AR being *off* on a large NDR fabric: nccl-tests all-reduce bus bandw
 
 **Analogy:** without SHARP, 1,000 students each mail their exam score to every other student and everyone adds them up. With **SHARP**, each student hands their score to the teacher at the front of their row, the row teachers hand subtotals to the head teacher, and the head teacher announces one total. The switch does the math.
 
-A ring or tree all-reduce across N GPUs moves each byte of the result roughly 2×(N−1)/N times across the network and makes every GPU do reduction arithmetic. **SHARP** (Scalable Hierarchical Aggregation and Reduction Protocol) moves the reduction into the Quantum switch ASICs: each GPU sends its data *once* up an aggregation tree; switches sum (or min/max/etc.) the data on the way up; the root sends the result back down once. Benefits: roughly half the data crossing the fabric, lower and far more predictable latency, and GPU SMs freed from reduction work. It is the main reason InfiniBand still posts better all-reduce numbers than equivalently sized Ethernet fabrics for some collective patterns.
+**What it is.** **SHARP** (Scalable Hierarchical Aggregation and Reduction Protocol) moves the reduction into the Quantum switch ASICs: each GPU sends its data *once* up an aggregation tree; switches sum (or min/max/etc.) the data on the way up; the root sends the result back down once. Figure 2.3-4 shows the data path; Figure 2.3-5 shows the software pieces that must all be present.
+
+![SHARP all-reduce on a two-level tree: sharp_am builds the tree from SM topology, each GPU sends its buffer once to its leaf aggregation node, leaves reduce four to one and send partial sums to the spine root, which multicasts the final result back down](diagrams/2.3-04-sharp-flow.svg)
+*Figure 2.3-4 — SHARP all-reduce: ① topology from the SM, ② tree and quota set up by sharp_am, ③ each GPU sends once, ④ leaves reduce and forward partial sums, ⑤ the root multicasts the result.*
 
 Generations: SHARPv1 (Switch-IB 2, small-message/latency focus), SHARPv2 (Quantum: large-message streaming aggregation, "SAT" — Streaming Aggregation Trees), SHARPv3 (Quantum-2: multiple tenants/jobs at once, larger payloads), SHARPv4 (Quantum-X800: 800G, further scaling).
 
@@ -136,25 +175,57 @@ Generations: SHARPv1 (Switch-IB 2, small-message/latency focus), SHARPv2 (Quantu
 | **Switch SHARP engine** | Quantum ASIC | Executes the reductions; one or more "aggregation nodes" per switch with finite buffer and group resources |
 | SM | — | Must be MLNXSM/UFM with SHARP support enabled (`sharp_enabled`/UFM "SHARP" toggle); provides topology to sharp_am |
 
+**Why it exists.** A ring or tree all-reduce across N GPUs moves each byte of the result roughly 2×(N−1)/N times across the network and makes every GPU do reduction arithmetic. For an S-byte buffer, a ring all-reduce has every GPU send and receive about 2S×(N−1)/N bytes — almost 2S at scale — in 2(N−1) sequential steps, each paying a network latency. With SHARP each GPU sends S once and receives S once, the number of sequential steps is the tree depth (2–3 switch levels), and the GPU's streaming multiprocessors do no reduction math. Benefits: roughly half the data crossing the fabric, lower and far more predictable latency, and GPU SMs freed from reduction work. It is the main reason InfiniBand still posts better all-reduce numbers than equivalently sized Ethernet fabrics for some collective patterns.
+
+**How it works — data path (Figure 2.3-4).**
+
+1. **Topology.** The SM (MLNXSM/UFM with SHARP enabled) gives `sharp_am` the discovered topology and which switches are SHARP-capable.
+2. **Tree and quota.** `sharp_am` builds aggregation trees — in a fat-tree typically rooted at a spine — and, when a job registers, allocates it a tree plus per-switch resources (aggregation-node buffers, group/outstanding-operation slots) using SHARP MADs. These resources are finite per ASIC; SHARPv3 lets several jobs share a switch at once.
+3. **Send once.** Each rank's buffer goes from its HCA to the leaf's aggregation node as RDMA traffic on the SHARP SL/VL (by convention a dedicated class so bulk traffic cannot starve it — VL7 in Figure 2.3-1).
+4. **Reduce up.** Each aggregation node waits for all of its children for a given chunk, applies the operation (sum/min/max…, fp32/fp16/bf16) in the ASIC, and forwards one partial result upward — 4:1 at the leaves and 2:1 at the spine in the figure. Large messages are pipelined through the tree in chunks (streaming aggregation, SAT); small messages use the low-latency path.
+5. **Multicast down.** The root sends the final result back down the same tree; each switch replicates it to its children, so every rank receives it once.
+
+**How it works — control path (Figure 2.3-5).**
+
+![Integration of NCCL CollNet plugin, libsharp and sharpd on the compute host with opensm, sharp_am and the Quantum switches: NCCL loads the plugin, libsharp asks local sharpd, sharpd requests a tree from sharp_am, sharp_am programs the aggregation nodes, and data then flows on the SHARP SL](diagrams/2.3-05-nccl-sharp-integration.svg)
+*Figure 2.3-5 — All four pieces must be present or NCCL silently falls back to Ring/Tree: plugin + `NCCL_COLLNET_ENABLE=1`, sharpd, sharp_am, SHARP enabled in the SM.*
+
+1. NCCL (with `NCCL_COLLNET_ENABLE=1`) loads the CollNet plugin (`libnccl-net.so` from the SHARP package) and asks for a CollNet communicator.
+2. libsharp_coll talks to the local `sharpd`.
+3. `sharpd` sends the job/tree request to `sharp_am` in-band.
+4. `sharp_am` already has topology from the SM.
+5. `sharp_am` programs the aggregation nodes for this job.
+6. Data flows on the SHARP SL/VL; NCCL logs `Connected CollNet` and channels `via COLLNET/SHARP`.
+
 Prerequisites for NCCL: Quantum or newer switches, SHARP-capable HCAs (ConnectX-6+), MLNXSM/UFM with SHARP enabled, `sharp` packages installed on hosts, `sharpd` running on every compute host, `sharp_am` running on the UFM/SM host, the NCCL SHARP plugin on the library path and `NCCL_COLLNET_ENABLE=1`. NCCL will only use SHARP when the job spans multiple nodes and the CollNet plugin loads successfully. SHARP uses its own SL and QoS class by convention (so aggregation traffic is not starved by bulk traffic); UFM/MLNXSM expose `sharp_sl`-style settings — verify names in the SHARP deployment guide.
+
+**Failure modes and how to observe them.** Any missing piece produces the same symptom: NCCL logs `Connected all rings` but never `Connected CollNet`, and bus bandwidth is identical with and without `NCCL_COLLNET_ENABLE=1` (§4.3). Test bottom-up: `sharp_hello -d mlx5_0:1` proves sharpd ↔ sharp_am ↔ switch; then nccl-tests with `NCCL_DEBUG=INFO`; `/var/log/sharp_am.log` shows tree builds and rejected jobs (for example, resources exhausted because too many jobs hold trees). A version mismatch between `sharp_am` and host `libsharp` also fails registration.
 
 **Why the exam cares:** the four-part checklist (sharp_am + sharpd + CollNet plugin + `NCCL_COLLNET_ENABLE=1`) and "SHARP reduces data movement for collectives, not point-to-point RDMA".
 
 ### 2.6 SHIELD and fast link recovery
 
-**SHIELD** (Self-Healing Interconnect Enhancement for inteLligent Datacenters) is a Quantum-family switch feature that lets switches react to a link failure *locally* instead of waiting for the SM:
+**What it is.** **SHIELD** (Self-Healing Interconnect Enhancement for inteLligent Datacenters) is a Quantum-family switch feature that lets switches react to a link failure *locally* instead of waiting for the SM. **Fast link recovery / Fast Link-Up** on Quantum-2 reduces the time for a flapping link to return to Active.
 
-- Normally a link failure → trap to SM → SM re-sweep and new LFTs → fabric repaired in hundreds of milliseconds to seconds (longer on huge fabrics). During that window flows routed over the dead link stall.
+**Why it exists.** Normally a link failure → trap to SM → SM re-sweep and new LFTs → fabric repaired in hundreds of milliseconds to seconds (longer on huge fabrics). During that window flows routed over the dead link stall; RC QPs on those flows burn through `retry_cnt` × ACK timeout and, if the window is long enough, fail with `IBV_WC_RETRY_EXC_ERR` — killing a training job over a cable hiccup.
+
+**How it works.**
+
 - With SHIELD, when a switch detects a port down it immediately re-routes affected destinations onto an alternative port from the AR group (or a pre-computed backup), informing neighbours as needed, in roughly a millisecond (NVIDIA quotes ~5,000× faster than SM-driven recovery). The SM still recomputes the global solution afterwards.
 - SHIELD therefore depends on AR groups being available — enable AR first. In MLNXSM/UFM it is a toggle alongside AR (`shield_mode` or the "SHIELD" option in UFM; "verify in current docs").
+- Recovery in ~1 ms is far inside a typical RC ACK timeout (NCCL's default `NCCL_IB_TIMEOUT` gives an ACK timeout on the order of a second or more — 4.096 µs × 2^timeout, Module 3.2), so the transport sees at most a retransmission, not a fatal error.
 
-**Fast link recovery / Fast Link-Up** on Quantum-2 reduces the time for a flapping link to return to Active. Together with UFM's auto-isolation of repeatedly flapping ports, these features turn a cable hiccup that used to kill a NCCL job into a brief slowdown.
+Together with UFM's auto-isolation of repeatedly flapping ports, these features turn a cable hiccup that used to kill a NCCL job into a brief slowdown.
+
+**Why the exam cares:** SHIELD = local, switch-driven reroute using AR groups; it needs AR enabled; the SM still reconverges afterwards.
 
 ## 3. Live-style walkthrough: QoS, AR and SHARP on a 2-node NDR lab
 
 Lab: `nodeA` and `nodeB`, 8 GPUs each, one ConnectX-7 NDR HCA per GPU (`mlx5_0`…`mlx5_7`), two Quantum-2 leaves and two spines, host-based MLNXSM on `mgmt01`. Goal: NCCL on SL1 with a guaranteed share, storage on SL2, AR on, SHARP on.
 
 ### Step 1 — Configure QoS in opensm.conf
+
+You are about to fill in the tables of Figure 2.3-1: SL2VL (step ②) and the two arbitration tables (step ④).
 
 ```bash
 mgmt01$ sudo tee -a /etc/opensm/opensm.conf <<'EOF'
@@ -172,6 +243,8 @@ EOF
 ```
 
 ### Step 2 — Enable adaptive routing (MLNXSM)
+
+This turns the left panel of Figure 2.3-3 into the right one: the SM computes AR groups (①), the ASIC spreads packets (②), and `enable_ar_by_device_cap` makes sure only HCAs that can reorder (③) receive AR traffic.
 
 ```bash
 mgmt01$ sudo tee -a /etc/opensm/opensm.conf <<'EOF'
@@ -232,6 +305,8 @@ nodeA$ ib_write_bw -d mlx5_0 -S 2 -q 4 -D 20 -F --report_gbits -p 18516 nodeB
 
 ### Step 5 — SHARP services
 
+Check the control path of Figure 2.3-5 from the top down: `sharp_am` (steps ④–⑤), then `sharpd` and `sharp_hello` (steps ②–③), then the plugin files (step ①).
+
 ```bash
 # On the AM host (UFM server or SM host):
 mgmt01$ systemctl status sharp_am                 # active (running). In UFM: Settings -> Subnet Manager -> SHARP = enabled
@@ -282,7 +357,7 @@ nodeA:1234:1234 [0] NCCL INFO Channel 00/0 : 0[0] -> 1[1] via COLLNET/SHARP     
 # = plugin did not load or sharp_am rejected the job: check /var/log/sharp_am.log and sharpd logs.
 ```
 
-While it runs, `perfquery -x <spine-lid> <port>` on each spine uplink (or UFM Telemetry) should show `PortXmitWait` spread evenly across uplinks — the AR signature. One hot uplink and three idle ones means AR is not in effect for SL1.
+The `Connected CollNet` line is step ⑥ of Figure 2.3-5; the busbw gain is the halved data movement of Figure 2.3-4. While it runs, `perfquery -x <spine-lid> <port>` on each spine uplink (or UFM Telemetry) should show `PortXmitWait` spread evenly across uplinks — the AR signature. One hot uplink and three idle ones means AR is not in effect for SL1.
 
 ## 4. Troubleshooting / common gotchas
 

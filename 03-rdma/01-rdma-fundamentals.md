@@ -26,7 +26,7 @@ By the end of this module you will be able to…
 
 **Analogy:** TCP/IP is sending a parcel through a post office: you hand it to a clerk (syscall), the clerk copies the address onto a form (socket buffer), a van carries it, and at the far end another clerk copies it again before knocking on the door. **RDMA** is giving the courier a key to your filing cabinet and your colleague's filing cabinet: the courier (the NIC) moves the document from one drawer to the other with no clerks involved at all.
 
-In a conventional TCP/IP stack, moving data from one application to another involves the sender's kernel copying from user buffer to socket buffer, building headers, the NIC DMA-ing the frame, and the mirror image on the receiver — with interrupts and context switches at each step. At 10 Gb/s this is tolerable; at 400 Gb/s per GPU, with eight GPUs per server, the host CPU cannot keep up and the copies alone exceed memory bandwidth budgets.
+**What it is.** Remote Direct Memory Access is a transport model in which the network adapter (the **HCA** on InfiniBand, the RDMA-capable NIC/SuperNIC on Ethernet) moves data directly between registered application buffers on two hosts. Four properties define it:
 
 | Property | Meaning | Effect |
 |---|---|---|
@@ -35,7 +35,22 @@ In a conventional TCP/IP stack, moving data from one application to another invo
 | **CPU offload / transport offload** | Segmentation, reliability (ACK/retransmit), ordering and congestion handling are implemented in the NIC | CPU utilisation near zero at line rate, leaving cores for the application |
 | **One-sided operations** | A remote NIC can read/write a peer's memory without the peer's CPU knowing in real time | Enables NCCL/NVSHMEM put/get semantics and GPUDirect RDMA (GPU memory ↔ remote GPU memory with no host involvement) |
 
-The combination is what makes NCCL achieve ~390 Gb/s per NDR HCA with negligible CPU, and why "RDMA fabric" (IB or RoCE) is non-negotiable for scale-out AI training.
+Figure 3.1-1 puts the two data paths side by side.
+
+![Side-by-side data paths: TCP/IP crosses the kernel with a syscall, copies into a socket buffer, runs the TCP stack and copies again into the NIC ring; RDMA posts a work request and rings a doorbell from user space, and the HCA DMAs straight from the application buffer onto the wire, with the kernel used only for setup](diagrams/3.1-01-rdma-vs-tcp.svg)
+*Figure 3.1-1 — TCP/IP sockets vs RDMA verbs: two copies and two kernel crossings per message vs one doorbell write and a DMA.*
+
+**Why it exists.** In a conventional TCP/IP stack, moving data from one application to another involves the sender's kernel copying from user buffer to socket buffer, building headers, the NIC DMA-ing the frame, and the mirror image on the receiver — with interrupts and context switches at each step. At 10 Gb/s this is tolerable; at 400 Gb/s per GPU, with eight GPUs per server, the host CPU cannot keep up and the copies alone exceed memory bandwidth budgets. The arithmetic: 8 × 400 Gb/s = 400 GB/s of network traffic per server; each copy reads and writes every byte, so two copies per direction is on the order of 1.6 TB/s of extra memory traffic — more than a dual-socket server's entire DRAM bandwidth. And a 64 KiB message at 400 Gb/s lasts 1.3 µs on the wire, shorter than a single syscall-plus-interrupt round trip, so per-message kernel work would cap throughput long before the link does.
+
+**How it works.** Follow the numbered steps on the RDMA side of Figure 3.1-1:
+
+1. **Post (user space).** `ibv_post_send` writes a 64-byte-aligned **WQE** (work queue element) into the QP's send ring, which lives in host memory that both the process and the HCA can see, then writes the QP number and new producer index to a **doorbell** register — an MMIO page (the UAR, User Access Region) mapped into the process at `ibv_open_device` time. One posted write, no syscall. For tiny messages **BlueFlame** writes the whole WQE through the doorbell page, saving the HCA a DMA read.
+2. **Execute (HCA).** The HCA fetches the WQE, translates the buffer's virtual address through its **MTT** (memory translation table, filled at registration time) using the **lkey**, DMA-reads the payload directly from the application or GPU buffer, segments it into path-MTU packets, adds headers, and owns reliability: PSNs, ACKs, retransmission, ordering.
+3. **Land (remote HCA).** The responder's HCA checks the packet's QPN, PSN, PKey and — for RDMA WRITE/READ — the **rkey**, bounds and access rights, then DMA-writes into registered memory. For one-sided operations no remote CPU, no receive WQE and no remote completion is involved.
+
+The completion comes back as a **CQE** that the application *polls* from another ring in its own memory — again no syscall. The combination is what makes NCCL achieve ~390 Gb/s per NDR HCA with negligible CPU, and why "RDMA fabric" (IB or RoCE) is non-negotiable for scale-out AI training.
+
+**Failure modes.** Kernel bypass makes the fast path invisible to `tcpdump`, `netstat` and `perf` on the host CPU: debugging moves to device counters (`rdma statistic`, `ethtool -S`, `perfquery`). The setup path is still kernel: `ulimit -l` too small, `ibv_reg_mr` failing in a container, or a missing `nvidia-peermem` module all fail *before* any packet moves.
 
 **Why the exam cares:** kernel bypass does not mean "no kernel" — setup still goes through the driver; only the fast path bypasses it.
 
@@ -43,22 +58,10 @@ The combination is what makes NCCL achieve ~390 Gb/s per NDR HCA with negligible
 
 **Analogy:** a **QP** is a pair of mailboxes — an outbox (Send Queue) and an inbox (Receive Queue). A **CQ** is the "delivery confirmed" tray where the courier drops a slip for every job finished. **MR registration** is telling the post office which rooms of your house it is allowed to deliver to, and getting two keys back: one for you (lkey) and one you can hand to a trusted friend (rkey). A **PD** is the fence around your property — keys from one property do not work on another.
 
-The programming interface for RDMA on Linux is **verbs** (`libibverbs`), originally defined by the InfiniBand specification and shared by IB, RoCE and iWARP. Every resource below is created by the application and lives in the NIC and the driver.
+**What it is.** The programming interface for RDMA on Linux is **verbs** (`libibverbs`), originally defined by the InfiniBand specification and shared by IB, RoCE and iWARP. Every resource below is created by the application and lives in the NIC and the driver. Figure 3.1-2 shows what belongs to what.
 
-```text
-  Application process
-  ┌───────────────────────────────────────────────────────────────────┐
-  │  Context (ibv_context) ─ opened on one HCA device (e.g. mlx5_0)   │
-  │   └── Protection Domain (PD)                                      │
-  │        ├── Memory Region (MR)   buffer, lkey, rkey                │
-  │        ├── Queue Pair (QP)      Send Queue + Receive Queue        │
-  │        │     └── posts Work Requests (WR) → WQEs in the queues    │
-  │        ├── Shared Receive Queue (SRQ)  optional, shared RQ        │
-  │        └── Address Handle (AH)  for UD destinations               │
-  │   └── Completion Queue (CQ)     CQEs, polled or event-driven      │
-  │        └── Completion Channel   fd for blocking wait              │
-  └───────────────────────────────────────────────────────────────────┘
-```
+![Nested object model: an application process holds an ibv_context opened on mlx5_0; inside it a protection domain contains memory regions with lkey and rkey, queue pairs, a shared receive queue, address handles and work requests, while completion queues and a completion channel sit beside the PD](diagrams/3.1-02-verbs-objects.svg)
+*Figure 3.1-2 — The verbs object model: context → PD → MR/QP/SRQ/AH; CQs and completion channels hang off the context.*
 
 | Object | Purpose | Key facts |
 |---|---|---|
@@ -71,11 +74,22 @@ The programming interface for RDMA on Linux is **verbs** (`libibverbs`), origina
 | **Work Request (WR) / WQE** | A descriptor: operation, scatter/gather list (addr, length, lkey), flags, for RDMA ops the remote addr + rkey | Posted with `ibv_post_send` / `ibv_post_recv`; becomes a WQE in NIC-visible memory |
 | **Completion (CQE / `ibv_wc`)** | Status, opcode, byte count, `wr_id`, immediate data | Status `IBV_WC_SUCCESS` or an error (e.g. `IBV_WC_REM_ACCESS_ERR`, `IBV_WC_RETRY_EXC_ERR`) |
 
+**Why it exists.** Kernel bypass hands user space direct control of hardware that can write into any physical memory. The object model is how that is made safe without the kernel on the fast path: the kernel validates everything *once* at creation (which pages a buffer covers, which process owns which QP), records it in HCA tables, and from then on the HCA enforces it on every packet. The PD ties the pieces together so a key from one tenant's PD can never be used on another's QP.
+
+**How it works.**
+
+- **Context.** `ibv_open_device` opens `/dev/infiniband/uverbsN` and maps the doorbell page; every other object belongs to this context.
+- **MR registration.** `ibv_reg_mr(pd, addr, len, access)` makes the kernel *pin* every page of the range (so it cannot be swapped or migrated — it counts against `ulimit -l`, memlock), look up each page's physical address, and write one MTT entry per page into the HCA. It returns a 32-bit **lkey** and **rkey**. A 1 GiB buffer in 4 KiB pages is 262,144 MTT entries; with 2 MiB huge pages it is 512 — one reason RDMA hosts use huge pages. Registration therefore costs time proportional to size (milliseconds per gigabyte), which is why every library caches registrations.
+- **Access checks.** Each incoming RDMA WRITE/READ/atomic carries the rkey, a virtual address and a length (the RETH header); the HCA checks the rkey belongs to an MR in the *same PD as the target QP*, that the range is inside the MR, and that the MR allows that access. Any failure returns a NAK and the requester sees `IBV_WC_REM_ACCESS_ERR`; a bad lkey on the local side gives `IBV_WC_LOC_PROT_ERR`.
+- **QP and CQ.** A QP is two rings of WQEs plus a hardware context (state, PSNs, peer QPN, path). The **QPN** is 24 bits; QP0 and QP1 are reserved for SMPs and GMPs (Module 2.1). A CQ is a ring of fixed-size CQEs (typically 64 bytes) the HCA writes; polling is a memory read.
+
 The ordering of creation (context → PD → MR/CQ → QP → connect) is detailed in [Module 3.2](02-rdma-programming-fundamentals.md).
 
 **Why the exam cares:** lkey vs rkey. lkey is used in *local* scatter/gather entries; rkey is given to the *remote* side for READ/WRITE/atomics. Using the wrong one yields a local or remote protection error.
 
 ### 2.3 QP transport types
+
+**What it is.** A QP is created with one transport type, which fixes whether it is connected (one peer) or datagram (any peer), and whether the HCA guarantees delivery:
 
 | Type | Connected? | Reliable? | Operations | Notes / who uses it |
 |---|---|---|---|---|
@@ -86,11 +100,20 @@ The ordering of creation (context → PD → MR/CQ → QP → connect) is detail
 | **DC** — Dynamically Connected (NVIDIA extension) | Connect-on-demand | Yes | RC ops | Transient connections created per message burst; UCX uses it for huge rank counts; `ibv_devinfo -v` and `mlx5dv` expose it |
 | **RD** — Reliable Datagram | spec-defined, not implemented | — | — | Know it exists only on paper |
 
+**Why it exists.** Reliability and connection state cost HCA memory and lookup time per peer. RC gives the strongest guarantees (and the only widely used one-sided READ/atomics) but needs a QP — with its context, rings and PSN state — for every peer: N processes talking all-to-all need N×(N−1) QPs. UD scales to any number of peers with one QP but gives up reliability, ordering and messages larger than one MTU. XRC and DC exist purely to recover RC semantics at UD-like QP counts.
+
+**How it works.** RC reliability is implemented entirely in the HCA: every packet carries a 24-bit **PSN** in the BTH; the responder ACKs (coalesced) with an AETH, NAKs a gap with a *PSN sequence error*, and the requester retransmits from the lost PSN (go-back-N) after a NAK or after the **local ACK timeout** (4.096 µs × 2^`timeout`) expires, up to `retry_cnt` (0–7) times; receiver-not-ready is handled separately by `rnr_retry` (7 = infinite). All of these are QP attributes set during the RTR/RTS transitions in [Module 3.2](02-rdma-programming-fundamentals.md). UD packets carry an extra 8-byte **DETH** with a 32-bit **Q_Key** that the receiving UD QP checks, and the sender names the destination per message through an Address Handle.
+
 Exam angle: RC is the only *widely used* type supporting one-sided RDMA READ and atomics; UD is the only one supporting multicast; XRC/DC are the scaling answers to "RC needs a QP per peer".
 
 ### 2.4 RDMA operations
 
 **Analogy:** SEND/RECV is handing a parcel to someone who must be standing at the door with their arms out (a posted RECV). RDMA WRITE is letting yourself in with the key they gave you and putting the parcel on the shelf they told you about — they only find out if they look (or if you leave a note: *immediate data*).
+
+**What it is.** Five operation families; Figure 3.1-3 shows who posts what and who gets a completion.
+
+![Sequence diagram between requester and responder: SEND/RECV needs a pre-posted RECV and produces completions on both sides, a missing RECV triggers an RNR NAK, RDMA WRITE lands with no responder CPU and only a requester completion, WRITE with immediate consumes a RECV, and RDMA READ returns data in response packets](diagrams/3.1-03-two-vs-one-sided.svg)
+*Figure 3.1-3 — Two-sided SEND/RECV vs one-sided RDMA WRITE and READ: steps ①–⑨ show the posts, packets and completions on each side.*
 
 | Operation | Sidedness | Who supplies the buffer? | Completion on remote side? |
 |---|---|---|---|
@@ -100,19 +123,41 @@ Exam angle: RC is the only *widely used* type supporting one-sided RDMA READ and
 | **Atomics** (Fetch-and-Add, Compare-and-Swap, 64-bit) | One-sided | Remote `addr + rkey` | No; result returned to initiator |
 | **SEND with Immediate** | Two-sided | As SEND; 32-bit immediate delivered in the CQE | Yes |
 
+**Why it exists.** Two different programming models need two different primitives. Message passing ("here is a request, you decide where it goes") wants SEND/RECV: the receiver chooses the buffer. Shared-memory style data movement ("put these bytes at that address") wants WRITE/READ: the initiator chooses, and the target CPU stays out of the critical path — which is exactly what collective libraries moving gigabytes between GPUs need.
+
+**How it works — on the wire.** Every operation starts with the 12-byte **BTH**: OpCode (8 bits: transport type + operation + First/Middle/Last/Only), SE (solicited event, 1 bit), M (migration, 1 bit), Pad count (2 bits), TVer (4 bits), **PKey** (16 bits), a reserved byte (IB uses two of its bits for FECN/BECN), **DestQP** (24 bits), A (ack-request, 1 bit), 7 reserved bits and the 24-bit **PSN**. Extended headers follow by opcode:
+
+- **RETH** (16 B) on RDMA WRITE First/Only and READ Request: virtual address (64 bits), R_Key (32 bits), DMA length (32 bits).
+- **AETH** (4 B) on ACK/NAK and READ responses: syndrome (8 bits: ACK, RNR NAK with a 5-bit timer code, or NAK code such as PSN sequence error / remote access error) and MSN (24-bit message sequence number).
+- **ImmDt** (4 B) on SEND/WRITE with Immediate; **AtomicETH** (28 B) on atomics; **DETH** (8 B, Q_Key + source QP) on UD.
+
+**How it works — in order (Figure 3.1-3).** ① The responder pre-posts a RECV WQE. ② A SEND is segmented into First/Middle/Last packets with consecutive PSNs and ACKed. ③ Both sides get CQEs (the requester only if the WR was `IBV_SEND_SIGNALED`). ④ If no RECV is posted, the responder answers with an **RNR NAK** carrying `min_rnr_timer`; the requester waits that long and retries up to `rnr_retry` times. ⑤–⑥ An RDMA WRITE carries RETH in its first packet, lands by address with no responder CPU, and only the requester completes. ⑦ WRITE with Immediate does the same but also consumes a RECV and gives the responder `IBV_WC_RECV_RDMA_WITH_IMM` — NCCL's notification pattern. ⑧–⑨ RDMA READ sends a small request with RETH; the responder's HCA streams READ Response packets back; the number of READs (and atomics) a QP may have in flight is bounded by `max_rd_atomic` / `max_dest_rd_atomic`.
+
 Two-sided requires the **receive-before-send** discipline: if a SEND arrives and no RECV WQE is available, the responder returns an **RNR NAK** (Receiver Not Ready); after `rnr_retry` attempts the QP goes to error. One-sided operations need the initiator to *already know* the remote virtual address and rkey, which is why control-plane exchange exists (§2.5). Under the hood, NCCL mostly uses RDMA WRITE (with immediate or a flag write) because the responder GPU never needs to react.
+
+**Why the exam cares:** which side completes (WRITE: requester only; WRITE_WITH_IMM and SEND: both), and RNR NAK = "no RECV posted", not a network problem.
 
 ### 2.5 Connection establishment
 
-A QP cannot be used until both sides know each other's parameters: the peer's **QPN**; the peer's **LID** (IB) or **GID** (RoCE/IB global), plus port, path MTU, SL, and for RoCE the GID index and MAC resolved through the IP stack; a **Packet Sequence Number (PSN)** starting value; and, for one-sided operations, the peer's buffer **address and rkey**.
+**What it is.** A QP cannot be used until both sides know each other's parameters: the peer's **QPN**; the peer's **LID** (IB) or **GID** (RoCE/IB global), plus port, path MTU, SL, and for RoCE the GID index and MAC resolved through the IP stack; a **Packet Sequence Number (PSN)** starting value; and, for one-sided operations, the peer's buffer **address and rkey**.
 
-**Raw verbs with out-of-band exchange.** The traditional (perftest, many tutorials) way: open a TCP socket, exchange a small struct containing `{lid, qpn, psn, gid, addr, rkey}`, then each side drives the QP through INIT→RTR→RTS with the peer's values. Simple, fully under your control, but you own the socket, the error handling and the transport-specific details (e.g. GID index for RoCE).
+**Why it exists.** RC QPs are point-to-point hardware contexts: the HCA must know, before the first packet, where to send (DLID/DGID, SL, MTU), whom it is talking to (remote QPN) and which PSN to expect. None of that can be discovered from the data packets themselves, so a separate control exchange must happen first — and it must use a channel that already works (TCP, IPoIB, or MADs on QP1).
 
-**RDMA Connection Manager (librdmacm).** **RDMA CM** gives a sockets-like API (`rdma_resolve_addr` → `rdma_resolve_route` → `rdma_connect` / `rdma_accept`) that uses IP addresses to identify peers (IPoIB addresses on IB, real IPs on RoCE), resolves the IB path record via the SA or the Ethernet route via the kernel (picking the correct **GID index** automatically), exchanges QPN/PSN via **MAD-based CM** (IB) or the same protocol encapsulated on RoCE, and transitions the QP for you. It still requires *you* to exchange buffer addresses/rkeys (often in `private_data` of the connect request).
+**How it works.**
+
+- **Raw verbs with out-of-band exchange.** The traditional (perftest, many tutorials) way: open a TCP socket, exchange a small struct containing `{lid, qpn, psn, gid, addr, rkey}`, then each side drives the QP through INIT→RTR→RTS with the peer's values. Simple, fully under your control, but you own the socket, the error handling and the transport-specific details (e.g. GID index for RoCE). Figure 3.1-6 (§2.9) is exactly this exchange as `ib_write_bw` performs it.
+- **RDMA Connection Manager (librdmacm).** **RDMA CM** gives a sockets-like API (`rdma_resolve_addr` → `rdma_resolve_route` → `rdma_connect` / `rdma_accept`) that uses IP addresses to identify peers (IPoIB addresses on IB, real IPs on RoCE), resolves the IB path record via the SA or the Ethernet route via the kernel (picking the correct **GID index** automatically), exchanges QPN/PSN via **MAD-based CM** (IB) or the same protocol encapsulated on RoCE, and transitions the QP for you. It still requires *you* to exchange buffer addresses/rkeys (often in `private_data` of the connect request). The CM messages are REQ (carries the client QPN, starting PSN, path and `private_data`), REP (server QPN and PSN) and RTU (ready to use); Module 3.2 traces them step by step.
 
 Nearly all production stacks (NVMe-oF, UCX, NCCL's default IB transport) use RDMA CM or an equivalent, because hand-rolled exchanges break on RoCE when GID selection is wrong. **UD multicast** and **UD unicast** also work through RDMA CM (`rdma_join_multicast`); for UD you talk to many peers via **Address Handles** (AH), each wrapping a destination LID/GID + SL + port.
 
+**Failure modes.** A wrong GID index on RoCE (link-local v1 entry instead of the IPv4 v2 one) means the RTR transition succeeds but packets go nowhere — perftest hangs after printing the address lines. On IB, no master SM means the SA never answers path queries and RDMA CM fails with `ROUTE_ERROR`.
+
 ### 2.6 Transports compared
+
+**What it is.** The same verbs and the same BTH run over four different network stacks; Figure 3.1-4 shows the encapsulations.
+
+![Four protocol stacks side by side: InfiniBand with LRH, optional GRH, BTH and ICRC; RoCE v1 with Ethernet EtherType 0x8915 and a mandatory GRH; RoCE v2 with Ethernet, IP and UDP port 4791 under the same BTH; and iWARP with TCP and MPA/DDP/RDMAP](diagrams/3.1-04-transport-stacks.svg)
+*Figure 3.1-4 — Encapsulation stacks: IB, RoCE v1, RoCE v2 and iWARP carry the same verbs; only the network underneath and what you must configure change.*
 
 | Property | InfiniBand | RoCE v1 | RoCE v2 | iWARP |
 |---|---|---|---|---|
@@ -125,43 +170,60 @@ Nearly all production stacks (NVMe-oF, UCX, NCCL's default IB transport) use RDM
 | Typical NVIDIA use | Quantum fabrics for SuperPOD | legacy only | **Spectrum-X**, cloud AI fabrics, storage | not supported on ConnectX |
 | Latency (approx.) | lowest | low | low, slightly above IB | higher |
 
-Practical consequences: the *verbs API is identical* across IB and RoCE — the differences are in addressing (GID vs LID), in what must be configured on the network (SM vs PFC/ECN), and in debugging tools (`sminfo`/`ibdiagnet` vs `mlnx_qos`/`ethtool -S`). Module 3.3 covers RoCE in depth.
+**Why it exists.** InfiniBand needs its own switches and SM; many data centers want RDMA on the Ethernet they already run. RoCE v1 put the IB transport straight into Ethernet frames (with the GRH as its network header), which worked only inside one L2 domain. RoCE v2 replaced the GRH with real IP/UDP headers so packets route through L3 fabrics and spread across ECMP paths — the UDP source port is set per QP, giving each connection its own hash entropy.
+
+**How it works.** On IB a packet is LRH (8 B) + optional GRH (40 B) + BTH + extended headers + payload + ICRC (4 B) + VCRC (2 B). On RoCE v2 it is Ethernet (14 B, +4 for 802.1Q) + IPv4 (20 B) or IPv6 (40 B) + UDP (8 B, destination **4791**) + the same BTH + extended headers + payload + ICRC + FCS. The IP header's 8-bit ToS byte carries **DSCP** (6 bits) and **ECN** (2 bits), which is how RoCE gets classes and congestion marking (Module 3.3). Practical consequences: the *verbs API is identical* across IB and RoCE — the differences are in addressing (GID vs LID), in what must be configured on the network (SM vs PFC/ECN), and in debugging tools (`sminfo`/`ibdiagnet` vs `mlnx_qos`/`ethtool -S`). Module 3.3 covers RoCE in depth.
 
 ### 2.7 MTU and path MTU
 
-Two MTUs exist:
+**What it is.** Two MTUs exist:
 
 - **Link MTU** — the physical maximum IB packet payload on a port (256, 512, 1024, 2048, **4096**), set by the SM (`partition mtu=`) within switch/HCA capability. On RoCE the "link MTU" is the Ethernet MTU of the interface (e.g. 9000 or 9216).
 - **Path MTU / active MTU** — negotiated per QP as the *minimum* along the path, from the IB-encoded set {256, 512, 1024, 2048, 4096}. `ibv_devinfo` shows `max_mtu` and `active_mtu`. On RoCE v2 the maximum RDMA MTU is **4096** even with a 9000-byte Ethernet MTU, because RoCE payload + headers (Ethernet 14 + IP 20 + UDP 8 + BTH 12 + ICRC 4 + payload) must fit in an Ethernet frame and the IB encoding only has power-of-two sizes; a 1500-byte Ethernet MTU limits RoCE to a 1024-byte path MTU, which costs significant throughput.
 
-Messages larger than the path MTU are segmented by the HCA into packets; the application never sees segmentation, but small MTUs raise per-packet overhead and reduce bandwidth, so 4096 is the standard target everywhere.
+**Why it exists.** The transport segments messages into packets in hardware, so it needs one packet size per QP, fixed at connection time; the IB transport has no path-MTU discovery and no fragmentation, so a packet larger than any hop's MTU is simply dropped. Choosing the minimum up front is the only safe option.
+
+**How it works.** The path MTU is an attribute of the QP set in the INIT→RTR transition (`IBV_QP_PATH_MTU`, encoded 1 = 256 … 5 = 4096); RDMA CM fills it from the SA path record (IB) or from the netdev MTU (RoCE). Messages larger than the path MTU are segmented by the HCA into packets; the application never sees segmentation, but small MTUs raise per-packet overhead and reduce bandwidth, so 4096 is the standard target everywhere. The RoCE arithmetic: a 4096-byte payload needs an IP MTU of at least 4096 + 20 (IP) + 8 (UDP) + 12 (BTH) + 16 (RETH) + 4 (ICRC) ≈ 4156 bytes, so any interface MTU ≥ ~4200 allows 4096, and the usual host 9000 / switch 9216 leaves margin. With 1500, the largest power of two that fits is 1024: four times the packets, and the HCA's message rate becomes the limit.
+
+**Failure modes.** `Mtu : 1024[B]` in the perftest header on RoCE (§4.2), or IB `active_mtu` 2048 because one switch or the partition definition says `mtu=4`. A hand-set path MTU larger than a hop supports produces silent drops and `IBV_WC_RETRY_EXC_ERR`.
 
 ### 2.8 rdma-core and the AI software stack
 
-`rdma-core` is the upstream user-space package set (libibverbs, librdmacm, ibverbs-providers incl. `mlx5`, rdma tooling). NVIDIA ships a tested version inside MLNX_OFED/DOCA-OFED along with extras (`mlnx-tools`, `infiniband-diags`, `perftest`, `mft`).
+**What it is.** `rdma-core` is the upstream user-space package set (libibverbs, librdmacm, ibverbs-providers incl. `mlx5`, rdma tooling). NVIDIA ships a tested version inside MLNX_OFED/DOCA-OFED along with extras (`mlnx-tools`, `infiniband-diags`, `perftest`, `mft`). Figure 3.1-5 shows where verbs sit under the frameworks.
 
-```text
-   PyTorch / JAX / Megatron
-            │
-   NCCL  (collectives: all-reduce, all-gather, reduce-scatter, all-to-all)
-   NVSHMEM (one-sided GPU put/get, symmetric heap)
-   UCX / UCC (MPI point-to-point and collectives, used by Open MPI, HPC-X)
-            │
-   libibverbs + librdmacm  (+ mlx5dv direct verbs, GPUDirect RDMA via nvidia-peermem/DMA-BUF)
-            │
-   ConnectX / BlueField HCA  ──  InfiniBand (Quantum)  or  RoCE v2 (Spectrum-X)
-```
+![Layered AI software stack: PyTorch, JAX and Megatron-LM call NCCL, NVSHMEM and UCX, which all turn their operations into libibverbs and librdmacm calls on ConnectX-7, ConnectX-8 SuperNIC or BlueField-3, running over InfiniBand Quantum or RoCE v2 Spectrum-X](diagrams/3.1-06-ai-software-stack.svg)
+*Figure 3.1-5 — Where verbs sit in the AI software stack: frameworks never see QPs; NCCL, NVSHMEM and UCX turn collectives and put/get into work requests.*
 
-- **NCCL** implements its IB transport directly on verbs: per peer it creates RC QPs (`NCCL_IB_QPS_PER_CONNECTION`), registers GPU memory with **GPUDirect RDMA** so the HCA DMAs straight into HBM, and uses RDMA WRITE + flags to move chunks. Env knobs you will meet in this course: `NCCL_IB_HCA`, `NCCL_IB_GID_INDEX`, `NCCL_IB_TC`, `NCCL_IB_SL`, `NCCL_IB_TIMEOUT`, `NCCL_IB_RETRY_CNT`, `NCCL_IB_AR_THRESHOLD`, `NCCL_NET_GDR_LEVEL`.
+**Why it exists.** Frameworks want collectives ("all-reduce this tensor"), not QPs. Communication libraries translate between the two, and each needs the same verbs underneath so one NIC driver serves all of them. Keeping the verbs API common across IB and RoCE is what lets the same NCCL binary run on Quantum and Spectrum-X.
+
+**How it works.**
+
+- **NCCL** implements its IB transport directly on verbs: per peer it creates RC QPs (`NCCL_IB_QPS_PER_CONNECTION`), registers GPU memory with **GPUDirect RDMA** so the HCA DMAs straight into HBM, and uses RDMA WRITE + flags to move chunks. Env knobs you will meet in this course: `NCCL_IB_HCA`, `NCCL_IB_GID_INDEX`, `NCCL_IB_TC`, `NCCL_IB_SL`, `NCCL_IB_TIMEOUT`, `NCCL_IB_RETRY_CNT`, `NCCL_IB_AR_THRESHOLD`, `NCCL_NET_GDR_LEVEL`. Each maps onto a QP attribute or verbs choice: `NCCL_IB_GID_INDEX` → `sgid_index`, `NCCL_IB_TC` → `traffic_class`, `NCCL_IB_SL` → `sl`, `NCCL_IB_TIMEOUT` → `timeout`, `NCCL_IB_RETRY_CNT` → `retry_cnt`.
 - **NVSHMEM** exposes a PGAS model where a GPU kernel can `put`/`get` into a remote GPU's memory; it maps directly to one-sided RDMA WRITE/READ (and to NVLink inside the node).
 - **UCX** is the general-purpose communication layer under MPI and some frameworks; it auto-selects RC/DC/UD transports and handles memory registration caches.
 - **DOCA** (BlueField) and **DPDK** sit beside verbs for data-plane applications; DOCA RDMA wraps verbs with a DPU-friendly API ([Module 5](../05-bluefield-doca/)).
+- **GPUDirect RDMA** works because GPU memory can be registered as an MR: `nvidia-peermem` (or the DMA-BUF path in newer kernels and drivers) lets `ibv_reg_mr` resolve GPU virtual addresses to PCIe bus addresses, so the HCA DMAs to and from HBM directly over PCIe — ideally through a PCIe switch shared by GPU and NIC, which is what `NCCL_NET_GDR_LEVEL` reasons about.
 
 The importance of **memory registration** here: pinning large GPU buffers is expensive (hundreds of microseconds per registration), so every library caches registrations — registration churn shows up as throughput collapse and is a classic performance pitfall. Pinned memory also counts against `ulimit -l` (memlock) — set it to unlimited on RDMA hosts.
 
 ### 2.9 perftest: the RDMA benchmark suite
 
-**perftest** is the standard tool for validating an RDMA link before blaming NCCL. The programs are named `ib_<op>_<metric>`: **ib_write_bw** / **ib_write_lat** (RDMA WRITE), **ib_read_bw** / **ib_read_lat** (RDMA READ), **ib_send_bw** / **ib_send_lat** (two-sided), **ib_atomic_bw** / **ib_atomic_lat** (atomics), **raw_ethernet_bw** (raw Ethernet packet injection for Spectrum testing). Server and client run the same binary; the client gets the server's IP (any IP — TCP is only used to exchange the connection parameters).
+**What it is.** **perftest** is the standard tool for validating an RDMA link before blaming NCCL. The programs are named `ib_<op>_<metric>`: **ib_write_bw** / **ib_write_lat** (RDMA WRITE), **ib_read_bw** / **ib_read_lat** (RDMA READ), **ib_send_bw** / **ib_send_lat** (two-sided), **ib_atomic_bw** / **ib_atomic_lat** (atomics), **raw_ethernet_bw** (raw Ethernet packet injection for Spectrum testing). Server and client run the same binary; the client gets the server's IP (any IP — TCP is only used to exchange the connection parameters).
+
+**Why it exists.** NCCL performance depends on GPUs, NVLink, PCIe topology, the NIC and the fabric at once. perftest removes everything except one NIC, one path and the verbs layer, so a number below line rate here is a fabric, NIC or PCIe problem — never NCCL's.
+
+**How it works.** Figure 3.1-6 is the exchange behind every run; §3 Step 2 shows the matching output lines.
+
+![Sequence diagram of ib_write_bw: the server allocates PD, MR and four RC QPs and listens on TCP 18515, the client connects over TCP, both sides swap LID or GID, QPN, PSN, rkey and virtual address, move their QPs to RTS, synchronise, then stream RDMA WRITEs while the client measures completions, and finally exchange results over TCP](diagrams/3.1-05-perftest-exchange.svg)
+*Figure 3.1-6 — perftest client/server: TCP only for the parameter swap (②–③) and barriers; every measured byte is RDMA WRITE (⑤).*
+
+1. The server opens the device, allocates a PD, registers its buffer, creates `-q` RC QPs and listens on TCP port 18515.
+2. The client connects to the server IP over TCP (the `Data ex. method : Ethernet` header line).
+3. Both sides print and swap `local address` / `remote address`: LID (or GID on RoCE), QPN, PSN, RKey, VAddr.
+4. Each side moves its QPs INIT → RTR (peer QPN/PSN/LID-or-GID, path MTU = the smaller `active_mtu`) → RTS.
+5. The client posts RDMA WRITEs of `-s` bytes, keeping `--tx-depth` outstanding per QP; ACKs come back coalesced and the server's CPU is idle.
+6. The client polls its CQ and computes bandwidth from completed bytes per interval.
+7. A final TCP exchange carries results and both sides tear down.
 
 | Flag | Meaning |
 |---|---|
@@ -183,7 +245,9 @@ The importance of **memory registration** here: pinning large GPU buffers is exp
 | `--use_cuda=<gpu>` | Use GPU memory (GPUDirect RDMA test; perftest built with CUDA) |
 | `--tx-depth`/`--rx-depth` | Queue depths |
 
-Expected results (healthy): NDR 400G ~ 390 Gb/s with `-q 4 -s 1M`; HDR 200G ~ 195 Gb/s; RDMA WRITE latency ~1.0–1.5 µs on IB for 8 bytes, a bit higher on RoCE.
+Expected results (healthy): NDR 400G ~ 390 Gb/s with `-q 4 -s 1M`; HDR 200G ~ 195 Gb/s; RDMA WRITE latency ~1.0–1.5 µs on IB for 8 bytes, a bit higher on RoCE. The ~2–3 % gap to 400 is header overhead plus link-layer encoding, not a fault.
+
+**Why the exam cares:** `-x` is mandatory on RoCE and must match on both ends; the server IP is only for the TCP parameter swap; `--tclass 106` puts RoCE traffic in DSCP 26 with ECT(0).
 
 ## 3. Live-style walkthrough: inspect the device, then run ib_write_bw and read every column
 
@@ -227,6 +291,8 @@ hostA$ ibdev2netdev -v                    # mlx5_0 -> ib0 (IB) or ens1f0np0 (RoC
 ```
 
 ### Step 2 — Bandwidth: server and client, every flag explained
+
+Keep Figure 3.1-6 open: the server command is step ①, the client's TCP connect is ②, the `local address` / `remote address` lines are ③, and the table is step ⑥ measuring the WRITE stream of step ⑤.
 
 ```bash
 # ---------- hostB: server. Same binary, no destination argument = listen ----------
@@ -297,6 +363,8 @@ hostA$ ib_write_lat -d mlx5_0 -s 8 -n 100000 -F 10.10.1.21
 ```
 
 ### Step 4 — Variants you will actually use
+
+Each variant exercises a different row of Figure 3.1-3: `ib_send_bw` needs pre-posted RECVs (①–③), `ib_read_bw` uses READ Request/Response (⑧–⑨).
 
 ```bash
 # RDMA CM instead of the out-of-band socket (resolves GID index automatically — the right way on RoCE)

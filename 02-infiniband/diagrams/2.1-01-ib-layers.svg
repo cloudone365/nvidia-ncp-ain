@@ -32,19 +32,19 @@
 <text x="530.0" y="673.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="400" fill="#5f6b7a" text-anchor="middle">4 lanes x 100 Gb/s PAM4 = NDR 400G</text>
 <text x="530.0" y="695.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="400" fill="#5f6b7a" text-anchor="middle">OSFP, FEC</text>
 <g><rect x="800" y="150" width="752" height="100" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
-<text x="812" y="188" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">MAD payload (SMP/GMP, 256 B) — Q_Key 32b for UD; application data</text>
+<text x="812" y="188" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">MAD payload (SMP/GMP, 256 B) — Q_Key 32b for UD; application data</text>
 <g><rect x="800" y="266" width="752" height="100" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
-<text x="812" y="296" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">BTH 12 B: OpCode 8b | SE | M | Pad 2b | TVer 4b | PKey 16b | DestQP 24b | A | PSN 24b</text>
-<text x="812" y="326" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">+ RETH 16 B for RDMA WRITE/READ: VA 64b | R_Key 32b | DMALen 32b   (ICRC 32b at tail)</text>
+<text x="812" y="296" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">BTH 12 B: OpCode 8b | SE | M | Pad 2b | TVer 4b | PKey 16b | DestQP 24b | A | PSN 24b</text>
+<text x="812" y="326" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">+ RETH 16 B for RDMA WRITE/READ: VA 64b | R_Key 32b | DMALen 32b   (ICRC 32b at tail)</text>
 <g><rect x="800" y="382" width="752" height="100" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
-<text x="812" y="412" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">GRH 40 B (optional on IB, always on RoCE): IPVer 4b | TClass 8b | FlowLabel 20b |</text>
-<text x="812" y="442" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">PayLen 16b | NxtHdr 8b | HopLmt 8b | SGID 128b | DGID 128b</text>
+<text x="812" y="412" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">GRH 40 B (optional on IB, always on RoCE): IPVer 4b | TClass 8b | FlowLabel 20b |</text>
+<text x="812" y="442" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">PayLen 16b | NxtHdr 8b | HopLmt 8b | SGID 128b | DGID 128b</text>
 <g><rect x="800" y="498" width="752" height="100" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
-<text x="812" y="528" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">LRH 8 B: VL 4b | LVer 4b | SL 4b | LNH 2b | DLID 16b | PktLen 11b | SLID 16b</text>
-<text x="812" y="558" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">VCRC 16b at tail; flow-control packets carry credits per VL</text>
+<text x="812" y="528" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">LRH 8 B: VL 4b | LVer 4b | SL 4b | LNH 2b | DLID 16b | PktLen 11b | SLID 16b</text>
+<text x="812" y="558" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">VCRC 16b at tail; flow-control packets carry credits per VL</text>
 <g><rect x="800" y="614" width="752" height="100" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
-<text x="812" y="644" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Lane training, speed/width negotiation (ibstat: Active width 4X, Active speed 100 Gbps)</text>
-<text x="812" y="674" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">symbol errors live here (SymbolErrorCounter)</text>
+<text x="812" y="644" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Lane training, speed/width negotiation (ibstat: Active width 4X, Active speed 100 Gbps)</text>
+<text x="812" y="674" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">symbol errors live here (SymbolErrorCounter)</text>
 <text x="48" y="760" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">Who assigns what:</text>
 <text x="48" y="788" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">GUID 64b — vendor, permanent (node, port, system image GUIDs)</text>
 <text x="48" y="812" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">LID 16b — assigned by the SM per subnet; may change after a new master</text>

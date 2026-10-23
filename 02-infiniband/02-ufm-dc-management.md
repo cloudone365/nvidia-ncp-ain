@@ -28,18 +28,25 @@ By the end of this module you will be able to…
 
 **Analogy:** in Module 2.1 the SM was the air-traffic controller. **UFM** is the whole control tower: the controller is still in there, but now with radar screens (telemetry), a logbook and alarm panel (events), an intercom to the airport's other systems (SNMP/syslog/REST), and a second tower ready to take over (HA).
 
-On a 16-node lab the SM on a switch is enough. On a 1,000-GPU SuperPOD you need, in addition:
+**What it is.** NVIDIA **UFM** (Unified Fabric Manager) is a software platform that runs on one or two Linux servers attached to the InfiniBand fabric. It *contains* a Subnet Manager — the enhanced **MLNXSM** build of `opensm` — and wraps it with five things the bare SM does not have: a fabric model database, a telemetry collector, an event/alarm engine, a web UI and a REST API. Everything from Module 2.1 (LIDs, LFTs, routing engines, PKeys, SL2VL) is still done by that SM; UFM decides *how the SM is configured*, records *what it discovered*, and *watches what the fabric is doing* afterwards.
 
-- A **scalable SM** with HA, persistent LID/GUID state and advanced routing (adaptive routing, SHARP aggregation manager).
-- **Telemetry** from every port: counters, BER, temperature, congestion, collected every few seconds without flooding the fabric with per-host `perfquery` scripts.
-- A **single pane of glass** with topology maps, inventory, events and alarms, plus hooks into the data center's existing monitoring (SNMP, syslog, Prometheus).
-- An **API** so cluster orchestration (Slurm, Kubernetes, BCM) can create partitions, isolate failing links and pull health data automatically.
+**Why it exists.** On a 16-node lab the SM on a switch is enough. On a 1,000-GPU SuperPOD (roughly 1,000 HCA ports, 100+ switches and 2,000+ cables) four problems appear that the SM was never designed to solve:
 
-UFM's SM is the enhanced MLNXSM, so everything about routing engines, PKeys and QoS from Module 2.1/2.3 applies; UFM wraps it with management, monitoring and automation.
+- **Scale and state.** The SM must keep LID assignments stable across restarts (guid2lid), run advanced routing (adaptive routing, SHARP aggregation manager) and survive the loss of its server. A switch-embedded SM has neither the CPU nor the storage for that history.
+- **Observability.** At 2,000 links a few cables are *always* degrading. Something has to poll every port's error and congestion counters every few seconds, keep history, and turn "SymbolErrorCounter on IB1/2 went from 0 to 4,000 in an hour" into an alarm. Doing that with per-host `perfquery` scripts floods the fabric with management MADs and gives you no history.
+- **Single pane of glass.** Operators need topology maps, inventory (serials, firmware, PSIDs, cable vendors), events and alarms, plus hooks into the data center's existing monitoring (SNMP, syslog, Prometheus).
+- **Automation.** Cluster orchestration (Slurm, Kubernetes, BCM) must create partitions, isolate failing links and pull health data without a human clicking.
+
+**How it works.** UFM runs the SM itself (management mode), so its own sweep is the source of truth for topology. Every sweep result lands in the UFM model database; the telemetry collector polls the same ports with Performance Management MADs; the event engine compares samples against thresholds; and both the UI and the REST API read and write the same model. A configuration change made in the UI or by REST is written to the database, UFM regenerates the SM's files, and the SM applies it on its next sweep — the data path never restarts. §2.3 walks through the components; Figure 2.2-2 shows them.
 
 **Why the exam cares:** questions ask which UFM component or edition solves a stated problem, and whether UFM replaces or wraps the SM (it wraps it).
 
 ### 2.2 UFM editions
+
+**What it is.** Three products that nest inside each other (Figure 2.2-1):
+
+![Nested boxes showing UFM Telemetry inside UFM Enterprise inside UFM Cyber-AI, with the capabilities each layer adds and the exam question that maps to each edition](diagrams/2.2-02-ufm-editions.svg)
+*Figure 2.2-1 — UFM editions: Telemetry ⊂ Enterprise ⊂ Cyber-AI, and the operational question each one answers.*
 
 | Edition | What it is | Adds |
 |---|---|---|
@@ -47,44 +54,72 @@ UFM's SM is the enhanced MLNXSM, so everything about routing engines, PKeys and 
 | **UFM Enterprise** | The full fabric manager (the subject of this module) | Everything in Telemetry **plus** the SM, fabric discovery and topology, web UI, REST API, events/alarms with SNMP/syslog/email forwarding, logical elements, PKey management, firmware/upgrade management, HA, SHARP AM integration |
 | **UFM Cyber-AI** | Enterprise **plus** an analytics appliance | AI/ML models trained on telemetry history: anomaly detection, link failure prediction, cable degradation trends, security anomalies (unexpected topology changes), capacity analytics. Sold as an appliance |
 
+**Why it exists.** The three editions answer three different operational questions, and buying (or deploying) more than you need costs licences, servers and attack surface. A site that already runs its SM on managed switches but wants Grafana dashboards needs only a counter collector; a site that wants one tool to own the subnet, tenants and alarms needs Enterprise; a site that wants to replace cables *before* they fail needs months of telemetry history and models trained on it — Cyber-AI.
+
+**How it works.** Telemetry polls counters with PM MADs and exposes them on an HTTP endpoint (port 9001 by default in 6.x) — it never sends an SMP that changes state, so it can coexist with any SM. Enterprise embeds the same collector and adds the SM and everything that writes to the fabric. Cyber-AI keeps long-term telemetry, trains per-port baselines, and raises "this link will fail" or "this topology change was unexpected" events that Enterprise alone never would.
+
 Mental model: Telemetry ⊂ Enterprise ⊂ Cyber-AI. The exam tends to ask "which edition gives predictive/anomaly analytics" (Cyber-AI) and "which can run without an SM" (Telemetry).
 
 ### 2.3 UFM Enterprise architecture
 
-A UFM Enterprise server is a Linux host (or VM, or container) with at least one HCA port on the IB fabric plus a management Ethernet interface. Internally it runs several cooperating services:
+**What it is.** A UFM Enterprise server is a Linux host (or VM, or container) with at least one HCA port on the IB fabric plus a management Ethernet interface. Internally it runs several cooperating services; Figure 2.2-2 shows them on both nodes of an HA pair.
 
-```text
-+----------------------------------------------------------------------+
-|  UFM Enterprise server                                               |
-|                                                                      |
-|   web UI (HTTPS 443)  <---->  REST API  (/ufmRest, /ufmRestV2)       |
-|            |                        |                                |
-|       UFM core / model DB (MySQL or SQLite, per release)             |
-|            |                 |                 |                     |
-|      opensm (MLNXSM)    UFM Telemetry     Event/alarm engine         |
-|      SM + SA             (collector)      SNMP/syslog/email          |
-|      SHARP AM (opt.)         |                                       |
-|            |                 |                                       |
-|       HCA port (mlx5_x) on the InfiniBand fabric                     |
-+----------------------------------------------------------------------+
-```
+![UFM Enterprise HA pair: each node runs web UI, REST API, UFM core and model DB, opensm, telemetry, event engine, sharp_am and the DRBD-backed /opt/ufm/files volume; Pacemaker heartbeat and DRBD replication link the nodes, a VIP floats to the active node, and only the active SM programs the fabric](diagrams/2.2-01-ufm-architecture.svg)
+*Figure 2.2-2 — UFM Enterprise components and the HA pair: the active node owns the VIP and the master SM; DRBD mirrors `/opt/ufm/files` to the standby.*
 
-- **SM**: UFM starts and supervises its own `opensm` process. You do not edit opensm.conf by hand in the usual way; UFM generates it from its settings. A host still running a separate `opensm` is a conflict: disable every other SM before starting UFM in management mode.
-- **Telemetry**: an embedded instance of UFM Telemetry polls counters via in-band management datagrams (PM MADs) and feeds the UI graphs, thresholds and the REST `/monitoring` endpoints.
-- **Modes**: *Management* mode (UFM runs the master SM) is the normal case. *Monitoring* mode lets UFM observe a fabric whose SM runs elsewhere (set `monitoring_mode` in `gv.cfg`) — useful during migrations.
+| Component | Process / location | Role |
+|---|---|---|
+| **UFM core** (`ModelMain`) | Python service under `/opt/ufm` | Owns the fabric model (systems, ports, links, logical elements), applies configuration, drives the SM |
+| **Model database** | SQLite or MySQL per release, under `/opt/ufm/files` | Inventory, events, PKeys, logical elements, user settings |
+| **opensm (MLNXSM)** | started and supervised by UFM | SM + SA: discovery, LIDs, routing (`ar_ftree`, …), PKeys, QoS tables |
+| **UFM Telemetry** | embedded collector | Polls PM counters, keeps history, feeds graphs/thresholds and `/monitoring` |
+| **Event / alarm engine** | inside UFM core | Turns traps and threshold crossings into events, alarms and actions |
+| **Web UI / REST** | HTTPS 443, `/ufm`, `/ufmRest*` | Human and machine front doors to the same model |
+| **sharp_am** (optional) | SHARP Aggregation Manager | Builds SHARP trees from the SM's topology (Module 2.3) |
+
+**Why it exists.** Splitting the work this way lets each piece scale and fail independently: the SM keeps the fabric forwarding even if the UI crashes; telemetry can be throttled without touching routing; the event engine can call out to SNMP/syslog without blocking a sweep. Putting *all* state in one directory (`/opt/ufm/files`) is what makes HA simple — replicate one volume and the standby has everything.
+
+**How it works.**
+
+- **SM ownership.** UFM generates `opensm.conf` and `partitions.conf` from its settings and starts its own `opensm`. You do not edit `opensm.conf` by hand in the usual way; UFM generates it from its settings. A host still running a separate `opensm`, or a switch SM at a higher priority, is a conflict: disable every other SM before starting UFM in management mode, because the IB election (highest priority, then lowest GUID — Module 2.1) still applies and UFM's SM will sit in STANDBY discovering nothing.
+- **Telemetry path.** An embedded instance of UFM Telemetry polls counters via in-band management datagrams (PM MADs): General Services MADs of the Performance Management class sent to each port's QP1, reading `PortCounters` (legacy 16/32-bit fields) and `PortCountersExtended` (64-bit data/packet counters). It feeds the UI graphs, thresholds and the REST `/monitoring` endpoints. Because the legacy error counters are only 8–16 bits wide (`LinkDownedCounter` is 8-bit, `SymbolErrorCounter` 16-bit) and *saturate* rather than wrap, the collector computes deltas between samples — which is also why resetting counters destroys evidence (§4.3).
+- **Modes.** *Management* mode (UFM runs the master SM) is the normal case. *Monitoring* mode lets UFM observe a fabric whose SM runs elsewhere (set `monitoring_mode` in `gv.cfg`) — useful during migrations; it rediscovers on a timer (`mon_mode_discovery_period`, default 60 s) instead of from its own sweeps.
 - **SHARP Aggregation Manager** (`sharp_am`) can run on the UFM server, so the same HA pair protects in-network computing (Module 2.3).
+- **What talks to the fabric.** Only three things leave the server on the IB port: SMPs from the master SM (QP0, VL15), SA/PM GMPs (QP1) and SHARP AM MADs. Everything else — UI, REST, SNMP, syslog, Prometheus — uses the management Ethernet.
+
+**Why the exam cares:** "which UFM component does X" (telemetry vs SM vs event engine) and "UFM will not discover the fabric — why?" (another master SM) are both recurring question shapes.
 
 ### 2.4 High availability
 
 **Analogy:** two control towers, one microphone. The active tower holds the microphone (the virtual IP) and keeps a carbon copy of every page of its logbook flowing to the standby tower (DRBD). If the active tower goes dark, the cluster software (Pacemaker) hands the microphone to the standby, whose logbook is already up to date.
 
-UFM HA is an **active/standby pair** of UFM servers, both connected to the fabric and to each other on a dedicated back-to-back or management link:
+**What it is.** UFM HA is an **active/standby pair** of UFM servers, both connected to the fabric and to each other on a dedicated back-to-back or management link:
 
 - Built with standard Linux clustering: **Pacemaker/Corosync** for resource management and failover, **DRBD** for block-level replication of `/opt/ufm/files` (the configuration and database volume). The `ufm_ha` package installs these and the `ufm_ha_cluster` wrapper command.
 - A **virtual IP** floats to the active node, so the UI/REST clients and SNMP consumers keep a single address.
 - The SM on the active node is master; the standby's SM is either not started or runs at a lower priority (UFM manages this), so the normal IB SM election is not what drives failover — the cluster does.
+
+**Why it exists.** SM redundancy alone (Module 2.1) protects *routing*, but not the things UFM adds: event history, telemetry history, logical elements, PKey definitions, user accounts, licences. If those lived only on the failed node, the standby would come up with an empty model, re-learn LIDs from scratch (risking renumbering and broken QPs), and lose the audit trail of what happened just before the failure. Replicating the one state directory at block level, synchronously, means the standby's disk is identical to the active's at the moment of failure.
+
+**How it works.** Pacemaker manages an ordered stack of resources on whichever node is active (names per release; the order is the point):
+
+1. **DRBD** resource promoted to *Primary* on the active node (*Secondary* on the standby). DRBD replicates every block write to the peer over the dedicated link before acknowledging it (synchronous replication), so `UpToDate/UpToDate` in `ufm_ha_cluster status` means the two copies are identical.
+2. **Filesystem** resource mounts the DRBD device on `/opt/ufm/files`. Only the Primary can mount it, which is the fence that prevents two UFMs writing the same database.
+3. **Virtual IP** resource brings up the VIP on the management interface (gratuitous ARP moves clients).
+4. **UFM service** starts on that node: ModelMain, opensm, telemetry, web server, optionally sharp_am.
+
+Corosync exchanges heartbeats between the nodes. When the active node stops answering (or you run `ufm_ha_cluster failover`), Pacemaker on the survivor promotes DRBD, mounts, moves the VIP and starts UFM. The new SM reads the replicated `guid2lid` cache and port state, performs a heavy sweep and keeps the existing LIDs — so established QPs keep working. During the gap the data plane is unaffected: switches keep forwarding on the LFTs already programmed; only fabric *changes* (a cable pulled during failover) wait for the new master. Expect failover in the tens-of-seconds-to-minutes range depending on fabric size (verify against the HA guide for your release).
+
 - Commands: `ufm_ha_cluster status`, `ufm_ha_cluster failover` (move mastership away from this node), `ufm_ha_cluster takeover` (claim it), `ufm_ha_cluster start|stop`, `ufm_ha_cluster cleanup`. Configuration is done once with `ufm_ha_cluster config` and its options (local/peer IPs, virtual IP, DRBD device); see the UFM HA guide for the exact flags.
-- Split-brain avoidance relies on the dedicated replication link; losing *both* the management network and the DRBD link simultaneously is the scenario to design against.
+- Split-brain avoidance relies on the dedicated replication link; losing *both* the management network and the DRBD link simultaneously is the scenario to design against. In a split brain each node believes the other is dead, both promote DRBD and both start an SM at priority 15 — two masters fighting over one subnet. Two independent heartbeat paths are the mitigation.
+
+**Failure modes and how to observe them.**
+
+| Symptom | Likely cause | Look at |
+|---|---|---|
+| `ufm_ha_cluster status` shows DRBD `Inconsistent` or `Outdated` on the standby | replication link down or resync in progress | DRBD state in status output; the back-to-back link |
+| Both nodes report master | split brain | `ufm_ha_cluster status` on both; `sminfo` from a host shows the GUID flipping |
+| Failover completes but UI unreachable | VIP not moved / ARP cache | `ip addr` on the new active; client ARP table |
 
 Contrast with plain **SM HA** (Module 2.1): two switch SMs with different priorities give SM redundancy only; UFM HA also replicates events, telemetry history, logical elements and PKey definitions.
 
@@ -92,17 +127,23 @@ Contrast with plain **SM HA** (Module 2.1): two switch SMs with different priori
 
 ### 2.5 Installation options and licensing
 
+**What it is.** Three packagings of the same software:
+
 | Option | Packaging | Notes |
 |---|---|---|
 | **Bare metal / VM** | `ufm-enterprise-<ver>.tgz` with `install.sh`; requires MLNX_OFED / DOCA-OFED already installed and the HCA port Active | Most common for self-managed clusters; supported on specific RHEL/Rocky and Ubuntu releases — check the matrix |
 | **Docker** | `ufm-enterprise` container image, run with `--net=host --privileged` and the `/opt/ufm/files` volume mapped from the host; `ufm-installation` helper container prepares the host | Lets you keep host OS and UFM lifecycles separate; HA is supported with the ufm_ha package on the host |
 | **Appliance** | UFM Enterprise Appliance / Cyber-AI appliance: NVIDIA-shipped server with pre-installed OS and UFM, managed via a restricted CLI (`ufm` command tree) | Enterprise and SuperPOD deployments; licence tied to the appliance |
 
+**Why it exists.** Operators differ in what they want to own: some want UFM as one more RPM-style package on a host they patch; some want an immutable container whose upgrade is a tag change; large sites want a supported box with a fixed OS so NVIDIA support can reproduce their environment.
+
+**How it works.** All three need the same two things from the host: a working NVIDIA RDMA stack (so `mlx5_ib` and `ib_umad` give UFM's SM and telemetry access to QP0/QP1 through `/dev/infiniband/umad*`), and an HCA port that is physically up. The Docker flavour needs `--net=host` (UFM binds the HCA and management IP directly) and `--privileged` (raw access to the umad devices). The persistent volume is always `/opt/ufm/files`, which is why backup, HA and container upgrades all revolve around that one path.
+
 UFM is licensed per managed node; the licence file is uploaded in the UI or placed in `/opt/ufm/files/licenses/`. Without a licence UFM runs in evaluation mode for a limited period.
 
 ### 2.6 Configuration: gv.cfg and the generated SM files
 
-UFM's main configuration file is **`/opt/ufm/files/conf/gv.cfg`** (older docs show `/opt/ufm/conf/gv.cfg`, which is a symlink into `files/`). It is INI-style:
+**What it is.** UFM's main configuration file is **`/opt/ufm/files/conf/gv.cfg`** (older docs show `/opt/ufm/conf/gv.cfg`, which is a symlink into `files/`). It is INI-style:
 
 ```ini
 [Server]
@@ -122,11 +163,15 @@ level = INFO
 ...
 ```
 
-Edit, then restart UFM (`systemctl restart ufm-enterprise`). The generated SM configuration lives under `/opt/ufm/files/conf/opensm/opensm.conf`; a monitoring-mode variant `opensm_mon.conf` exists alongside it. UFM rewrites some parameters at start-up, so persistent SM changes should be made through the UI (Settings → Subnet Manager) or in `gv.cfg`, not by editing the generated file. Partitions are kept in `/opt/ufm/files/conf/opensm/partitions.conf` and also regenerated from the UFM database.
+**Why it exists.** UFM, not the operator, owns `opensm.conf` — it must, because UFM features (AR, SHARP, QoS, PKeys from the UI) are implemented by rewriting SM parameters. A single higher-level file lets UFM regenerate the SM configuration consistently at every start, and lets HA replicate one source of truth.
+
+**How it works.** Edit, then restart UFM (`systemctl restart ufm-enterprise`). The generated SM configuration lives under `/opt/ufm/files/conf/opensm/opensm.conf`; a monitoring-mode variant `opensm_mon.conf` exists alongside it. UFM rewrites some parameters at start-up, so persistent SM changes should be made through the UI (Settings → Subnet Manager) or in `gv.cfg`, not by editing the generated file. Partitions are kept in `/opt/ufm/files/conf/opensm/partitions.conf` and also regenerated from the UFM database. The flow for a PKey created by REST is exactly Figure 2.2-4: the API writes the database, UFM regenerates `partitions.conf` and signals the SM, the SM pushes `PKeyTable` SMPs on its next sweep. A hand-edit to the generated file therefore survives only until the next regeneration — the classic "my opensm.conf change disappeared after a restart".
+
+**Why the exam cares:** "where do you change UFM's SM priority / routing engine?" — Settings → Subnet Manager or `gv.cfg`, never the generated file.
 
 ### 2.7 Web UI areas
 
-Know what you would open to answer a given operational question.
+**What it is.** The UI is a set of views over the same model. Know what you would open to answer a given operational question.
 
 | Area | What you find there | Typical use |
 |---|---|---|
@@ -139,11 +184,18 @@ Know what you would open to answer a given operational question.
 | **System Health** | UFM server health, SM status, HA status, licence, Telemetry status, fabric health report run | Confirm UFM itself is OK |
 | **Settings** | SM settings (priority, routing engine, AR, SHARP, QoS), event policy & thresholds, SNMP/syslog/email destinations, users & RBAC/LDAP, licence, backups | Configuration |
 
-Logical Elements (Environments / Logical Servers / Networks) are an *abstraction* for provisioning; they map onto PKeys underneath.
+**Why it exists.** Different roles ask different questions — a NOC operator wants "what is red", a fabric engineer wants "why is this port congested", a tenant admin wants "which hosts are in my partition". Separate views over one model avoid three tools drifting out of sync.
+
+**How it works.** Logical Elements (Environments / Logical Servers / Networks) are an *abstraction* for provisioning; they map onto PKeys underneath: adding a Logical Server to a Network adds its hosts' port GUIDs to that Network's PKey, which follows the same database → `partitions.conf` → SM path as a REST call. Actions in Managed Elements become SMPs (e.g. port disable = `SubnSet(PortInfo)` with PortState Down) for unmanaged switches, or MLNX-OS calls for managed ones.
 
 ### 2.8 Monitoring: what UFM collects and what it means
 
 **Analogy:** `PortXmitWait` is the counter on the parking-garage gate that counts how long cars sat waiting because no space was free — it is the credit-based flow control from Module 2.1 made visible. Symbol errors are scratches on the ticket that the reader could not decode.
+
+**What it is.** UFM's telemetry and event engine turn per-port hardware counters into graphs, thresholds, events, alarms and actions — the pipeline in Figure 2.2-3.
+
+![Pipeline from fabric port counters through UFM Telemetry and the threshold engine to events, alarms and the actions chosen by the Events Policy: SNMP trap, syslog, email, script hook and port isolation, with isolation feeding back to the fabric port](diagrams/2.2-04-event-pipeline.svg)
+*Figure 2.2-3 — From a counter to a page: telemetry samples feed thresholds, events become alarms, and the Events Policy decides the action (including isolating the port).*
 
 | Metric family | Examples | What a bad value means |
 |---|---|---|
@@ -154,15 +206,27 @@ Logical Elements (Environments / Logical Servers / Networks) are an *abstraction
 | **Link flaps** | Count of link up/down transitions per period | Flapping links cause SM re-sweeps and NCCL time-outs; UFM can auto-isolate them |
 | **Environment** | Switch and transceiver temperature, PSU/fan status, power | Overheating optics raise BER before they fail |
 
-UFM Telemetry collects at a configurable period (default a few tens of seconds for the full set, faster for a "low-frequency vs high-frequency" split in newer releases) and stores history in a round-robin fashion; long-term retention is where Cyber-AI or an external Prometheus/Grafana stack comes in.
+**Why it exists.** IB is lossless by credit flow control (Module 2.3), so it never *drops* under congestion — it *waits*. That makes congestion invisible to anything that only counts drops; `PortXmitWait` is the only direct evidence. Physical faults, on the other hand, are almost always gradual: a cable's symbol error rate climbs for hours or days before the link flaps, and every flap triggers an SM re-sweep and NCCL `IBV_WC_RETRY_EXC_ERR` time-outs. Catching the trend early — and isolating the link before it flaps during a training run — is the whole value of the pipeline.
 
-**Events, severities and thresholds.** Events have a severity (**Info / Minor / Warning / Critical**) and belong to a category. Many are **threshold events** generated by the telemetry engine: e.g. "Symbol error rate exceeded threshold", "Port temperature high", "Link utilisation > 90 %". Settings → Events Policy lets you enable/disable each event type, set the threshold value and the evaluation period, and choose the action: log, raise alarm, send **SNMP trap**, **syslog**, **email**, call a script, or (for link errors) **isolate the port**. An alarm is a persistent condition derived from events; it stays open until cleared or acknowledged.
+**How it works.** Follow the numbered steps in Figure 2.2-3:
+
+1. **Sample.** UFM Telemetry sends PM `Get(PortCounters)` / `Get(PortCountersExtended)` to each port at a configurable period (default a few tens of seconds for the full set, faster for a "low-frequency vs high-frequency" split in newer releases) and stores history in a round-robin fashion; long-term retention is where Cyber-AI or an external Prometheus/Grafana stack comes in. Data counters (`PortXmitData`/`PortRcvData`) count in 4-byte words, so multiply by 4 for bytes; the extended set is 64-bit and effectively never saturates.
+2. **Threshold.** The threshold engine compares each delta (value now minus value one period ago) against the policy: "SymbolErrorCounter increased by more than N within period P".
+3. **Event.** A crossing raises an **event** with a severity (**Info / Minor / Warning / Critical**) and a category (Hardware, Fabric Topology, Communication, Security, Gateway). Traps from the SM (port state change, Trap 128 in Module 2.1) also become events.
+4. **Alarm.** An alarm is a persistent condition derived from events; it stays open until cleared or acknowledged.
+5. **Action.** Settings → Events Policy lets you enable/disable each event type, set the threshold value and the evaluation period, and choose the action: log, raise alarm, send **SNMP trap**, **syslog**, **email**, call a script, or (for link errors) **isolate the port**. Isolation is a `SubnSet(PortInfo)` with PortState Down on that port, which takes the link down deliberately — the SM re-routes around it on the next sweep, and any job using that path gets a clean failure instead of a slow death.
+
+Many events are **threshold events** generated by the telemetry engine: e.g. "Symbol error rate exceeded threshold", "Port temperature high", "Link utilisation > 90 %".
 
 **Northbound integration:** SNMP traps (v2c/v3; MIB shipped under `/opt/ufm/files/...`), remote syslog (SIEM), email via SMTP relay, Prometheus scraping of the telemetry endpoint (`http://<ufm>:9001/csv/...` or a Prometheus-format exporter, depending on release), and REST polling of `/ufmRest/app/events` or `/ufmRest/app/alarms`.
 
+**Failure modes.** A counter reset (UI or `reset_ports_counters`) zeroes the evidence but not the event history — read `app/events`, not the live counter (§4.3). A saturated 16-bit legacy counter stops at 65,535 and looks "stable"; trust the delta and the extended counters. Telemetry that stops updating on every port at once usually means the collector lost its HCA (port down on the UFM server), not that the fabric went quiet.
+
+**Why the exam cares:** "high `PortXmitWait`, zero errors" = congestion; "symbol errors + `LinkDownedCounter`" = physical; "what can the Events Policy do?" = alarm, SNMP, syslog, email, script, isolate.
+
 ### 2.9 REST API model
 
-All management operations have a REST equivalent at `https://<ufm>/ufmRest/...` (and `/ufmRestV2`, `/ufmRestV3` for newer endpoints). Authentication is HTTP basic with a UFM user, or a token (`/ufmRest/app/tokens`) for scripts. Responses are JSON. Use `-k` only in the lab; production should have a real certificate.
+**What it is.** All management operations have a REST equivalent at `https://<ufm>/ufmRest/...` (and `/ufmRestV2`, `/ufmRestV3` for newer endpoints). Authentication is HTTP basic with a UFM user, or a token (`/ufmRest/app/tokens`) for scripts. Responses are JSON. Use `-k` only in the lab; production should have a real certificate.
 
 | Resource family | Path | Used for |
 |---|---|---|
@@ -173,7 +237,23 @@ All management operations have a REST equivalent at `https://<ufm>/ufmRest/...` 
 | Monitoring | `monitoring/...` | Counter snapshots |
 | Reports | `reports/Fabric_Health` | Run/fetch the fabric health report |
 
-Field names (`guids`, `membership`, `index0`, `ip_over_ib`) are those documented for 6.x; the request format for setting membership per-GUID differs between endpoints, so copy the exact body from the REST API Guide for the version you run. **Why the exam cares:** it is far more likely to ask *which resource* you would call (ports vs. systems vs. pkeys vs. events) than to test JSON field names.
+**Why it exists.** At SuperPOD scale nothing that has to happen per job or per incident can depend on a human in a UI: Slurm prologs create or check partitions, Kubernetes operators request tenant isolation, NOC tooling isolates failing links. The REST API exposes exactly the same model as the UI, so automation and humans can never disagree about state.
+
+**How it works.** Figure 2.2-4 traces a PKey creation end to end; the numbers match the circled steps.
+
+![Sequence diagram: an automation script authenticates to the UFM REST API, posts a PKey, UFM core validates and writes the model DB, regenerates partitions.conf and signals opensm, which programs PKey tables on switches and HCAs within one sweep; the script reads back and later posts a disable_port action](diagrams/2.2-03-rest-flow.svg)
+*Figure 2.2-4 — REST integration: from a POST to a PKey programmed in the fabric, with no SM restart.*
+
+1. **Authenticate** — basic auth on every call, or `POST app/tokens` once and reuse the token (header format per the API guide for your release).
+2. **POST `resources/pkeys`** with the key (`0x0a02`), membership, IPoIB flag, MTU/rate limits and member GUIDs (hex *without* `0x`). UFM core validates and writes the model database; the HTTP 200/201 is returned as soon as the DB write is accepted — *not* when the fabric is programmed.
+3. **Regenerate** — UFM rewrites `partitions.conf` and signals the SM.
+4. **Program** — on its next sweep the SM sends `SubnSet(PKeyTable)` to each member port (and `SubnSet(MFT)` for the IPoIB multicast group); tables are live within one sweep, typically seconds. The host then creates `ib0.8a02`.
+5. **Read back** with `GET resources/pkeys/0x0a02?guids_data=true`; inventory, links and events are the same pattern on other resources.
+6. **Act** — `POST actions` (`disable_port`, …) uses the same path for operations; for an unmanaged switch UFM sends a `PortInfo` MAD in-band, for a managed one it may use MLNX-OS.
+
+Because step 2 returns before step 4 completes, a script that immediately checks the host may see the old table — poll the host's `pkeys` sysfs or `guids_data` instead of assuming. Field names (`guids`, `membership`, `index0`, `ip_over_ib`) are those documented for 6.x; the request format for setting membership per-GUID differs between endpoints, so copy the exact body from the REST API Guide for the version you run.
+
+**Why the exam cares:** it is far more likely to ask *which resource* you would call (ports vs. systems vs. pkeys vs. events) than to test JSON field names.
 
 ## 3. Live-style walkthrough: install UFM, walk the UI, then do it all again with curl
 
@@ -227,12 +307,14 @@ Network Map should populate within a minute or two: 2 switches, 5 hosts (includi
 2. **Network Map** — click `ib-sw-01`; the two ISLs to `ib-sw-02` are drawn; hover a host to see its leaf and port. "Which leaf is gpu03 on?" is answered here.
 3. **Managed Elements** → `ib-sw-01` → Ports → `IB1/31` — firmware, PSID, serial, per-port counters, and the Actions menu (Disable, Reset counters).
 4. **Logical Elements** → **PKeys** → "+" — enter `0x0a01`, leave *index-0* unchecked (whether this key is placed at index 0 of the port's table — usually no), tick IPoIB, MTU 4K, SL 0, add the two GUIDs for the Vision hosts with membership *full*, Save. Watch the SM resweep: no restart.
-5. **Events & Alarms** — filter severity *Critical*, category *Hardware*. Acknowledge one to see how alarms differ from events.
+5. **Events & Alarms** — filter severity *Critical*, category *Hardware* (steps ③–④ of Figure 2.2-3). Acknowledge one to see how alarms differ from events.
 6. **Telemetry** — pick `ib-sw-01 IB1/1`, graph `PortXmitWait` and `SymbolErrorCounter` over the last hour.
 7. **System Health** — SM `master`, HA `n/a` (single node), licence state, Telemetry `running`; run **Fabric Health** report (ibdiagnet-based plus UFM's own checks: duplicate GUIDs, mixed firmware, degraded width/speed, cable errors).
-8. **Settings** → Events Policy — find "Symbol error rate exceeded threshold", note the threshold, period, and the action list including *isolate port*.
+8. **Settings** → Events Policy — find "Symbol error rate exceeded threshold", note the threshold, period, and the action list including *isolate port* (step ⑤ of Figure 2.2-3).
 
 ### Step 5 — The same work via REST with curl
+
+Every call below is one numbered step of Figure 2.2-4: the token (①), the PKey POST (②), UFM regenerating the SM files (③) and the SM programming the tables (④) happen without you touching the SM; the GETs are ⑤ and the `disable_port` action is ⑥.
 
 ```bash
 UFM=https://10.0.100.50
@@ -295,7 +377,7 @@ curl -sk -u $AUTH "$UFM/ufmRest/monitoring/..."
 systemctl status ufm-enterprise ; systemctl restart ufm-enterprise
 /opt/ufm/scripts/show_ufm_status.sh -e          # core + sub-processes
 
-# HA (only once the ufm_ha package is configured on both nodes)
+# HA (only once the ufm_ha package is configured on both nodes) — the pair in Figure 2.2-2
 ufm_ha_cluster status                            # which node is master; DRBD "UpToDate/UpToDate" = replication healthy
 ufm_ha_cluster failover                          # run on the current master to hand over to the peer
 ufm_ha_cluster takeover                          # run on the standby to pull mastership here
