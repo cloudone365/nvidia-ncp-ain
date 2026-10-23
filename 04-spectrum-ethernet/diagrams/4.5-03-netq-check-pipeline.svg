@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%" role="img">
-<title>netq check validation pipeline: collected state → per-protocol tests → summary with failed nodes/sessions</title>
+<title>netq check validation pipeline: collected state → per-protocol tests → summary</title>
 <defs>
 <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
 <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
@@ -10,75 +10,99 @@
 <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
 </defs>
 <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
-<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">netq check validation pipeline: collected state → per-protocol tests → summary with failed nodes/sessions</text>
-<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Runs on demand or on a schedule; 'around 1h' validates the past; json output feeds CI (summary.failedNodeCount)</text>
-<g><title>Agents (Fresh?) netq check agents first</title><rect x="60" y="180" width="300" height="110" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="210.0" y="219.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Agents (Fresh?)</text>
-<text x="210.0" y="241.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">netq check agents first</text>
-<text x="210.0" y="267.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">Rotten → everything downstream is stale</text>
+<text x="48" y="72" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">netq check pipeline: collected state → per-protocol tests → summary</text>
+<text x="48" y="104" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">Runs on demand or on a schedule; 'around 1h' validates the past; json output feeds CI (failed node count)</text>
+<g><title>Agents (Fresh?)</title><rect x="48" y="160" width="280" height="110" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="188.0" y="189.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Agents (Fresh?)</text>
+<text x="188.0" y="212.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">netq check agents first</text>
+<text x="188.0" y="234.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">Rotten → everything</text>
+<text x="188.0" y="256.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">downstream is stale</text>
 </g>
-<g><title>Time-series store state of ALL devices at time T</title><rect x="420" y="180" width="300" height="110" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="570.0" y="219.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Time-series store</text>
-<text x="570.0" y="241.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">state of ALL devices at time T</text>
-<text x="570.0" y="267.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">interfaces, LLDP, BGP, EVPN, MLAG, RoCE…</text>
+<line x1="328" y1="215" x2="376" y2="215" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>step 1</title><circle cx="352" cy="182" r="16" fill="#1f2937"/>
+<text x="352" y="188" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
 </g>
-<line x1="360" y1="235" x2="420" y2="235" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<g><title>Step 1</title><circle cx="390" cy="205" r="16" fill="#1f2937"/><text x="390" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
-<g><title>Validation suites (run in dependency order)</title><rect x="780" y="150" width="760" height="300" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
-<text x="1160.0" y="305.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Validation suites (run in dependency order)</text>
+<g><title>Time-series store</title><rect x="380" y="160" width="330" height="110" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="545.0" y="189.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Time-series store</text>
+<text x="545.0" y="212.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">state of ALL devices at time T</text>
+<text x="545.0" y="234.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">interfaces, LLDP, BGP, EVPN,</text>
+<text x="545.0" y="256.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">MLAG, RoCE …</text>
 </g>
-<g><title>interfaces / mtu</title><rect x="800" y="195" width="190" height="40" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="895.0" y="219.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">interfaces / mtu</text>
+<line x1="710" y1="215" x2="756" y2="215" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>step 2</title><circle cx="733" cy="182" r="16" fill="#1f2937"/>
+<text x="733" y="188" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
 </g>
-<text x="1005" y="221" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start">admin≠oper, MTU mismatch between LLDP peers, speed/FEC/autoneg</text>
-<g><title>bgp</title><rect x="800" y="245" width="190" height="40" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="895.0" y="269.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">bgp</text>
+<rect x="760" y="136" width="792" height="340" rx="12" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<text x="778" y="166" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#5f6b7a" text-anchor="start">Validation suites (run interfaces first: lower layers explain upper)</text>
+<g><title>interfaces / mtu</title><rect x="778" y="184" width="180" height="44" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="868.0" y="212.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">interfaces / mtu</text>
 </g>
-<text x="1005" y="271" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start">Session Establishment · Address Families · Router-ID uniqueness</text>
-<g><title>evpn</title><rect x="800" y="295" width="190" height="40" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="895.0" y="319.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">evpn</text>
+<text x="974" y="212" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">admin≠oper, MTU mismatch between LLDP peers, speed/FEC/autoneg</text>
+<g><title>bgp</title><rect x="778" y="240" width="180" height="44" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="868.0" y="268.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">bgp</text>
 </g>
-<text x="1005" y="321" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start">VNI consistency, VTEP reachability, Type-2/5 presence, L3VNI↔VRF map</text>
-<g><title>mlag</title><rect x="800" y="345" width="190" height="40" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="895.0" y="369.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">mlag</text>
+<text x="974" y="268" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Session Establishment · Address Families · Router-ID uniqueness</text>
+<g><title>evpn</title><rect x="778" y="296" width="180" height="44" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="868.0" y="324.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">evpn</text>
 </g>
-<text x="1005" y="371" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start">peer alive, backup IP, bond consistency, VLAN/MTU per peer</text>
-<g><title>roce</title><rect x="800" y="395" width="190" height="40" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="895.0" y="419.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">roce</text>
+<text x="974" y="324" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">VNI consistency, VTEP reachability, Type-2/5 presence, L3VNI↔VRF</text>
+<g><title>mlag</title><rect x="778" y="352" width="180" height="44" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="868.0" y="380.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">mlag</text>
 </g>
-<text x="1005" y="421" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start">RoCE mode/PFC/ECN/trust uniform across the fabric</text>
-<line x1="720" y1="235" x2="780" y2="235" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<g><title>Step 2</title><circle cx="750" cy="205" r="16" fill="#1f2937"/><text x="750" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
-<g><title>bgp check result summary </title><rect x="420" y="520" width="700" height="230" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="770.0" y="591.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">bgp check result summary</text>
-<text x="770.0" y="639.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">Total nodes 4 · Checked 4 · Failed 1 · Rotten 0 · Warning 0</text>
-<text x="770.0" y="657.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">Total Sessions 16 · Failed Sessions 2 (one per end)</text>
-<text x="770.0" y="675.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">Session Establishment Test: 1 error · Address Families: passed · Router ID: passed</text>
-<text x="770.0" y="693.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">leaf02  default  swp62  spine02  'failed, reason: Active'</text>
+<text x="974" y="380" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">peer alive, backup IP, bond consistency, VLAN/MTU per peer</text>
+<g><title>roce</title><rect x="778" y="408" width="180" height="44" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="868.0" y="436.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">roce</text>
 </g>
-<line x1="1160" y1="450" x2="900" y2="520" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<g><title>Step 3</title><circle cx="1040" cy="480" r="16" fill="#1f2937"/><text x="1040" y="486" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
-<g><title>Act </title><rect x="1200" y="560" width="340" height="150" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="1370.0" y="600.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Act</text>
-<text x="1370.0" y="648.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">CI: exit non-zero if failedNodeCount &gt; 0</text>
-<text x="1370.0" y="666.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">UI: Validation Summary card drill-down</text>
-<text x="1370.0" y="684.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">fix the device, re-run, compare 'around'</text>
+<text x="974" y="436" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">RoCE mode / PFC / ECN / trust uniform across the fabric</text>
+<line x1="1156" y1="476" x2="900" y2="536" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>step 3</title><circle cx="1050" cy="506" r="16" fill="#1f2937"/>
+<text x="1050" y="512" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
 </g>
-<line x1="1120" y1="635" x2="1200" y2="635" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<g><title>Step 4</title><circle cx="1160" cy="605" r="16" fill="#1f2937"/><text x="1160" y="611" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
-<g><title>Note</title><rect x="60" y="520" width="320" height="230" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
-<text x="72" y="542" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Why a single switch cannot do this:</text>
-<text x="72" y="560" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">an MTU mismatch, duplicate router-id,</text>
-<text x="72" y="578" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">or one leaf left 'lossy' only shows up</text>
-<text x="72" y="596" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">when every device's state is compared</text>
-<text x="72" y="614" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">against every other's. nv show is one</text>
-<text x="72" y="632" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">camera; netq check is the control room.</text>
-<g><title>Legend</title><rect x="1110" y="780" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
-<line x1="1124" y1="806" x2="1184" y2="806" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<text x="1198" y="812" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
-<line x1="1124" y1="836" x2="1184" y2="836" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1198" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<g><title>Why fabric-wide</title><rect x="48" y="300" width="662" height="176" rx="8" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="64" y="330" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Why a single switch cannot do this: an MTU mismatch,</text>
+<text x="64" y="358" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">a duplicate router-id, or one leaf left 'lossy' only shows up</text>
+<text x="64" y="386" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">when every device's state is compared against every other's.</text>
+<text x="64" y="414" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">nv show is one camera; netq check is the control room.</text>
+<text x="64" y="442" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Tests are numbered: netq check bgp include 0,1 runs a subset.</text>
+<g><title>bgp check result summary</title><rect x="48" y="540" width="760" height="196" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="428.0" y="590.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">bgp check result summary</text>
+<text x="428.0" y="613.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">Total nodes 4 · Checked 4 · Failed 1 · Rotten 0 · Warning 0</text>
+<text x="428.0" y="635.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">Total Sessions 16 · Failed Sessions 2 (one per end)</text>
+<text x="428.0" y="657.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">Session Establishment Test: 1 error</text>
+<text x="428.0" y="679.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">Address Families: passed · Router ID: passed</text>
+<text x="428.0" y="701.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">leaf02 default swp62 spine02 'failed, reason: Active'</text>
 </g>
-<text x="60" y="800" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">1 collect (agents stream state)   2 run suites against the stored snapshot at T (or 'around &lt;t&gt;')</text>
-<text x="60" y="826" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">3 summarise: nodes/sessions failed + exact interface and reason   4 gate the pipeline or drill down</text>
+<line x1="808" y1="638" x2="880" y2="638" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>step 4</title><circle cx="844" cy="606" r="16" fill="#1f2937"/>
+<text x="844" y="612" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+</g>
+<g><title>Act</title><rect x="884" y="560" width="668" height="156" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1218.0" y="601.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Act</text>
+<text x="1218.0" y="624.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">CI: fail the pipeline if any node failed (json output)</text>
+<text x="1218.0" y="646.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">UI: Validation Summary card → drill-down to the device</text>
+<text x="1218.0" y="668.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">fix the device, re-run, compare with 'around &lt;t&gt;'</text>
+<text x="1218.0" y="690.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">Rotten nodes &gt; 0 → the result is not trustworthy</text>
+</g>
+<g><title>step 1</title><circle cx="64" cy="774" r="16" fill="#1f2937"/>
+<text x="64" y="780" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+</g>
+<text x="90" y="780" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">collect (agents stream state)</text>
+<g><title>step 2</title><circle cx="436" cy="774" r="16" fill="#1f2937"/>
+<text x="436" y="780" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+</g>
+<text x="462" y="780" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">run suites against stored state at T (or 'around &lt;t&gt;')</text>
+<g><title>step 3</title><circle cx="64" cy="820" r="16" fill="#1f2937"/>
+<text x="64" y="826" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+</g>
+<text x="90" y="826" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">summarise: failed nodes/sessions + interface + reason</text>
+<g><title>step 4</title><circle cx="576" cy="820" r="16" fill="#1f2937"/>
+<text x="576" y="826" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+</g>
+<text x="602" y="826" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">gate the pipeline or drill down</text>
+<g><title>Legend</title><rect x="1110" y="766" width="442" height="90" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1124" y1="792" x2="1180" y2="792" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1194" y="798" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
+<line x1="1124" y1="822" x2="1180" y2="822" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1194" y="828" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (query / result)</text>
+</g>
 </svg>

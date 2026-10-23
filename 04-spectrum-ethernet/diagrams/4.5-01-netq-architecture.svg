@@ -10,89 +10,96 @@
 <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
 </defs>
 <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
-<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">NetQ architecture: agents → on-prem server, or OPTA → NetQ Cloud</text>
-<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Agents → TCP 31980 (on-prem) / 31443 TLS (OPTA → cloud). Server = Kubernetes appliance with Kafka + Cassandra; UI on 443; CLI/API query the same store</text>
-<g><title>leaf01</title><rect x="60" y="680" width="180" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="150.0" y="714.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
-<text x="150.0" y="739.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">Cumulus · netq-agent</text>
+<text x="48" y="72" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">NetQ architecture: agents → on-prem server, or OPTA → NetQ Cloud</text>
+<text x="48" y="104" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">Agents → TCP 31980 (on-prem) / 31443 TLS (OPTA → cloud). Server = Kubernetes appliance: Kafka pipeline + Cassandra time series</text>
+<rect x="48" y="136" width="960" height="380" rx="12" fill="none" stroke="#6b7280" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="66" y="166" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#5f6b7a" text-anchor="start">NetQ on-premises server — standalone VM, or 3-node cluster (1 master + 2 workers)</text>
+<g><title>UI workbench https://10.10.0.100 (443)</title><rect x="70" y="184" width="450" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="295.0" y="214.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">UI workbench https://10.10.0.100 (443)</text>
+<text x="295.0" y="237.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">cards: validation, RoCE, WJH, topology</text>
 </g>
-<line x1="150" y1="680" x2="520" y2="500" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<g><title>leaf02</title><rect x="260" y="680" width="180" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="350.0" y="714.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">leaf02</text>
-<text x="350.0" y="739.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">Cumulus · netq-agent</text>
+<g><title>CLI / API: netq show | check | trace</title><rect x="540" y="184" width="446" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="763.0" y="214.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">CLI / API: netq show | check | trace</text>
+<text x="763.0" y="237.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">netq config add cli server 10.10.0.100</text>
 </g>
-<line x1="350" y1="680" x2="520" y2="500" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<g><title>spine01</title><rect x="460" y="680" width="180" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="550.0" y="714.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">spine01</text>
-<text x="550.0" y="739.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">SONiC · netq-agent</text>
+<g><title>Validation engine</title><rect x="70" y="274" width="296" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="218.0" y="304.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Validation engine</text>
+<text x="218.0" y="327.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">netq check *</text>
 </g>
-<line x1="550" y1="680" x2="520" y2="500" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<g><title>dgx01</title><rect x="660" y="680" width="180" height="80" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
-<text x="750.0" y="714.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">dgx01</text>
-<text x="750.0" y="739.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#5f6b7a" text-anchor="middle">Ubuntu host · netq-agent</text>
+<g><title>Events / TCAs</title><rect x="380" y="274" width="296" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="528.0" y="304.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Events / TCAs</text>
+<text x="528.0" y="327.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">channels → rules → filters</text>
 </g>
-<line x1="750" y1="680" x2="520" y2="500" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<rect x="33" y="584" width="594" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="330" y="600" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">TCP 31980 · vrf mgmt on switches (no vrf on hosts) · state + counters + WJH</text>
-<g><title>NetQ on-premises server (standalone VM or 3-node cluster: 1 master + 2 workers, cluster-vip)</title><rect x="60" y="160" width="900" height="340" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
-<text x="74" y="188" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">NetQ on-premises server (standalone VM or 3-node cluster: 1 master + 2 workers, cluster-vip)</text>
-<g><title>Kubernetes netq install … full</title><rect x="90" y="210" width="250" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="215.0" y="239.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Kubernetes</text>
-<text x="215.0" y="259.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">netq install … full</text>
+<g><title>LCM</title><rect x="690" y="274" width="296" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="838.0" y="304.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">LCM</text>
+<text x="838.0" y="327.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">images, agent upgrades, snapshots</text>
 </g>
-<g><title>Kafka ingest / message bus</title><rect x="360" y="210" width="250" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="485.0" y="239.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Kafka</text>
-<text x="485.0" y="259.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">ingest / message bus</text>
+<g><title>Agent endpoint</title><rect x="70" y="400" width="196" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="168.0" y="430.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Agent endpoint</text>
+<text x="168.0" y="453.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">TCP 31980</text>
 </g>
-<g><title>Cassandra (time series) every state change, forever-ish</title><rect x="630" y="210" width="300" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="780.0" y="239.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Cassandra (time series)</text>
-<text x="780.0" y="259.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">every state change, forever-ish</text>
+<line x1="266" y1="435" x2="306" y2="435" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>Kafka</title><rect x="310" y="400" width="196" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="408.0" y="430.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Kafka</text>
+<text x="408.0" y="453.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ingest / message bus</text>
 </g>
-<g><title>Validation engine netq check *</title><rect x="90" y="310" width="250" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="215.0" y="339.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Validation engine</text>
-<text x="215.0" y="359.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">netq check *</text>
+<line x1="506" y1="435" x2="546" y2="435" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>Stream processors</title><rect x="550" y="400" width="196" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="648.0" y="430.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Stream processors</text>
+<text x="648.0" y="453.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">normalise, detect events</text>
 </g>
-<g><title>Events / TCAs channels → rules → filters</title><rect x="360" y="310" width="250" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="485.0" y="339.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">Events / TCAs</text>
-<text x="485.0" y="359.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">channels → rules → filters</text>
+<line x1="746" y1="435" x2="786" y2="435" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>Cassandra</title><rect x="790" y="400" width="196" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="888.0" y="430.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Cassandra</text>
+<text x="888.0" y="453.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">time series</text>
 </g>
-<g><title>LCM images, agent upgrades, snapshots</title><rect x="630" y="310" width="300" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="780.0" y="339.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">LCM</text>
-<text x="780.0" y="359.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">images, agent upgrades, snapshots</text>
+<text x="70" y="386" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">Ingest pipeline — all of it runs as pods on the bundled Kubernetes (netq install … full)</text>
+<line x1="888" y1="400" x2="888" y2="348" stroke="#6b7280" stroke-width="2.5" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="900" y="380" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">queries</text>
+<rect x="1032" y="136" width="520" height="380" rx="12" fill="none" stroke="#6b7280" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="1050" y="166" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#5f6b7a" text-anchor="start">Cloud-hosted alternative</text>
+<g><title>NetQ Cloud (NVIDIA-hosted backend)</title><rect x="1056" y="184" width="472" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1292.0" y="219.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">NetQ Cloud (NVIDIA-hosted backend)</text>
+<text x="1292.0" y="242.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">UI, validation, events — same features</text>
 </g>
-<g><title>UI workbench  https://10.10.0.100 (443) cards: validation, RoCE, WJH, topology</title><rect x="90" y="410" width="400" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="290.0" y="439.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">UI workbench  https://10.10.0.100 (443)</text>
-<text x="290.0" y="459.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">cards: validation, RoCE, WJH, topology</text>
+<line x1="1292" y1="396" x2="1292" y2="268" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1308" y="336" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">HTTPS / TLS outbound</text>
+<g><title>OPTA (On-Premises Telemetry Aggregator)</title><rect x="1056" y="400" width="472" height="80" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1292.0" y="435.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">OPTA (On-Premises Telemetry Aggregator)</text>
+<text x="1292.0" y="458.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">VM on site; agents point here on 31443</text>
 </g>
-<g><title>CLI / API  netq show | check | trace netq config add cli server 10.10.0.100</title><rect x="530" y="410" width="400" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="730.0" y="439.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">CLI / API  netq show | check | trace</text>
-<text x="730.0" y="459.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">netq config add cli server 10.10.0.100</text>
+<line x1="158" y1="640" x2="168.0" y2="474" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<line x1="398" y1="640" x2="180.0" y2="474" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<line x1="638" y1="640" x2="192.0" y2="474" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<line x1="878" y1="640" x2="204.0" y2="474" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<g><title>leaf01</title><rect x="48" y="640" width="220" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="158.0" y="670.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
+<text x="158.0" y="693.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">Cumulus · netq-agent</text>
 </g>
-<line x1="520" y1="500" x2="520" y2="480" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5"/>
-<line x1="485" y1="280" x2="485" y2="310" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6"/>
-<g><title>Cloud-hosted alternative</title><rect x="1010" y="160" width="530" height="340" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
-<text x="1024" y="188" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">Cloud-hosted alternative</text>
-<g><title>OPTA (On-Premises Telemetry Aggregator) VM on site; agents point here on port 31443</title><rect x="1040" y="210" width="470" height="90" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="1275.0" y="249.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">OPTA (On-Premises Telemetry Aggregator)</text>
-<text x="1275.0" y="269.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">VM on site; agents point here on port 31443</text>
+<g><title>leaf02</title><rect x="288" y="640" width="220" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="398.0" y="670.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf02</text>
+<text x="398.0" y="693.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">Cumulus · netq-agent</text>
 </g>
-<g><title>NetQ Cloud (NVIDIA-hosted backend) UI, validation, events — same features</title><rect x="1040" y="380" width="470" height="90" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="1275.0" y="419.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">NetQ Cloud (NVIDIA-hosted backend)</text>
-<text x="1275.0" y="439.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">UI, validation, events — same features</text>
+<g><title>spine01</title><rect x="528" y="640" width="220" height="70" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="638.0" y="670.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">spine01</text>
+<text x="638.0" y="693.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SONiC · netq-agent</text>
 </g>
-<line x1="1275" y1="300" x2="1275" y2="380" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<text x="1395.0" y="340.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">HTTPS/TLS outbound</text>
-<line x1="950" y1="720" x2="1100" y2="300" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<rect x="950" y="544" width="201" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="1050" y="560" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">31443 (cloud model only)</text>
-<g><title>Note</title><rect x="1010" y="540" width="530" height="120" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
-<text x="1022" y="562" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Sizing (verify current guide): standalone ≈ 16 vCPU / 64 GB / 500 GB SSD;</text>
-<text x="1022" y="580" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">OPTA lighter. Several hundred to low thousands of devices per server.</text>
-<text x="1022" y="598" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Fresh = recent heartbeat; Rotten = stale → fix before trusting netq check.</text>
-<g><title>Legend</title><rect x="1110" y="780" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
-<line x1="1124" y1="806" x2="1184" y2="806" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
-<text x="1198" y="812" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
-<line x1="1124" y1="836" x2="1184" y2="836" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1198" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<g><title>dgx01</title><rect x="768" y="640" width="220" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="878.0" y="670.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">dgx01</text>
+<text x="878.0" y="693.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">Ubuntu host · netq-agent</text>
+</g>
+<path d="M 988 675 L 1292 675 L 1292 484" fill="none" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1306" y="600" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">cloud model: agents → OPTA</text>
+<text x="1306" y="624" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">TCP 31443 (TLS)</text>
+<text x="48" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">On-prem: agents → TCP 31980; vrf mgmt on switches, no vrf on hosts.</text>
+<text x="48" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">Each agent streams state deltas + counters + WJH, plus a heartbeat (Fresh / Rotten).</text>
+<g><title>Sizing</title><rect x="48" y="806" width="1000" height="80" rx="8" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="64" y="836" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Sizing (verify current guide): standalone ≈ 16 vCPU / 64 GB / 500 GB SSD; OPTA lighter.</text>
+<text x="64" y="862" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Several hundred to low thousands of devices per server. Fix Rotten agents before trusting netq check.</text>
+<g><title>Legend</title><rect x="1080" y="776" width="472" height="90" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1094" y1="802" x2="1150" y2="802" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
+<text x="1164" y="808" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Management / telemetry</text>
+<line x1="1094" y1="832" x2="1150" y2="832" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1164" y="838" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (queries / API)</text>
 </g>
 </svg>

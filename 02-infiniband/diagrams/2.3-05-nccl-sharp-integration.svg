@@ -8,12 +8,12 @@
 <text x="360.0" y="348.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">CollNet chosen only if the plugin loads and the job spans &gt; 1 node</text>
 <g><title>libnccl-net.so (SHARP plugin)</title><rect x="70" y="390" width="280" height="90" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="210.0" y="420.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">libnccl-net.so (SHARP plugin)</text>
-<text x="210.0" y="442.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">/opt/mellanox/sharp/lib</text>
-<text x="210.0" y="462.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">in LD_LIBRARY_PATH</text>
+<text x="210.0" y="442.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">/opt/mellanox/sharp/lib</text>
+<text x="210.0" y="462.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">in LD_LIBRARY_PATH</text>
 <g><title>libsharp / libsharp_coll</title><rect x="370" y="390" width="280" height="90" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="510.0" y="420.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">libsharp / libsharp_coll</text>
-<text x="510.0" y="442.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SHARP_COLL_ENABLE_SAT=1</text>
-<text x="510.0" y="462.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SHARP_COLL_LOG_LEVEL=3</text>
+<text x="510.0" y="442.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SHARP_COLL_ENABLE_SAT=1</text>
+<text x="510.0" y="462.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SHARP_COLL_LOG_LEVEL=3</text>
 <g><title>ConnectX-7 mlx5_0..7 (verbs)</title><rect x="70" y="500" width="280" height="90" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="210.0" y="530.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">ConnectX-7 mlx5_0..7 (verbs)</text>
 <text x="210.0" y="552.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">data on SL7 / VL7 (high table)</text>
@@ -35,12 +35,12 @@
 <text x="776" y="180" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="start">Management host mgmt01 / UFM</text>
 <g><title>opensm / MLNXSM (UFM SM)</title><rect x="790" y="200" width="350" height="100" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="965.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">opensm / MLNXSM (UFM SM)</text>
-<text x="965.0" y="258.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharp_enabled TRUE</text>
-<text x="965.0" y="278.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SL2VL/VLArb for SL7, ar_ftree</text>
+<text x="965.0" y="258.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharp_enabled TRUE</text>
+<text x="965.0" y="278.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SL2VL/VLArb for SL7, ar_ftree</text>
 <g><title>sharp_am (systemd)</title><rect x="1180" y="200" width="350" height="100" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="1355.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">sharp_am (systemd)</text>
-<text x="1355.0" y="258.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">/var/log/sharp_am.log</text>
-<text x="1355.0" y="278.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">trees, quotas, job registry</text>
+<text x="1355.0" y="258.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">/var/log/sharp_am.log</text>
+<text x="1355.0" y="278.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">trees, quotas, job registry</text>
 <line x1="1140" y1="250" x2="1180" y2="250" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <circle cx="1160" cy="215" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="1160" y="221" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
@@ -53,9 +53,9 @@
 <text x="1160.0" y="678.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SHARP aggregation nodes: finite buffer + group resources per ASIC</text>
 <text x="1160.0" y="698.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">reduction (sum/min/max, fp32/fp16/bf16) executed in silicon; SHARPv3 = multiple concurrent jobs</text>
 <path d="M650,545 L1355,545 L1355,300" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<circle cx="1000" cy="545" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="1000" y="551" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
-<text x="1030" y="535" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#6b7280" text-anchor="start">job / tree request from sharpd to sharp_am (in-band MADs)</text>
+<circle cx="1290" cy="545" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1290" y="551" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<text x="720" y="533" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#6b7280" text-anchor="start">job / tree request from sharpd to sharp_am (in-band MADs)</text>
 <path d="M1420,300 L1420,600" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <circle cx="1420" cy="480" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="1420" y="486" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
@@ -65,6 +65,7 @@
 <text x="480" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
 <text x="510" y="650" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="start">data on the SHARP SL</text>
 <g><title>Any piece missing -&gt; &#x27;Connected all rings&#x27; only, no &#x27;Connected CollNet&#x27; line</title><rect x="40" y="730" width="640" height="60" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
+<text x="360" y="779" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">never a &#x27;Connected CollNet&#x27; line</text>
 <text x="360.0" y="764.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">Any piece missing -&gt; &#x27;Connected all rings&#x27; only, no &#x27;Connected CollNet&#x27; line</text>
 <g><rect x="760" y="760" width="800" height="130" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="772" y="784" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">1 NCCL loads the plugin, asks for a CollNet communicator.  2 libsharp talks to local sharpd.</text>

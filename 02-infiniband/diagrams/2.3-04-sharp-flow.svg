@@ -22,63 +22,63 @@
 <text x="1190.0" y="573.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">aggregation node</text>
 <text x="1190.0" y="593.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sum(gpu05..gpu08)</text>
 <line x1="800" y1="240" x2="800" y2="330" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="800.0" y="279.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#6b7280" text-anchor="start">tree + quota setup (SHARP MADs)</text>
-<circle cx="840" cy="285" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="840" y="291" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<text x="816" y="291" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#6b7280" text-anchor="start">tree + quota setup (SHARP MADs)</text>
+<circle cx="770" cy="285" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="770" y="291" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
 <g><title>gpu01</title><rect x="80" y="720" width="130" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="145.0" y="750.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">gpu01</text>
 <text x="145.0" y="772.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharpd + NCCL</text>
-<line x1="145" y1="720" x2="410" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
 <g><title>gpu02</title><rect x="230" y="720" width="130" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="295.0" y="750.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">gpu02</text>
 <text x="295.0" y="772.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharpd + NCCL</text>
-<line x1="295" y1="720" x2="410" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
 <g><title>gpu03</title><rect x="380" y="720" width="130" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="445.0" y="750.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">gpu03</text>
 <text x="445.0" y="772.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharpd + NCCL</text>
-<line x1="445" y1="720" x2="410" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
 <g><title>gpu04</title><rect x="530" y="720" width="130" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="595.0" y="750.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">gpu04</text>
 <text x="595.0" y="772.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharpd + NCCL</text>
-<line x1="595" y1="720" x2="410" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
 <g><title>gpu05</title><rect x="870" y="720" width="130" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="935.0" y="750.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">gpu05</text>
 <text x="935.0" y="772.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharpd + NCCL</text>
-<line x1="935" y1="720" x2="1190" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
 <g><title>gpu06</title><rect x="1020" y="720" width="130" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="1085.0" y="750.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">gpu06</text>
 <text x="1085.0" y="772.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharpd + NCCL</text>
-<line x1="1085" y1="720" x2="1190" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
 <g><title>gpu07</title><rect x="1170" y="720" width="130" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="1235.0" y="750.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">gpu07</text>
 <text x="1235.0" y="772.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharpd + NCCL</text>
-<line x1="1235" y1="720" x2="1190" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
 <g><title>gpu08</title><rect x="1320" y="720" width="130" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="1385.0" y="750.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">gpu08</text>
 <text x="1385.0" y="772.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sharpd + NCCL</text>
-<line x1="1385" y1="720" x2="1190" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
-<path d="M432,612 L175,720" fill="none" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<path d="M432,612 L325,720" fill="none" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<path d="M432,612 L475,720" fill="none" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<path d="M432,612 L625,720" fill="none" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<path d="M1212,612 L965,720" fill="none" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<path d="M1212,612 L1115,720" fill="none" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<path d="M1212,612 L1265,720" fill="none" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<path d="M1212,612 L1415,720" fill="none" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<circle cx="300" cy="680" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="300" y="686" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
-<circle cx="1120" cy="680" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="1120" y="686" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
-<line x1="410" y1="520" x2="760" y2="420" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
-<text x="585.0" y="458.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#76b900" text-anchor="middle">partial sums up (once)</text>
-<line x1="1190" y1="520" x2="840" y2="420" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
-<circle cx="470" cy="505" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="470" y="511" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
-<path d="M800,420 L450,520" fill="none" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<path d="M800,420 L1150,520" fill="none" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
-<text x="1010" y="500" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="start">result multicast down (once)</text>
-<circle cx="1130" cy="505" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="1130" y="511" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+<line x1="125" y1="720" x2="290" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<line x1="320" y1="612" x2="165" y2="720" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<line x1="275" y1="720" x2="350" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<line x1="380" y1="612" x2="315" y2="720" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<line x1="425" y1="720" x2="410" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<line x1="440" y1="612" x2="465" y2="720" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<line x1="575" y1="720" x2="470" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<line x1="500" y1="612" x2="615" y2="720" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<line x1="915" y1="720" x2="1080" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<line x1="1110" y1="612" x2="955" y2="720" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<line x1="1065" y1="720" x2="1140" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<line x1="1170" y1="612" x2="1105" y2="720" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<line x1="1215" y1="720" x2="1200" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<line x1="1230" y1="612" x2="1255" y2="720" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<line x1="1365" y1="720" x2="1260" y2="612" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<line x1="1290" y1="612" x2="1405" y2="720" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<line x1="380" y1="520" x2="740" y2="420" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<line x1="780" y1="420" x2="440" y2="520" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<line x1="1220" y1="520" x2="860" y2="420" stroke="#76b900" stroke-width="4" marker-end="url(#arrow-green)"/>
+<line x1="820" y1="420" x2="1160" y2="520" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+<text x="560" y="455" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#76b900" text-anchor="end">partial sums up (once)</text>
+<text x="1062" y="455" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#2f6fdb" text-anchor="start">result multicast down (once)</text>
+<circle cx="60" cy="680" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="60" y="686" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<circle cx="850" cy="680" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="850" y="686" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<circle cx="330" cy="470" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="330" y="476" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+<circle cx="1340" cy="450" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="1340" y="456" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
 <g><rect x="40" y="830" width="1040" height="130" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="52" y="854" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">1 SM gives sharp_am the SHARP-capable topology.  2 sharp_am programs an aggregation tree + per-job quota into the switches.</text>
 <text x="52" y="874" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">3 Each GPU sends its buffer ONCE to its leaf (sharpd brokered the job with sharp_am).  4 Leaves reduce 4:1, spine reduces 2:1.</text>

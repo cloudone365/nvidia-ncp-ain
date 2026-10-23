@@ -7,13 +7,13 @@
 <text x="620.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">spine-02</text>
 <g><title>leaf-01 QM9700</title><rect x="310" y="420" width="200" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="410.0" y="450.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">leaf-01 QM9700</text>
-<text x="410.0" y="473.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">LFT: one port per DLID</text>
+<text x="410.0" y="473.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">LFT: one port per DLID</text>
 <g><title>gpu01 flow A</title><rect x="100" y="580" width="180" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="190.0" y="604.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">gpu01 flow A</text>
-<text x="190.0" y="625.8" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu17 (LID 20)</text>
+<text x="190.0" y="625.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu17 (LID 20)</text>
 <g><title>gpu02 flow B</title><rect x="540" y="580" width="180" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="630.0" y="604.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">gpu02 flow B</text>
-<text x="630.0" y="625.8" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu18 (LID 21)</text>
+<text x="630.0" y="625.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu18 (LID 21)</text>
 <line x1="190" y1="580" x2="370" y2="490" stroke="#2f6fdb" stroke-width="3"/>
 <line x1="630" y1="580" x2="450" y2="490" stroke="#2f6fdb" stroke-width="3"/>
 <line x1="370" y1="420" x2="200" y2="260" stroke="#2f6fdb" stroke-width="9" marker-end="url(#arrow-blue)"/>
@@ -31,19 +31,19 @@
 <text x="1400.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">spine-02</text>
 <g><title>leaf-01 QM9700</title><rect x="1090" y="420" width="200" height="70" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="1190.0" y="450.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#1f2937" text-anchor="middle">leaf-01 QM9700</text>
-<text x="1190.0" y="473.6" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">AR group {p31,p32}</text>
+<text x="1190.0" y="473.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">AR group {p31,p32}</text>
 <g><title>gpu01 flow A</title><rect x="880" y="580" width="180" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="970.0" y="604.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">gpu01 flow A</text>
-<text x="970.0" y="625.8" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu17 (LID 20)</text>
+<text x="970.0" y="625.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu17 (LID 20)</text>
 <g><title>gpu02 flow B</title><rect x="1320" y="580" width="180" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="1410.0" y="604.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#1f2937" text-anchor="middle">gpu02 flow B</text>
-<text x="1410.0" y="625.8" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu18 (LID 21)</text>
+<text x="1410.0" y="625.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">to gpu18 (LID 21)</text>
 <line x1="970" y1="580" x2="1150" y2="490" stroke="#2f6fdb" stroke-width="3"/>
 <line x1="1410" y1="580" x2="1230" y2="490" stroke="#2f6fdb" stroke-width="3"/>
 <line x1="1150" y1="420" x2="980" y2="260" stroke="#2f6fdb" stroke-width="5" marker-end="url(#arrow-blue)"/>
 <line x1="1230" y1="420" x2="1400" y2="260" stroke="#2f6fdb" stroke-width="5" marker-end="url(#arrow-blue)"/>
-<text x="910" y="350" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="start">p31: A pkts 1,3,5 + B</text>
-<text x="1320" y="350" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="start">p32: A pkts 2,4 + B</text>
+<text x="880" y="386" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="start">p31: A pkts 1,3,5 + B</text>
+<text x="1340" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="start">p32: A pkts 2,4 + B</text>
 <text x="1190" y="670" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ARLFT: DLID 20 -&gt; AR group 7 = {p31,p32}, mode free or bounded</text>
 <text x="1190" y="693" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#2f6fdb" text-anchor="middle">per packet: least-loaded egress queue wins</text>
 <circle cx="1300" cy="455" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
@@ -54,12 +54,13 @@
 <text x="1445" y="306" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
 <g><rect x="40" y="730" width="740" height="120" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="52" y="754" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Static LFT: one output port per destination LID (48K entries); spread is by</text>
-<text x="52" y="774" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">destination, never by load. Two NCCL elephant flows on one uplink cost</text>
-<text x="52" y="794" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">20-40% of all-reduce bandwidth. Ethernet twin: ECMP hash collision.</text>
+<text x="52" y="774" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">destination, never by load. Two NCCL elephant flows on one uplink can</text>
+<text x="52" y="794" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">halve their all-reduce bandwidth. Ethernet twin: ECMP hash collision.</text>
 <g><rect x="820" y="730" width="740" height="120" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
-<text x="832" y="754" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">   3  Receiving HCA (ConnectX-5+) places RDMA WRITE/READ by address, so</text>
-<text x="832" y="774" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">out-of-order packets inside a window need no retransmit. SENDs are stricter,</text>
-<text x="832" y="794" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">hence ar_sl_mask (per SL) and ar_transport_mask (RC+UD). NCCL_IB_AR_THRESHOLD = 8192 B.</text>
-<circle cx="850" cy="750" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="850" y="756" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<text x="880" y="754" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Receiving HCA (ConnectX-5+) places RDMA WRITE/READ by address, so</text>
+<text x="880" y="774" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">out-of-order packets inside a window need no retransmit. SENDs are stricter,</text>
+<text x="880" y="794" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">hence ar_sl_mask (per SL) and ar_transport_mask (RC+UD).</text>
+<text x="880" y="814" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">NCCL_IB_AR_THRESHOLD = 8192 B by default (messages above it use AR).</text>
+<circle cx="852" cy="766" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="852" y="772" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
 </svg>
