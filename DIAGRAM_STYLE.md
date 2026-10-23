@@ -65,3 +65,7 @@ python3 tools/render_diagrams.py --check  # validate only (CI)
 3. Fix: text running past its box or the 1600-px canvas (shorten, wrap into two `<tspan>` lines, or widen the box); labels sitting on top of lines (move the label, or put a white underlay behind it — a white `<rect>` or a duplicate white-stroked `<text>` drawn first; do NOT rely on `paint-order`, which cairosvg ignores and renders as solid white text); arrows passing through text.
 4. Re-render and re-check until clean.
 Approximate text width at 20px Inter ≈ 0.55 × font-size × characters — budget box widths from that.
+
+## Rendering gotchas learned in QA
+- **Monospace width.** cairosvg silently substitutes a proportional font when `'JetBrains Mono'` is not installed, so mono labels look like they fit in the PNG but overflow on GitHub (where viewers get a real monospace font). QA monospace labels with a real monospace font installed, budget ≈ 0.6 × font-size per character, or use Inter for long labels.
+- **Halos.** cairosvg ignores `paint-order`; use an opaque white `<rect>` or a white-stroked duplicate `<text>` drawn underneath instead.

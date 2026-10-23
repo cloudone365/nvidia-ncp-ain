@@ -38,6 +38,8 @@ Each module is written as an instructor-led lesson and follows the same five-par
 | 4 | **Troubleshooting / common gotchas** | 2–3 errors learners actually hit here: Symptom → Why → How to debug → Fix |
 | 5 | **Hands-on assignment** | A mini-project you build independently, with a **Hint** section — and the **Solution guide held until the very bottom of the file** |
 
+Every module is illustrated with high-definition **SVG diagrams** (117 across the course): architecture/topology views, numbered traffic and message flows (packets, MADs, CNPs, REST calls), integration diagrams showing how components hand off to each other, and decision flowcharts in the troubleshooting modules. SVGs stay sharp at any zoom on GitHub; run `python3 tools/render_diagrams.py` to export 3200-px PNGs for slides. Every concept in §2 is explained as **What it is → Why it exists → How it works**.
+
 After those, each module carries appendices you'll want on exam day: a quick command/config reference, exam traps & key takeaways, a knowledge check (scenario MCQs + answer key), and references.
 
 ## How to use this course

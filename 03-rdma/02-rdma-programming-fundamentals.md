@@ -28,7 +28,10 @@ By the end of this module you will be able to…
 
 **Analogy (carried over from Module 3.1):** a **QP** is a pair of mailboxes (outbox = Send Queue, inbox = Receive Queue). **Registering an MR** is telling the post office which rooms it may deliver to — you get a key for yourself (lkey) and one to hand to a friend (rkey). A **CQ** is the tray where the courier drops a "done" slip. A **PD** is the fence around your property.
 
-Every verbs program, from `rc_pingpong` to NCCL, performs the same sequence: open a device → allocate a PD → register memory → create a CQ → create a QP → exchange connection parameters → drive the QP to RTS → post work → poll completions → tear down in reverse. Each call allocates a specific resource:
+**What it is.** Every verbs program, from `rc_pingpong` to NCCL, performs the same sequence: open a device → allocate a PD → register memory → create a CQ → create a QP → exchange connection parameters → drive the QP to RTS → post work → poll completions → tear down in reverse. Figure 3.2-1 is that sequence as eleven calls; each call allocates a specific resource:
+
+![Eleven-step call sequence of a minimal RDMA WRITE program from ibv_open_device through PD, MR, CQ and QP creation, parameter exchange and three modify_qp calls, to ibv_post_send and ibv_poll_cq on the kernel-free fast path, and teardown](diagrams/3.2-02-verbs-call-sequence.svg)
+*Figure 3.2-1 — A minimal RDMA WRITE program as a call sequence: steps 1–8 and 11 go through the kernel; steps 9–10 are the fast path.*
 
 | Call | Allocates / does | Kernel involved? |
 |---|---|---|
@@ -43,24 +46,20 @@ Every verbs program, from `rc_pingpong` to NCCL, performs the same sequence: ope
 | `ibv_poll_cq` | Reads CQEs from the ring | **No** |
 | `ibv_req_notify_cq` + `ibv_get_cq_event` | Blocking wait on a completion-channel fd | Yes (the syscall is the point) |
 
+**Why it exists.** The split between an expensive, kernel-mediated setup phase and a syscall-free data phase *is* RDMA's performance model. Everything that needs privilege or validation — opening hardware, pinning memory, assigning a QPN, binding a QP to a port and partition — is done once, up front; after that the HCA trusts the tables the kernel wrote and the process talks to it with plain memory writes. A program that registers memory or creates QPs inside its hot loop loses the benefit entirely.
+
+**How it works.** Each setup call is an `ioctl`/`write` on the uverbs device: the kernel driver (`mlx5_ib`) allocates the object in HCA memory or host memory and returns a handle. `ibv_create_qp` sizes the rings from `max_send_wr`/`max_recv_wr` (rounded up to powers of two) and `max_inline_data` (which grows each WQE), and returns a 24-bit QPN; `ibv_create_cq` allocates `cqe` entries (also rounded up). After step 8 the kernel is out of the picture: step 9 writes a WQE and the doorbell, step 10 reads a CQE. Observe the objects live with `rdma resource show` (counts per type) and `rdma resource show qp` (state, PSNs, owning PID).
+
 Network-engineer reading: `ibv_open_device` is where the kernel is involved; on the data path later it is not involved at all. `pattr.lid` is the LID the SM assigned; on RoCE it is 0 and `pattr.link_layer == IBV_LINK_LAYER_ETHERNET`.
 
 ### 2.2 The QP state machine
 
 **Analogy:** a QP is a phone line being provisioned. RESET: the handset exists. INIT: it has a number and knows which exchange (port/PKey) it belongs to — you may already put the handset to your ear (post receives). RTR: it knows the other party's number (dest QPN, PSN, address) — incoming calls are accepted. RTS: you may dial out.
 
-```text
-          create                 modify(INIT)             modify(RTR)             modify(RTS)
-  [RESET] ──────► (RESET) ─────────────► [INIT] ────────────────► [RTR] ─────────────────► [RTS]
-                                           │                        │                        │  ▲
-                                           │ post_recv allowed      │ receives processed     │  │ modify(SQD→RTS)
-                                           ▼                        ▼                        ▼  │
-                                    (sends rejected)          (sends rejected)          [SQD] ──┘  (drain, then re-configure path)
-                                                                                           │
-                            any state ── fatal error / modify(ERR) ───────────────► [ERR] ──┘   (all WRs flushed with IBV_WC_WR_FLUSH_ERR)
-                                                                                      │
-                                                            [SQE]  (UD/UC send error; RC goes straight to ERR)
-```
+**What it is.** A QP's hardware context moves through a fixed set of states; each `ibv_modify_qp` call names the target state and a bit-mask of the attributes it carries. Figure 3.2-2 shows the states and the attribute set each RC transition must carry.
+
+![RC queue pair state machine: RESET to INIT to RTR to RTS with the attributes each modify_qp must carry, SQD and SQE detours, and the ERR state reached on fatal completions where every queued work request is flushed](diagrams/3.2-01-qp-state-machine.svg)
+*Figure 3.2-2 — RC QP state machine and the attributes each transition carries; any fatal completion drops the QP to ERR.*
 
 | State | Can post recv? | Can post send? | Notes |
 |---|---|---|---|
@@ -72,11 +71,32 @@ Network-engineer reading: `ibv_open_device` is where the kernel is involved; on 
 | **SQE** — Send Queue Error | Yes | No | Only for UD/UC (unreliable types); RC skips to ERR |
 | **ERR** | Flushes | Flushes | Every outstanding WR completes with `IBV_WC_WR_FLUSH_ERR`; application must reset or destroy the QP |
 
+**Why it exists.** An RC connection is a pair of hardware contexts that must agree on addresses and sequence numbers before the first packet. Staging the setup lets each side become *able to receive* (RTR) before anyone *sends* (RTS), so the first packet never hits a QP that does not yet know its peer — a packet arriving at a QP not in RTR/RTS is silently dropped, and the sender then times out. ERR exists because after a transport failure the PSN state is no longer trustworthy; the only safe recovery is to flush everything and rebuild.
+
+**How it works — attributes per transition (RC, the mask bits from `ibv_modify_qp(3)`).**
+
+1. **RESET → INIT:** `IBV_QP_STATE | IBV_QP_PKEY_INDEX | IBV_QP_PORT | IBV_QP_ACCESS_FLAGS`. The PKey *index* selects an entry of the port's PKey table (index 0 is normally the default partition, 0x7fff limited / 0xffff full); the access flags are what the *peer* may do to us through this QP (REMOTE_WRITE/READ/ATOMIC).
+2. **INIT → RTR:** `IBV_QP_STATE | IBV_QP_AV | IBV_QP_PATH_MTU | IBV_QP_DEST_QPN | IBV_QP_RQ_PSN | IBV_QP_MAX_DEST_RD_ATOMIC | IBV_QP_MIN_RNR_TIMER`. The address vector holds DLID + SL + port (IB), or `is_global` with DGID + `sgid_index` + `hop_limit` + `traffic_class` (RoCE, and IB across routers). `rq_psn` is the first PSN we expect; `max_dest_rd_atomic` bounds inbound READs/atomics we will service concurrently; `min_rnr_timer` is the back-off we tell senders to use when our RQ is empty.
+3. **RTR → RTS:** `IBV_QP_STATE | IBV_QP_SQ_PSN | IBV_QP_TIMEOUT | IBV_QP_RETRY_CNT | IBV_QP_RNR_RETRY | IBV_QP_MAX_QP_RD_ATOMIC`. These are the *sender's* reliability knobs.
+
 Notice how much of the *network* is in the transition attributes: PKey index (partition), SL (QoS), path MTU, LID or GID (addressing), traffic class (RoCE DSCP), timeout/retry (how long a flow survives a link flap — NCCL exposes exactly these as `NCCL_IB_TIMEOUT` and `NCCL_IB_RETRY_CNT`).
+
+**How it works — the reliability timers.** Figure 3.2-3 shows both retry paths on a timeline.
+
+![Timeline on an RC QP: a WRITE_WITH_IMM hits an empty receive queue and draws an RNR NAK, the requester waits min_rnr_timer and retransmits the same PSN until a receive is posted; later lost packets cause an ACK timeout of 4.096 us times 2 to the 14, a go-back-N retransmit, and retry_cnt exhaustion ends in IBV_WC_RETRY_EXC_ERR](diagrams/3.2-05-rnr-retry-timeline.svg)
+*Figure 3.2-3 — RNR NAK vs ACK timeout: two independent retry counters, two different error completions.*
+
+- **Local ACK timeout** = 4.096 µs × 2^`timeout` (5-bit field; 0 means wait forever). `timeout 14` ≈ 67 ms; 18 ≈ 1.07 s. If no ACK covers an outstanding PSN within that time, the requester retransmits from the oldest unacknowledged PSN (go-back-N) and decrements its retry budget.
+- **`retry_cnt`** (3 bits, 0–7) — transport retries after timeouts or PSN-sequence NAKs. When exhausted, the WR completes with **`IBV_WC_RETRY_EXC_ERR`** and the QP goes to ERR. Worst-case time to detect a dead path ≈ (`retry_cnt` + 1) × timeout: with 7 and 18 that is about 8.6 s, which is why NCCL jobs survive a brief link flap but hang for seconds on a dead one.
+- **RNR NAK** — an inbound SEND or WRITE_WITH_IMM found no RECV WQE. The responder returns an AETH whose syndrome carries a 5-bit **RNR timer code** (its `min_rnr_timer`; code 12 = 0.64 ms, code 0 = the maximum, 655.36 ms). The requester waits that long and resends the *same* PSN; the packet was not stored.
+- **`rnr_retry`** (3 bits) — how many RNR retries before **`IBV_WC_RNR_RETRY_EXC_ERR`**; **7 means infinite**. RNR is application pacing, not a network fault.
+- The responder's counters make the two cases distinguishable from the CLI: `rdma statistic show link` exposes `rnr_nak_retry_err`, `local_ack_timeout_err`, `packet_seq_err`, `out_of_sequence` and `duplicate_request`.
 
 **Why the exam cares:** "the peer sends before this side is in RTR" → packets dropped/NAKed, so the standard handshake is *both sides reach RTR, then exchange a ready signal, then RTS*; RDMA CM sequences this for you. "A connection with retry_cnt exhausted" → `IBV_WC_RETRY_EXC_ERR` and QP in ERR; on the fabric that usually means a dead link, wrong LID/GID, or no route.
 
 ### 2.3 Work request flags, inline and immediate data
+
+**What it is.** A work request is a small descriptor (`struct ibv_send_wr` / `ibv_recv_wr`) the library turns into a WQE. Its opcode, scatter/gather list and flags decide what the HCA does and whether a completion is generated:
 
 | Flag / feature | Meaning | Why you care |
 |---|---|---|
@@ -89,11 +109,44 @@ Notice how much of the *network* is in the transition attributes: PKey index (pa
 
 Opcode cheat-sheet: `IBV_WR_SEND`, `IBV_WR_SEND_WITH_IMM`, `IBV_WR_RDMA_WRITE`, `IBV_WR_RDMA_WRITE_WITH_IMM`, `IBV_WR_RDMA_READ`, `IBV_WR_ATOMIC_CMP_AND_SWP`, `IBV_WR_ATOMIC_FETCH_AND_ADD`. Completion opcodes mirror them (`IBV_WC_RDMA_WRITE`, `IBV_WC_RECV`, `IBV_WC_RECV_RDMA_WITH_IMM`).
 
+**Why it exists.** Every completion costs the HCA a 64-byte CQE write and the application a poll; at millions of messages per second that matters, so verbs lets you ask for completions selectively. Every DMA read of a small payload costs a PCIe round trip (hundreds of nanoseconds), so inline lets the CPU push tiny payloads with the WQE. Immediate data exists so one-sided WRITEs — which by design tell the target nothing — can carry a 4-byte notification at the cost of one RECV.
+
+**How it works.** Figure 3.2-4 follows one signaled RDMA WRITE through the hardware.
+
+![Life of a work request: the application writes a WQE into the send queue ring, rings the UAR doorbell, the ConnectX HCA fetches the WQE and payload by DMA and segments it to path MTU, the remote HCA checks keys and DMAs into memory, the ACK returns, the HCA writes a CQE and the application polls it](diagrams/3.2-04-wqe-lifecycle.svg)
+*Figure 3.2-4 — post_send → WQE → doorbell → HCA → wire → remote HCA → ACK → CQE → poll; none of it is a syscall.*
+
+1. `ibv_post_send` writes the WQE (opcode, flags, SGEs with lkeys, `remote_addr`/`rkey`, `wr_id`) into the next SQ slot. Unsignaled WQEs still occupy their slot.
+2. The library rings the doorbell — one MMIO write to the UAR page (or, with BlueFlame, the whole WQE written through it).
+3. The HCA fetches the WQE by DMA, translates the SGE through the MTT using the lkey, DMA-reads the payload (skipped for inline), and segments it into path-MTU packets: WRITE First (with RETH), Middle…, Last.
+4. Packets go out with consecutive PSNs.
+5. The responder checks PKey, QPN, PSN order, rkey/PD/access/range, DMA-writes the data and returns a (coalesced) ACK.
+6. When the ACK covers this WR's last PSN, the HCA writes a CQE — only if the WR was signaled — and retires this slot *and all earlier unsignaled slots*.
+7. The application's `ibv_poll_cq` reads the CQE; the SQ slots are free again.
+
+Step 6 is why a QP with `sq_sig_all = 0` that never signals eventually returns `ENOMEM` from `ibv_post_send` (§4.1): no CQE, no slot reclamation. The usual pattern is to signal every N-th WR where N is less than the SQ depth. The same accounting applies to the CQ: if CQEs are produced faster than they are polled and the ring overflows, the CQ goes into error (`IBV_EVENT_CQ_ERR` async event) and every QP using it is affected — size CQs for the worst case of outstanding signaled WRs plus posted RECVs.
+
 ### 2.4 librdmacm: connection management done for you
 
 **Analogy:** raw verbs is dialling an international number by hand: country code, area code, exchange, number, and you must know the callee's exact handset ID. **RDMA CM** is a phone book plus an operator: you give it an IP address, it looks up the route, rings the other side, exchanges the handset IDs and connects the line.
 
-**librdmacm** models connections on sockets and hides the LID/GID/QPN/PSN exchange and the state transitions. The key abstraction is the `rdma_cm_id` (like a socket), driven by events from an `rdma_event_channel`: client `rdma_resolve_addr` → `RDMA_CM_EVENT_ADDR_RESOLVED` → `rdma_create_qp` → `rdma_resolve_route` → `ROUTE_RESOLVED` → `rdma_connect` → `ESTABLISHED`; server `rdma_bind_addr` → `rdma_listen` → `CONNECT_REQUEST` → `rdma_create_qp` → post receives → `rdma_accept` → `ESTABLISHED`.
+**What it is.** **librdmacm** models connections on sockets and hides the LID/GID/QPN/PSN exchange and the state transitions. The key abstraction is the `rdma_cm_id` (like a socket), driven by events from an `rdma_event_channel`: client `rdma_resolve_addr` → `RDMA_CM_EVENT_ADDR_RESOLVED` → `rdma_create_qp` → `rdma_resolve_route` → `ROUTE_RESOLVED` → `rdma_connect` → `ESTABLISHED`; server `rdma_bind_addr` → `rdma_listen` → `CONNECT_REQUEST` → `rdma_create_qp` → post receives → `rdma_accept` → `ESTABLISHED`.
+
+**Why it exists.** Hand-rolled exchanges (§3) work, but every application then re-implements address resolution, GID selection, path lookup and the RTR/RTS barrier — and gets the RoCE GID index wrong. RDMA CM puts all of that in one well-tested library that uses the addresses operators already understand (IPs) and the fabric's own services (the SA on IB, the kernel's ARP/ND and routing table on RoCE).
+
+**How it works.** Figure 3.2-5 traces the events; the numbers match.
+
+![RDMA CM sequence between client, fabric services and server: resolve_addr maps the IP to a device and GID, resolve_route queries the SA path record on IB or the kernel route on RoCE, rdma_connect sends a CM REQ carrying private data, the server accepts with REP, the client returns RTU, both see ESTABLISHED, data flows on verbs, and disconnect sends DREQ/DREP](diagrams/3.2-03-rdma-cm-sequence.svg)
+*Figure 3.2-5 — RDMA CM: each step has a success event and an error event that names the failing layer.*
+
+1. `rdma_resolve_addr(id, NULL, server_ip, 2000 ms)` maps the destination IP to the local RDMA device, port and source GID index (the netdev that routes to that IP). Event `ADDR_RESOLVED`, or `ADDR_ERROR`.
+2. The application allocates PD/CQ/MR and calls `rdma_create_qp`, which creates the QP *and* moves it to INIT.
+3. `rdma_resolve_route` — on IB an SA `PathRecord` query over QP1 returns DLID, SL, MTU and rate (so `qos-policy.conf` and partition `sl=` take effect here); on RoCE the kernel route and neighbour (ARP/ND) entry give the next-hop MAC. Event `ROUTE_RESOLVED`, or `ROUTE_ERROR`.
+4. `rdma_connect` sends a CM **REQ** (CM MADs on IB; the same protocol carried over RoCE v2 UDP 4791 on Ethernet) with the client QPN, starting PSN, `responder_resources`/`initiator_depth` (→ `max_dest_rd_atomic`/`max_rd_atomic`), `retry_count`, `rnr_retry_count` and up to a few dozen bytes of `private_data` (where applications put their rkey and buffer address).
+5. The server sees `CONNECT_REQUEST` on a new per-connection id, creates its QP, posts receives and calls `rdma_accept`, which sends **REP** (server QPN/PSN).
+6. The client moves its QP to RTR and RTS and returns **RTU**; the server moves to RTS. Both see `ESTABLISHED`.
+7. Data moves with plain verbs.
+8. `rdma_disconnect` → DREQ/DREP → `DISCONNECTED`; destroy QP and id.
 
 Why network engineers should know this flow: the *error events* map to fabric problems. `ADDR_ERROR` = the IP does not map to an RDMA device (wrong interface, missing IPoIB address); `ROUTE_ERROR` on IB = SA path query failed (no SM, PKey mismatch); `UNREACHABLE`/`CONNECT_ERROR` on RoCE = GID/MAC resolution or a firewalled UDP 4791; `REJECTED` = the peer is listening on a different port space or refused (e.g. QP attribute mismatch).
 
@@ -101,7 +154,11 @@ Why network engineers should know this flow: the *error events* map to fabric pr
 
 ### 2.5 Memory registration cost and pinning
 
-Registration does three expensive things: it faults in and **pins** every page (the kernel marks them unmovable, and they count against `RLIMIT_MEMLOCK`), builds the HCA's address translation (MTT) entries, and writes them to the device. Order of magnitude: tens of microseconds for small buffers, milliseconds for gigabytes. Deregistration is similarly costly. Consequences:
+**What it is.** Registration does three expensive things: it faults in and **pins** every page (the kernel marks them unmovable, and they count against `RLIMIT_MEMLOCK`), builds the HCA's address translation (MTT) entries, and writes them to the device. Order of magnitude: tens of microseconds for small buffers, milliseconds for gigabytes. Deregistration is similarly costly.
+
+**Why it exists.** The HCA DMAs by physical (bus) address while the application thinks in virtual addresses, and the kernel is not on the data path to translate or to stop pages moving. So translation must be precomputed into HCA tables and the pages must not move while the HCA might touch them — that is pinning. The cost is proportional to the number of pages: a 4 GiB GPU buffer in 4 KiB host pages would be a million MTT entries (GPU memory is mapped in 64 KiB GPU pages; host buffers benefit from 2 MiB huge pages).
+
+**How it works.** `ibv_reg_mr` → kernel `get_user_pages`-style pinning (or, for GPU memory, `nvidia-peermem`/DMA-BUF supplying the GPU's bus addresses) → DMA mapping through the IOMMU if enabled → MTT entries written to the HCA → lkey/rkey (32-bit) returned. Every subsequent WQE or incoming RETH is translated by the HCA with no CPU involvement. Consequences:
 
 - `ulimit -l unlimited` (memlock) is mandatory on RDMA hosts; a container with a low memlock limit fails with `ibv_reg_mr: Cannot allocate memory`. Kubernetes pods need the `IPC_LOCK` capability or the limit raised (Module 7).
 - Libraries keep **registration caches** (UCX `rcache`, NCCL's registered buffer pools) and use large, long-lived buffers. Churn in registration shows up as bandwidth collapse and high CPU in `ibv_reg_mr`.
@@ -109,9 +166,11 @@ Registration does three expensive things: it faults in and **pins** every page (
 - **GPUDirect RDMA**: registering `cudaMalloc` memory requires the `nvidia-peermem` kernel module (or DMA-BUF on newer kernels/drivers); `NCCL_NET_GDR_LEVEL` controls when NCCL uses it based on PCIe topology. Without it, NCCL bounces through host memory — visible as halved bandwidth and CPU load.
 - **Relaxed ordering** (`IBV_ACCESS_RELAXED_ORDERING`) improves PCIe efficiency to GPUs behind switches; firmware `mlxconfig` knobs (`PCI_WR_ORDERING`) interact with it.
 
+**Failure modes.** `Cannot allocate memory` (memlock), `Bad address` (buffer freed or not mapped), silently lower bandwidth with GPU buffers (`nvidia-peermem` not loaded so NCCL falls back to host staging — `NCCL_DEBUG=INFO` shows `GDR 0`).
+
 ### 2.6 GID index selection for RoCE
 
-On RoCE there are no LIDs; every connection is addressed by **GID**, and a port's GID *table* contains several entries created automatically by the kernel from the netdev's addresses:
+**What it is.** On RoCE there are no LIDs; every connection is addressed by **GID**, and a port's GID *table* contains several entries created automatically by the kernel from the netdev's addresses:
 
 ```text
 $ show_gids
@@ -123,18 +182,30 @@ mlx5_2  1     3      0000:0000:0000:0000:0000:ffff:0a0a:0114  10.10.1.20     v2 
 mlx5_2  1     4      ...  (one pair per VLAN sub-interface or extra IP)
 ```
 
-Each IP (and link-local) appears twice: once as **RoCE v1** and once as **RoCE v2**. The `sgid_index` you place in the address vector (or `-x` in perftest, `NCCL_IB_GID_INDEX` in NCCL) decides *both* the source IP and the RoCE version of the packets you emit. Rules:
+Each IP (and link-local) appears twice: once as **RoCE v1** and once as **RoCE v2**. The `sgid_index` you place in the address vector (or `-x` in perftest, `NCCL_IB_GID_INDEX` in NCCL) decides *both* the source IP and the RoCE version of the packets you emit.
+
+**Why it exists.** A GID is 128 bits so it can hold an IPv6 address directly or an IPv4 address in the IPv4-mapped form `::ffff:a.b.c.d` (0a0a:0114 above is 10.10.1.20). Because one netdev can have several IPs, VLANs and both RoCE versions, the table has many entries, and the HCA needs to know per QP which one to put in the packet's source IP and which encapsulation (v1 EtherType 0x8915 or v2 UDP 4791) to use.
+
+**How it works.** Rules:
 
 - Use a **v2** entry with the IPv4/IPv6 address on the interface that routes to the peer (index 3 above). Index 0/1 (link-local) only works on the same L2 segment.
 - Entries on VLAN sub-interfaces get their own indices; the VLAN tag is inserted by the HCA.
 - RDMA CM selects the index automatically from the IP you connect to — one more reason to prefer it. NCCL ≥ 2.12 also auto-detects when `NCCL_IB_GID_INDEX` is unset (check release notes; older versions default to 0, which breaks routed RoCE).
 - `cma_roce_mode -d mlx5_2 -p 1` shows/sets the default RoCE version RDMA CM uses (details in [Module 3.3](03-roce-a-to-z.md)).
 
+The table is visible without tools in sysfs: `/sys/class/infiniband/mlx5_2/ports/1/gids/<n>` and `.../gid_attrs/types/<n>` ("IB/RoCE v1" or "RoCE v2"). The index is *local* — the two ends may use different numbers as long as each picks its own v2 IPv4 entry.
+
 ### 2.7 UD and multicast basics
 
-UD QPs have no connection: every `ibv_post_send` carries an **Address Handle** (`ibv_create_ah` from an `ibv_ah_attr` with DLID/GID/SL) plus the destination QPN and **Q_Key** (a 32-bit shared secret that must match on both sides). Messages are limited to one path MTU; each receive buffer must leave **40 bytes** at the front for the GRH, which the HCA deposits even on IB when present. For **multicast**: the application joins a multicast group (MGID) via the SA (`rdma_join_multicast` or `ibv_attach_mcast`), the SM programs the switches' multicast forwarding tables, and a SEND to the MLID/MGID is replicated by the fabric. IPoIB uses exactly this for broadcast/ARP, which is why a missing `ipoib` flag in partitions.conf (no multicast group) breaks IP over a PKey.
+**What it is.** UD QPs have no connection: every `ibv_post_send` carries an **Address Handle** (`ibv_create_ah` from an `ibv_ah_attr` with DLID/GID/SL) plus the destination QPN and **Q_Key** (a 32-bit shared secret that must match on both sides). Messages are limited to one path MTU; each receive buffer must leave **40 bytes** at the front for the GRH, which the HCA deposits even on IB when present.
+
+**Why it exists.** Some traffic is one-to-many or many-to-one with tiny messages — address resolution, SA queries, service discovery, IPoIB broadcast — where a connected QP per peer would be absurd. UD trades reliability and large messages for scale and multicast.
+
+**How it works.** For **multicast**: the application joins a multicast group (MGID) via the SA (`rdma_join_multicast` or `ibv_attach_mcast`), the SM programs the switches' multicast forwarding tables, and a SEND to the MLID/MGID is replicated by the fabric. IPoIB uses exactly this for broadcast/ARP, which is why a missing `ipoib` flag in partitions.conf (no multicast group) breaks IP over a PKey. A UD packet carries a DETH (Q_Key + source QPN) after the BTH; a Q_Key mismatch is dropped silently at the receiver, which is the classic "UD sends complete but nothing arrives" bug.
 
 ### 2.8 How DOCA, NVSHMEM, UCX and NCCL build on verbs
+
+**What it is.** Every higher-level communication library on NVIDIA hardware is, at the bottom, a verbs (or `mlx5dv` direct-verbs) user:
 
 | Layer | Relationship to verbs | What it adds |
 |---|---|---|
@@ -144,11 +215,15 @@ UD QPs have no connection: every `ibv_post_send` carries an **Address Handle** (
 | **DOCA** (BlueField) | DOCA RDMA and DOCA Comch wrap verbs/`mlx5dv` with a device-model API usable on host or DPU; DOCA also exposes flow steering, DPA (data-path accelerator) programming | Programmable offloads on the DPU; Module 5 |
 | **DPDK / mlx5dv direct verbs** | Bypass even libibverbs' generic layer to post WQEs directly | Used by high-performance middleware; not exam-critical beyond knowing it exists |
 
+**Why it exists.** Each library optimises for a different pattern — collectives (NCCL), fine-grained GPU-initiated one-sided access (NVSHMEM), general MPI point-to-point at massive rank counts (UCX), DPU-resident data paths (DOCA) — but none wants to own a NIC driver. Verbs is the common contract.
+
+**How it works.** The mapping is direct enough to debug from the fabric: NCCL's `NCCL_IB_GID_INDEX`, `NCCL_IB_TC`, `NCCL_IB_SL`, `NCCL_IB_TIMEOUT`, `NCCL_IB_RETRY_CNT` are literally `sgid_index`, `traffic_class`, `sl`, `timeout`, `retry_cnt` in the INIT→RTR and RTR→RTS transitions of §2.2; an `IBV_WC_RETRY_EXC_ERR` in an NCCL log is the same completion your own program would get. NVSHMEM's IBGDA goes one step further: the GPU itself writes WQEs and rings the HCA doorbell, removing the CPU proxy thread entirely.
+
 The thread running through all of them: *one-sided RDMA WRITE with registered, pinned GPU memory* is the primitive that lets a GPU in rack 12 land data in a GPU in rack 40 without any CPU on either end — and every one of the fabric properties in this course (losslessness, MTU, QoS, adaptive routing, PFC/ECN) is in service of that primitive.
 
 ## 3. Live-style walkthrough: a minimal RDMA WRITE program, every call commented, then rping
 
-Below is a complete two-node RDMA WRITE program (error handling trimmed to `CHECK()` for readability). Both sides run the same binary; they exchange connection data over a plain TCP socket (`exchange()` is a 20-line send/recv of the struct, not shown). Compile with `gcc -O2 -o rdma_write rdma_write.c -libverbs`.
+Below is a complete two-node RDMA WRITE program (error handling trimmed to `CHECK()` for readability). Both sides run the same binary; they exchange connection data over a plain TCP socket (`exchange()` is a 20-line send/recv of the struct, not shown). Compile with `gcc -O2 -o rdma_write rdma_write.c -libverbs`. The numbered comment blocks follow Figure 3.2-1 (steps 1–11), sections 5a–5c are the three transitions of Figure 3.2-2, and section 6–7 is the WQE life cycle of Figure 3.2-4.
 
 ```c
 /* rdma_write.c — minimal RC RDMA WRITE between two hosts.  Usage: ./rdma_write [server-ip]  (no arg = server) */
@@ -322,6 +397,8 @@ link mlx5_0/1 lqpn 178 rqpn 196 type RC state RTS rq-psn 0x4d5e6f sq-psn 0x1a2b3
 ```
 
 ### The same connection with librdmacm
+
+Read this against Figure 3.2-5: `rdma_resolve_addr` is step ①, `rdma_create_qp` ②, `rdma_resolve_route` ③, `rdma_connect` ④, the server side ⑤, `ESTABLISHED` ⑥.
 
 ```c
 #include <rdma/rdma_cma.h>
