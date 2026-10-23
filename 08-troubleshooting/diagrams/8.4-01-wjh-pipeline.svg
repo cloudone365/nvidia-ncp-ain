@@ -18,17 +18,21 @@
 <g><title>Step 1</title><circle cx="70" cy="360" r="16" fill="#1f2937"/><text x="70" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
 <g><title>Drop categories (trigger groups)</title><rect x="500" y="150" width="420" height="420" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
 <text x="516" y="177" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Drop categories (trigger groups)</text>
-<text x="516" y="206" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">L1      link training / oper down / admin down</text>
-<text x="516" y="224" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">L2      VLAN filter, STP filter, loopback filter,</text>
-<text x="516" y="242" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">        bad SMAC (zero / multicast / = DMAC), MLAG</text>
-<text x="516" y="260" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Router  routing table unicast miss, blackhole,</text>
-<text x="516" y="278" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">        TTL exceeded, unresolved neighbor</text>
-<text x="516" y="296" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Tunnel  VXLAN decap error, tunnel disabled</text>
-<text x="516" y="314" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ACL     ingress / egress port or router ACL (+rule id)</text>
-<text x="516" y="332" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Buffer  Tail drop, WRED, TC congestion threshold,</text>
-<text x="516" y="350" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">        latency threshold crossed  (PFC / RoCE home)</text>
-<text x="516" y="368" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">severity: Error (broken) / Warning (config,</text>
-<text x="516" y="386" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">capacity) / Notice (expected, e.g. ACL deny)</text>
+<text x="516" y="206" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">L1      link training / oper down /</text>
+<text x="516" y="224" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">        admin down</text>
+<text x="516" y="242" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">L2      VLAN, STP, loopback filter;</text>
+<text x="516" y="260" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">        bad SMAC (zero/mcast/=DMAC); MLAG</text>
+<text x="516" y="278" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Router  unicast route miss, blackhole,</text>
+<text x="516" y="296" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">        TTL exceeded, unresolved neighbor</text>
+<text x="516" y="314" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Tunnel  VXLAN decap error, tunnel down</text>
+<text x="516" y="332" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ACL     ingress/egress port or router</text>
+<text x="516" y="350" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">        ACL (+ rule id)</text>
+<text x="516" y="368" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Buffer  tail drop, WRED, TC congestion</text>
+<text x="516" y="386" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">        threshold, latency threshold</text>
+<text x="516" y="404" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">        (the PFC / RoCE home)</text>
+<text x="516" y="422" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">severity: Error (broken) / Warning</text>
+<text x="516" y="440" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  (config, capacity) / Notice</text>
+<text x="516" y="458" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  (expected, e.g. ACL deny)</text>
 </g>
 <g><title>WJH service on the switch</title><rect x="48" y="620" width="420" height="200" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
 <text x="64" y="647" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">WJH service on the switch</text>
@@ -45,8 +49,9 @@
 <text x="576" y="676" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv show system wjh packet-buffer</text>
 <text x="576" y="694" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv show system wjh aggregate-buffer</text>
 <text x="576" y="712" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv show system wjh l1-buffer</text>
-<text x="576" y="730" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv-wjh-cli poll --data drops|aggregates|l1</text>
-<text x="576" y="748" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv action export ... -&gt; PCAP (Wireshark)</text>
+<text x="576" y="730" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv-wjh-cli poll --data drops</text>
+<text x="576" y="748" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  (or: aggregates | l1)</text>
+<text x="576" y="766" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nv action export ... -&gt; .pcap</text>
 </g>
 <g><title>Step 3</title><circle cx="560" cy="620" r="16" fill="#1f2937"/><text x="560" y="626" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
 <line x1="468" y1="720" x2="560" y2="720" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
@@ -61,7 +66,7 @@
 <text x="996" y="314" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">'NetQ shows nothing' = local service still owns the channel</text>
 </g>
 <g><title>Step 4</title><circle cx="980" cy="150" r="16" fill="#1f2937"/><text x="980" y="156" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
-<path d="M468,680 L520,680 L520,600 L950,600 L950,280 L980,280" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
+<path d="M468,680 L520,680 L520,588 L950,588 L950,280 L980,280" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
 <g><title>Streaming export</title><rect x="980" y="450" width="570" height="120" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
 <text x="996" y="477" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Streaming export</text>
 <text x="996" y="506" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Kafka / gRPC / OpenTelemetry (gNMI) collectors;</text>

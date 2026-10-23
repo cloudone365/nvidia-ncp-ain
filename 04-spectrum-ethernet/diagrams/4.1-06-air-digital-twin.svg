@@ -89,7 +89,7 @@
 <g><title>Step 4</title><circle cx="1030" cy="575" r="16" fill="#1f2937"/><text x="1030" y="581" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
 <text x="60" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">1  Commit renders the per-switch YAML; CI diff shows the device-level change.    2  CI spins up the twin from a topology file and runs the playbook (check, then apply).</text>
 <text x="60" y="758" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">3  netq check bgp / evpn / interfaces inside the twin gates the merge.    4  On merge, the same artefacts deploy to hardware; data-plane proof needs real Spectrum-4 + SuperNICs.</text>
-<g><title>Legend</title><rect x="1110" y="780" width="430" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<g><title>Legend</title><rect x="1100" y="780" width="452" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
 <line x1="1124" y1="806" x2="1184" y2="806" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
 <text x="1198" y="812" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
 <line x1="1124" y1="836" x2="1184" y2="836" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>

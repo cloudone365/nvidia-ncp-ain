@@ -34,8 +34,8 @@
 <text x="820" y="600" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#1f2937" text-anchor="start" xml:space="preserve">No: 5-10% low with retries = loss or congestion. Which fabric?</text>
 <path d="M800,560 L800,630 L310,630 L310,670" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
 <path d="M800,560 L800,630 L1030,630 L1030,670" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
-<text x="310" y="660" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#e07b00" text-anchor="middle" xml:space="preserve">RoCE / Spectrum-X</text>
-<text x="1030" y="660" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#2f6fdb" text-anchor="middle" xml:space="preserve">InfiniBand / Quantum + UFM</text>
+<text x="296" y="660" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#e07b00" text-anchor="end" xml:space="preserve">RoCE / Spectrum-X</text>
+<text x="1044" y="660" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#2f6fdb" text-anchor="start" xml:space="preserve">InfiniBand / Quantum + UFM</text>
 <g><title>netq &lt;leaf&gt; show roce-counters: PFC Tx to the host rising ?</title><polygon points="310,690.0 500.0,750 310,810.0 120.0,750" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
 <text x="310" y="745.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">netq &lt;leaf&gt; show roce-counters:</text>
 <text x="310" y="764.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">PFC Tx to the host rising ?</text>

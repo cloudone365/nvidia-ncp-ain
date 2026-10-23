@@ -6,7 +6,7 @@
 <g><title>mst  (MST driver set)</title><rect x="430" y="260" width="760" height="92" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
 <text x="446" y="288" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">mst  (MST driver set)</text>
 <text x="446" y="318" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mst start   -&gt; loads mst_pci / mst_pciconf, creates /dev/mst/*</text>
-<text x="446" y="336" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mst status -v -&gt; /dev/mst/mt4129_pciconf0 &lt;-&gt; 17:00.0 &lt;-&gt; mlx5_0 &lt;-&gt; net-ibp23s0 &lt;-&gt; NUMA 0</text>
+<text x="446" y="336" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mst status -v: /dev/mst/mt4129_pciconf0 = 17:00.0 = mlx5_0 = ibp23s0</text>
 </g>
 <g><title>Firmware  (ConnectX-7 28.4x.xxxx / BlueField-3 32.x)</title><rect x="430" y="370" width="760" height="92" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/>
 <text x="446" y="398" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Firmware  (ConnectX-7 28.4x.xxxx / BlueField-3 32.x)</text>
@@ -52,8 +52,8 @@
 <text x="64" y="785" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">-q / -i fw.bin -b transceiver FW</text>
 </g>
 <path d="M388,745.0 L410,745.0 L410,650 L430,650" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
-<path d="M300,330 L300,300 L430,300" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
-<text x="60" y="318" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">all four need a device handle from mst status -v</text>
+<path d="M370,330 L370,300 L430,300" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
+<text x="60" y="318" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">all need a handle from mst status -v</text>
 <g><title>On a Spectrum / Quantum switch</title><rect x="1230" y="150" width="320" height="200" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
 <text x="1246" y="176" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">On a Spectrum / Quantum switch</text>
 <text x="1246" y="204" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">same stack; device is the ASIC:</text>
@@ -61,7 +61,7 @@
 <text x="1246" y="240" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">add -p &lt;port&gt; (ASIC port label,</text>
 <text x="1246" y="258" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">not swpN for split ports)</text>
 <text x="1246" y="276" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">NVOS / MLNX-OS: 'show interfaces</text>
-<text x="1246" y="294" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">... transceiver' calls the same regs</text>
+<text x="1246" y="294" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">... transceiver' = same regs</text>
 </g>
 <g><title>Runtime vs persistent</title><rect x="1230" y="380" width="320" height="200" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
 <text x="1246" y="406" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Runtime vs persistent</text>

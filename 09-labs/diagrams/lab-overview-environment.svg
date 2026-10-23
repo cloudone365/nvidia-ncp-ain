@@ -48,7 +48,7 @@
 <path d="M540,255 L500,255 L500,560 L540,560" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)" fill="none"/>
 <path d="M540,395 L500,395" stroke="#7a3fd1" stroke-width="2" stroke-dasharray="10 5 2 5" fill="none"/>
 <text x="70" y="640" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">Simulated fully: NVUE, BGP unnumbered, EVPN, QoS config state, NetQ check/show/trace, Ansible.</text>
-<text x="70" y="664" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">Not simulated: Spectrum ASIC datapath (real PFC/ECN behaviour, WJH hardware drop records), InfiniBand.</text>
+<text x="70" y="664" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">Not simulated: Spectrum ASIC datapath (real PFC/ECN behaviour, WJH hardware drop records)</text><text x="70" y="686" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">or InfiniBand.</text>
 <rect x="850" y="140" width="700" height="330" rx="12" fill="none" stroke="#2f6fdb" stroke-width="2" stroke-dasharray="6 6"/>
 <text x="864" y="164" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#2f6fdb" text-anchor="start" xml:space="preserve">Two Linux hosts  -  Labs 2, 3</text>
 <g><title>hostA</title><rect x="880" y="200" width="300" height="110" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>

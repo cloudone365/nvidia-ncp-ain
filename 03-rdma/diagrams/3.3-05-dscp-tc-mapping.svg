@@ -99,7 +99,7 @@
 <text x="60" y="743" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">--prio_tc 0,0,0,3,0,0,6,0; --tsa/--tcbw for ETS shares. PCP (802.1p) only exists on tagged links and is lost</text>
 <text x="60" y="762" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">at L3: trust DSCP for routed RoCE v2. Conventions, not laws (some sites use DSCP 24 for data); every box must agree.</text>
 <text x="60" y="781" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Observe: ethtool -S | grep rx_prio3_bytes (RoCE really in prio 3?), nv show qos roce, nv show interface swp1 qos roce status.</text>
-<g><rect x="1130" y="700" width="430" height="172" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<g><rect x="1130" y="700" width="430" height="186" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="1144" y="720" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
 <line x1="1144" y1="742" x2="1204" y2="742" stroke="#1f2937" stroke-width="3"/>
 <text x="1216" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Local call / state change</text>

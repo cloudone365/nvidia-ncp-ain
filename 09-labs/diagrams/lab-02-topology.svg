@@ -60,5 +60,5 @@
 <line x1="1216" y1="606" x2="1270" y2="606" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>
 <text x="1284" y="611" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">4X NDR / HDR InfiniBand link</text>
 <line x1="1216" y1="636" x2="1270" y2="636" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1284" y="641" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SM management datagrams (VL15)</text>
+<text x="1284" y="641" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SM management MADs (VL15)</text>
 </g></svg>

@@ -9,17 +9,17 @@
 </g>
 <g><title>MAD-based tools</title><rect x="90" y="390" width="240" height="440" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
 <text x="106" y="420" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">MAD-based tools</text>
-<text x="106" y="453" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SMP (class 0x01, QP0):</text>
-<text x="106" y="473" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  ibnodes ibhosts ibswitches</text>
-<text x="106" y="493" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  iblinkinfo ibroute ibtracert</text>
-<text x="106" y="513" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  smpquery ibportstate sminfo</text>
-<text x="106" y="533" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SA (class 0x03, QP1):</text>
-<text x="106" y="553" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  saquery NR | PR | -p | MCMR</text>
-<text x="106" y="573" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PerfMgt (class 0x04, QP1):</text>
-<text x="106" y="593" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  perfquery ibqueryerrors</text>
-<text x="106" y="613" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Vendor (class 0x32, QP1):</text>
-<text x="106" y="633" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  ibping</text>
-<text x="106" y="653" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet uses all four</text>
+<text x="106" y="453" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SMP (class 0x01, QP0):</text>
+<text x="106" y="473" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  ibnodes ibhosts ibswitches</text>
+<text x="106" y="493" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  iblinkinfo ibroute ibtracert</text>
+<text x="106" y="513" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  smpquery ibportstate sminfo</text>
+<text x="106" y="533" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">SA (class 0x03, QP1):</text>
+<text x="106" y="553" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  saquery NR | PR | -p | MCMR</text>
+<text x="106" y="573" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PerfMgt (class 0x04, QP1):</text>
+<text x="106" y="593" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  perfquery ibqueryerrors</text>
+<text x="106" y="613" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Vendor (class 0x32, QP1):</text>
+<text x="106" y="633" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  ibping</text>
+<text x="106" y="653" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ibdiagnet uses all four</text>
 </g>
 <g><title>mlx5_core / sysfs</title><rect x="380" y="210" width="250" height="150" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
 <text x="505.0" y="240" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">mlx5_core / sysfs</text>
@@ -62,7 +62,7 @@
 <text x="1370.0" y="503" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">SMA + PMA</text>
 <text x="1370.0" y="523" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">same agents, more hops</text>
 </g>
-<g><title>dgx-08  (LID 38)</title><rect x="1200" y="680" width="340" height="150" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<g><title>dgx-08  (LID 38)</title><rect x="1200" y="680" width="340" height="125" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
 <text x="1370.0" y="710" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">dgx-08  (LID 38)</text>
 <text x="1370.0" y="743" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">ibping -S  responder</text>
 <text x="1370.0" y="763" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">answers vendor-class MADs</text>
@@ -73,20 +73,20 @@
 <line x1="330" y1="470" x2="380" y2="470" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
 <line x1="505" y1="560" x2="505" y2="620" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)" fill="none"/>
 <line x1="630" y1="720" x2="800" y2="600" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)" marker-start="url(#arrow-blue)" fill="none"/>
-<text x="650" y="640" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#2f6fdb" text-anchor="start" xml:space="preserve">4X NDR data + VL15 MADs</text>
+<text x="690" y="745" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#2f6fdb" text-anchor="start" xml:space="preserve">4X NDR data + VL15 MADs</text>
 <path d="M660,470 L720,470 L720,500 L800,500" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
 <g><title>Step 2</title><circle cx="720" cy="440" r="16" fill="#1f2937"/><text x="720" y="446" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
 <text x="560" y="583" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve"></text>
 <path d="M660,430 L900,430 L900,300 L1200,300" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
 <g><title>Step 3</title><circle cx="1050" cy="300" r="16" fill="#1f2937"/><text x="1050" y="306" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
-<text x="930" y="285" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">SA GetTable: PathRecord, PKeyTable</text>
+<text x="910" y="276" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">SA GetTable: PathRecord, PKeyTable</text>
 <path d="M1130,540 L1200,540" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
 <g><title>Step 4</title><circle cx="1165" cy="510" r="16" fill="#1f2937"/><text x="1165" y="516" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
 <text x="830" y="700" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">PerfMgt GMP: PortCountersExt (64-bit)</text>
 <path d="M1130,640 L1165,640 L1165,755 L1200,755" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)" fill="none"/>
 <g><title>Step 5</title><circle cx="1165" cy="690" r="16" fill="#1f2937"/><text x="1165" y="696" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
 <path d="M1370,350 L1370,440" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
-<text x="1385" y="400" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">SM sweep: SMPs set LIDs/LFTs</text>
+<text x="1385" y="390" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">SM sweep: SMPs</text><text x="1385" y="410" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start" xml:space="preserve">set LIDs / LFTs</text>
 <g><title>Legend</title><rect x="1000" y="820" width="552" height="114" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
 <line x1="1016" y1="846" x2="1070" y2="846" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>
 <text x="1084" y="851" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Local sysfs / driver read (no SM needed)</text>

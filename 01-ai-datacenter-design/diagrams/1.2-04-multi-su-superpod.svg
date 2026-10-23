@@ -25,9 +25,9 @@
 <g><title>Sp 13</title><rect x="1266" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1306.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 13</text><text x="1306.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
 <g><title>Sp 14</title><rect x="1358" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1398.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 14</text><text x="1398.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
 <g><title>Sp 15</title><rect x="1450" y="260" width="80" height="54" rx="10" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/><text x="1490.0" y="282.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">Sp 15</text><text x="1490.0" y="302.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">64p</text></g>
+<text x="800.0" y="240.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="500" fill="#ffffff" stroke="#ffffff" stroke-width="6" stroke-linejoin="round" text-anchor="middle" aria-hidden="true">16 × QM9700 spines — each leaf sends 2 uplinks to every spine (32 ÷ 16)</text>
 <text x="800.0" y="240.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="500" fill="#2f6fdb" text-anchor="middle">16 × QM9700 spines — each leaf sends 2 uplinks to every spine (32 ÷ 16)</text>
-<g><title>SU 1</title><rect x="70" y="430" width="350" height="330" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
-<text x="84.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#76b900" text-anchor="start">SU 1</text>
+<g><title>SU 1</title><rect x="70" y="430" width="350" height="320" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
 <g><rect x="82" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
 <text x="100.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L0</text>
 <path d="M100.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
@@ -172,7 +172,6 @@
 <path d="M387.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
 <path d="M387.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
 <path d="M387.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<text x="245.0" y="554.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves (rails 0–7), 32↓/32↑ each</text>
 <g><title>32 DGX H100 (31 + UFM slot)</title><rect x="82" y="580" width="326" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/><text x="245.0" y="610.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">32 DGX H100 (31 + UFM slot)</text><text x="245.0" y="630.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">256 compute ports · 252 cables as built</text></g>
 <path d="M100.0,580.0 L100.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
 <path d="M141.0,580.0 L141.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
@@ -185,8 +184,7 @@
 <text x="245.0" y="680.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">each leaf: 2 uplinks × 16 spines = 32 ↑</text>
 <text x="245.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves × 32 = 256 leaf→spine ports per SU</text>
 <text x="245.0" y="730.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" font-style="italic">every leaf reaches every spine (full mesh)</text>
-<g><title>SU 2</title><rect x="442" y="430" width="350" height="330" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
-<text x="456.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#76b900" text-anchor="start">SU 2</text>
+<g><title>SU 2</title><rect x="442" y="430" width="350" height="320" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
 <g><rect x="454" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
 <text x="472.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L0</text>
 <path d="M472.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
@@ -331,7 +329,6 @@
 <path d="M759.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
 <path d="M759.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
 <path d="M759.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<text x="617.0" y="554.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves (rails 0–7), 32↓/32↑ each</text>
 <g><title>32 DGX H100 (31 + UFM slot)</title><rect x="454" y="580" width="326" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/><text x="617.0" y="610.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">32 DGX H100 (31 + UFM slot)</text><text x="617.0" y="630.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">256 compute ports · 252 cables as built</text></g>
 <path d="M472.0,580.0 L472.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
 <path d="M513.0,580.0 L513.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
@@ -344,8 +341,7 @@
 <text x="617.0" y="680.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">each leaf: 2 uplinks × 16 spines = 32 ↑</text>
 <text x="617.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves × 32 = 256 leaf→spine ports per SU</text>
 <text x="617.0" y="730.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" font-style="italic">every leaf reaches every spine (full mesh)</text>
-<g><title>SU 3</title><rect x="814" y="430" width="350" height="330" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
-<text x="828.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#76b900" text-anchor="start">SU 3</text>
+<g><title>SU 3</title><rect x="814" y="430" width="350" height="320" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
 <g><rect x="826" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
 <text x="844.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L0</text>
 <path d="M844.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
@@ -490,7 +486,6 @@
 <path d="M1131.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
 <path d="M1131.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
 <path d="M1131.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<text x="989.0" y="554.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves (rails 0–7), 32↓/32↑ each</text>
 <g><title>32 DGX H100 (31 + UFM slot)</title><rect x="826" y="580" width="326" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/><text x="989.0" y="610.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">32 DGX H100 (31 + UFM slot)</text><text x="989.0" y="630.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">256 compute ports · 252 cables as built</text></g>
 <path d="M844.0,580.0 L844.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
 <path d="M885.0,580.0 L885.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
@@ -503,8 +498,7 @@
 <text x="989.0" y="680.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">each leaf: 2 uplinks × 16 spines = 32 ↑</text>
 <text x="989.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves × 32 = 256 leaf→spine ports per SU</text>
 <text x="989.0" y="730.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" font-style="italic">every leaf reaches every spine (full mesh)</text>
-<g><title>SU 4</title><rect x="1186" y="430" width="350" height="330" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
-<text x="1200.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#76b900" text-anchor="start">SU 4</text>
+<g><title>SU 4</title><rect x="1186" y="430" width="350" height="320" rx="14" fill="#e4f1cc" fill-opacity="0.2" stroke="#76b900" stroke-width="2.5" stroke-dasharray="10 6"/></g>
 <g><rect x="1198" y="470" width="36" height="60" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2.5"/></g>
 <text x="1216.0" y="506.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#1f2937" text-anchor="middle">L0</text>
 <path d="M1216.0,470.0 L110.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
@@ -649,7 +643,6 @@
 <path d="M1503.0,470.0 L1306.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
 <path d="M1503.0,470.0 L1398.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
 <path d="M1503.0,470.0 L1490.0,314.0" fill="none" stroke="#2f6fdb" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.14"/>
-<text x="1361.0" y="554.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves (rails 0–7), 32↓/32↑ each</text>
 <g><title>32 DGX H100 (31 + UFM slot)</title><rect x="1198" y="580" width="326" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/><text x="1361.0" y="610.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="middle">32 DGX H100 (31 + UFM slot)</text><text x="1361.0" y="630.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" fill="#5f6b7a" text-anchor="middle">256 compute ports · 252 cables as built</text></g>
 <path d="M1216.0,580.0 L1216.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
 <path d="M1257.0,580.0 L1257.0,530.0" fill="none" stroke="#2f6fdb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
@@ -662,16 +655,24 @@
 <text x="1361.0" y="680.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">each leaf: 2 uplinks × 16 spines = 32 ↑</text>
 <text x="1361.0" y="700.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">8 leaves × 32 = 256 leaf→spine ports per SU</text>
 <text x="1361.0" y="730.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" font-style="italic">every leaf reaches every spine (full mesh)</text>
+<text x="84.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff" stroke="#ffffff" stroke-width="6" stroke-linejoin="round" text-anchor="start" aria-hidden="true">SU 1 · leaves L0–L7 = rails 0–7, 32↓/32↑</text>
+<text x="84.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#76b900" text-anchor="start">SU 1 · leaves L0–L7 = rails 0–7, 32↓/32↑</text>
+<text x="456.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff" stroke="#ffffff" stroke-width="6" stroke-linejoin="round" text-anchor="start" aria-hidden="true">SU 2 · leaves L0–L7 = rails 0–7, 32↓/32↑</text>
+<text x="456.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#76b900" text-anchor="start">SU 2 · leaves L0–L7 = rails 0–7, 32↓/32↑</text>
+<text x="828.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff" stroke="#ffffff" stroke-width="6" stroke-linejoin="round" text-anchor="start" aria-hidden="true">SU 3 · leaves L0–L7 = rails 0–7, 32↓/32↑</text>
+<text x="828.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#76b900" text-anchor="start">SU 3 · leaves L0–L7 = rails 0–7, 32↓/32↑</text>
+<text x="1200.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff" stroke="#ffffff" stroke-width="6" stroke-linejoin="round" text-anchor="start" aria-hidden="true">SU 4 · leaves L0–L7 = rails 0–7, 32↓/32↑</text>
+<text x="1200.0" y="456.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#76b900" text-anchor="start">SU 4 · leaves L0–L7 = rails 0–7, 32↓/32↑</text>
 <g><title>Spines = (total leaves × 32 uplinks) ÷ 64 ports:  1 SU → 4,  2 SUs → 8,  3 SUs → 12 (RA deploys 16),  4 SUs → 1,024 ÷ 64 = 16.</title><rect x="48" y="790" width="1010" height="81" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/></g>
 <text x="60.0" y="817.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Spines = (total leaves × 32 uplinks) ÷ 64 ports:  1 SU → 4,  2 SUs → 8,  3 SUs → 12 (RA deploys 16),  4 SUs → 1,024 ÷ 64 = 16.</text>
 <text x="60.0" y="836.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Inter-SU traffic always crosses a spine; rail optimization keeps same-rail, same-SU traffic on the leaf.</text>
 <text x="60.0" y="855.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Storage, in-band and OOB are separate fabrics with their own switches (see Figure 1.2-6).</text>
-<rect x="1100" y="778" width="452" height="110" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
-<text x="1116.0" y="806.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">Legend</text>
-<path d="M1116,833.0 L1162,833.0" fill="none" stroke="#2f6fdb" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
-<text x="1176.0" y="839.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">400G NDR (all links)</text>
-<rect x="1116" y="844.0" width="46" height="22" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2"/>
-<text x="1176.0" y="861.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">QM9700 switch</text>
-<rect x="1116" y="866.0" width="46" height="22" rx="5" fill="#e4f1cc" stroke="#76b900" stroke-width="2"/>
-<text x="1176.0" y="883.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">DGX nodes</text>
+<rect x="1100" y="764" width="452" height="122" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<text x="1116.0" y="792.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">Legend</text>
+<path d="M1116,820.0 L1162,820.0" fill="none" stroke="#2f6fdb" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
+<text x="1176.0" y="826.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">400G NDR (all links)</text>
+<rect x="1116" y="833.0" width="46" height="22" rx="5" fill="#dbe8ff" stroke="#2f6fdb" stroke-width="2"/>
+<text x="1176.0" y="850.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">QM9700 switch</text>
+<rect x="1116" y="857.0" width="46" height="22" rx="5" fill="#e4f1cc" stroke="#76b900" stroke-width="2"/>
+<text x="1176.0" y="874.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">DGX nodes</text>
 </svg>

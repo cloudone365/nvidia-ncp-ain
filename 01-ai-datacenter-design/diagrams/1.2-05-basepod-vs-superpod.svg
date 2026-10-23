@@ -97,11 +97,11 @@
 <text x="844.0" y="692.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start">BCM for nodes + UFM for the IB fabric; 4 separate networks</text>
 <text x="844.0" y="720.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start">Delivery</text>
 <text x="844.0" y="742.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="start">NVIDIA-validated component list, CVT acceptance per SU</text>
-<rect x="420" y="770" width="350" height="88" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
-<text x="436.0" y="798.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">Legend</text>
-<path d="M436,825.0 L482,825.0" fill="none" stroke="#2f6fdb" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
-<text x="496.0" y="831.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Compute fabric (IB or Eth)</text>
-<path d="M436,847.0 L482,847.0" fill="none" stroke="#e07b00" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow-orange)"/>
-<text x="496.0" y="853.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Storage / in-band Ethernet</text>
+<rect x="470" y="700" width="300" height="98" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<text x="486.0" y="728.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">Legend</text>
+<path d="M486,756.0 L532,756.0" fill="none" stroke="#2f6fdb" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
+<text x="546.0" y="762.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Compute fabric (IB or Eth)</text>
+<path d="M486,780.0 L532,780.0" fill="none" stroke="#e07b00" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow-orange)"/>
+<text x="546.0" y="786.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Storage / in-band Ethernet</text>
 <text x="800.0" y="870.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="500" fill="#5f6b7a" text-anchor="middle">Both: one compute NIC per GPU, BlueField-3 for storage/in-band, BMC on OOB. Exam: SuperPOD questions are SU-arithmetic questions in disguise.</text>
 </svg>

@@ -83,10 +83,10 @@
 <text x="1216" y="568" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">records; Air shows the commands)</text>
 </g>
 <path d="M720,660 L800,660 L800,600 L1200,560" stroke="#d93025" stroke-width="2" marker-end="url(#arrow-red)" fill="none"/>
-<g><title>Break / fix faults you will inject</title><rect x="48" y="770" width="1500" height="110" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
-<text x="64" y="797" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Break / fix faults you will inject</text>
-<text x="64" y="826" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">1 shut a fabric link (netq check interfaces, events type link)   2 MTU mismatch on one side (netq check mtu)   3 roce mode lossy on leaf02 (netq show roce-config drift)</text>
-<text x="64" y="844" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Local toolbox when NetQ is absent: nv show interface swp51 counters, nv show qos roce, cl-resource-query, sudo cl-support, /var/log/switchd.log</text>
+<g><title>Break / fix faults you will inject</title><rect x="48" y="800" width="1500" height="110" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="64" y="827" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Break / fix faults you will inject</text>
+<text x="64" y="856" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">1 shut a fabric link (netq check interfaces, events type link)   2 MTU mismatch on one side (netq check mtu)   3 roce mode lossy on leaf02 (netq show roce-config drift)</text>
+<text x="64" y="874" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Local toolbox when NetQ is absent: nv show interface swp51 counters, nv show qos roce, cl-resource-query, sudo cl-support, /var/log/switchd.log</text>
 </g>
 <g><title>Legend</title><rect x="1200" y="640" width="350" height="144" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
 <line x1="1216" y1="666" x2="1270" y2="666" stroke="#7a3fd1" stroke-width="3" stroke-dasharray="10 5 2 5" marker-end="url(#arrow-purple)"/>

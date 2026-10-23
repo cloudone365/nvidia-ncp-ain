@@ -10,77 +10,85 @@
 <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
 </defs>
 <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
-<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">VLAN-aware bridge br_default, SVIs with VRR, LACP bonds and an MLAG pair</text>
-<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">One bridge carries all VLANs; access ports untagged (PVID), trunks tagged; SVI vlanN routes; clagd syncs MAC/LACP state over the peerlink</text>
-<g><title>leaf01 (MLAG primary, prio 1000) </title><rect x="160" y="200" width="460" height="200" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="390.0" y="256.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01 (MLAG primary, prio 1000)</text>
-<text x="390.0" y="304.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">br_default: VLAN 10, 20, 30</text>
-<text x="390.0" y="322.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlan10 10.1.10.1/24 · VRR 10.1.10.254 / 00:00:5e:00:01:0a</text>
-<text x="390.0" y="340.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlan20 10.1.20.1/24</text>
-<text x="390.0" y="358.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlag mac 44:38:39:BE:EF:AA · backup 192.168.200.12 (mgmt)</text>
+<text x="48" y="72" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">VLAN-aware bridge br_default, SVIs with VRR, LACP bonds and an MLAG pair</text>
+<text x="48" y="104" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">One bridge carries all VLANs; access ports untagged (PVID), trunks tagged; SVI vlanN routes; clagd syncs MAC/LACP over the peerlink</text>
+<line x1="588" y1="196" x2="1012" y2="196" stroke="#e07b00" stroke-width="4"/>
+<line x1="588" y1="220" x2="1012" y2="220" stroke="#e07b00" stroke-width="4"/>
+<text x="800" y="184" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">peerlink bond: swp49, swp50</text>
+<line x1="592" y1="262" x2="1008" y2="262" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
+<text x="800" y="290" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">clagd over peerlink.4094 (IPv6 LL): MAC + LACP sync</text>
+<line x1="150" y1="300" x2="190" y2="520" stroke="#e07b00" stroke-width="4"/>
+<rect x="114.0" y="383.8" width="42.0" height="20.8" fill="#ffffff"/>
+<text x="156" y="399" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="end">swp5</text>
+<line x1="190" y1="300" x2="246" y2="520" stroke="#e07b00" stroke-width="4"/>
+<rect x="222" y="383.8" width="42.0" height="20.8" fill="#ffffff"/>
+<text x="227" y="399" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">swp6</text>
+<line x1="480" y1="300" x2="560" y2="520" stroke="#e07b00" stroke-width="4"/>
+<rect x="521" y="383.8" width="42.0" height="20.8" fill="#ffffff"/>
+<text x="526" y="399" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">swp1</text>
+<line x1="1080" y1="300" x2="660" y2="520" stroke="#e07b00" stroke-width="4"/>
+<rect x="900" y="383.8" width="42.0" height="20.8" fill="#ffffff"/>
+<text x="905" y="399" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">swp1</text>
+<line x1="1200" y1="300" x2="994" y2="520" stroke="#e07b00" stroke-width="4"/>
+<rect x="1116" y="383.8" width="58.0" height="20.8" fill="#ffffff"/>
+<text x="1121" y="399" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">swp2s0</text>
+<line x1="1450" y1="300" x2="1382" y2="520" stroke="#e07b00" stroke-width="4"/>
+<rect x="1426" y="383.8" width="42.0" height="20.8" fill="#ffffff"/>
+<text x="1431" y="399" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">swp3</text>
+<g><title>leaf01 (MLAG primary, prio 1000)</title><rect x="48" y="150" width="540" height="150" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="318.0" y="188.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01 (MLAG primary, prio 1000)</text>
+<text x="318.0" y="211.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">br_default: VLAN 10, 20, 30</text>
+<text x="318.0" y="233.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlan10 10.1.10.1/24 · VRR 10.1.10.254 / 00:00:5e:00:01:0a</text>
+<text x="318.0" y="255.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlan20 10.1.20.1/24</text>
+<text x="318.0" y="277.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlag mac 44:38:39:BE:EF:AA · backup 192.168.200.12 (mgmt)</text>
 </g>
-<g><title>leaf02 (MLAG secondary, prio 32768) </title><rect x="980" y="200" width="460" height="200" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="1210.0" y="256.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf02 (MLAG secondary, prio 32768)</text>
-<text x="1210.0" y="304.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">br_default: VLAN 10, 20, 30</text>
-<text x="1210.0" y="322.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlan10 10.1.10.2/24 · VRR 10.1.10.254 / 00:00:5e:00:01:0a</text>
-<text x="1210.0" y="340.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlan20 10.1.20.2/24</text>
-<text x="1210.0" y="358.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlag mac 44:38:39:BE:EF:AA · backup 192.168.200.11 (mgmt)</text>
+<g><title>leaf02 (MLAG secondary, prio 32768)</title><rect x="1012" y="150" width="540" height="150" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1282.0" y="188.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">leaf02 (MLAG secondary, prio 32768)</text>
+<text x="1282.0" y="211.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">br_default: VLAN 10, 20, 30</text>
+<text x="1282.0" y="233.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlan10 10.1.10.2/24 · VRR 10.1.10.254 / 00:00:5e:00:01:0a</text>
+<text x="1282.0" y="255.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlan20 10.1.20.2/24</text>
+<text x="1282.0" y="277.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">mlag mac 44:38:39:BE:EF:AA · backup 192.168.200.11 (mgmt)</text>
 </g>
-<line x1="620" y1="270" x2="980" y2="270" stroke="#e07b00" stroke-width="4"/>
-<line x1="620" y1="300" x2="980" y2="300" stroke="#e07b00" stroke-width="4"/>
-<rect x="670" y="228" width="259" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="800" y="245" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">peerlink bond: swp49, swp50</text>
-<line x1="620" y1="350" x2="980" y2="350" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)"/>
-<rect x="596" y="369" width="409" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="800" y="385" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">clagd over peerlink.4094 (IPv6 LL): MAC + LACP sync</text>
-<g><title>server01 (dual-attached) bond0 LACP · 10.1.10.10/24</title><rect x="80" y="560" width="300" height="90" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
-<text x="230.0" y="588.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">server01 (dual-attached)</text>
-<text x="230.0" y="608.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">bond0 LACP · 10.1.10.10/24</text>
-<text x="230.0" y="632.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">access VLAN 10 via bond1 / mlag id 1</text>
+<g><title>storage01</title><rect x="48" y="520" width="340" height="96" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5"/>
+<text x="218.0" y="552.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">storage01</text>
+<text x="218.0" y="575.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">bond1 LACP (swp5, swp6)</text>
+<text x="218.0" y="597.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">access VLAN 20, lacp-rate fast</text>
 </g>
-<line x1="200" y1="560" x2="300" y2="400" stroke="#e07b00" stroke-width="4"/>
-<rect x="204" y="463" width="52" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="230" y="480" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1</text>
-<line x1="260" y1="560" x2="1060" y2="400" stroke="#e07b00" stroke-width="4"/>
-<rect x="734" y="463" width="52" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="760" y="480" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp1</text>
-<rect x="260" y="504" width="339" height="24" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="430" y="520" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">bond1: mlag id 1 (identical on both peers)</text>
-<g><title>storage01 bond1 LACP (swp5, swp6)</title><rect x="480" y="560" width="300" height="90" rx="10" fill="#d9f3f0" stroke="#1a9c8a" stroke-width="2.5"/>
-<text x="630.0" y="588.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">storage01</text>
-<text x="630.0" y="608.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">bond1 LACP (swp5, swp6)</text>
-<text x="630.0" y="632.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">access VLAN 20, lacp-rate fast</text>
+<g><title>server01 (dual-attached)</title><rect x="436" y="520" width="340" height="96" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="606.0" y="552.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">server01 (dual-attached)</text>
+<text x="606.0" y="575.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">bond0 LACP · 10.1.10.10/24</text>
+<text x="606.0" y="597.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">leaf side: bond1, mlag id 1 on both peers</text>
 </g>
-<line x1="600" y1="560" x2="500" y2="400" stroke="#e07b00" stroke-width="4"/>
-<line x1="660" y1="560" x2="560" y2="400" stroke="#e07b00" stroke-width="4"/>
-<g><title>host-trunk swp2s0 trunk VLAN 10,20</title><rect x="880" y="560" width="300" height="90" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
-<text x="1030.0" y="588.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">host-trunk</text>
-<text x="1030.0" y="608.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">swp2s0 trunk VLAN 10,20</text>
-<text x="1030.0" y="632.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">tagged frames; native VLAN 1 (untagged)</text>
+<g><title>host-trunk</title><rect x="824" y="520" width="340" height="96" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="994.0" y="552.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">host-trunk</text>
+<text x="994.0" y="575.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp2s0 trunk VLAN 10,20</text>
+<text x="994.0" y="597.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">tagged frames; native VLAN 1 untagged</text>
 </g>
-<line x1="1030" y1="560" x2="1100" y2="400" stroke="#e07b00" stroke-width="4"/>
-<g><title>legacy-host swp3 access VLAN 10</title><rect x="1240" y="560" width="300" height="90" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
-<text x="1390.0" y="588.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">legacy-host</text>
-<text x="1390.0" y="608.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">swp3 access VLAN 10</text>
-<text x="1390.0" y="632.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">untagged frames (PVID 10)</text>
+<g><title>legacy-host</title><rect x="1212" y="520" width="340" height="96" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1382.0" y="552.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">legacy-host</text>
+<text x="1382.0" y="575.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">swp3 access VLAN 10</text>
+<text x="1382.0" y="597.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">untagged frames (PVID 10)</text>
 </g>
-<line x1="1390" y1="560" x2="1300" y2="400" stroke="#e07b00" stroke-width="4"/>
-<g><title>Note</title><rect x="60" y="700" width="700" height="150" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
-<text x="72" y="722" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">nv show bridge domain br_default vlan  (reads: PVID = untagged membership)</text>
-<text x="72" y="740" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">VLAN  Flags  Member Ports</text>
-<text x="72" y="758" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">1     PVID   swp2s0                    ← native VLAN on the trunk</text>
-<text x="72" y="776" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">10    PVID   swp3, bond1               ← access ports</text>
-<text x="72" y="794" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">10           swp2s0 · 20 PVID storage bond1 · 20/30 tagged on trunks</text>
-<g><title>Note</title><rect x="800" y="700" width="740" height="150" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
-<text x="812" y="722" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">VRR (active-active): both leaves own 10.1.10.254 and the virtual MAC;</text>
-<text x="812" y="740" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">whichever leaf the host bond hashes to answers. VRRP would be active-standby.</text>
-<text x="812" y="758" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">MLAG rules: same mac-address and bond mlag id on both peers; priorities differ</text>
-<text x="812" y="776" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">(lower = primary); backup IP = the OTHER peer's eth0, in vrf mgmt.</text>
-<text x="812" y="794" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">GPU RoCE ports are NOT MLAG'd — each SuperNIC single-attaches to a rail leaf.</text>
-<g><title>Legend</title><rect x="1110" y="130" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
-<line x1="1124" y1="156" x2="1184" y2="156" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<text x="1198" y="162" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
-<line x1="1124" y1="186" x2="1184" y2="186" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1198" y="192" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<g><title>bridge VLAN table</title><rect x="48" y="650" width="600" height="226" rx="8" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="64" y="678" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">nv show bridge domain br_default vlan (illustrative)</text>
+<text x="64" y="710" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">VLAN   Flags  Member ports</text>
+<text x="64" y="740" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">1      PVID   swp2s0        ← native</text>
+<text x="64" y="770" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">10     PVID   swp3, bond1   ← access</text>
+<text x="64" y="800" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">10,20         swp2s0        ← tagged</text>
+<text x="64" y="830" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">20     PVID   storage bond  ← access</text>
+<g><title>VRR and MLAG rules</title><rect x="664" y="650" width="640" height="226" rx="8" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="680" y="680" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">VRR (active-active): both leaves own 10.1.10.254 + virtual</text>
+<text x="680" y="705" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">MAC; whichever leaf the host bond hashes to answers.</text>
+<text x="680" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">VRRP would be active-standby.</text>
+<text x="680" y="755" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">MLAG: same mlag mac and bond mlag id on both peers;</text>
+<text x="680" y="780" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">priorities differ (lower = primary); backup IP = the</text>
+<text x="680" y="805" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">OTHER peer's eth0, in vrf mgmt.</text>
+<text x="680" y="830" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">GPU RoCE ports are NOT MLAG'd: each SuperNIC</text>
+<text x="680" y="855" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">single-attaches to a rail leaf.</text>
+<g><title>Legend</title><rect x="1320" y="650" width="232" height="90" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1334" y1="676" x2="1390" y2="676" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1404" y="682" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Ethernet link</text>
+<line x1="1334" y1="706" x2="1390" y2="706" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1404" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">clagd sync</text>
 </g>
 </svg>

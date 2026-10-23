@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1060" width="100%" role="img">
+<title>OVS offload flow lifecycle on the DPU: slow path once, then hardware</title>
+<defs>
+<marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#e07b00"/></marker>
+<marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fdb"/></marker>
+<marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+<marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d93025"/></marker>
+<marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a3fd1"/></marker>
+<marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker>
+<marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
+</defs>
+<rect x="0" y="0" width="1600" height="1060" fill="#ffffff"/>
+<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">OVS offload flow lifecycle on the DPU: slow path once, then hardware</text>
+<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">First packet of a flow is an upcall to ovs-vswitchd on the Arm; the resulting rule is pushed into the eSwitch</text>
+<g><title>Host PF</title>
+<rect x="40.0" y="150" width="320" height="80" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="200" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Host PF</text>
+<text x="200" y="211" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ens3f0np0</text>
+</g>
+<line x1="200" y1="230" x2="200" y2="900" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>eSwitch (hardware)</title>
+<rect x="440.0" y="150" width="320" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="600" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">eSwitch (hardware)</text>
+<text x="600" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ConnectX-7 FDB</text>
+</g>
+<line x1="600" y1="230" x2="600" y2="900" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>ovs-vswitchd (Arm)</title>
+<rect x="840.0" y="150" width="320" height="80" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="1000" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">ovs-vswitchd (Arm)</text>
+<text x="1000" y="211" font-family="'JetBrains Mono', Consolas, monospace" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">via pf0hpf rep</text>
+</g>
+<line x1="1000" y1="230" x2="1000" y2="900" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<g><title>p0 → leaf</title>
+<rect x="1250.0" y="150" width="300" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1400" y="182" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">p0 → leaf</text>
+<text x="1400" y="211" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">400G wire</text>
+</g>
+<line x1="1400" y1="230" x2="1400" y2="900" stroke="#9aa3ad" stroke-width="2" stroke-dasharray="5 5"/>
+<polyline points="200,300 600,300" fill="none" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<g><title>Step 1</title><circle cx="224" cy="276" r="16" fill="#1f2937"/>
+<text x="224" y="282" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
+<text x="250" y="288" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">packet 1 of a new 5-tuple</text>
+<text x="250" y="288" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">packet 1 of a new 5-tuple</text>
+<g><title>no hardware match → miss</title>
+<rect x="430" y="330" width="340" height="42" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="600" y="356" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">no hardware match → miss</text>
+</g>
+<g><title>Step 2</title><circle cx="404" cy="351" r="16" fill="#1f2937"/>
+<text x="404" y="357" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
+<polyline points="600,450 1000,450" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 3</title><circle cx="624" cy="426" r="16" fill="#1f2937"/>
+<text x="624" y="432" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
+<text x="650" y="438" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">upcall: packet arrives on pf0hpf</text>
+<text x="650" y="438" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">upcall: packet arrives on pf0hpf</text>
+<g><title>OpenFlow lookup on ovsbr1 →</title>
+<rect x="800" y="480" width="400" height="64" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="1000" y="506" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">OpenFlow lookup on ovsbr1 →</text>
+<text x="1000" y="528" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">datapath (megaflow) rule</text>
+</g>
+<g><title>Step 4</title><circle cx="774" cy="512" r="16" fill="#1f2937"/>
+<text x="774" y="518" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
+<polyline points="1000,620 1400,620" fill="none" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<g><title>Step 5</title><circle cx="1024" cy="596" r="16" fill="#1f2937"/>
+<text x="1024" y="602" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
+<text x="1050" y="608" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">packet 1 sent in software</text>
+<text x="1050" y="608" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">packet 1 sent in software</text>
+<polyline points="1000,700 600,700" fill="none" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>Step 6</title><circle cx="624" cy="676" r="16" fill="#1f2937"/>
+<text x="624" y="682" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">6</text></g>
+<text x="650" y="688" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">install rule (TC flower → in_hw)</text>
+<text x="650" y="688" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">install rule (TC flower → in_hw)</text>
+<polyline points="200,780 1400,780" fill="none" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<g><title>Step 7</title><circle cx="224" cy="756" r="16" fill="#1f2937"/>
+<text x="224" y="762" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">7</text></g>
+<text x="250" y="768" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#ffffff" stroke="#ffffff" stroke-width="7" stroke-linejoin="round" text-anchor="start" aria-hidden="true">packets 2…N: hardware match in the eSwitch → p0 at line rate, Arm CPU idle</text>
+<text x="250" y="768" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">packets 2…N: hardware match in the eSwitch → p0 at line rate, Arm CPU idle</text>
+<g><title>idle ≈10 s (max-idle) → rule aged out</title>
+<rect x="800" y="820" width="400" height="42" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1000" y="846" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">idle ≈10 s (max-idle) → rule aged out</text>
+</g>
+<g><title>Step 8</title><circle cx="774" cy="841" r="16" fill="#1f2937"/>
+<text x="774" y="847" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">8</text></g>
+<g><title>Observe: ovs-appctl dpctl/dump-flows type=offloaded (packets: climbing)</title>
+<rect x="48" y="930" width="1000" height="100" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="62" y="974" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Observe: ovs-appctl dpctl/dump-flows type=offloaded (packets: climbing)</text>
+<text x="62" y="996" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">tc -s filter show dev pf0hpf ingress → in_hw · empty + busy Arm = not offloaded</text>
+</g>
+<g><title>Legend</title><rect x="1100" y="940" width="452" height="84" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1116" y1="966" x2="1176" y2="966" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1192" y="972" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (packets)</text>
+<line x1="1116" y1="996" x2="1176" y2="996" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1192" y="1002" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Slow path (upcall / rule)</text>
+</g>
+</svg>

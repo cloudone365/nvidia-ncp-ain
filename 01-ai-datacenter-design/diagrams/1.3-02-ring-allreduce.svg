@@ -40,36 +40,36 @@
 <text x="1200.0" y="686.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">each step: forward the fully reduced chunk you just received</text>
 <g><title>State after each step (GPU 0's buffer; Σ = sum over all 4 ranks)</title><rect x="48" y="700" width="1504" height="200" rx="14" fill="#fff5cc" fill-opacity="0.2" stroke="#c9a400" stroke-width="2.5" stroke-dasharray="10 6"/></g>
 <text x="62.0" y="726.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#c9a400" text-anchor="start">State after each step (GPU 0's buffer; Σ = sum over all 4 ranks)</text>
-<text x="70.0" y="740.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start">Step</text>
-<text x="200.0" y="740.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start">GPU0 holds</text>
-<text x="520.0" y="740.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start">What moved on every link</text>
-<text x="1160.0" y="740.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start">Running total per GPU</text>
-<text x="70.0" y="766.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">start</text>
-<text x="200.0" y="766.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">a0 b0 c0 d0</text>
-<text x="520.0" y="766.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">—</text>
-<text x="1160.0" y="766.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">0</text>
-<text x="70.0" y="790.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">① RS-1</text>
-<text x="200.0" y="790.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">a0 b0 c0 d0+d3</text>
-<text x="520.0" y="790.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">chunk d3→GPU0, a0→GPU1, b1→GPU2, c2→GPU3</text>
-<text x="1160.0" y="790.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">S/4</text>
-<text x="70.0" y="814.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">② RS-2</text>
-<text x="200.0" y="814.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">a0 b0 c0+c2+c3 d0+d3</text>
-<text x="520.0" y="814.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">2-way partial sums move one hop</text>
-<text x="1160.0" y="814.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">2·S/4</text>
-<text x="70.0" y="838.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">③ RS-3</text>
-<text x="200.0" y="838.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">a0 Σb c0+c2+c3 d0+d3</text>
-<text x="520.0" y="838.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">each GPU now owns ONE fully reduced chunk (GPU0: Σb)</text>
-<text x="1160.0" y="838.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">3·S/4</text>
-<text x="70.0" y="862.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">④–⑥ AG</text>
-<text x="200.0" y="862.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Σa Σb Σc Σd</text>
-<text x="520.0" y="862.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Σ-chunks forwarded around the ring</text>
-<text x="1160.0" y="862.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">6·S/4 = 2·S·(N−1)/N</text>
+<text x="70.0" y="750.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start">Step</text>
+<text x="200.0" y="750.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start">GPU0 holds</text>
+<text x="520.0" y="750.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start">What moved on every link</text>
+<text x="1160.0" y="750.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start">Running total sent per GPU</text>
+<text x="70.0" y="776.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">start</text>
+<text x="200.0" y="776.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">a0 b0 c0 d0</text>
+<text x="520.0" y="776.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">—</text>
+<text x="1160.0" y="776.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">0</text>
+<text x="70.0" y="800.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">① RS-1</text>
+<text x="200.0" y="800.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">a0 b0 c0 d0+d3</text>
+<text x="520.0" y="800.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">chunk d3→GPU0, a0→GPU1, b1→GPU2, c2→GPU3</text>
+<text x="1160.0" y="800.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">S/4</text>
+<text x="70.0" y="824.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">② RS-2</text>
+<text x="200.0" y="824.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">a0 b0 c0+c2+c3 d0+d3</text>
+<text x="520.0" y="824.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">2-way partial sums move one hop</text>
+<text x="1160.0" y="824.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">2·S/4</text>
+<text x="70.0" y="848.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">③ RS-3</text>
+<text x="200.0" y="848.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">a0 Σb c0+c2+c3 d0+d3</text>
+<text x="520.0" y="848.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">each GPU now owns ONE fully reduced chunk (GPU0: Σb)</text>
+<text x="1160.0" y="848.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">3·S/4</text>
+<text x="70.0" y="872.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">④–⑥ AG</text>
+<text x="200.0" y="872.0" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Σa Σb Σc Σd</text>
+<text x="520.0" y="872.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">Σ-chunks forwarded around the ring</text>
+<text x="1160.0" y="872.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">6·S/4 = 2·S·(N−1)/N</text>
 <text x="800.0" y="925.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="500" fill="#5f6b7a" text-anchor="middle">Bandwidth-optimal (every link busy both directions, busbw = algbw × 2(N−1)/N) but latency grows linearly: 2(N−1) steps — at N = 1,024 that is 2,046 hops of latency.</text>
 <text x="800.0" y="950.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">NCCL runs many rings in parallel (one or more per NIC/NVLink lane); on a rail-optimized fabric PXN keeps each ring's inter-node hop on one rail.</text>
-<rect x="665" y="360" width="270" height="92" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
-<text x="681.0" y="388.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">Legend</text>
-<path d="M681,416.0 L727,416.0" fill="none" stroke="#76b900" stroke-width="5" stroke-linecap="round" marker-end="url(#arrow-green)"/>
-<text x="741.0" y="422.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">NVLink hop (intra-node)</text>
-<path d="M681,440.0 L727,440.0" fill="none" stroke="#2f6fdb" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
-<text x="741.0" y="446.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">NET/IB hop on rail n</text>
+<rect x="668" y="360" width="264" height="96" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
+<text x="684.0" y="388.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start">Legend</text>
+<path d="M684,416.0 L730,416.0" fill="none" stroke="#76b900" stroke-width="5" stroke-linecap="round" marker-end="url(#arrow-green)"/>
+<text x="744.0" y="422.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">RS step: send + ADD</text>
+<path d="M684,440.0 L730,440.0" fill="none" stroke="#2f6fdb" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow-blue)"/>
+<text x="744.0" y="446.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start">AG step: forward Σ</text>
 </svg>

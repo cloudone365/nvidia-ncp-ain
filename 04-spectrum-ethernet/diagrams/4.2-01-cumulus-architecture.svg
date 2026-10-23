@@ -10,103 +10,132 @@
 <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
 </defs>
 <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
-<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Cumulus Linux architecture: NVUE → Linux kernel / FRR → switchd → Spectrum ASIC</text>
-<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Debian host; nvued renders ifupdown2 and FRR files; the kernel is the control-plane truth; switchd mirrors it into the ASIC via the SDK</text>
-<g><title>Operator / Ansible nv CLI · REST :8765</title><rect x="60" y="170" width="300" height="80" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="210.0" y="204.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Operator / Ansible</text>
-<text x="210.0" y="226.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">nv CLI · REST :8765</text>
+<text x="48" y="72" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">Cumulus Linux architecture: NVUE → Linux kernel / FRR → switchd → Spectrum ASIC</text>
+<text x="48" y="104" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">Debian host; nvued renders ifupdown2 and FRR files; the kernel is the control-plane truth; switchd mirrors it into the ASIC via the SDK</text>
+<g><title>Operator / Ansible</title><rect x="48" y="150" width="300" height="64" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="198.0" y="177.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Operator / Ansible</text>
+<text x="198.0" y="200.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv CLI · REST :8765</text>
 </g>
-<g><title>nvued (NVUE daemon) object tree, revisions</title><rect x="60" y="300" width="300" height="90" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="210.0" y="319.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">nvued (NVUE daemon)</text>
-<text x="210.0" y="341.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">object tree, revisions</text>
-<text x="210.0" y="367.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">pending → applied → startup</text>
-<text x="210.0" y="385.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">/etc/nvue.d/startup.yaml</text>
+<line x1="198" y1="214" x2="198" y2="276" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>step 1</title><circle cx="226" cy="246" r="16" fill="#1f2937"/>
+<text x="226" y="252" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
 </g>
-<line x1="210" y1="250" x2="210" y2="300" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<g><title>Step 1</title><circle cx="240" cy="275" r="16" fill="#1f2937"/><text x="240" y="281" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
-<g><title>/etc/network/interfaces</title><rect x="430" y="290" width="300" height="50" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="580.0" y="308.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">/etc/network/interfaces</text>
-<text x="580.0" y="332.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">rendered for ifupdown2</text>
+<g><title>nvued (NVUE daemon)</title><rect x="48" y="278" width="300" height="116" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="198.0" y="309.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">nvued (NVUE daemon)</text>
+<text x="198.0" y="332.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">object tree, revisions</text>
+<text x="198.0" y="354.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">pending → applied → startup</text>
+<text x="198.0" y="376.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">/etc/nvue.d/startup.yaml</text>
 </g>
-<g><title>/etc/frr/frr.conf</title><rect x="430" y="360" width="300" height="50" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="580.0" y="378.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">/etc/frr/frr.conf</text>
-<text x="580.0" y="402.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">rendered for FRR</text>
+<line x1="348" y1="336" x2="424" y2="298" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<line x1="348" y1="336" x2="424" y2="378" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<line x1="348" y1="336" x2="424" y2="458" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<line x1="724" y1="298" x2="796" y2="233" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<line x1="724" y1="378" x2="796" y2="333" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<line x1="724" y1="458" x2="796" y2="433" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>step 2</title><circle cx="386" cy="262" r="16" fill="#1f2937"/>
+<text x="386" y="268" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
 </g>
-<g><title>/etc/cumulus/acl, qos, …</title><rect x="430" y="430" width="300" height="50" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="580.0" y="448.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">/etc/cumulus/acl, qos, …</text>
-<text x="580.0" y="472.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">rendered for cl-acltool / switchd</text>
+<g><title>/etc/network/interfaces</title><rect x="428" y="268" width="296" height="60" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="576.0" y="293.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">/etc/network/interfaces</text>
+<text x="576.0" y="315.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">rendered for ifupdown2</text>
 </g>
-<line x1="360" y1="330" x2="430" y2="315" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<line x1="360" y1="350" x2="430" y2="385" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<line x1="360" y1="370" x2="430" y2="455" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<g><title>Step 2</title><circle cx="395" cy="300" r="16" fill="#1f2937"/><text x="395" y="306" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
-<g><title>ifupdown2 ifreload -a</title><rect x="800" y="200" width="260" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="930.0" y="229.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">ifupdown2</text>
-<text x="930.0" y="250.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">ifreload -a</text>
+<g><title>/etc/frr/frr.conf</title><rect x="428" y="348" width="296" height="60" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="576.0" y="373.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">/etc/frr/frr.conf</text>
+<text x="576.0" y="395.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">rendered for FRR</text>
 </g>
-<g><title>FRR bgpd · zebra · staticd</title><rect x="800" y="300" width="260" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="930.0" y="329.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">FRR</text>
-<text x="930.0" y="350.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">bgpd · zebra · staticd</text>
+<g><title>/etc/cumulus/acl, qos, …</title><rect x="428" y="428" width="296" height="60" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="576.0" y="453.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">/etc/cumulus/acl, qos, …</text>
+<text x="576.0" y="475.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">rendered for cl-acltool / switchd</text>
 </g>
-<g><title>cl-acltool / qos iptables, ebtables</title><rect x="800" y="400" width="260" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="930.0" y="429.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">cl-acltool / qos</text>
-<text x="930.0" y="450.3" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">iptables, ebtables</text>
+<g><title>ifupdown2</title><rect x="800" y="200" width="240" height="66" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="920.0" y="228.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">ifupdown2</text>
+<text x="920.0" y="250.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ifreload -a</text>
 </g>
-<line x1="730" y1="315" x2="800" y2="235" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<line x1="730" y1="385" x2="800" y2="335" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<line x1="730" y1="455" x2="800" y2="435" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<g><title>Linux kernel (control-plane truth) </title><rect x="1130" y="200" width="410" height="270" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="1335.0" y="291.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Linux kernel (control-plane truth)</text>
-<text x="1335.0" y="339.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">netdevs: swpN, swpNsM, eth0, lo, vlanN, bondN, br_default</text>
-<text x="1335.0" y="357.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">bridge FDB · neighbor table (ARP/ND)</text>
-<text x="1335.0" y="375.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">RIB/FIB per VRF (from zebra) · netfilter</text>
-<text x="1335.0" y="393.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">observe: ip link / bridge fdb / ip route</text>
+<g><title>FRR</title><rect x="800" y="300" width="240" height="66" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="920.0" y="328.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">FRR</text>
+<text x="920.0" y="350.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">bgpd · zebra · staticd</text>
 </g>
-<line x1="1060" y1="235" x2="1130" y2="235" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1095.0" y="225.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">link/addr</text>
-<line x1="1060" y1="335" x2="1130" y2="335" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1095.0" y="325.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">routes</text>
-<line x1="1060" y1="435" x2="1130" y2="435" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1095.0" y="425.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">rules</text>
-<g><title>Step 3</title><circle cx="1095" cy="285" r="16" fill="#1f2937"/><text x="1095" y="291" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
-<g><title>switchd watches kernel state via netlink</title><rect x="1130" y="540" width="410" height="90" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="1335.0" y="568.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">switchd</text>
-<text x="1335.0" y="590.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">watches kernel state via netlink</text>
-<text x="1335.0" y="616.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">programs the ASIC through the NVIDIA SDK</text>
+<g><title>cl-acltool / qos</title><rect x="800" y="400" width="240" height="66" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="920.0" y="428.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">cl-acltool / qos</text>
+<text x="920.0" y="450.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">iptables, ebtables</text>
 </g>
-<line x1="1335" y1="470" x2="1335" y2="540" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1425.0" y="505.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">netlink events</text>
-<g><title>Step 4</title><circle cx="1290" cy="505" r="16" fill="#1f2937"/><text x="1290" y="511" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
-<g><title>Spectrum ASIC (Spectrum-2/3/4) </title><rect x="1130" y="690" width="410" height="110" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="1335.0" y="710.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Spectrum ASIC (Spectrum-2/3/4)</text>
-<text x="1335.0" y="758.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">L2 FDB · LPM routes · host table · ECMP groups</text>
-<text x="1335.0" y="776.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">ACL TCAM · VXLAN · QoS/PFC/ECN · counters</text>
-<text x="1335.0" y="794.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">observe: cl-resource-query, WJH</text>
+<line x1="1040" y1="233" x2="1126" y2="233" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1083" y="222" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">link/addr</text>
+<line x1="1040" y1="333" x2="1126" y2="333" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1083" y="322" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">routes</text>
+<line x1="1040" y1="433" x2="1126" y2="433" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1083" y="422" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">rules</text>
+<g><title>step 3</title><circle cx="1083" cy="283" r="16" fill="#1f2937"/>
+<text x="1083" y="289" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
 </g>
-<line x1="1335" y1="630" x2="1335" y2="690" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<text x="1405.0" y="660.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SDK calls</text>
-<g><title>Step 5</title><circle cx="1290" cy="660" r="16" fill="#1f2937"/><text x="1290" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text></g>
-<g><title>Forwarding paths</title><rect x="60" y="540" width="1000" height="260" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
-<text x="74" y="568" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">Forwarding paths</text>
-<g><title>Hardware path (steady state) ASIC entry matched → forwarded at line rate</title><rect x="90" y="600" width="420" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="300.0" y="629.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">Hardware path (steady state)</text>
-<text x="300.0" y="649.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">ASIC entry matched → forwarded at line rate</text>
+<g><title>Linux kernel (control-plane truth)</title><rect x="1130" y="190" width="422" height="290" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1341.0" y="287.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Linux kernel (control-plane truth)</text>
+<text x="1341.0" y="310.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">netdevs: swpN, swpNsM, eth0, lo,</text>
+<text x="1341.0" y="332.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">vlanN, bondN, br_default</text>
+<text x="1341.0" y="354.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">bridge FDB · neighbor table (ARP/ND)</text>
+<text x="1341.0" y="376.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">RIB/FIB per VRF (from zebra) · netfilter</text>
+<text x="1341.0" y="398.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">observe: ip link / bridge fdb / ip route</text>
 </g>
-<g><title>CPU punt path (exception) BGP, SSH, LLDP, ARP to the switch, ASIC misses</title><rect x="90" y="700" width="420" height="70" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
-<text x="300.0" y="729.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">CPU punt path (exception)</text>
-<text x="300.0" y="749.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">BGP, SSH, LLDP, ARP to the switch, ASIC misses</text>
+<line x1="1341" y1="480" x2="1341" y2="536" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<g><title>step 4</title><circle cx="1310" cy="508" r="16" fill="#1f2937"/>
+<text x="1310" y="514" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
 </g>
-<text x="540" y="625" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Anything with a matching ASIC entry never touches the CPU.</text>
-<text x="540" y="651" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Punted traffic is rate-limited (control-plane policer):</text>
-<text x="540" y="677" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">tens of thousands of pps, not terabits.</text>
-<text x="540" y="703" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">A route in `ip route` but not in the ASIC (table full)</text>
-<text x="540" y="729" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">is software-forwarded → high CPU, slow traffic.</text>
-<g><title>Legend</title><rect x="48" y="820" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
-<line x1="62" y1="846" x2="122" y2="846" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="136" y="852" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
-<line x1="62" y1="876" x2="122" y2="876" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<text x="136" y="882" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
+<text x="1362" y="514" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">netlink events</text>
+<g><title>switchd</title><rect x="1130" y="540" width="422" height="82" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1341.0" y="566.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">switchd</text>
+<text x="1341.0" y="589.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">watches kernel state via netlink</text>
+<text x="1341.0" y="611.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">programs the ASIC through the NVIDIA SDK</text>
 </g>
-<text x="520" y="845" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">1 nv set → pending revision   2 nv config apply renders files   3 daemons push state into the kernel</text>
-<text x="520" y="869" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">4 switchd sees netlink changes   5 SDK programs tables; nv show reads operational state back</text>
+<line x1="1341" y1="622" x2="1341" y2="676" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<g><title>step 5</title><circle cx="1310" cy="650" r="16" fill="#1f2937"/>
+<text x="1310" y="656" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+</g>
+<text x="1362" y="656" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">SDK calls</text>
+<g><title>Spectrum ASIC (Spectrum-2/3/4)</title><rect x="1130" y="680" width="422" height="112" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1341.0" y="710.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Spectrum ASIC (Spectrum-2/3/4)</text>
+<text x="1341.0" y="733.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">L2 FDB · LPM routes · host table · ECMP groups</text>
+<text x="1341.0" y="755.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ACL TCAM · VXLAN · QoS/PFC/ECN · counters</text>
+<text x="1341.0" y="777.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">observe: cl-resource-query, WJH</text>
+</g>
+<rect x="48" y="512" width="1050" height="280" rx="12" fill="none" stroke="#6b7280" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="66" y="544" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">Forwarding paths</text>
+<g><title>Hardware path (steady state)</title><rect x="70" y="566" width="430" height="80" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="285.0" y="601.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">Hardware path (steady state)</text>
+<text x="285.0" y="623.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">ASIC entry matched → forwarded at line rate</text>
+</g>
+<g><title>CPU punt path (exception)</title><rect x="70" y="674" width="430" height="80" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="285.0" y="709.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">CPU punt path (exception)</text>
+<text x="285.0" y="731.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">BGP, SSH, LLDP, ARP to the switch, ASIC misses</text>
+</g>
+<text x="526" y="594" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Anything with a matching ASIC entry never touches the CPU.</text>
+<text x="526" y="624" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Punted traffic is rate-limited (control-plane policer):</text>
+<text x="526" y="654" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">tens of thousands of pps, not terabits.</text>
+<text x="526" y="684" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">A route in `ip route` but not in the ASIC (table full)</text>
+<text x="526" y="714" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">is software-forwarded → high CPU, slow traffic.</text>
+<g><title>Legend</title><rect x="48" y="806" width="450" height="90" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="62" y1="832" x2="118" y2="832" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="132" y="838" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<line x1="62" y1="862" x2="118" y2="862" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="132" y="868" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
+</g>
+<g><title>step 1</title><circle cx="530" cy="830" r="16" fill="#1f2937"/>
+<text x="530" y="836" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+</g>
+<text x="556" y="836" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">nv set → pending revision</text>
+<g><title>step 2</title><circle cx="800" cy="830" r="16" fill="#1f2937"/>
+<text x="800" y="836" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+</g>
+<text x="826" y="836" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">nv config apply renders files</text>
+<g><title>step 3</title><circle cx="1100" cy="830" r="16" fill="#1f2937"/>
+<text x="1100" y="836" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+</g>
+<text x="1126" y="836" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">daemons push state into the kernel</text>
+<g><title>step 4</title><circle cx="530" cy="872" r="16" fill="#1f2937"/>
+<text x="530" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+</g>
+<text x="556" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">switchd sees netlink changes</text>
+<g><title>step 5</title><circle cx="800" cy="872" r="16" fill="#1f2937"/>
+<text x="800" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+</g>
+<text x="826" y="878" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">SDK programs tables; nv show reads operational state back</text>
 </svg>

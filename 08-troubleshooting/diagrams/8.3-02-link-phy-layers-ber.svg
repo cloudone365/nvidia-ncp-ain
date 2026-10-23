@@ -19,6 +19,10 @@
 <text x="86" y="592" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">eye height / phase margin (-e)</text>
 <text x="86" y="610" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">raw BER counted per lane</text>
 </g>
+<line x1="1300" y1="560" x2="350" y2="560" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
+<line x1="1300" y1="578" x2="350" y2="578" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
+<line x1="1300" y1="596" x2="350" y2="596" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
+<line x1="1300" y1="614" x2="350" y2="614" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
 <g><title>OSFP module</title><rect x="430" y="520" width="220" height="120" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
 <text x="540.0" y="546" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle" xml:space="preserve">OSFP module</text>
 <text x="540.0" y="574" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="middle" xml:space="preserve">Rx power per lane [dBm]</text>
@@ -55,21 +59,17 @@
 <text x="1336" y="574" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">PAM4 drivers</text>
 <text x="1336" y="592" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">pre-emphasis</text>
 </g>
-<line x1="1300" y1="560" x2="350" y2="560" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
-<line x1="1300" y1="578" x2="350" y2="578" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
-<line x1="1300" y1="596" x2="350" y2="596" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
-<line x1="1300" y1="614" x2="350" y2="614" stroke="#2f6fdb" stroke-width="2" marker-end="url(#arrow-blue)" fill="none"/>
 <text x="660" y="505" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#2f6fdb" text-anchor="start" xml:space="preserve">4 lanes  (link Width 4x; two lanes lit = Width 2x = 'Could be 4X')</text>
 <g><title>Error source</title><rect x="430" y="690" width="280" height="100" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
-<text x="446" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Dirty / scratched ferrule, bent fiber:</text>
-<text x="446" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ONE lane low Rx power, one lane raw</text>
-<text x="446" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">BER 100-1000x its siblings</text>
+<text x="446" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Hot module (near [-5..80] C ceiling):</text>
+<text x="446" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ALL lanes drift; BER rises with load</text>
+<text x="446" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">and fixes itself at night</text>
 </g>
 <line x1="550" y1="690" x2="550" y2="640" stroke="#d93025" stroke-width="2" marker-end="url(#arrow-red)" fill="none"/>
 <g><title>Error source</title><rect x="730" y="690" width="280" height="100" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
-<text x="746" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Hot module (near [-5..80] C ceiling):</text>
-<text x="746" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ALL lanes drift; BER rises with load</text>
-<text x="746" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">and fixes itself at night</text>
+<text x="746" y="712" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Dirty / scratched ferrule, bent fiber:</text>
+<text x="746" y="730" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ONE lane low Rx power, one lane raw</text>
+<text x="746" y="748" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">BER 100-1000x its siblings</text>
 </g>
 <line x1="850" y1="690" x2="850" y2="640" stroke="#d93025" stroke-width="2" marker-end="url(#arrow-red)" fill="none"/>
 <g><title>Error source</title><rect x="1030" y="690" width="280" height="100" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
@@ -86,14 +86,15 @@
 <line x1="168" y1="690" x2="168" y2="640" stroke="#d93025" stroke-width="2" marker-end="url(#arrow-red)" fill="none"/>
 <g><title>Reading the numbers (mlxlink -c)</title><rect x="430" y="150" width="820" height="240" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
 <text x="446" y="178" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">Reading the numbers (mlxlink -c)</text>
-<text x="446" y="208" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Raw Physical BER per lane   = errors / bits BEFORE FEC.  2E-10 .. 1E-8 is normal PAM4.</text>
-<text x="446" y="226" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">                              FEC correction budget ends around 1E-6 .. 1E-5 (worse = codewords with 16+ bad symbols).</text>
-<text x="446" y="244" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Effective Physical BER      = errors AFTER FEC. Target 1E-12 (Ethernet spec floor) to 1E-15 (what a healthy NDR</text>
-<text x="446" y="262" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">                              link shows). '15E-255' = none observed in the window.</text>
-<text x="446" y="280" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Effective Physical Errors   = count of uncorrectable codewords; must stay 0 / flat. These become Symbol Errors</text>
-<text x="446" y="298" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">                              in the link layer = perfquery SymbolErrorCounter = retransmits = NCCL 'error 12'.</text>
-<text x="446" y="316" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">--rx_fec_histogram          = codewords binned by corrected symbols 0..15; bin 15 = uncorrectable.</text>
-<text x="446" y="334" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">At 400 Gb/s a BER of 1E-12 is ~1 bit error every 2.5 s; 1E-15 is one every ~40 min. Rate over a window, not totals.</text>
+<text x="446" y="206" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Raw Physical BER (per lane) = errors / bits BEFORE FEC. 2E-10 .. 1E-8 is normal on PAM4.</text>
+<text x="446" y="225" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">      FEC budget ends around 1E-6 .. 1E-5 pre-FEC (worse = codewords with 16+ bad symbols).</text>
+<text x="446" y="244" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Effective Physical BER = errors AFTER FEC. Targets: 1E-12 (Ethernet spec floor) to 1E-15 (healthy NDR).</text>
+<text x="446" y="263" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">      '15E-255' means none observed in the window.</text>
+<text x="446" y="282" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Effective Physical Errors = uncorrectable codewords; must stay 0 / flat. In the link layer they</text>
+<text x="446" y="301" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">      surface as Symbol Errors = perfquery SymbolErrorCounter = retransmits = NCCL 'error 12'.</text>
+<text x="446" y="320" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">--rx_fec_histogram = codewords binned by corrected symbols 0..15; high bins = FEC near its limit.</text>
+<text x="446" y="339" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">At 400 Gb/s, BER 1E-12 is ~1 bit error every 2.5 s; 1E-15 is one every ~40 min.</text>
+<text x="446" y="358" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">      Judge a rate over a window, never a total since boot.</text>
 </g>
 <g><title>Legend</title><rect x="48" y="810" width="400" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
 <line x1="64" y1="836" x2="118" y2="836" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)"/>

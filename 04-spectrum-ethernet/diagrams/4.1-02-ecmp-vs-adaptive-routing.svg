@@ -10,98 +10,123 @@
 <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
 </defs>
 <rect x="0" y="0" width="1600" height="1000" fill="#ffffff"/>
-<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">ECMP hash collision vs adaptive routing with Direct Data Placement</text>
-<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">Left: two elephant flows hash to one spine link. Right: per-packet spraying, SuperNIC DDP writes each packet to its final address</text>
-<g><title>A — Flow-based ECMP (any switch, any NIC)</title><rect x="60" y="140" width="720" height="560" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
-<text x="74" y="168" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">A — Flow-based ECMP (any switch, any NIC)</text>
+<text x="48" y="72" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">ECMP hash collision vs adaptive routing with Direct Data Placement</text>
+<text x="48" y="104" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">Left: two elephant flows hash to one spine link. Right: per-packet spraying; SuperNIC DDP writes each packet to its final address</text>
+<rect x="60" y="140" width="720" height="560" rx="12" fill="none" stroke="#6b7280" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="76" y="172" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">A — Flow-based ECMP (any switch, any NIC)</text>
+<rect x="820" y="140" width="720" height="560" rx="12" fill="none" stroke="#6b7280" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="836" y="172" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">B — Spectrum-X adaptive routing + SuperNIC DDP</text>
+<line x1="200" y1="246" x2="290" y2="420" stroke="#6b7280" stroke-width="2.5"/>
+<line x1="600" y1="246" x2="530" y2="420" stroke="#6b7280" stroke-width="2.5"/>
+<line x1="385" y1="420" x2="390" y2="248" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<line x1="415" y1="420" x2="410" y2="248" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
 <g><title>spine01</title><rect x="120" y="190" width="160" height="56" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="200.0" y="210.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">spine01</text>
-<text x="200.0" y="234.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
+<text x="200.0" y="213.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">spine01</text>
+<text x="200.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
 </g>
 <g><title>spine02</title><rect x="320" y="190" width="160" height="56" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="400.0" y="210.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">spine02</text>
-<text x="400.0" y="234.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
+<text x="400.0" y="213.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">spine02</text>
+<text x="400.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
 </g>
 <g><title>spine03</title><rect x="520" y="190" width="160" height="56" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="600.0" y="210.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">spine03</text>
-<text x="600.0" y="234.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
+<text x="600.0" y="213.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">spine03</text>
+<text x="600.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
 </g>
-<g><title>leaf01</title><rect x="300" y="420" width="200" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="400.0" y="446.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
-<text x="400.0" y="472.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">hash(5-tuple) → one uplink per flow</text>
+<g><title>2 flows, 1 link</title><rect x="428" y="270" width="142" height="34" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
+<text x="499.0" y="292.9" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">2 flows, 1 link</text>
 </g>
-<line x1="400" y1="420" x2="200" y2="246" stroke="#6b7280" stroke-width="2.5"/>
-<line x1="400" y1="420" x2="600" y2="246" stroke="#6b7280" stroke-width="2.5"/>
-<line x1="380" y1="420" x2="390" y2="246" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<line x1="420" y1="420" x2="410" y2="246" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<g><title>2 flows on 1 link</title><rect x="330" y="270" width="140" height="40" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5"/>
-<text x="400.0" y="294.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">2 flows on 1 link</text>
+<text x="226" y="334" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="end">idle</text>
+<text x="582" y="334" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">idle</text>
+<line x1="220" y1="580" x2="370" y2="492" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<line x1="580" y1="580" x2="430" y2="492" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<g><title>leaf01</title><rect x="250" y="420" width="300" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="400.0" y="450.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
+<text x="400.0" y="473.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">hash(5-tuple) → one uplink per flow</text>
 </g>
-<text x="200" y="300" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">idle</text>
-<text x="600" y="300" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">idle</text>
-<g><title>GPU 3, node 17</title><rect x="120" y="580" width="200" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
-<text x="220.0" y="603.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">GPU 3, node 17</text>
-<text x="220.0" y="627.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">ConnectX / any NIC</text>
+<text x="84" y="522" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">flow A</text>
+<text x="84" y="544" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">(multi-GB RDMA write)</text>
+<text x="520" y="530" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">flow B</text>
+<g><title>GPU 3, node 17</title><rect x="110" y="580" width="220" height="62" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="220.0" y="606.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">GPU 3, node 17</text>
+<text x="220.0" y="628.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ConnectX / any NIC</text>
 </g>
-<g><title>GPU 3, node 22</title><rect x="480" y="580" width="200" height="60" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
-<text x="580.0" y="603.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">GPU 3, node 22</text>
-<text x="580.0" y="627.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">ConnectX / any NIC</text>
+<g><title>GPU 3, node 22</title><rect x="470" y="580" width="220" height="62" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="580.0" y="606.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">GPU 3, node 22</text>
+<text x="580.0" y="628.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">ConnectX / any NIC</text>
 </g>
-<line x1="220" y1="580" x2="360" y2="484" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<text x="170.0" y="522.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">flow A (multi-GB RDMA write)</text>
-<line x1="580" y1="580" x2="440" y2="484" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<text x="570.0" y="522.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">flow B</text>
-<text x="420" y="672" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#d93025" text-anchor="middle">Result: 50–60% of paper bandwidth; one slow collective = slow job (tail latency)</text>
-<g><title>B — Spectrum-X adaptive routing + SuperNIC DDP</title><rect x="820" y="140" width="720" height="560" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2" stroke-dasharray="10 6"/></g>
-<text x="834" y="168" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">B — Spectrum-X adaptive routing + SuperNIC DDP</text>
+<text x="420" y="678" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#d93025" text-anchor="middle">Result: 50–60% of paper bandwidth; one slow collective = slow job (tail latency)</text>
+<line x1="1160" y1="420" x2="960" y2="248" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<line x1="1160" y1="420" x2="1160" y2="248" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<line x1="1160" y1="420" x2="1360" y2="248" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
 <g><title>spine01</title><rect x="880" y="190" width="160" height="56" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="960.0" y="210.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">spine01</text>
-<text x="960.0" y="234.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
+<text x="960.0" y="213.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">spine01</text>
+<text x="960.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
 </g>
 <g><title>spine02</title><rect x="1080" y="190" width="160" height="56" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="1160.0" y="210.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">spine02</text>
-<text x="1160.0" y="234.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
+<text x="1160.0" y="213.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">spine02</text>
+<text x="1160.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
 </g>
 <g><title>spine03</title><rect x="1280" y="190" width="160" height="56" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="1360.0" y="210.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">spine03</text>
-<text x="1360.0" y="234.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
+<text x="1360.0" y="213.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">spine03</text>
+<text x="1360.0" y="235.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">SN5600</text>
 </g>
-<g><title>leaf01</title><rect x="1060" y="420" width="200" height="64" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="1160.0" y="446.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
-<text x="1160.0" y="472.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">per-packet: least-loaded egress</text>
+<g><title>step 2</title><circle cx="1046" cy="334" r="16" fill="#1f2937"/>
+<text x="1046" y="340" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
 </g>
-<line x1="1120" y1="420" x2="960" y2="246" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<line x1="1160" y1="420" x2="1160" y2="246" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<line x1="1200" y1="420" x2="1360" y2="246" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<g><title>Step 2</title><circle cx="1030" cy="340" r="16" fill="#1f2937"/><text x="1030" y="346" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
-<g><title>Step 2</title><circle cx="1160" cy="330" r="16" fill="#1f2937"/><text x="1160" y="336" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
-<g><title>Step 2</title><circle cx="1290" cy="340" r="16" fill="#1f2937"/><text x="1290" y="346" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
-<g><title>BlueField-3 SuperNIC</title><rect x="860" y="580" width="250" height="60" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
-<text x="985.0" y="603.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">BlueField-3 SuperNIC</text>
-<text x="985.0" y="627.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">sender: packets carry VA offset</text>
+<g><title>step 2</title><circle cx="1182" cy="334" r="16" fill="#1f2937"/>
+<text x="1182" y="340" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
 </g>
-<g><title>BlueField-3 SuperNIC</title><rect x="1230" y="580" width="260" height="60" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
-<text x="1360.0" y="603.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="middle">BlueField-3 SuperNIC</text>
-<text x="1360.0" y="627.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">receiver: DDP places out-of-order</text>
+<g><title>step 2</title><circle cx="1274" cy="334" r="16" fill="#1f2937"/>
+<text x="1274" y="340" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
 </g>
-<line x1="990" y1="580" x2="1110" y2="484" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<g><title>Step 1</title><circle cx="1030" cy="530" r="16" fill="#1f2937"/><text x="1030" y="536" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
-<line x1="1210" y1="484" x2="1330" y2="580" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<g><title>Step 3</title><circle cx="1290" cy="530" r="16" fill="#1f2937"/><text x="1290" y="536" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
-<g><title>Step 4</title><circle cx="1510" cy="610" r="16" fill="#1f2937"/><text x="1510" y="616" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
-<text x="1180" y="672" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1a9c8a" text-anchor="middle">Result: all uplinks busy, no reorder buffer, no go-back-N</text>
-<g><title>Steps (right-hand side)</title><rect x="60" y="730" width="1480" height="220" rx="12" fill="#ffffff" fill-opacity="0.55" stroke="#6b7280" stroke-width="2"/></g>
-<text x="74" y="758" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">Steps (right-hand side)</text>
-<text x="90" y="790" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">1  SuperNIC sends a RoCE message as many packets; each carries the virtual address it belongs to (RDMA write semantics).</text>
-<text x="90" y="820" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">2  leaf01 forwards EVERY packet independently to the least-loaded uplink (queue depth + link-utilization-threshold, default 70%).</text>
-<text x="90" y="850" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">3  Packets of one flow arrive at the far leaf over different spines, out of order; a classic NIC would treat this as loss.</text>
-<text x="90" y="880" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">4  The receiving SuperNIC's DDP engine writes each packet straight to its offset in GPU/host memory and completes once all are present.</text>
-<g><title>Legend</title><rect x="1180" y="745" width="360" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
-<line x1="1194" y1="771" x2="1254" y2="771" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
-<text x="1268" y="777" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
-<line x1="1194" y1="801" x2="1254" y2="801" stroke="#6b7280" stroke-width="2.5" marker-end="url(#arrow-gray)"/>
-<text x="1268" y="807" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Physical link</text>
-<rect x="1194" y="821" width="60" height="20" rx="4" fill="#ffd9d9" stroke="#d93025" stroke-width="2"/>
-<text x="1268" y="837" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Collision / drop</text>
+<line x1="990" y1="580" x2="1110" y2="492" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<line x1="1210" y1="492" x2="1330" y2="578" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<g><title>leaf01</title><rect x="1010" y="420" width="300" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="1160.0" y="450.4" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">leaf01</text>
+<text x="1160.0" y="473.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">per-packet: least-loaded egress</text>
+</g>
+<g><title>step 1</title><circle cx="1030" cy="528" r="16" fill="#1f2937"/>
+<text x="1030" y="534" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+</g>
+<g><title>step 3</title><circle cx="1290" cy="528" r="16" fill="#1f2937"/>
+<text x="1290" y="534" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+</g>
+<g><title>BlueField-3 SuperNIC</title><rect x="850" y="580" width="280" height="62" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="990.0" y="606.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">BlueField-3 SuperNIC</text>
+<text x="990.0" y="628.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">sender: packets carry VA offset</text>
+</g>
+<g><title>BlueField-3 SuperNIC</title><rect x="1200" y="580" width="280" height="62" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
+<text x="1340.0" y="606.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="middle">BlueField-3 SuperNIC</text>
+<text x="1340.0" y="628.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">receiver: DDP places out-of-order</text>
+</g>
+<g><title>step 4</title><circle cx="1508" cy="611" r="16" fill="#1f2937"/>
+<text x="1508" y="617" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+</g>
+<text x="1180" y="678" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1a9c8a" text-anchor="middle">Result: all uplinks busy, no reorder buffer, no go-back-N</text>
+<g><title>Steps</title><rect x="60" y="724" width="1100" height="232" rx="12" fill="#ffffff" stroke="#6b7280" stroke-width="2"/></g>
+<text x="78" y="756" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#5f6b7a" text-anchor="start">Steps (right-hand side)</text>
+<g><title>step 1</title><circle cx="98" cy="794" r="16" fill="#1f2937"/>
+<text x="98" y="800" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+</g>
+<text x="126" y="800" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">SuperNIC sends a RoCE message as many packets; each carries the virtual address it belongs to.</text>
+<g><title>step 2</title><circle cx="98" cy="838" r="16" fill="#1f2937"/>
+<text x="98" y="844" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+</g>
+<text x="126" y="844" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">leaf01 forwards EVERY packet to the least-loaded uplink (queue depth + utilization threshold, default 70%).</text>
+<g><title>step 3</title><circle cx="98" cy="882" r="16" fill="#1f2937"/>
+<text x="98" y="888" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+</g>
+<text x="126" y="888" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Packets of one flow reach the far leaf over different spines, out of order; a classic NIC calls this loss.</text>
+<g><title>step 4</title><circle cx="98" cy="926" r="16" fill="#1f2937"/>
+<text x="98" y="932" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+</g>
+<text x="126" y="932" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">The receiving SuperNIC's DDP engine writes each packet to its offset in GPU/host memory; done when all arrive.</text>
+<g><title>Legend</title><rect x="1180" y="724" width="360" height="120" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="1194" y1="750" x2="1250" y2="750" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
+<text x="1264" y="756" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (RoCE / Ethernet)</text>
+<line x1="1194" y1="780" x2="1250" y2="780" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow-gray)"/>
+<text x="1264" y="786" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Physical link</text>
+<rect x="1194" y="799" width="56" height="20" rx="4" fill="#ffd9d9" stroke="#d93025" stroke-width="2"/>
+<text x="1264" y="816" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Collision / hot link</text>
 </g>
 </svg>

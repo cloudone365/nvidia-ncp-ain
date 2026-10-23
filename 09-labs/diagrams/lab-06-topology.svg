@@ -11,7 +11,8 @@
 <text x="86" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">CRDs</text>
 <text x="86" y="394" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">nicclusterpolicies.mellanox.com</text>
 <text x="86" y="412" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">macvlannetworks / hostdevicenetworks /</text>
-<text x="86" y="430" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ipoibnetworks.mellanox.com; NAD (Multus)</text>
+<text x="86" y="430" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ipoibnetworks.mellanox.com</text>
+<text x="86" y="448" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">+ NAD (Multus)</text>
 </g>
 <g><title>NicClusterPolicy  nic-cluster-policy  (state: ready)</title><rect x="520" y="150" width="1030" height="120" rx="10" fill="#e9ddff" stroke="#7a3fd1" stroke-width="2.5"/>
 <text x="536" y="177" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">NicClusterPolicy  nic-cluster-policy  (state: ready)</text>
@@ -60,7 +61,7 @@
 <text x="1096" y="645" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">pod perftest-client</text>
 <text x="1096" y="672" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">limits: rdma/rdma_shared_device_a: 1</text>
 <text x="1096" y="690" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">annotation k8s.v1.cni.cncf.io/networks: rdma-net</text>
-<text x="1096" y="708" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">net1 (macvlan on the RDMA NIC); ib_write_bw &lt;server net1 ip&gt;</text>
+<text x="1096" y="708" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">net1 (macvlan); ib_write_bw &lt;server-ip&gt;</text>
 </g>
 <path d="M1305,270 L1305,320" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" fill="none"/>
 <line x1="1010" y1="680" x2="1060" y2="680" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)" marker-start="url(#arrow-blue)" fill="none"/>

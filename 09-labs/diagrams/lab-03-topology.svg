@@ -28,19 +28,20 @@
 </g>
 <g><title>perftest clients (+ hostA IP)</title><rect x="1010" y="370" width="500" height="100" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
 <text x="1026" y="396" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">perftest clients (+ hostA IP)</text>
-<text x="1026" y="424" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ib_write_bw -d mlx5_0 -i 1 -F --report_gbits -a &lt;hostA-ip&gt;</text>
-<text x="1026" y="442" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ib_write_lat -d mlx5_0 -i 1 -F -s 8 -n 20000 &lt;hostA-ip&gt;</text>
+<text x="1026" y="424" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ib_write_bw -d mlx5_0 -i 1 -F --report_gbits -a &lt;hostA&gt;</text>
+<text x="1026" y="442" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">ib_write_lat -d mlx5_0 -i 1 -F -s 8 -n 20000 &lt;hostA&gt;</text>
 </g>
-<g><title>GPU (optional)</title><rect x="1010" y="490" width="500" height="90" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<g><title>GPU (optional)</title><rect x="1010" y="490" width="500" height="96" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
 <text x="1026" y="516" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">GPU (optional)</text>
-<text x="1026" y="544" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mpirun -np 16 -H hostA:8,hostB:8 ./all_reduce_perf -b 8 -e 8G -f 2 -g 1</text>
-<text x="1026" y="562" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">NCCL_DEBUG=INFO, NCCL_IB_HCA, NCCL_IB_GID_INDEX / NCCL_IB_TC (RoCE)</text>
+<text x="1026" y="538" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">mpirun -np 16 -H hostA:8,hostB:8 \</text>
+<text x="1026" y="555" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">  ./all_reduce_perf -b 8 -e 8G -f 2 -g 1</text>
+<text x="1026" y="572" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">NCCL_DEBUG=INFO, NCCL_IB_HCA, NCCL_IB_TC (RoCE)</text>
 </g>
 <line x1="620" y1="300" x2="980" y2="300" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)" marker-start="url(#arrow-gray)" fill="none"/>
 <text x="800" y="290" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" xml:space="preserve">TCP 18515: QP / GID / rkey exchange</text>
 <line x1="980" y1="420" x2="620" y2="420" stroke="#2f6fdb" stroke-width="4" marker-end="url(#arrow-blue)" marker-start="url(#arrow-blue)" fill="none"/>
-<text x="800" y="400" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#2f6fdb" text-anchor="middle" xml:space="preserve">RDMA WRITE / READ / SEND traffic (IB, or RoCEv2 = UDP 4791)</text>
-<text x="800" y="460" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" xml:space="preserve">back to back, or through a Quantum / Spectrum switch</text>
+<text x="800" y="384" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#2f6fdb" text-anchor="middle" xml:space="preserve">RDMA WRITE / READ / SEND traffic</text><text x="800" y="402" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#2f6fdb" text-anchor="middle" xml:space="preserve">(IB, or RoCEv2 = UDP 4791)</text>
+<text x="800" y="448" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" xml:space="preserve">back to back, or through</text><text x="800" y="466" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle" xml:space="preserve">a Quantum / Spectrum switch</text>
 <g><title>What to record</title><rect x="60" y="640" width="1090" height="200" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
 <text x="76" y="667" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start" xml:space="preserve">What to record</text>
 <text x="76" y="697" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Task 1  message size at which BW reaches ~95% of line rate; small-message MsgRate (Mpps)</text>

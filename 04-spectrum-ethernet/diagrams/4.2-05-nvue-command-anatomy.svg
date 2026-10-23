@@ -10,46 +10,50 @@
 <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
 </defs>
 <rect x="0" y="0" width="1600" height="700" fill="#ffffff"/>
-<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">Anatomy of an NVUE command: object → identifier → attribute path → value</text>
-<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">The CLI tree is the YAML tree is the REST URL tree; nv show &lt;path&gt; reads any subtree, nv unset &lt;path&gt; removes it</text>
-<g><title>nv set</title><rect x="120" y="200" width="150" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="195.0" y="241.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#1f2937" text-anchor="middle">nv set</text>
+<text x="48" y="72" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">Anatomy of an NVUE command: object → identifier → attribute path → value</text>
+<text x="48" y="104" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">The CLI tree is the YAML tree is the REST URL tree; nv show &lt;path&gt; reads any subtree, nv unset &lt;path&gt; removes it</text>
+<g><title>nv set</title><rect x="100" y="160" width="160" height="70" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="180.0" y="204.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#1f2937" text-anchor="middle">nv set</text>
 </g>
-<text x="195.0" y="310" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">verb</text>
-<g><title>interface</title><rect x="290" y="200" width="200" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="390.0" y="241.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#1f2937" text-anchor="middle">interface</text>
+<text x="180.0" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">verb</text>
+<g><title>interface</title><rect x="300" y="160" width="200" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="400.0" y="204.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#1f2937" text-anchor="middle">interface</text>
 </g>
-<text x="390.0" y="310" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">object (top-level tree)</text>
-<g><title>swp1</title><rect x="510" y="200" width="150" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="585.0" y="241.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#1f2937" text-anchor="middle">swp1</text>
+<text x="400.0" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">object</text>
+<text x="400.0" y="284" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">(top-level tree)</text>
+<g><title>swp1</title><rect x="540" y="160" width="200" height="70" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
+<text x="640.0" y="204.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#1f2937" text-anchor="middle">swp1</text>
 </g>
-<text x="585.0" y="310" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">identifier (ranges ok: swp1-4,swp10)</text>
-<g><title>link mtu</title><rect x="680" y="200" width="220" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="790.0" y="241.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#1f2937" text-anchor="middle">link mtu</text>
+<text x="640.0" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">identifier</text>
+<text x="640.0" y="284" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">(ranges: swp1-4,swp10)</text>
+<g><title>link mtu</title><rect x="780" y="160" width="220" height="70" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
+<text x="890.0" y="204.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#1f2937" text-anchor="middle">link mtu</text>
 </g>
-<text x="790.0" y="310" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">attribute path</text>
-<g><title>9216</title><rect x="920" y="200" width="150" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
-<text x="995.0" y="241.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#1f2937" text-anchor="middle">9216</text>
+<text x="890.0" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">attribute path</text>
+<g><title>9216</title><rect x="1040" y="160" width="160" height="70" rx="10" fill="#e4f1cc" stroke="#76b900" stroke-width="2.5"/>
+<text x="1120.0" y="204.5" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#1f2937" text-anchor="middle">9216</text>
 </g>
-<text x="995.0" y="310" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">value</text>
-<text x="1100" y="245" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="400" fill="#5f6b7a" text-anchor="start">→ pending revision</text>
-<g><title>Same path, three surfaces</title><rect x="120" y="380" width="470" height="180" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
-<text x="355.0" y="444.7" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Same path, three surfaces</text>
-<text x="355.0" y="470.7" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">CLI:   nv show interface swp1 link mtu</text>
-<text x="355.0" y="489.7" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">YAML:  interface: {swp1: {link: {mtu: 9216}}}</text>
-<text x="355.0" y="508.7" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">REST:  PATCH /nvue_v1/interface/swp1/link  {"mtu": 9216}</text>
+<text x="1120.0" y="262" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">value</text>
+<line x1="1206" y1="195" x2="1250" y2="195" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow-gray)"/>
+<text x="1262" y="201" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="400" fill="#5f6b7a" text-anchor="start">pending revision</text>
+<g><title>Same path, three surfaces</title><rect x="48" y="350" width="560" height="170" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="328.0" y="409.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Same path, three surfaces</text>
+<text x="328.0" y="432.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">CLI:  nv show interface swp1 link mtu</text>
+<text x="328.0" y="454.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">YAML: interface: {swp1: {link: {mtu: 9216}}}</text>
+<text x="328.0" y="476.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">REST: PATCH /nvue_v1/interface/swp1/link {"mtu": 9216}</text>
 </g>
-<g><title>Top-level objects</title><rect x="640" y="380" width="440" height="180" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
-<text x="860.0" y="444.7" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Top-level objects</text>
-<text x="860.0" y="470.7" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">system · interface · bridge · mlag</text>
-<text x="860.0" y="489.7" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">router · vrf · nve · evpn</text>
-<text x="860.0" y="508.7" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">qos · acl · service</text>
+<g><title>Top-level objects</title><rect x="632" y="350" width="420" height="170" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="842.0" y="409.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Top-level objects</text>
+<text x="842.0" y="432.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">system · interface · bridge · mlag</text>
+<text x="842.0" y="454.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">router · vrf · nve · evpn</text>
+<text x="842.0" y="476.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">qos · acl · service</text>
 </g>
-<g><title>Discovery</title><rect x="1130" y="380" width="410" height="180" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
-<text x="1335.0" y="444.7" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Discovery</text>
-<text x="1335.0" y="470.7" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv list-commands</text>
-<text x="1335.0" y="489.7" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv show &lt;path&gt; -o yaml|json|commands</text>
-<text x="1335.0" y="508.7" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">TAB completion at every level</text>
+<g><title>Discovery</title><rect x="1076" y="350" width="476" height="170" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="1314.0" y="409.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Discovery</text>
+<text x="1314.0" y="432.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">nv list-commands</text>
+<text x="1314.0" y="454.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">nv show &lt;path&gt; -o yaml|json|commands</text>
+<text x="1314.0" y="476.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">TAB completion at every level</text>
 </g>
-<text x="60" y="630" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="start">Ranges and lists: nv set interface swp1-4,swp10 link mtu 9216 · nv set bridge domain br_default vlan 10,20,30 · nv unset interface swp1 link mtu</text>
+<text x="48" y="576" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">Ranges and lists:  nv set interface swp1-4,swp10 link mtu 9216  ·  nv set bridge domain br_default vlan 10,20,30</text>
+<text x="48" y="604" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">Remove a leaf of the tree:  nv unset interface swp1 link mtu</text>
 </svg>

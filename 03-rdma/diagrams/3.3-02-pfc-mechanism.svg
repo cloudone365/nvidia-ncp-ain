@@ -9,28 +9,29 @@
 <text x="1390.0" y="258.6" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">trust DSCP</text>
 <line x1="320" y1="200" x2="1240" y2="200" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
 <text x="780.0" y="190.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="500" fill="#e07b00" text-anchor="middle">RoCE data, priority 3, 400 Gb/s</text>
-<circle cx="780" cy="240" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="780" y="246" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
-<line x1="1240" y1="260" x2="320" y2="260" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
-<text x="780.0" y="276.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#d93025" text-anchor="middle">PFC frame (MAC 01:80:C2:00:00:01, EtherType 0x8808, opcode 0x0101): prio-3 pause, time 0xFFFF quanta (512 bit-times each)</text>
-<circle cx="780" cy="300" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="780" y="306" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
-<g><rect x="500" y="330" width="600" height="60" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
-<g><rect x="500" y="330" width="330" height="60" rx="6" fill="#ffe9cc" stroke="#e07b00" stroke-width="0" fill-opacity="1.0"/></g>
-<g><rect x="830" y="330" width="170" height="60" rx="6" fill="#ffd9d9" stroke="#d93025" stroke-width="0" fill-opacity="0.6"/></g>
-<text x="725" y="368" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#1f2937" text-anchor="middle">normal fill</text>
-<text x="915" y="368" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle">headroom</text>
-<text x="1050" y="368" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">spare</text>
-<path d="M830,320 L830,400" fill="none" stroke="#1f2937" stroke-width="3"/>
-<text x="830" y="314" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#d93025" text-anchor="middle">XOFF threshold: send pause here</text>
-<path d="M620,320 L620,400" fill="none" stroke="#1f2937" stroke-width="3"/>
-<text x="620" y="418" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">XON: resume when drained to here</text>
-<circle cx="470" cy="360" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
-<text x="470" y="366" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
-<g><rect x="60" y="430" width="1480" height="110" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
-<text x="72" y="454" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">3  Headroom must hold everything still arriving after XOFF is sent: sender reaction (&lt;= 2 x 512 bit-times + pipeline) + one max frame in flight (9216 B)</text>
-<text x="72" y="473" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">   + 2 x cable propagation (fibre ~5 ns/m). 400 Gb/s x 100 m: 2 x 500 ns x 50 GB/s = 50 KB, plus ~9 KB frame, plus NIC/MAC delay -&gt; ~70-100 KB per port per priority.</text>
-<text x="72" y="492" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">   Spectrum computes it from the configured cable-length (nv show qos roce). Too small = rx_prio3_discards on a &#x27;lossless&#x27; priority. XON &lt; XOFF gives hysteresis.</text>
+<line x1="1240" y1="245" x2="320" y2="245" stroke="#d93025" stroke-width="3" stroke-dasharray="3 6" marker-end="url(#arrow-red)"/>
+<text x="780" y="272" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#d93025" text-anchor="middle">PFC frame: dst MAC 01:80:C2:00:00:01, EtherType 0x8808, opcode 0x0101</text>
+<text x="780" y="292" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="500" fill="#d93025" text-anchor="middle">pause prio 3 for 0xFFFF quanta (1 quantum = 512 bit-times); quanta 0 = XON</text>
+<circle cx="360" cy="245" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="360" y="251" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+<g><rect x="500" y="352" width="600" height="60" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<g><rect x="500" y="352" width="330" height="60" rx="6" fill="#ffe9cc" stroke="#e07b00" stroke-width="0" fill-opacity="1.0"/></g>
+<g><rect x="830" y="352" width="170" height="60" rx="6" fill="#ffd9d9" stroke="#d93025" stroke-width="0" fill-opacity="0.6"/></g>
+<text x="725" y="390" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#1f2937" text-anchor="middle">normal fill</text>
+<text x="915" y="390" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="600" fill="#d93025" text-anchor="middle">headroom</text>
+<text x="1050" y="390" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">spare</text>
+<path d="M830,340 L830,422" fill="none" stroke="#1f2937" stroke-width="3"/>
+<text x="830" y="330" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#d93025" text-anchor="middle">XOFF threshold: send pause here</text>
+<circle cx="660" cy="325" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="660" y="331" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+<path d="M620,340 L620,422" fill="none" stroke="#1f2937" stroke-width="3"/>
+<text x="620" y="440" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">XON: resume when drained to here</text>
+<circle cx="470" cy="382" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
+<text x="470" y="388" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+<g><rect x="60" y="456" width="1480" height="70" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="72" y="480" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">3  Headroom must hold everything still arriving after XOFF is sent: sender reaction (&lt;= 2 x 512 bit-times + pipeline) + one max frame in flight (9216 B)</text>
+<text x="72" y="499" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">   + 2 x cable propagation (fibre ~5 ns/m). 400 Gb/s x 100 m: 2 x 500 ns x 50 GB/s = 50 KB, plus ~9 KB frame, plus NIC/MAC delay -&gt; ~70-100 KB per port per priority.</text>
+<text x="72" y="518" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">   Spectrum computes it from the configured cable-length (nv show qos roce). Too small = rx_prio3_discards on a &#x27;lossless&#x27; priority. XON &lt; XOFF gives hysteresis.</text>
 <text x="60" y="600" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2937" text-anchor="start">PFC storm: XOFF propagates against the flow of traffic</text>
 <g><title>hostX NIC (hung)</title><rect x="60" y="630" width="240" height="80" rx="10" fill="#ffd9d9" stroke="#d93025" stroke-width="2.5" fill-opacity="1.0"/></g>
 <text x="180.0" y="665.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="600" fill="#1f2937" text-anchor="middle">hostX NIC (hung)</text>
@@ -64,11 +65,12 @@
 <text x="660.0" y="850.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">restore after recovery interval (nv set ... qos pfc-watchdog; verify syntax)</text>
 <circle cx="340" cy="825" r="16" fill="#1f2937" stroke="#ffffff" stroke-width="2"/>
 <text x="340" y="831" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
-<g><rect x="980" y="780" width="560" height="90" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
-<text x="992" y="804" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Observe: rx_prio3_pause_duration never returning to 0 (ethtool -S);</text>
-<text x="992" y="823" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">nv show interface qos-roce-counters sorted by rx pfc; switchd.log for watchdog.</text>
-<text x="992" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Deadlock variant: cyclic buffer dependency across a Clos during reroutes.</text>
-<g><rect x="60" y="900" width="480" height="112" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<g><rect x="980" y="780" width="560" height="96" rx="6" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
+<text x="992" y="804" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Observe: ethtool -S | grep prio3_pause (duration keeps</text>
+<text x="992" y="823" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">growing), per-port PFC counters on the switch (nv show</text>
+<text x="992" y="842" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">interface ... qos), watchdog events in switchd.log.</text>
+<text x="992" y="861" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Deadlock variant: cyclic buffer dependency in a Clos.</text>
+<g><rect x="60" y="900" width="480" height="122" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5" fill-opacity="1.0"/></g>
 <text x="74" y="920" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5f6b7a" text-anchor="start">Legend</text>
 <line x1="74" y1="942" x2="134" y2="942" stroke="#e07b00" stroke-width="4"/>
 <text x="146" y="948" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Data plane (Ethernet / RoCE)</text>

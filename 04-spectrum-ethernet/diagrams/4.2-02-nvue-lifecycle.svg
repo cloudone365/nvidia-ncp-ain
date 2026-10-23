@@ -10,74 +10,92 @@
 <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#76b900"/></marker>
 </defs>
 <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
-<text x="48" y="78" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937">NVUE configuration lifecycle: pending → applied → startup, with revisions</text>
-<text x="48" y="110" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" fill="#5f6b7a">nv set/unset edit a detached pending revision; apply makes it running and numbers it; save copies applied to /etc/nvue.d/startup.yaml</text>
-<g><title>PENDING (your draft)</title><rect x="100" y="240" width="340" height="150" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="2.5"/>
-<text x="270.0" y="278.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="middle">PENDING</text>
-<text x="270.0" y="305.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="middle">(your draft)</text>
-<text x="270.0" y="336.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set / nv unset / nv config replace|patch</text>
-<text x="270.0" y="354.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">read with: nv config diff</text>
-<text x="270.0" y="372.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">discard: nv config detach</text>
+<text x="48" y="72" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#1f2937" text-anchor="start">NVUE configuration lifecycle: pending → applied → startup, with revisions</text>
+<text x="48" y="104" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#5f6b7a" text-anchor="start">nv set/unset edit a detached pending revision; apply makes it running and numbers it; save copies applied to /etc/nvue.d/startup.yaml</text>
+<g><title>PENDING — your draft</title><rect x="90" y="150" width="360" height="150" rx="10" fill="#fff5cc" stroke="#c9a400" stroke-width="3"/>
+<text x="270.0" y="189.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="middle">PENDING — your draft</text>
+<text x="270.0" y="213.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv set / nv unset /</text>
+<text x="270.0" y="235.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config replace | patch</text>
+<text x="270.0" y="257.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">read with: nv config diff</text>
+<text x="270.0" y="279.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">discard: nv config detach</text>
 </g>
-<g><title>APPLIED (running now)</title><rect x="630" y="240" width="340" height="150" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="2.5"/>
-<text x="800.0" y="278.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="middle">APPLIED</text>
-<text x="800.0" y="305.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="middle">(running now)</text>
-<text x="800.0" y="336.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">numbered revision rev_id N</text>
-<text x="800.0" y="354.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">read with: nv show, nv config show</text>
-<text x="800.0" y="372.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">kernel + FRR + ASIC reflect it</text>
+<g><title>step 1</title><circle cx="70" cy="150" r="16" fill="#1f2937"/>
+<text x="70" y="156" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
 </g>
-<g><title>STARTUP (/etc/nvue.d/startup.yaml)</title><rect x="1160" y="240" width="340" height="150" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="1330.0" y="278.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="middle">STARTUP</text>
-<text x="1330.0" y="305.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="middle">(/etc/nvue.d/startup.yaml)</text>
-<text x="1330.0" y="336.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">loaded at boot</text>
-<text x="1330.0" y="354.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">read with: nv config show --rev startup</text>
-<text x="1330.0" y="372.8" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config diff startup applied</text>
+<g><title>APPLIED — running now</title><rect x="610" y="150" width="380" height="150" rx="10" fill="#ffe9cc" stroke="#e07b00" stroke-width="3"/>
+<text x="800.0" y="200.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="middle">APPLIED — running now</text>
+<text x="800.0" y="224.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">numbered revision rev_id N</text>
+<text x="800.0" y="246.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">read with: nv show, nv config show</text>
+<text x="800.0" y="268.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">kernel + FRR + ASIC reflect it</text>
 </g>
-<line x1="440" y1="300" x2="630" y2="300" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
-<rect x="437" y="273" width="196" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="535" y="290" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config apply [-y]</text>
-<g><title>Step 2</title><circle cx="535" cy="250" r="16" fill="#1f2937"/><text x="535" y="256" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">2</text></g>
-<line x1="970" y1="300" x2="1160" y2="300" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
-<rect x="994" y="273" width="142" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="1065" y="290" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config save</text>
-<g><title>Step 3</title><circle cx="1065" cy="250" r="16" fill="#1f2937"/><text x="1065" y="256" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">3</text></g>
-<line x1="1160" y1="350" x2="970" y2="350" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1065.0" y="374.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">reboot loads startup</text>
-<line x1="60" y1="315" x2="100" y2="315" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
-<g><title>Step 1</title><circle cx="60" cy="280" r="16" fill="#1f2937"/><text x="60" y="286" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">1</text></g>
-<g><title>Revision history nv config history</title><rect x="630" y="540" width="340" height="120" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
-<text x="800.0" y="565.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Revision history</text>
-<text x="800.0" y="587.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">nv config history</text>
-<text x="800.0" y="613.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">rev 12  2026-10-19 09:14  cumulus</text>
-<text x="800.0" y="631.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">rev 11  2026-10-19 08:50  cumulus</text>
-<text x="800.0" y="649.2" font-family="'JetBrains Mono', Consolas, monospace" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config diff 11 12</text>
+<g><title>STARTUP — boot config</title><rect x="1150" y="150" width="402" height="150" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="3"/>
+<text x="1351.0" y="200.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="middle">STARTUP — boot config</text>
+<text x="1351.0" y="224.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">/etc/nvue.d/startup.yaml, loaded at boot</text>
+<text x="1351.0" y="246.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">read: nv config show --rev startup</text>
+<text x="1351.0" y="268.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config diff startup applied</text>
 </g>
-<line x1="800" y1="390" x2="800" y2="540" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="950.0" y="465.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">every apply creates a revision</text>
-<line x1="630" y1="600" x2="440" y2="390" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
-<rect x="364" y="463" width="313" height="25" rx="5" fill="#ffffff" fill-opacity="0.92"/>
-<text x="520" y="480" font-family="'JetBrains Mono', Consolas, monospace" font-size="15" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config apply &lt;rev&gt;  (rollback)</text>
-<g><title>Step 4</title><circle cx="560" cy="540" r="16" fill="#1f2937"/><text x="560" y="546" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">4</text></g>
-<g><title>Operational state nv show … (live)</title><rect x="100" y="540" width="340" height="120" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
-<text x="270.0" y="565.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Operational state</text>
-<text x="270.0" y="587.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">nv show … (live)</text>
-<text x="270.0" y="613.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">reads applied + hardware/kernel state</text>
-<text x="270.0" y="631.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">NOT your pending edits</text>
-<text x="270.0" y="649.2" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="400" fill="#5f6b7a" text-anchor="middle">classic mistake: nv show to confirm a draft</text>
+<line x1="450" y1="210" x2="606" y2="210" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="530" y="196" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">nv config apply [-y]</text>
+<g><title>step 2</title><circle cx="530" cy="160" r="16" fill="#1f2937"/>
+<text x="530" y="166" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
 </g>
-<g><title>Note</title><rect x="1160" y="540" width="380" height="200" rx="6" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
-<text x="1172" y="563" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">Exam traps</text>
-<text x="1172" y="582" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">• apply ≠ save: reboot after apply-only reverts</text>
-<text x="1172" y="601" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">• save writes APPLIED, not pending</text>
-<text x="1172" y="620" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">• nv show reads applied/operational, diff reads pending</text>
-<text x="1172" y="639" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">• pending is per user session (detached revision);</text>
-<text x="1172" y="658" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">  another user's draft → apply warns / 409 via REST</text>
-<text x="1172" y="677" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" fill="#1f2937" text-anchor="start">• replace = whole file is pending; patch = merge</text>
-<text x="60" y="790" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">1 edit the draft   2 publish it (switchd/FRR/ifupdown2 react, rev_id assigned)   3 persist it to disk   4 roll back by re-applying an older revision</text>
-<g><title>Legend</title><rect x="48" y="820" width="430" height="82" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
-<line x1="62" y1="846" x2="122" y2="846" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
-<text x="136" y="852" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Flow / step</text>
-<line x1="62" y1="876" x2="122" y2="876" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="136" y="882" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
+<line x1="990" y1="210" x2="1146" y2="210" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<text x="1070" y="196" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="middle">nv config save</text>
+<g><title>step 3</title><circle cx="1070" cy="160" r="16" fill="#1f2937"/>
+<text x="1070" y="166" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+</g>
+<line x1="1150" y1="258" x2="994" y2="258" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="1070" y="284" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">reboot loads startup</text>
+<line x1="800" y1="300" x2="800" y2="446" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="816" y="380" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="start">every apply creates a revision</text>
+<g><title>Revision history</title><rect x="610" y="450" width="380" height="140" rx="10" fill="#eeeeee" stroke="#6b7280" stroke-width="2.5"/>
+<text x="800.0" y="483.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Revision history</text>
+<text x="800.0" y="506.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config history</text>
+<text x="800.0" y="528.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">rev 12  2026-10-19 09:14  cumulus</text>
+<text x="800.0" y="550.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">rev 11  2026-10-19 08:50  cumulus</text>
+<text x="800.0" y="572.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv config diff 11 12</text>
+</g>
+<line x1="610" y1="520" x2="420" y2="304" stroke="#1f2937" stroke-width="3" marker-end="url(#arrow-dark)"/>
+<g><title>step 4</title><circle cx="562" cy="466" r="16" fill="#1f2937"/>
+<text x="562" y="472" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+</g>
+<rect x="224.0" y="404.8" width="266.0" height="20.8" fill="#ffffff"/>
+<text x="490" y="420" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="end">nv config apply &lt;rev&gt; (rollback)</text>
+<g><title>Operational state</title><rect x="90" y="450" width="360" height="140" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2.5"/>
+<text x="270.0" y="483.0" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="19" font-weight="700" fill="#1f2937" text-anchor="middle">Operational state</text>
+<text x="270.0" y="506.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">nv show … (live)</text>
+<text x="270.0" y="528.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">reads applied + hardware/kernel state</text>
+<text x="270.0" y="550.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">NOT your pending edits</text>
+<text x="270.0" y="572.1" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#5f6b7a" text-anchor="middle">mistake: nv show to confirm a draft</text>
+</g>
+<g><title>Exam traps</title><rect x="1060" y="400" width="492" height="212" rx="8" fill="#fff5cc" stroke="#c9a400" stroke-width="1.5"/></g>
+<text x="1078" y="430" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">Exam traps</text>
+<text x="1078" y="456" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">• apply ≠ save: reboot after apply-only reverts</text>
+<text x="1078" y="482" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">• save writes APPLIED, not pending</text>
+<text x="1078" y="508" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">• nv show = applied/operational; diff = pending</text>
+<text x="1078" y="534" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">• pending is per user session (detached revision);</text>
+<text x="1078" y="560" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">   another user's draft → apply warns / 409 via REST</text>
+<text x="1078" y="586" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">• replace = whole file is pending; patch = merge</text>
+<g><title>step 1</title><circle cx="70" cy="660" r="16" fill="#1f2937"/>
+<text x="70" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+</g>
+<text x="96" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">edit the draft</text>
+<g><title>step 2</title><circle cx="330" cy="660" r="16" fill="#1f2937"/>
+<text x="330" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+</g>
+<text x="356" y="666" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">publish it (switchd/FRR/ifupdown2 react, rev_id assigned)</text>
+<g><title>step 3</title><circle cx="70" cy="704" r="16" fill="#1f2937"/>
+<text x="70" y="710" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+</g>
+<text x="96" y="710" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">persist it to disk</text>
+<g><title>step 4</title><circle cx="330" cy="704" r="16" fill="#1f2937"/>
+<text x="330" y="710" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+</g>
+<text x="356" y="710" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">roll back by re-applying an older revision</text>
+<g><title>Legend</title><rect x="48" y="770" width="450" height="90" rx="8" fill="#ffffff" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="62" y1="796" x2="118" y2="796" stroke="#1f2937" stroke-width="4" marker-end="url(#arrow-dark)"/>
+<text x="132" y="802" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">State transition / step</text>
+<line x1="62" y1="826" x2="118" y2="826" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
+<text x="132" y="832" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start">Control plane (BGP / EVPN / REST / Ansible)</text>
 </g>
 </svg>

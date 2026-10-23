@@ -79,7 +79,7 @@
 </g>
 <g><title>Legend</title><rect x="1200" y="640" width="350" height="84" rx="10" fill="#ffffff" stroke="#6b7280" stroke-width="2"/>
 <line x1="1216" y1="666" x2="1270" y2="666" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-gray)"/>
-<text x="1284" y="671" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Ansible -&gt; NVUE REST (8765) or SSH</text>
+<text x="1284" y="671" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Ansible -&gt; NVUE REST / SSH</text>
 <line x1="1216" y1="696" x2="1270" y2="696" stroke="#e07b00" stroke-width="4" marker-end="url(#arrow-orange)"/>
 <text x="1284" y="701" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#1f2937" text-anchor="start" xml:space="preserve">Fabric link</text>
 </g></svg>
