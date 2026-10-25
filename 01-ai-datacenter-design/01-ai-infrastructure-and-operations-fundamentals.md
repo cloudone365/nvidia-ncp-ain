@@ -36,7 +36,7 @@ By the end of this module you will be able to…
 | Fabrics | Separate physical networks for compute, storage, in-band and OOB management | InfiniBand Quantum-2 or Spectrum-X for compute |
 
 ![AI factory stack: one DGX H100 node with its scale-up NVLink domain and the four separate fabrics it connects to](diagrams/1.1-01-ai-factory-four-fabrics.svg)
-*Figure 1.1-1 — The AI factory from one node's point of view: 8 ConnectX-7 ports to the compute fabric, BlueField-3 ports to storage and in-band, the BMC to OOB; NVLink/NVSwitch never leaves the chassis.*
+*Figure 1.1-1 — The AI factory from one node's point of view: 8 ConnectX-7 ports to the compute fabric (one per rail); port 1 of each BlueField-3 (`mlx5_8`, `mlx5_10`) to the storage fabric and port 2 of each (`mlx5_9`, `mlx5_11`) to in-band management, so losing one card never cuts the node off from either network; the BMC to OOB; NVLink/NVSwitch never leaves the chassis. Verify device indices on your nodes with `ibdev2netdev -v`.*
 
 **Why it exists.** The whole facility is optimized around a single, tightly coupled workload class instead of thousands of independent tenants. The practical consequence for you as a network engineer is that **GPU utilization is the primary KPI**, and the network is the component most likely to reduce it: a slow link, a lost packet, or a congested spine stalls every GPU in the job, not just the one behind the bad port. Enterprise designs amortize a bad link across thousands of unrelated flows; an AI factory cannot, because the flows are coupled by synchronous collectives (§2.2).
 
