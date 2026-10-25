@@ -191,7 +191,7 @@ Nearly all production stacks (NVMe-oF, UCX, NCCL's default IB transport) use RDM
 
 **What it is.** `rdma-core` is the upstream user-space package set (libibverbs, librdmacm, ibverbs-providers incl. `mlx5`, rdma tooling). NVIDIA ships a tested version inside MLNX_OFED/DOCA-OFED along with extras (`mlnx-tools`, `infiniband-diags`, `perftest`, `mft`). Figure 3.1-5 shows where verbs sit under the frameworks.
 
-![Layered AI software stack: PyTorch, JAX and Megatron-LM call NCCL, NVSHMEM and UCX, which all turn their operations into libibverbs and librdmacm calls on ConnectX-7, ConnectX-8 SuperNIC or BlueField-3, running over InfiniBand Quantum or RoCE v2 Spectrum-X](diagrams/3.1-06-ai-software-stack.svg)
+![Layered AI software stack: PyTorch, JAX and Megatron-LM call NCCL, NVSHMEM and UCX, which all turn their operations into libibverbs and librdmacm calls on ConnectX-7, ConnectX-8 SuperNIC or BlueField-3, running over InfiniBand Quantum or RoCE v2 Spectrum-X](diagrams/3.1-05-ai-software-stack.svg)
 *Figure 3.1-5 — Where verbs sit in the AI software stack: frameworks never see QPs; NCCL, NVSHMEM and UCX turn collectives and put/get into work requests.*
 
 **Why it exists.** Frameworks want collectives ("all-reduce this tensor"), not QPs. Communication libraries translate between the two, and each needs the same verbs underneath so one NIC driver serves all of them. Keeping the verbs API common across IB and RoCE is what lets the same NCCL binary run on Quantum and Spectrum-X.
@@ -214,7 +214,7 @@ The importance of **memory registration** here: pinning large GPU buffers is exp
 
 **How it works.** Figure 3.1-6 is the exchange behind every run; §3 Step 2 shows the matching output lines.
 
-![Sequence diagram of ib_write_bw: the server allocates PD, MR and four RC QPs and listens on TCP 18515, the client connects over TCP, both sides swap LID or GID, QPN, PSN, rkey and virtual address, move their QPs to RTS, synchronise, then stream RDMA WRITEs while the client measures completions, and finally exchange results over TCP](diagrams/3.1-05-perftest-exchange.svg)
+![Sequence diagram of ib_write_bw: the server allocates PD, MR and four RC QPs and listens on TCP 18515, the client connects over TCP, both sides swap LID or GID, QPN, PSN, rkey and virtual address, move their QPs to RTS, synchronise, then stream RDMA WRITEs while the client measures completions, and finally exchange results over TCP](diagrams/3.1-06-perftest-exchange.svg)
 *Figure 3.1-6 — perftest client/server: TCP only for the parameter swap (②–③) and barriers; every measured byte is RDMA WRITE (⑤).*
 
 1. The server opens the device, allocates a PD, registers its buffer, creates `-q` RC QPs and listens on TCP port 18515.

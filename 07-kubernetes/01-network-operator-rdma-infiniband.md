@@ -37,7 +37,7 @@ By the end of this module you will be able to…
 
 Doing this by hand on 128 nodes means 128 chances for drift: one node with a different OFED, one with a missing device plugin, and NCCL falls back to TCP on exactly the rank that bounds every collective (Module 1.3).
 
-**How it works.** The operator pattern is *declare, then reconcile*. You declare the desired state once in a custom resource (`NicClusterPolicy`, §2.5). The controller watches that resource and the objects it owns. It renders a DaemonSet (or Deployment) for every component the policy names, creates or patches it through the API server, and reports per-component status back into the policy. The kubelet on each selected node then runs the component pods, and those pods do the node-level work: load drivers, register devices, install CNI binaries (Figure 7.1-1). Because the controller keeps reconciling, a deleted DaemonSet comes back and a changed image version rolls out without anyone touching a node.
+**How it works.** The operator pattern is *declare, then reconcile*. You declare the desired state once in a custom resource (`NicClusterPolicy`, §2.5). The controller watches that resource and the objects it owns. It renders a DaemonSet (or Deployment) for every component the policy names, creates or patches it through the API server, and reports per-component status back into the policy. The kubelet on each selected node then runs the component pods, and those pods do the node-level work: load drivers, register devices, install CNI binaries (Figure 7.1-1, §2.2). Because the controller keeps reconciling, a deleted DaemonSet comes back and a changed image version rolls out without anyone touching a node.
 
 **Why the exam cares:** the exam frames this as "which piece of Kubernetes plumbing gives the pod X". The answer is always a Network Operator component, chosen through the `NicClusterPolicy`.
 
@@ -132,7 +132,7 @@ helm install network-operator nvidia/network-operator \
   --version v25.4.0 -f ./values.yaml --wait
 ```
 
-`--wait` returns when the operator Deployment is Ready. The DaemonSets roll out afterwards, which is why you watch the `NicClusterPolicy` status next (§2.5, Figure 7.1-3 steps ①–⑥).
+`--wait` returns when the operator Deployment is Ready. The DaemonSets roll out afterwards, which is why you watch the `NicClusterPolicy` status next (§2.5, Figure 7.1-2 steps ①–⑥).
 
 **Example `values.yaml` — RDMA shared device (InfiniBand compute fabric, host OFED)**
 
@@ -233,10 +233,10 @@ ibKubernetes:
 
 **Why it exists.** One cluster-scoped object makes the networking design auditable (`kubectl get nicclusterpolicy -o yaml` is the whole design) and gives the controller one thing to converge on. Per-component status localizes failures: `notReady` plus the applied states names the DaemonSet to look at.
 
-**How it works.** The reconcile loop, step by step (Figure 7.1-3, steps ①–⑥):
+**How it works.** The reconcile loop, step by step (Figure 7.1-2, steps ①–⑥):
 
-![Deployment sequence diagram: admin installs the chart, the operator creates the NicClusterPolicy and reconciles DaemonSets, driver and device-plugin pods register resources with the kubelet, the policy goes ready, then a NAD and pod are applied and the kubelet and Multus give the pod its RDMA device and net1](diagrams/7.1-03-deployment-sequence.svg)
-*Figure 7.1-3 — Time flows down. ①–⑥: operator phase (helm → policy → DaemonSets → resources → ready). ⑦–⑪: workload phase (NAD → pod → device mount → net1 → test). The note at the bottom maps each failure to its step.*
+![Deployment sequence diagram: admin installs the chart, the operator creates the NicClusterPolicy and reconciles DaemonSets, driver and device-plugin pods register resources with the kubelet, the policy goes ready, then a NAD and pod are applied and the kubelet and Multus give the pod its RDMA device and net1](diagrams/7.1-02-deployment-sequence.svg)
+*Figure 7.1-2 — Time flows down. ①–⑥: operator phase (helm → policy → DaemonSets → resources → ready). ⑦–⑪: workload phase (NAD → pod → device mount → net1 → test). The note at the bottom maps each failure to its step.*
 
 1. `helm install` creates the CRDs and the operator Deployment (①). With `deployCR: true` the chart also creates the policy (②).
 2. The controller (built on controller-runtime) receives a watch event for the `NicClusterPolicy`. It also watches the DaemonSets it owns, so any drift triggers a new pass.
@@ -372,10 +372,10 @@ A `notReady` status almost always means one DaemonSet (usually `mofed-*`) is not
 
 **Why it exists.** The primary CNI (Calico, OVN-Kubernetes, Cilium) knows nothing about InfiniBand, PKeys or SR-IOV VFs, and replacing it would break the cluster network. A meta-plugin that *adds* interfaces described by API objects lets each workload pick its fabric attachment without touching the primary network.
 
-**How it works.** Figure 7.1-2 shows the result on two nodes. The **CNI ADD sequence** that produces it:
+**How it works.** Figure 7.1-3 shows the result on two nodes. The **CNI ADD sequence** that produces it:
 
-![Pod networking on two nodes: each pod gets eth0 from the default CNI and net1 from Multus delegating to the IPoIB CNI on PF ibp26s0, plus /dev/infiniband devices from the device plugin; the HCAs meet on Leaf 0 where both ports share PKey 0x7fff](diagrams/7.1-02-pod-networking.svg)
-*Figure 7.1-2 — Interface (Multus → ipoib CNI → net1), device (device plugin → /dev/infiniband) and partition (SM/UFM → PKey) come from three different places; RDMA works only when all three line up.*
+![Pod networking on two nodes: each pod gets eth0 from the default CNI and net1 from Multus delegating to the IPoIB CNI on PF ibp26s0, plus /dev/infiniband devices from the device plugin; the HCAs meet on Leaf 0 where both ports share PKey 0x7fff](diagrams/7.1-03-pod-networking.svg)
+*Figure 7.1-3 — Interface (Multus → ipoib CNI → net1), device (device plugin → /dev/infiniband) and partition (SM/UFM → PKey) come from three different places; RDMA works only when all three line up.*
 
 1. The kubelet asks the container runtime (containerd/CRI-O) to create the pod sandbox. The runtime creates a new network namespace.
 2. The runtime invokes the first CNI config in `/etc/cni/net.d` (Multus) with `CNI_COMMAND=ADD`, the container ID, the netns path and `CNI_IFNAME=eth0`.
@@ -536,7 +536,7 @@ Equivalent operator CR: `kind: IPoIBNetwork` with `master: ibp26s0` and the same
 
 **What it is.** The pod-level contract. A pod needs three things for RDMA on a secondary network: the **resource request** (gets the device), the **Multus annotation** (gets the interface), and **`IPC_LOCK`** (lets it pin memory for registrations).
 
-**Why it exists.** The three come from three different subsystems (Figure 7.1-2), so each must be requested explicitly:
+**Why it exists.** The three come from three different subsystems (Figure 7.1-3), so each must be requested explicitly:
 - The device comes from the device plugin's `Allocate` (§2.2), and the scheduler only calls it for a pod that requests the resource.
 - The interface comes from Multus (§2.6), which acts only on the annotation.
 - `ibv_reg_mr()` pins pages with `mlock`-style accounting. Containers drop `CAP_IPC_LOCK` and run with a small `RLIMIT_MEMLOCK` by default, so registering NCCL's buffers fails with "Couldn't allocate MR" or `ENOMEM` unless the capability is added.
@@ -703,18 +703,18 @@ spec:
 ```
 Read the output exactly as in [Module 1.3](../01-ai-datacenter-design/03-gpu-to-gpu-communication-nccl-gpudirect.md): look for `NET/IB/.../GDRDMA` in the launcher log and compare busbw with the node's NIC capacity.
 
-**Why the exam cares:** the in-cluster NCCL test is the last rung of the verification ladder (Figure 7.1-4, check ⑧).
+**Why the exam cares:** the in-cluster NCCL test is the last rung of the verification ladder (Figure 7.1-4 in §3, check ⑧).
 
 ## 3. Live-style walkthrough — helm install to ib_write_bw, end to end
 
 Let's bring RDMA to a 2-node Kubernetes cluster (`dgx01`, `dgx02`, DGX OS with host DOCA-OFED, ConnectX-7 on InfiniBand) and prove it with a pod-to-pod bandwidth test. Every command is commented with what it does and what you should see.
 
-The walkthrough follows the deployment sequence of Figure 7.1-3 (§2.5), and its verification steps are the eight numbered checks of Figure 7.1-4. Each check proves one layer; stop at the first one that fails and go to the §4 entry it points to.
+The walkthrough follows the deployment sequence of Figure 7.1-2 (§2.5), and its verification steps are the eight numbered checks of Figure 7.1-4. Each check proves one layer; stop at the first one that fails and go to the §4 entry it points to.
 
 ![Verification flow: two pods on two nodes connected through Leaf 0, with eight numbered checks from NicClusterPolicy status through node Allocatable, pod creation, interfaces, devices, ib_write_bw server and client, to an MPIJob all_reduce_perf](diagrams/7.1-04-verification-flow.svg)
 *Figure 7.1-4 — The verification ladder: checks ①–④ prove the operator and Kubernetes plumbing, ⑤–⑦ prove the RDMA path pod to pod, ⑧ proves GPUDirect and the collective. The failure map at the bottom links each check to its §4 gotcha.*
 
-| Walkthrough step | Figure 7.1-3 step(s) | Figure 7.1-4 check |
+| Walkthrough step | Figure 7.1-2 step(s) | Figure 7.1-4 check |
 |---|---|---|
 | 1 — host readiness | (precondition; ④ is skipped with host OFED) | — |
 | 2 — helm install | ①–② | — |
@@ -738,7 +738,7 @@ ssh dgx01 "lsmod | grep -E 'mlx5_ib|nvidia_peermem'"   # Host OFED loaded and pe
                                               # EXPECT: both lines. No nvidia_peermem = GPUDirect will silently be off in pods.
 ```
 
-**Step 2 — install the operator with Helm.** This is Figure 7.1-3 steps ①–②.
+**Step 2 — install the operator with Helm.** This is Figure 7.1-2 steps ①–②.
 
 ```bash
 helm repo add nvidia https://helm.ngc.nvidia.com/nvidia      # Add the NGC Helm repo that hosts network-operator.
@@ -751,7 +751,7 @@ helm install network-operator nvidia/network-operator \      # Release name "net
 # EXPECT: "STATUS: deployed" and NOTES describing the NicClusterPolicy created by deployCR: true.
 ```
 
-**Step 3 — watch the NicClusterPolicy converge.** This is the single status that tells you whether every component landed: Figure 7.1-3 steps ③ and ⑥, and check ① of Figure 7.1-4. Step ④ (the `mofed-*` driver build) does not happen here because the host already runs DOCA-OFED.
+**Step 3 — watch the NicClusterPolicy converge.** This is the single status that tells you whether every component landed: Figure 7.1-2 steps ③ and ⑥, and check ① of Figure 7.1-4. Step ④ (the `mofed-*` driver build) does not happen here because the host already runs DOCA-OFED.
 
 ```bash
 kubectl get nicclusterpolicy                                 # Cluster-scoped; exactly one object.
@@ -773,7 +773,7 @@ kubectl get nicclusterpolicy
 kubectl describe nicclusterpolicy nic-cluster-policy | sed -n '/Applied States/,$p'   # Per-component state; any "notReady" names the DaemonSet to inspect.
 ```
 
-**Step 4 — confirm the node now advertises RDMA resources.** The device plugin turned eight HCAs into a schedulable extended resource: the `Register()` → `ListAndWatch` exchange of §2.2, Figure 7.1-3 step ⑤ and check ② of Figure 7.1-4.
+**Step 4 — confirm the node now advertises RDMA resources.** The device plugin turned eight HCAs into a schedulable extended resource: the `Register()` → `ListAndWatch` exchange of §2.2, Figure 7.1-2 step ⑤ and check ② of Figure 7.1-4.
 
 ```bash
 kubectl describe node dgx01 | grep -A12 Allocatable          # Extended resources appear here once the plugin registers.
@@ -783,7 +783,7 @@ kubectl describe node dgx01 | grep -A12 Allocatable          # Extended resource
 kubectl -n nvidia-network-operator logs ds/rdma-shared-dp-ds | tail -20   # Plugin log lists matched devices and the resource it registered.
 ```
 
-**Step 5 — create the secondary network** (Figure 7.1-3 step ⑦). We use IPoIB so the pods also get an IP on the InfiniBand fabric (NCCL bootstrap, perftest addressing). The `resourceName` annotation binds it to the device-plugin resource.
+**Step 5 — create the secondary network** (Figure 7.1-2 step ⑦). We use IPoIB so the pods also get an IP on the InfiniBand fabric (NCCL bootstrap, perftest addressing). The `resourceName` annotation binds it to the device-plugin resource.
 
 ```bash
 cat <<'EOF' | kubectl apply -f -
@@ -811,7 +811,7 @@ EOF
 kubectl get net-attach-def                                   # EXPECT: ipoib-net listed.
 ```
 
-**Step 6 — launch two test pods, one per node** (Figure 7.1-3 step ⑧, check ③). Admission triggers the device plugin's `Allocate()` and the CNI ADD sequence of §2.6.
+**Step 6 — launch two test pods, one per node** (Figure 7.1-2 step ⑧, check ③). Admission triggers the device plugin's `Allocate()` and the CNI ADD sequence of §2.6.
 
 ```bash
 for i in 1 2; do
@@ -842,7 +842,7 @@ done
 kubectl get pods -o wide                                     # EXPECT: both Running, one on each node.
 ```
 
-**Step 7 — verify inside the pods.** Two separate things must be true: the interface exists (Multus, Figure 7.1-3 step ⑩, check ④), and the device exists (device plugin, step ⑨, check ⑤).
+**Step 7 — verify inside the pods.** Two separate things must be true: the interface exists (Multus, Figure 7.1-2 step ⑩, check ④), and the device exists (device plugin, step ⑨, check ⑤).
 
 ```bash
 kubectl exec rdma-test-1 -- ip -br addr                      # Interfaces in the pod netns.
@@ -913,7 +913,7 @@ If step 8 passes and step 9 shows `GDRDMA`, the Network Operator, the GPU Operat
 
 **Symptom.** `ip addr` in the pod shows `net1` with an IPoIB address, but either `ls /dev/infiniband` is empty, or it lists `uverbs0`/`rdma_cm` and `ibstat`/`ibv_devices` still say "No IB devices found".
 
-**Why it happens.** Interface and device are delivered by different components (§2.6, Figure 7.1-2): Multus/IPoIB CNI made `net1`; only the device plugin's `Allocate()` mounts `/dev/infiniband`. Two causes:
+**Why it happens.** Interface and device are delivered by different components (§2.6, Figure 7.1-3): Multus/IPoIB CNI made `net1`; only the device plugin's `Allocate()` mounts `/dev/infiniband`. Two causes:
 - **`/dev/infiniband` empty:** the pod did not request the `rdma/` resource (or requested a resource name the plugin does not serve), so `Allocate()` was never called for it.
 - **Devices mounted but invisible:** the host RDMA subsystem is in `exclusive` netns mode while you use the RDMA *shared* device plugin. In exclusive mode each RDMA device belongs to one network namespace; the shared PF stays in the host namespace, so libibverbs inside the pod's namespace sees no device even though the character files exist. The shared-device design needs the default `shared` mode; `exclusive` is for SR-IOV with per-pod RDMA isolation.
 

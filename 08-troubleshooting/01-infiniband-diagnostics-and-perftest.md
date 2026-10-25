@@ -45,7 +45,7 @@ By the end of this module you will be able to:
 | 6 RDMA perf | `ib_write_bw -q 4` ≥ ~97 % of line rate; `ib_write_lat` 1–2 µs | perftest, `perfquery PortXmitWait` | width (rung 2), PCIe, QP count, congestion |
 | 7 Application | all_reduce busbw near the per-GPU NIC rate | nccl-tests, `NCCL_DEBUG=INFO` | NIC selection, GDR, PCIe affinity |
 
-The §3 walkthrough climbs this ladder literally, and the decision flowchart in Figure 8.1-3 is the same ladder drawn as yes/no branches.
+The §3 walkthrough climbs this ladder literally, and the decision flowchart in Figure 8.1-5 (§3) is the same ladder drawn as yes/no branches.
 
 **Why the exam cares.** Nearly every troubleshooting question is "given this symptom, what do you check first?". The answer is always the lowest rung that could produce the symptom.
 
@@ -186,10 +186,10 @@ cat /sys/class/infiniband/mlx5_0/ports/1/rate         # "400 Gb/sec (4X NDR)"
 
 **Analogy.** Everything above is a stethoscope; **ibdiagnet** is the annual full physical with blood work — slower, but it looks at everything and writes a report.
 
-**What it is.** ibdiagnet (ibutils2) is a single binary that runs every check in this module in sequence — discovery, LID/GUID consistency, link width/speed against capability, SM status, port counters over a measured window, PKey tables, routing-table validation (dead-ends, credit loops), cable EEPROM, optionally **SHARP** trees — and writes one file per stage into `/var/tmp/ibdiagnet2/` (Figure 8.1-5). Its summary table (stage, warnings, errors) is the first thing you read.
+**What it is.** ibdiagnet (ibutils2) is a single binary that runs every check in this module in sequence — discovery, LID/GUID consistency, link width/speed against capability, SM status, port counters over a measured window, PKey tables, routing-table validation (dead-ends, credit loops), cable EEPROM, optionally **SHARP** trees — and writes one file per stage into `/var/tmp/ibdiagnet2/` (Figure 8.1-3). Its summary table (stage, warnings, errors) is the first thing you read.
 
-![ibdiagnet command flags on the left, its nine stages in the middle, and the files each stage writes under /var/tmp/ibdiagnet2 on the right](diagrams/8.1-05-ibdiagnet-output-map.svg)
-*Figure 8.1-5 — ibdiagnet stages and the file each one writes. `ibdiagnet2.log` summarises all of them; `db_csv` is what UFM and CVT parse.*
+![ibdiagnet command flags on the left, its nine stages in the middle, and the files each stage writes under /var/tmp/ibdiagnet2 on the right](diagrams/8.1-03-ibdiagnet-output-map.svg)
+*Figure 8.1-3 — ibdiagnet stages and the file each one writes. `ibdiagnet2.log` summarises all of them; `db_csv` is what UFM and CVT parse.*
 
 | Flag | Purpose |
 |---|---|
@@ -274,13 +274,13 @@ IPoIB: `cat /sys/class/net/ib0/pkey` reads `0xffff` on the default partition (th
 
 ## 3. Live-style walkthrough: "the training job hangs on node 7"
 
-Scenario: a 32-node job stalls; the scheduler points at `dgx-07`. The SRE already restarted the job twice. You are going to work bottom-up and narrate every decision. The decision flowchart in Figure 8.1-3 is the route we follow; each shell step below names the diamond it answers. All output is illustrative.
+Scenario: a 32-node job stalls; the scheduler points at `dgx-07`. The SRE already restarted the job twice. You are going to work bottom-up and narrate every decision. The decision flowchart in Figure 8.1-5 is the route we follow; each shell step below names the diamond it answers. All output is illustrative.
 
-![Flowchart for a job hanging on one node: ibstat physical state, then Active/LID, then iblinkinfo width, perfquery counters, XmitWait, ibdiagnet summary and ib_write_bw, each No branch exiting to a fix](diagrams/8.1-03-node7-decision-flow.svg)
-*Figure 8.1-3 — "The training job hangs on node 7": the ladder of Figure 8.1-1 drawn as decisions. Diamonds 1–7 map to Steps 1–8 below.*
+![Flowchart for a job hanging on one node: ibstat physical state, then Active/LID, then iblinkinfo width, perfquery counters, XmitWait, ibdiagnet summary and ib_write_bw, each No branch exiting to a fix](diagrams/8.1-05-node7-decision-flow.svg)
+*Figure 8.1-5 — "The training job hangs on node 7": the ladder of Figure 8.1-1 drawn as decisions. Diamonds 1–7 map to Steps 1–8 below.*
 
 ```bash
-# ---- Step 1 (Figure 8.1-3, diamonds 1 and 2): local port state on the suspect node. Always first;
+# ---- Step 1 (Figure 8.1-5, diamonds 1 and 2): local port state on the suspect node. Always first;
 #      it needs no SM and no fabric (a local read, Figure 8.1-2 path 1), so if it is bad nothing else is worth running.
 dgx-07$ ibstat
 CA 'mlx5_0'
@@ -339,7 +339,7 @@ dgx-07$ sudo perfquery -R 3 2 >/dev/null; sleep 60; sudo perfquery -x 3 2 | grep
 SymbolErrorCounter:..............94        # 94 symbol errors in 60 s: still happening now
 LinkErrorRecoveryCounter:........0
 
-# ---- Step 5 (diamond 6): one full ibdiagnet pass for the record and to catch anything else (Figure 8.1-5 for the files).
+# ---- Step 5 (diamond 6): one full ibdiagnet pass for the record and to catch anything else (Figure 8.1-3 for the files).
 #      NOTE: --pc clears counters. We already captured the evidence above, so that is OK.
 dgx-07$ sudo ibdiagnet --pc --pm_pause_width=30 -P all=1 --extended_speeds all --get_cable_info -r
 ...

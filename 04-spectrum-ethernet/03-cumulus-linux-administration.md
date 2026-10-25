@@ -26,8 +26,8 @@ By the end of this module you will be able to…
 
 *Analogy:* a package upgrade is renovating a house while you live in it — furniture stays. A binary image install is demolishing and rebuilding — you must have moved the furniture (configuration) out first.
 
-![Upgrade decision flow: same-train releases take the in-place package path, major jumps or corrupted systems take the ONIE image-install path followed by an NVUE YAML restore, and both end in NetQ validation](diagrams/4.3-03-upgrade-flow.svg)
-*Figure 4.3-3 — Choosing the upgrade path (1): A = in-place package upgrade, B = ONIE binary install that wipes the OS partition; then verify or restore (2) and validate fabric-wide (3).*
+![Upgrade decision flow: same-train releases take the in-place package path, major jumps or corrupted systems take the ONIE image-install path followed by an NVUE YAML restore, and both end in NetQ validation](diagrams/4.3-01-upgrade-flow.svg)
+*Figure 4.3-1 — Choosing the upgrade path (1): A = in-place package upgrade, B = ONIE binary install that wipes the OS partition; then verify or restore (2) and validate fabric-wide (3).*
 
 **What it is.** Cumulus Linux has exactly two ways to change its version, and they differ in what they touch on disk:
 
@@ -40,7 +40,7 @@ By the end of this module you will be able to…
 
 **Why it exists.** The two paths trade convenience against certainty. A package upgrade keeps everything — `/etc`, `/etc/nvue.d/startup.yaml`, local users in `/etc/passwd`/`/etc/shadow`, SSH host keys, the NetQ agent's configuration, cron jobs, your ZTP leftovers — but it is only supported within a major release and only when the release notes do not say otherwise, because a jump across kernels, SDK versions or Debian base releases can leave a half-migrated system. A binary install is always safe from a software-consistency point of view (you get exactly the image NVIDIA tested) but it is destructive: after it, the switch is at factory defaults and only what *you* restore comes back. Always read the release notes for the target version first — some minor versions have had "image install required" notes because of kernel or SDK changes.
 
-**How it works** (Figure 4.3-3).
+**How it works** (Figure 4.3-1).
 
 *Path A — package upgrade.* (1) You confirm the target is in the same train and the notes allow it. `nv config save` makes `startup.yaml` current and you copy a YAML backup off-box anyway. `nv action upgrade system packages to-version 5.11.0 use-vrf mgmt` (or `apt update && apt upgrade`, which must also reach the repository through the mgmt VRF) downloads and installs the new packages, including a new kernel and `switchd`/SDK. (2) The reboot loads the new kernel, `switchd` reprograms the ASIC from scratch (seconds of forwarding loss — drain the switch first), and NVUE loads the same `startup.yaml`. What survives: everything on the OS partition.
 
@@ -74,8 +74,8 @@ Observe and debug: `nv show system aaa`, `nv show system aaa tacacs` (is `vrf` s
 
 *Analogy:* a **VRF** is a separate building with its own address book. The `mgmt` VRF is the security office — `eth0` lives there, so a leaked default route in the fabric can never hijack SSH.
 
-![Cumulus management plane: eth0 is enslaved to the mgmt VRF with its own routing table, every out-of-band daemon binds to that VRF and reaches TACACS, NTP, syslog, SNMP, NetQ and the provisioning server through the OOB switch](diagrams/4.3-01-management-plane.svg)
-*Figure 4.3-1 — One kernel, two routing tables: the fabric runs in the default VRF; `eth0` and every out-of-band daemon (sshd, AAA, chrony/rsyslog/snmpd, netq-agent, ztp) live in VRF `mgmt` and reach the OOB services through the management switch.*
+![Cumulus management plane: eth0 is enslaved to the mgmt VRF with its own routing table, every out-of-band daemon binds to that VRF and reaches TACACS, NTP, syslog, SNMP, NetQ and the provisioning server through the OOB switch](diagrams/4.3-02-management-plane.svg)
+*Figure 4.3-2 — One kernel, two routing tables: the fabric runs in the default VRF; `eth0` and every out-of-band daemon (sshd, AAA, chrony/rsyslog/snmpd, netq-agent, ztp) live in VRF `mgmt` and reach the OOB services through the management switch.*
 
 **What it is.** The **mgmt VRF** isolates out-of-band management (`eth0`) from the data plane so that management traffic has its own routing table. It is enabled by default on Cumulus 4.x/5.x. Mechanically it is a Linux **l3mdev** (layer-3 master device): a `vrf`-type netdev called `mgmt` bound to its own routing table (table 1001 for mgmt on Cumulus; tenant VRFs get their own table IDs), with `eth0` enslaved to it — exactly as a bridge port is enslaved to a bridge, but at layer 3.
 
@@ -100,14 +100,14 @@ Observe at the Linux level: `ip vrf show` (mgmt → table 1001), `ip route show 
 
 **Why it exists.** Time sync matters beyond logs: NetQ correlates events across devices, certificates for the NVUE API/gNMI expire by date, and PTP (`nv set service ptp`) for time-sensitive workloads depends on a sane system clock. Remote syslog survives a switch that reboots or loses its disk; SNMP is still what many NOCs poll; streaming telemetry exists because polling hundreds of 800G ports every few seconds over SNMP does not scale and misses microbursts, while a push model sends samples at the rate the collector subscribes to.
 
-**How it works.** Each service follows the same pattern: (1) NVUE renders the daemon's config with the VRF and listener addresses; (2) systemd starts the VRF-bound instance; (3) the daemon's sockets use the mgmt table (Figure 4.3-1). chrony polls its sources (`iburst` sends a quick burst at start-up to converge in seconds) and disciplines the clock; rsyslog forwards matching severities over UDP/TCP 514; snmpd answers on UDP 161 only on the listening address you bind and sends traps to UDP 162; gNMI subscriptions stream on a gRPC port. `chronyc sources` and `ntpq -p` (depending on the release's NTP daemon) confirm sync at the Linux level — `^*` marks the selected source, `?` means unreachable (almost always the VRF). Failure modes: wrong VRF (nothing works, no error), SNMP bound to the default VRF's address (walks time out from the NOC), clock unsynchronised (NetQ timestamps and certificate validity drift).
+**How it works.** Each service follows the same pattern: (1) NVUE renders the daemon's config with the VRF and listener addresses; (2) systemd starts the VRF-bound instance; (3) the daemon's sockets use the mgmt table (Figure 4.3-2). chrony polls its sources (`iburst` sends a quick burst at start-up to converge in seconds) and disciplines the clock; rsyslog forwards matching severities over UDP/TCP 514; snmpd answers on UDP 161 only on the listening address you bind and sends traps to UDP 162; gNMI subscriptions stream on a gRPC port. `chronyc sources` and `ntpq -p` (depending on the release's NTP daemon) confirm sync at the Linux level — `^*` marks the selected source, `?` means unreachable (almost always the VRF). Failure modes: wrong VRF (nothing works, no error), SNMP bound to the default VRF's address (walks time out from the NOC), clock unsynchronised (NetQ timestamps and certificate validity drift).
 
 ### 2.5 cl-resource-query — ASIC table utilization
 
 *Analogy:* the ASIC's tables are a car park with a fixed number of bays. When it is full, new cars (routes, MACs, ACL rules) are turned away at the gate — but the receptionist's visitor log (the kernel) still shows them as "arrived". Everyone looks present; some are circling the block on the CPU.
 
-![Bar chart of cl-resource-query output on an illustrative leaf showing host, IPv4 and IPv6 route, ECMP, MAC and ACL table occupancy, with what fills each table, the symptoms at 100%, architectural fixes, and the kernel-vs-ASIC gap](diagrams/4.3-04-asic-resource-map.svg)
-*Figure 4.3-4 — What `cl-resource-query` measures: each row is a separate hardware table (or region) with its own limit. The kernel can hold more than any of them; the gap is the problem.*
+![Bar chart of cl-resource-query output on an illustrative leaf showing host, IPv4 and IPv6 route, ECMP, MAC and ACL table occupancy, with what fills each table, the symptoms at 100%, architectural fixes, and the kernel-vs-ASIC gap](diagrams/4.3-03-asic-resource-map.svg)
+*Figure 4.3-3 — What `cl-resource-query` measures: each row is a separate hardware table (or region) with its own limit. The kernel can hold more than any of them; the gap is the problem.*
 
 **What it is.** The Spectrum ASIC has finite hardware tables, and **cl-resource-query** is the tool that shows their occupancy. Also: `nv show system forwarding resources` or `nv show platform forwarding-table` in newer releases exposes the same data through NVUE (verify object name). The rows map to distinct structures:
 
@@ -148,14 +148,14 @@ RoCE has its own one-line profile (Module 4.1). General QoS objects it builds on
 
 **Why it exists.** ACLs in hardware filter at line rate with no CPU cost, which is the only way to protect a 51.2 Tb/s switch — but being stateless they have no idea about connections, so return traffic needs its own permit. QoS exists because a converged fabric carries traffic with different loss and latency needs (RoCE, storage, management, CNPs) on the same links; mapping, scheduling and marking give each class its share and its drop behaviour.
 
-**How it works.** Under the hood NVUE renders `iptables`/`ebtables` rules into `/etc/cumulus/acl/policy.d/` and `cl-acltool` installs them into hardware; `sudo cl-acltool -L ipv4` lists what is programmed. Rules are evaluated in order, first match wins, and traffic that matches no rule in an NVUE ACL is not dropped by default (verify for your release) unless you add an explicit deny — so order your rules from most to least specific (Step 6 of §3). For QoS, profiles (`default-global`, or a named profile) are bound to interfaces: `nv set interface swp1 qos egress-scheduler profile my-sched`. For the exam, remember the pipeline order: ingress trust → switch-priority → (PFC applies per SP) → traffic class → scheduler/shaper → remark. Failure modes: an ACL install fails when the TCAM region is full (apply error, Figure 4.3-4); a rule permits forward traffic but not the replies (stateless); trust set to `port` ignores the DSCP the hosts carefully set. Observe with `nv show acl <name> statistics` (per-rule hits), `sudo cl-acltool -L all`, `nv show interface swpN qos`.
+**How it works.** Under the hood NVUE renders `iptables`/`ebtables` rules into `/etc/cumulus/acl/policy.d/` and `cl-acltool` installs them into hardware; `sudo cl-acltool -L ipv4` lists what is programmed. Rules are evaluated in order, first match wins, and traffic that matches no rule in an NVUE ACL is not dropped by default (verify for your release) unless you add an explicit deny — so order your rules from most to least specific (Step 6 of §3). For QoS, profiles (`default-global`, or a named profile) are bound to interfaces: `nv set interface swp1 qos egress-scheduler profile my-sched`. For the exam, remember the pipeline order: ingress trust → switch-priority → (PFC applies per SP) → traffic class → scheduler/shaper → remark. Failure modes: an ACL install fails when the TCAM region is full (apply error, Figure 4.3-3); a rule permits forward traffic but not the replies (stateless); trust set to `port` ignores the DSCP the hosts carefully set. Observe with `nv show acl <name> statistics` (per-rule hits), `sudo cl-acltool -L all`, `nv show interface swpN qos`.
 
 ### 2.7 The troubleshooting workflow
 
-![Seven-rung troubleshooting ladder from link, LLDP, bridge, L3, ASIC, counters and WJH to cl-support, each with its commands and the symptom that points to it](diagrams/4.3-05-troubleshooting-ladder.svg)
-*Figure 4.3-5 — Verify each rung before climbing; fix the lowest failing rung first.*
+![Seven-rung troubleshooting ladder from link, LLDP, bridge, L3, ASIC, counters and WJH to cl-support, each with its commands and the symptom that points to it](diagrams/4.3-04-troubleshooting-ladder.svg)
+*Figure 4.3-4 — Verify each rung before climbing; fix the lowest failing rung first.*
 
-**What it is.** A fixed, layered order for diagnosing a Cumulus switch, from the physical link up to escalation (Figure 4.3-5):
+**What it is.** A fixed, layered order for diagnosing a Cumulus switch, from the physical link up to escalation (Figure 4.3-4):
 
 1. **Link** — `nv show interface swp1 link` (admin/oper state, speed, FEC, autoneg), `nv show interface swp1 counters` (CRC, errors), `nv show interface swp1 transceiver` / `mlxlink -d ... -m` for optics. Mismatched FEC or speed is the #1 cause of a down 400G/800G link.
 2. **LLDP / cabling** — `nv show interface swp1 lldp` confirms you are plugged into what the design says.
@@ -175,8 +175,8 @@ A disciplined candidate uses this order on exam scenarios: a question describing
 
 *Analogy:* ZTP is a new employee's first-day packet. The building (DHCP) tells them which desk (URL) to go to, the packet (script) must carry the company letterhead (`# CUMULUS-AUTOPROVISIONING`) or security refuses it, and it walks them through setup in order.
 
-![ZTP sequence: the new switch finds no local script, sends DHCPDISCOVER on eth0, receives option 239 with the script URL, fetches the script, runs it to set credentials and pull its NVUE YAML by serial number, applies it, points the NetQ agent at the server and exits 0](diagrams/4.3-02-ztp-flow.svg)
-*Figure 4.3-2 — The ten ZTP steps from factory default to a provisioned, monitored leaf. Steps 2–5 are the discovery contract; steps 6–10 are whatever your script does.*
+![ZTP sequence: the new switch finds no local script, sends DHCPDISCOVER on eth0, receives option 239 with the script URL, fetches the script, runs it to set credentials and pull its NVUE YAML by serial number, applies it, points the NetQ agent at the server and exits 0](diagrams/4.3-05-ztp-flow.svg)
+*Figure 4.3-5 — The ten ZTP steps from factory default to a provisioned, monitored leaf. Steps 2–5 are the discovery contract; steps 6–10 are whatever your script does.*
 
 **What it is.** **ZTP** (Zero Touch Provisioning) is a Cumulus service that runs automatically on first boot (or when `ztp -e` is set and the switch has no saved config), finds a provisioning script, and executes it as root. Discovery order:
 1. USB drive containing `cumulus-ztp` or `cumulus-ztp.sh`.
@@ -185,11 +185,11 @@ A disciplined candidate uses this order on exam scenarios: a question describing
 
 **Why it exists.** An AI pod can bring hundreds of leaves online in a day; console-configuring each is slow and error-prone. ZTP turns cabling plus a DHCP reservation into a fully configured, monitored switch, and because the script pulls a per-serial YAML from a repository (git), every leaf comes up identical and auditable. The marker requirement exists so that a DHCP server answering with the wrong URL cannot make a switch execute an arbitrary web page as root.
 
-**How it works** (Figure 4.3-2).
+**How it works** (Figure 4.3-5).
 
 1. The `ztp` service starts at boot and checks local/USB locations first; finding nothing, it moves on to DHCP.
 2. The DHCP client on `eth0` (in the mgmt VRF) sends DHCPDISCOVER with `vendor-class-identifier "cumulus-linux"` and asks for option 239 in its parameter request list. On an ISC-style server you declare the option once (`option cumulus-provision-url code 239 = text;`) and hand it to clients that match the vendor class.
-3. The DHCPOFFER/ACK carries the address, router, DNS and option 239 — `http://10.10.0.50/ztp.sh` in Figure 4.3-2.
+3. The DHCPOFFER/ACK carries the address, router, DNS and option 239 — `http://10.10.0.50/ztp.sh` in Figure 4.3-5.
 4. ZTP fetches the URL over HTTP from the mgmt VRF.
 5. The response must contain the marker comment `# CUMULUS-AUTOPROVISIONING` (by convention right after the shebang, on line 2) or ZTP refuses to execute it — the most common "ZTP downloads but does nothing" cause (Gotcha 3).
 6. The script runs. It must start with `#!/bin/bash` (or Python); typical first actions set credentials and read the serial number with `decode-syseeprom -e`.
@@ -208,7 +208,7 @@ The switch from Module 4.2 forwards traffic. Now we make it operable: management
 
 ### Step 1 — Management VRF and eth0
 
-This builds the left half of Figure 4.3-1: `eth0` enslaved to VRF `mgmt`, with a default route that exists only in table 1001.
+This builds the left half of Figure 4.3-2: `eth0` enslaved to VRF `mgmt`, with a default route that exists only in table 1001.
 
 ```bash
 # eth0 gets a static address in the mgmt VRF (DHCP alternative: nv set interface eth0 ip address dhcp).
@@ -228,7 +228,7 @@ ip vrf exec mgmt ping -c2 10.10.0.5                     # TACACS server — must
 
 ### Step 2 — Local users, roles, TACACS+
 
-Every TACACS+ exchange from §2.2 (authentication, authorization with `priv-lvl`, accounting) leaves from a socket; the `vrf mgmt` line below is what puts that socket in the mgmt table of Figure 4.3-1.
+Every TACACS+ exchange from §2.2 (authentication, authorization with `priv-lvl`, accounting) leaves from a socket; the `vrf mgmt` line below is what puts that socket in the mgmt table of Figure 4.3-2.
 
 ```bash
 # A named admin with full rights (sudo included).
@@ -305,7 +305,7 @@ Good: `chronyc sources` shows `^* 10.10.0.10` with a small offset. If every sour
 
 ### Step 4 — Health sweep
 
-This is rung 5 of Figure 4.3-5 plus the platform health that sits underneath every rung.
+This is rung 5 of Figure 4.3-4 plus the platform health that sits underneath every rung.
 
 ```bash
 systemctl status switchd            # ASIC programming daemon — "active (running)", no recent restarts
@@ -326,7 +326,7 @@ sudo decode-syseeprom               # ONIE EEPROM: serial, MAC base, platform na
 
 ### Step 5 — Read every row of cl-resource-query
 
-Keep Figure 4.3-4 open: each row below is one of its tables, with its own limit and its own failure mode.
+Keep Figure 4.3-3 open: each row below is one of its tables, with its own limit and its own failure mode.
 
 ```bash
 sudo cl-resource-query
@@ -389,7 +389,7 @@ ls -lh /var/support/
 
 ### Step 8 — Backup before an upgrade
 
-Figure 4.3-3 in commands: the backup is the precondition for both paths, the `nv action upgrade` block is path A, and the restore block is path B step 2.
+Figure 4.3-1 in commands: the backup is the precondition for both paths, the `nv action upgrade` block is path A, and the restore block is path B step 2.
 
 ```bash
 nv config save                                    # make startup.yaml current
@@ -412,7 +412,7 @@ nv config save
 
 ### Step 9 — A ZTP script that does it all
 
-The numbered comments are steps 6–9 of Figure 4.3-2; the final `exit 0` is step 10. The marker on line 2 is what step 5 checks for.
+The numbered comments are steps 6–9 of Figure 4.3-5; the final `exit 0` is step 10. The marker on line 2 is what step 5 checks for.
 
 ```bash
 #!/bin/bash

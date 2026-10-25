@@ -237,10 +237,10 @@ netq check roce                            # consistency across the fabric (veri
 
 **Analogy.** PFC is a per-lane red light. A storm is a broken red light stuck on: the lane behind it fills, then the intersection before that turns red too, until traffic that never meant to go near the broken light is stopped across town.
 
-**What it is.** A **PFC storm** is a sustained stream of pause frames from a device that has stopped draining a lossless priority — classically a NIC whose driver hung, a host stuck in a PCIe stall, or firmware that keeps its Rx buffer above XOFF. Because PFC is per-priority and hop-by-hop, the pause propagates upstream (Figure 8.4-5). A **PFC watchdog** is the switch (or NIC) feature that detects a queue paused for too long and breaks the chain.
+**What it is.** A **PFC storm** is a sustained stream of pause frames from a device that has stopped draining a lossless priority — classically a NIC whose driver hung, a host stuck in a PCIe stall, or firmware that keeps its Rx buffer above XOFF. Because PFC is per-priority and hop-by-hop, the pause propagates upstream (Figure 8.4-3). A **PFC watchdog** is the switch (or NIC) feature that detects a queue paused for too long and breaks the chain.
 
-![Five devices in a row: a hung dgx-02 NIC sending PFC pause at line rate to leaf-r2-01, which stops its TC3 egress queue, fills, and pauses dgx-01 and spine-01, which in turn pauses every other leaf; with panels on the buffer math and how to see each hop](diagrams/8.4-05-pfc-storm-propagation.svg)
-*Figure 8.4-5 — PFC storm propagation: (1) the stuck NIC pauses its leaf, (2) the leaf pauses its other hosts, (3) the leaf pauses the spine, (4) the spine pauses every other leaf.*
+![Five devices in a row: a hung dgx-02 NIC sending PFC pause at line rate to leaf-r2-01, which stops its TC3 egress queue, fills, and pauses dgx-01 and spine-01, which in turn pauses every other leaf; with panels on the buffer math and how to see each hop](diagrams/8.4-03-pfc-storm-propagation.svg)
+*Figure 8.4-3 — PFC storm propagation: (1) the stuck NIC pauses its leaf, (2) the leaf pauses its other hosts, (3) the leaf pauses the spine, (4) the spine pauses every other leaf.*
 
 **Why it exists.** PFC is reactive and has no notion of fairness or of "who caused it". The mechanics make the propagation inevitable:
 - A pause frame carries a time per priority in **quanta** of 512 bit times. At 400 Gb/s a bit time is 2.5 ps, so one quantum is 1.28 ns and the maximum (65,535 quanta) is ~84 µs; a receiver that keeps re-sending XOFF before the timer expires holds the link paused indefinitely.
@@ -315,13 +315,13 @@ sudo cl-support                               # /var/support/cl_support_<host>_<
 
 ## 3. Live-style walkthrough: "NCCL is slow between two nodes"
 
-Scenario: 2-node nccl-tests busbw is 60% of reference; single-node is fine. Spectrum-X, Cumulus 5.x, RoCEv2 lossless on TC3 / switch-priority 3, DSCP 26. NetQ is deployed with WJH forwarded. Output is illustrative. Figure 8.4-3 is the run as a decision flow: diamonds 1–2 are shared by both fabrics, then the RoCE track (left) and the InfiniBand track (right) diverge at the congestion step. Each step below names the diamond it answers.
+Scenario: 2-node nccl-tests busbw is 60% of reference; single-node is fine. Spectrum-X, Cumulus 5.x, RoCEv2 lossless on TC3 / switch-priority 3, DSCP 26. NetQ is deployed with WJH forwarded. Output is illustrative. Figure 8.4-4 is the run as a decision flow: diamonds 1–2 are shared by both fabrics, then the RoCE track (left) and the InfiniBand track (right) diverge at the congestion step. Each step below names the diamond it answers.
 
-![Decision flowchart for NCCL slow between two nodes: perftest per rail and a half-rate check shared by both fabrics, then a RoCE track (roce-counters, WJH tail drop, WJH TC column, pause storm, roce config consistency) and an InfiniBand track (UFM events, perfquery XmitWait, ibtracert, AR/SHARP, telemetry), each No branch exiting to a fix](diagrams/8.4-03-nccl-slow-decision-flow.svg)
-*Figure 8.4-3 — "NCCL is slow between two nodes": the same opening move on both fabrics (diamonds 1–2), then the RoCE and InfiniBand tracks (diamonds 3–7).*
+![Decision flowchart for NCCL slow between two nodes: perftest per rail and a half-rate check shared by both fabrics, then a RoCE track (roce-counters, WJH tail drop, WJH TC column, pause storm, roce config consistency) and an InfiniBand track (UFM events, perfquery XmitWait, ibtracert, AR/SHARP, telemetry), each No branch exiting to a fix](diagrams/8.4-04-nccl-slow-decision-flow.svg)
+*Figure 8.4-4 — "NCCL is slow between two nodes": the same opening move on both fabrics (diamonds 1–2), then the RoCE and InfiniBand tracks (diamonds 3–7).*
 
 ```bash
-# ---- Step 0 (Figure 8.4-3, diamonds 1 and 2): is it ONE link or the fabric? Same reflex as Module 8.1: perftest per rail pair.
+# ---- Step 0 (Figure 8.4-4, diamonds 1 and 2): is it ONE link or the fabric? Same reflex as Module 8.1: perftest per rail pair.
 dgx-02$ ib_write_bw -d mlx5_2 -R --report_gbits -a                 # server (RoCE: -R for rdma_cm)
 dgx-01$ for r in 0 1 2 3; do ib_write_bw -d mlx5_$r -R --report_gbits -s 1048576 -q 4 10.0.$r.2 | tail -1; done
  1048576  ... 389.9   # rail 0 fine
@@ -356,7 +356,7 @@ leaf-r2-01  swp1          swp2         Tail drop   Warning   10.0.2.1    10.0.2.
 # Decision: this is a DSCP -> switch-priority mismatch on the dgx-01 side, not a switch QoS bug.
 #     Confirm the switch is configured as we think before touching the host.
 
-# ---- Step 3 (RoCE diamond 6; Section 2.7, Figure 8.4-5): PFC storm check while we are here — rule out a stuck receiver as the cause of the pause volume.
+# ---- Step 3 (RoCE diamond 6; Section 2.7, Figure 8.4-3): PFC storm check while we are here — rule out a stuck receiver as the cause of the pause volume.
 leaf-r2-01$ nv show interface swp2 counters --view=pause            # (view name varies; see -h)
    Rx pause (pri3)   0
    Tx pause (pri3)   318011        # climbing, but NOT continuous at line rate; it tracks job phases
@@ -636,8 +636,8 @@ sudo vtysh -c "show bgp summary" ; cl-resource-query ; sudo tail -f /var/log/swi
 
 ### roce-validate.md — Go/No-Go table (AC1: 10 rows, each with command and threshold)
 
-![Ten-step RoCE validation flow in two columns: agents, interfaces/MTU/BGP, WJH handoff, roce-config consistency and idle pause sample, then load test, WJH buffer drops on 4791, ECN marks before and after, link events and evidence capture, with GO only if all ten pass and a Rotten agent stopping everything](diagrams/8.4-04-roce-go-no-go.svg)
-*Figure 8.4-4 — The RoCE go/no-go flow implemented below: rows 1–10 in a fixed order; a Rotten agent in row 1 stops the run before anything else is interpreted.*
+![Ten-step RoCE validation flow in two columns: agents, interfaces/MTU/BGP, WJH handoff, roce-config consistency and idle pause sample, then load test, WJH buffer drops on 4791, ECN marks before and after, link events and evidence capture, with GO only if all ten pass and a Rotten agent stopping everything](diagrams/8.4-05-roce-go-no-go.svg)
+*Figure 8.4-5 — The RoCE go/no-go flow implemented below: rows 1–10 in a fixed order; a Rotten agent in row 1 stops the run before anything else is interpreted.*
 
 ```markdown
 # RoCE pod validation — Go/No-Go

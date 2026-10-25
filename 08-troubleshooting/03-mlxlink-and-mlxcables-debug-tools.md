@@ -339,24 +339,24 @@ $ sudo mlxconfig -d /dev/mst/mt4129_pciconf0 r          # reset params to firmwa
 | Needs | MFT, root; no SM | Nothing beyond the driver | Active port + SM |
 | Use it for | *Why* a specific link is bad | Quick RoCE host checks, scripting | *Which* link in the fabric is bad |
 
-![QM9700 OSFP cage holding one finned-top twin-port transceiver with eight lanes split into ports 1/1 (lanes 0-3) and 1/2 (lanes 4-7), a breakout cable fanning out to two ConnectX-7 NICs with flat-top modules, and panels on shared temperature and firmware](diagrams/8.3-04-osfp-twin-port-breakout.svg)
-*Figure 8.3-4 — OSFP twin-port: one module, eight lanes, two 400G ports, and a breakout cable to two NICs — so one module's heat or firmware affects both ports.*
+![QM9700 OSFP cage holding one finned-top twin-port transceiver with eight lanes split into ports 1/1 (lanes 0-3) and 1/2 (lanes 4-7), a breakout cable fanning out to two ConnectX-7 NICs with flat-top modules, and panels on shared temperature and firmware](diagrams/8.3-03-osfp-twin-port-breakout.svg)
+*Figure 8.3-3 — OSFP twin-port: one module, eight lanes, two 400G ports, and a breakout cable to two NICs — so one module's heat or firmware affects both ports.*
 
 **Why it exists.** Twin-port doubles front-panel density: a 1U QM9700 exposes 64 NDR ports through 32 OSFP cages, each module carrying 2 × 4 lanes (800G). The price is shared fate.
 
-**How it works.** NDR Quantum-2 switches use **OSFP twin-port** cages; ConnectX-7 NDR NICs use single-port OSFP or QSFP112 (Figure 8.3-4). Consequences: switch ports `1/1` and `1/2` share one module, so a hot transceiver, low Tx or a firmware bug shows on *both*; breakout cables (one twin-port switch end → two 400G NIC ends) put each NIC on 4 of the module's 8 lanes, so the NIC reports a full 4x while the switch module has 8; the split configuration must match on the switch (`nv set interface swp1 link breakout 2x` on Spectrum; port split profiles on Quantum) or you get `Negotiation failure` / `Width 2x` symptoms that are configuration, not cable; power class 8 (>14 W) modules need the finned-top variant in Quantum-2 cages and flat-top in NIC cages (the NIC cage carries its own heatsink) — mixing them presents as temperature alarms and heat-driven BER. Workflow: `iblinkinfo -l | grep -i "could be"` finds *which* link, `mlxlink -m -c` on both ends explains *why*, and for a hot module check the twin-port sibling before blaming the cable.
+**How it works.** NDR Quantum-2 switches use **OSFP twin-port** cages; ConnectX-7 NDR NICs use single-port OSFP or QSFP112 (Figure 8.3-3). Consequences: switch ports `1/1` and `1/2` share one module, so a hot transceiver, low Tx or a firmware bug shows on *both*; breakout cables (one twin-port switch end → two 400G NIC ends) put each NIC on 4 of the module's 8 lanes, so the NIC reports a full 4x while the switch module has 8; the split configuration must match on the switch (`nv set interface swp1 link breakout 2x` on Spectrum; port split profiles on Quantum) or you get `Negotiation failure` / `Width 2x` symptoms that are configuration, not cable; power class 8 (>14 W) modules need the finned-top variant in Quantum-2 cages and flat-top in NIC cages (the NIC cage carries its own heatsink) — mixing them presents as temperature alarms and heat-driven BER. Workflow: `iblinkinfo -l | grep -i "could be"` finds *which* link, `mlxlink -m -c` on both ends explains *why*, and for a hot module check the twin-port sibling before blaming the cable.
 
 **Why the exam cares.** `iblinkinfo` finds which link; `mlxlink` explains why; `ethtool -m` is Ethernet-only. Two ports on one module share temperature and firmware.
 
 ## 3. Live-style walkthrough: a flapping NDR link
 
-Scenario: UFM raised "Link downed counter exceeded" three times tonight for `dgx-04 mlx5_3`; `perfquery` shows LinkErrorRecoveryCounter climbing. The job on dgx-04 keeps getting `NCCL WARN ... error 12`. You have 20 minutes before the next training epoch. Output is illustrative. Figure 8.3-3 is the run as a decision flow: each diamond is one command, a **No** exits to a fix, a **Yes** goes to the next check. The step comments below name the diamond they answer.
+Scenario: UFM raised "Link downed counter exceeded" three times tonight for `dgx-04 mlx5_3`; `perfquery` shows LinkErrorRecoveryCounter climbing. The job on dgx-04 keeps getting `NCCL WARN ... error 12`. You have 20 minutes before the next training epoch. Output is illustrative. Figure 8.3-4 is the run as a decision flow: each diamond is one command, a **No** exits to a fix, a **Yes** goes to the next check. The step comments below name the diamond they answer.
 
-![Decision flowchart for a flapping NDR link: seven diamonds in order (mst handle, mlxlink opcode and config, module DOM, counters and BER, eye margin, PHY loopback, post-swap verification), each No branch exiting to a red fix box and the final Yes reaching a verified state](diagrams/8.3-03-flapping-link-decision-flow.svg)
-*Figure 8.3-3 — Flapping or degraded NDR link: get the handle, read firmware's diagnosis, then module, counters, eye and loopback; replace only with evidence.*
+![Decision flowchart for a flapping NDR link: seven diamonds in order (mst handle, mlxlink opcode and config, module DOM, counters and BER, eye margin, PHY loopback, post-swap verification), each No branch exiting to a red fix box and the final Yes reaching a verified state](diagrams/8.3-04-flapping-link-decision-flow.svg)
+*Figure 8.3-4 — Flapping or degraded NDR link: get the handle, read firmware's diagnosis, then module, counters, eye and loopback; replace only with evidence.*
 
 ```bash
-# ---- Step 1 (Figure 8.3-3, diamond 1): get a device handle. Without this, every MFT tool fails with "No such device".
+# ---- Step 1 (Figure 8.3-4, diamond 1): get a device handle. Without this, every MFT tool fails with "No such device".
 dgx-04$ sudo mst start
 Create devices
 dgx-04$ sudo mst status -v | grep -E 'MST|mlx5_3'

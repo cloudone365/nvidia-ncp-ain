@@ -30,7 +30,7 @@ By the end of this module you will be able to…
 
 **What it is.** Every verbs program, from `rc_pingpong` to NCCL, performs the same sequence: open a device → allocate a PD → register memory → create a CQ → create a QP → exchange connection parameters → drive the QP to RTS → post work → poll completions → tear down in reverse. Figure 3.2-1 is that sequence as eleven calls; each call allocates a specific resource:
 
-![Eleven-step call sequence of a minimal RDMA WRITE program from ibv_open_device through PD, MR, CQ and QP creation, parameter exchange and three modify_qp calls, to ibv_post_send and ibv_poll_cq on the kernel-free fast path, and teardown](diagrams/3.2-02-verbs-call-sequence.svg)
+![Eleven-step call sequence of a minimal RDMA WRITE program from ibv_open_device through PD, MR, CQ and QP creation, parameter exchange and three modify_qp calls, to ibv_post_send and ibv_poll_cq on the kernel-free fast path, and teardown](diagrams/3.2-01-verbs-call-sequence.svg)
 *Figure 3.2-1 — A minimal RDMA WRITE program as a call sequence: steps 1–8 and 11 go through the kernel; steps 9–10 are the fast path.*
 
 | Call | Allocates / does | Kernel involved? |
@@ -58,7 +58,7 @@ Network-engineer reading: `ibv_open_device` is where the kernel is involved; on 
 
 **What it is.** A QP's hardware context moves through a fixed set of states; each `ibv_modify_qp` call names the target state and a bit-mask of the attributes it carries. Figure 3.2-2 shows the states and the attribute set each RC transition must carry.
 
-![RC queue pair state machine: RESET to INIT to RTR to RTS with the attributes each modify_qp must carry, SQD and SQE detours, and the ERR state reached on fatal completions where every queued work request is flushed](diagrams/3.2-01-qp-state-machine.svg)
+![RC queue pair state machine: RESET to INIT to RTR to RTS with the attributes each modify_qp must carry, SQD and SQE detours, and the ERR state reached on fatal completions where every queued work request is flushed](diagrams/3.2-02-qp-state-machine.svg)
 *Figure 3.2-2 — RC QP state machine and the attributes each transition carries; any fatal completion drops the QP to ERR.*
 
 | State | Can post recv? | Can post send? | Notes |
@@ -83,7 +83,7 @@ Notice how much of the *network* is in the transition attributes: PKey index (pa
 
 **How it works — the reliability timers.** Figure 3.2-3 shows both retry paths on a timeline.
 
-![Timeline on an RC QP: a WRITE_WITH_IMM hits an empty receive queue and draws an RNR NAK, the requester waits min_rnr_timer and retransmits the same PSN until a receive is posted; later lost packets cause an ACK timeout of 4.096 us times 2 to the 14, a go-back-N retransmit, and retry_cnt exhaustion ends in IBV_WC_RETRY_EXC_ERR](diagrams/3.2-05-rnr-retry-timeline.svg)
+![Timeline on an RC QP: a WRITE_WITH_IMM hits an empty receive queue and draws an RNR NAK, the requester waits min_rnr_timer and retransmits the same PSN until a receive is posted; later lost packets cause an ACK timeout of 4.096 us times 2 to the 14, a go-back-N retransmit, and retry_cnt exhaustion ends in IBV_WC_RETRY_EXC_ERR](diagrams/3.2-03-rnr-retry-timeline.svg)
 *Figure 3.2-3 — RNR NAK vs ACK timeout: two independent retry counters, two different error completions.*
 
 - **Local ACK timeout** = 4.096 µs × 2^`timeout` (5-bit field; 0 means wait forever). `timeout 14` ≈ 67 ms; 18 ≈ 1.07 s. If no ACK covers an outstanding PSN within that time, the requester retransmits from the oldest unacknowledged PSN (go-back-N) and decrements its retry budget.
@@ -136,7 +136,7 @@ Step 6 is why a QP with `sq_sig_all = 0` that never signals eventually returns `
 
 **How it works.** Figure 3.2-5 traces the events; the numbers match.
 
-![RDMA CM sequence between client, fabric services and server: resolve_addr maps the IP to a device and GID, resolve_route queries the SA path record on IB or the kernel route on RoCE, rdma_connect sends a CM REQ carrying private data, the server accepts with REP, the client returns RTU, both see ESTABLISHED, data flows on verbs, and disconnect sends DREQ/DREP](diagrams/3.2-03-rdma-cm-sequence.svg)
+![RDMA CM sequence between client, fabric services and server: resolve_addr maps the IP to a device and GID, resolve_route queries the SA path record on IB or the kernel route on RoCE, rdma_connect sends a CM REQ carrying private data, the server accepts with REP, the client returns RTU, both see ESTABLISHED, data flows on verbs, and disconnect sends DREQ/DREP](diagrams/3.2-05-rdma-cm-sequence.svg)
 *Figure 3.2-5 — RDMA CM: each step has a success event and an error event that names the failing layer.*
 
 1. `rdma_resolve_addr(id, NULL, server_ip, 2000 ms)` maps the destination IP to the local RDMA device, port and source GID index (the netdev that routes to that IP). Event `ADDR_RESOLVED`, or `ADDR_ERROR`.

@@ -54,7 +54,7 @@ Everything that follows assumes RoCE v2. Packet-capture tell: RoCE v2 shows up i
 
 **Lossless vs lossy RoCE.** Figure 3.3-2 frames the design decision.
 
-![Decision flow: a RoCE v2 fabric for NCCL training or loss-sensitive storage goes lossless with PFC on priority 3 plus ECN and a strict CNP class; mixed or tolerant workloads may run lossy with ECN only; a Spectrum-4 plus BlueField-3 end-to-end fabric goes Spectrum-X; each branch lists what it commits you to](diagrams/3.3-06-lossy-vs-lossless.svg)
+![Decision flow: a RoCE v2 fabric for NCCL training or loss-sensitive storage goes lossless with PFC on priority 3 plus ECN and a strict CNP class; mixed or tolerant workloads may run lossy with ECN only; a Spectrum-4 plus BlueField-3 end-to-end fabric goes Spectrum-X; each branch lists what it commits you to](diagrams/3.3-02-lossy-vs-lossless.svg)
 *Figure 3.3-2 — Lossy or lossless? The decision, and what each choice commits you to operationally.*
 
 | Model | Mechanism | Pros | Cons |
@@ -73,7 +73,7 @@ NVIDIA's guidance for AI training fabrics is lossless (PFC + ECN) with ECN doing
 
 **What it is.** A receiver whose buffer for priority *p* fills past a threshold (**XOFF**) sends a PFC frame telling its link partner "stop sending priority *p* for *t* quanta" and later releases it (**XON**) when the buffer drains. Only the RoCE priority (conventionally **priority 3**) is made lossless; TCP management traffic on priority 0 is still allowed to drop. Figure 3.3-3 shows one hop in detail and how a stuck receiver turns into a storm.
 
-![PFC mechanism: hostA transmits priority 3 to leaf01 swp1; when the priority-3 ingress buffer crosses XOFF the switch sends a PFC frame pausing priority 3 for 0xFFFF quanta; the buffer bar shows normal fill, headroom and XON; below, a hung host holds XOFF and pause frames propagate hop by hop against the data until the PFC watchdog breaks the chain](diagrams/3.3-02-pfc-mechanism.svg)
+![PFC mechanism: hostA transmits priority 3 to leaf01 swp1; when the priority-3 ingress buffer crosses XOFF the switch sends a PFC frame pausing priority 3 for 0xFFFF quanta; the buffer bar shows normal fill, headroom and XON; below, a hung host holds XOFF and pause frames propagate hop by hop against the data until the PFC watchdog breaks the chain](diagrams/3.3-03-pfc-mechanism.svg)
 *Figure 3.3-3 — PFC: ① the pause frame, ② XOFF threshold, ③ headroom; ④ storm propagation against the data flow; ⑤ the watchdog.*
 
 **Why it exists.** Ethernet switches drop when a buffer is full; RoCE cannot afford drops (§2.1). PFC turns "full buffer → drop" into "nearly-full buffer → tell the neighbour to stop", per priority, so lossless and lossy traffic can share a link. It is the Ethernet approximation of IB's credits — but *reactive*: IB never sends without a grant, PFC sends until told to stop, so it must reserve buffer for what is already in flight.
@@ -121,7 +121,7 @@ Headroom grows with link speed and cable length; this is why NVUE's RoCE profile
 
 **How it works.** Figure 3.3-4 is one full DCQCN cycle; the numbers match.
 
-![DCQCN sequence across the reaction point sending NIC, the congestion point switch egress queue on TC3 and the notification point receiving NIC: ECN-capable data is marked CE between Kmin and Kmax, the receiver sends a CNP on DSCP 48 to TC6, the sender cuts its rate by alpha over two, then recovers through fast recovery, additive and hyper increase](diagrams/3.3-03-dcqcn.svg)
+![DCQCN sequence across the reaction point sending NIC, the congestion point switch egress queue on TC3 and the notification point receiving NIC: ECN-capable data is marked CE between Kmin and Kmax, the receiver sends a CNP on DSCP 48 to TC6, the sender cuts its rate by alpha over two, then recovers through fast recovery, additive and hyper increase](diagrams/3.3-04-dcqcn.svg)
 *Figure 3.3-4 — DCQCN: the switch marks (CP), the receiver notifies (NP), the sender slows (RP), then recovers.*
 
 1. **Send ECN-capable.** The RP's QP transmits at line rate with ToS 0x6a (DSCP 26, ECT(0)).
@@ -182,7 +182,7 @@ Variants: `mode lossy` (ECN on TC3, DSCP/TC mapping, CNP TC6 — but **no PFC**,
 
 Figure 3.3-6 puts the host and switch halves side by side; reading across a row, every box must agree.
 
-![End-to-end lossless RoCE configuration map: hostA, leaf01, spine01, leaf02 and hostB columns with matching rows for MTU, trust DSCP, PFC on priority 3, DSCP 26 and 48 mapping, ECN on TC3 and CNP DSCP 48, ETS with TC6 strict, and ToS 106 or pfc-watchdog, over 3 m DAC and 100 m links](diagrams/3.3-04-lossless-config-map.svg)
+![End-to-end lossless RoCE configuration map: hostA, leaf01, spine01, leaf02 and hostB columns with matching rows for MTU, trust DSCP, PFC on priority 3, DSCP 26 and 48 mapping, ECN on TC3 and CNP DSCP 48, ETS with TC6 strict, and ToS 106 or pfc-watchdog, over 3 m DAC and 100 m links](diagrams/3.3-06-lossless-config-map.svg)
 *Figure 3.3-6 — End-to-end lossless RoCE: every hop must agree on the same classes; one mismatch means silent drops.*
 
 ### 2.6 Spectrum-X preview

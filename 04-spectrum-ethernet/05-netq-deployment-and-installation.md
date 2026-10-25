@@ -31,7 +31,7 @@ Mental model for Cisco/Arista engineers: NetQ ≈ CloudVision/DNA Center assuran
 
 **Why it exists.** Most fabric faults are *relationships*, not single-device states: an MTU that differs between two LLDP neighbours, a VNI present on one VTEP and missing on another, one leaf left in lossy mode among lossless peers. No single-switch command sees those, and by the time an engineer logs in the transient state (a PFC storm, a flapping session) may be gone. NetQ keeps every device's state over time in one store, so it can compare devices with each other and look back in time.
 
-**How it works.** Three moving parts (Figure 4.5-1): an **agent** on every switch and host gathers state locally and streams changes; a **server** (on-premises, or NVIDIA's cloud reached through an **OPTA**) ingests, stores and indexes them; the **CLI/UI/API** query that store. Everything else in this module — validation, RoCE views, WJH, traces, LCM, notifications — is a query or an action against that store.
+**How it works.** Three moving parts (Figure 4.5-1, §2.2): an **agent** on every switch and host gathers state locally and streams changes; a **server** (on-premises, or NVIDIA's cloud reached through an **OPTA**) ingests, stores and indexes them; the **CLI/UI/API** query that store. Everything else in this module — validation, RoCE views, WJH, traces, LCM, notifications — is a query or an action against that store.
 
 ### 2.2 Components and deployment models
 
@@ -136,7 +136,7 @@ Run suites lowest layer first — `interfaces`/`mtu` before `bgp`, `bgp` before 
 
 **What it is.** LCM lets NetQ upgrade Cumulus Linux images and NetQ agents, and (in newer releases) push NVUE configuration, across many switches from one place. For NVUE configuration management, LCM can store NVUE YAML "configuration profiles" and apply them — a GUI alternative to Ansible (Module 6.1).
 
-**Why it exists.** A Cumulus major upgrade is a destructive image install (Module 4.3 Figure 4.3-3): back up, install, restore, validate. Doing that by hand on hundreds of switches invites mistakes — two MLAG peers upgraded at once, a forgotten backup. LCM makes the safe procedure the default.
+**Why it exists.** A Cumulus major upgrade is a destructive image install (Module 4.3 Figure 4.3-1): back up, install, restore, validate. Doing that by hand on hundreds of switches invites mistakes — two MLAG peers upgraded at once, a forgotten backup. LCM makes the safe procedure the default.
 
 **How it works** (Figure 4.5-2, steps 6–9). You register SSH credentials and upload the image (6). For each switch, in the configured `order`, LCM connects over SSH, backs up the configuration, takes a snapshot 'before', copies the image, installs it and reboots (7). When the agent reconnects, LCM takes the snapshot 'after' and compares BGP/EVPN/interfaces state; with `run-restore-on-failure`, a failed upgrade or mismatch triggers restore (8). Then it moves to the next host — sequential or grouped upgrades protect MLAG pairs (9). `netq lcm show upgrade-jobs cl-image` shows progress. Failure modes: wrong or expired credentials (job fails at the SSH step), a switch with a Rotten agent (no 'after' snapshot to compare), image download blocked (outbound HTTPS from the server).
 

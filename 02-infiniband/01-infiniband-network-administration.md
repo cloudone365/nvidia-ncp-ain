@@ -177,7 +177,7 @@ Observe it: `sminfo` (master LID, GUID, priority, state), `show ib sm` / `show i
 
 **What it is.** The routing engine is the algorithm inside the SM that turns the discovered topology into one LFT per switch (destination LID → output port). The choice is set with `routing_engine` in `opensm.conf` (comma-separated list; the first one that succeeds is used). Figure 2.1-4 shows the same 2-level fat tree routed by `minhop` and by `ftree`, with the resulting entries on leaf-01.
 
-![A two-spine two-leaf fat tree with LFT entries for leaf-01 showing minhop load-balanced versus ftree deterministic spine selection](diagrams/2.1-05-routing-engines.svg)
+![A two-spine two-leaf fat tree with LFT entries for leaf-01 showing minhop load-balanced versus ftree deterministic spine selection](diagrams/2.1-04-routing-engines.svg)
 *Figure 2.1-4 — minhop vs ftree on a 2-level fat tree: same topology, different LFT entries for the same destinations.*
 
 | Engine | How it routes | Use when |
@@ -233,7 +233,7 @@ Membership rules, which the exam loves (Figure 2.1-5 draws them for the §5 assi
 - **Full ↔ limited**: can communicate.
 - **Limited ↔ limited**: **cannot** communicate.
 
-![Four compute hosts in two tenant partitions and one storage partition; arrows show which pairs may exchange packets based on full or limited PKey membership](diagrams/2.1-04-partitions.svg)
+![Four compute hosts in two tenant partitions and one storage partition; arrows show which pairs may exchange packets based on full or limited PKey membership](diagrams/2.1-05-partitions.svg)
 *Figure 2.1-5 — Two tenants plus a shared storage partition: full↔full and full↔limited pass, limited↔limited is dropped by the receiving HCA.*
 
 **Why it exists.** A shared cluster needs isolation without N separate fabrics, and it needs it enforced in hardware on every packet rather than by trusting hosts. Putting the key in the transport header means a packet from a non-member is rejected by the *receiving HCA* (or switch port) before any QP sees it; there is nothing to spoof because the SM, not the host, writes the PKey table. Limited membership exists for exactly the storage/shared-service case: put a shared storage server as a *full* member and tenants' compute nodes as *limited* members of the same PKey. Each tenant reaches storage, but tenants cannot see each other — without needing N separate partitions, and without consuming N entries of every storage port's 128-entry table.

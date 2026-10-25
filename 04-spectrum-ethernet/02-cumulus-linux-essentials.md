@@ -48,10 +48,10 @@ By the end of this module you will be able to…
 
 ### 2.2 NVUE — the object model
 
-![Anatomy of an NVUE command: verb, object, identifier, attribute path, value, and the same path in YAML and REST](diagrams/4.2-05-nvue-command-anatomy.svg)
-*Figure 4.2-5 — One NVUE path, three surfaces: the CLI argument list, the YAML tree that `nv config show -o yaml` emits, and the REST URL under `/nvue_v1/`.*
+![Anatomy of an NVUE command: verb, object, identifier, attribute path, value, and the same path in YAML and REST](diagrams/4.2-02-nvue-command-anatomy.svg)
+*Figure 4.2-2 — One NVUE path, three surfaces: the CLI argument list, the YAML tree that `nv config show -o yaml` emits, and the REST URL under `/nvue_v1/`.*
 
-**What it is.** **NVUE** (NVIDIA User Experience) is the supported CLI and REST API. Legacy **NCLU** (`net add`, `net commit`) was removed in Cumulus 5.x; if you see `net` commands in older study material, translate them to `nv`. NVUE presents configuration as a tree of objects whose top level includes `system`, `interface`, `bridge`, `mlag`, `router`, `vrf`, `nve`, `evpn`, `qos`, `acl`, `service`. Every command is a path into that tree plus a value — `nv set interface swp1 link mtu 9216` is verb + object (`interface`) + identifier (`swp1`) + attribute path (`link mtu`) + value (`9216`), as Figure 4.2-5 shows.
+**What it is.** **NVUE** (NVIDIA User Experience) is the supported CLI and REST API. Legacy **NCLU** (`net add`, `net commit`) was removed in Cumulus 5.x; if you see `net` commands in older study material, translate them to `nv`. NVUE presents configuration as a tree of objects whose top level includes `system`, `interface`, `bridge`, `mlag`, `router`, `vrf`, `nve`, `evpn`, `qos`, `acl`, `service`. Every command is a path into that tree plus a value — `nv set interface swp1 link mtu 9216` is verb + object (`interface`) + identifier (`swp1`) + attribute path (`link mtu`) + value (`9216`), as Figure 4.2-2 shows.
 
 **Why it exists.** A single tree means one schema for three surfaces: the CLI, the YAML file (`nv config show -o yaml`) and the REST API (`PATCH /nvue_v1/interface/swp1/link {"mtu": 9216}`, Module 6.1). Automation gets a declarative document instead of a transcript of commands, and the CLI gets completion and validation from the same schema.
 
@@ -61,8 +61,8 @@ By the end of this module you will be able to…
 
 *Analogy:* think of a blog post. **Pending** is your draft — only you see it. **Applied** is published — the world sees it now. **Startup** is the copy saved to disk — what survives if the server reboots. Publishing does not save to disk, and saving to disk does not publish your draft.
 
-![NVUE lifecycle state diagram: pending revision applied with nv config apply, persisted with nv config save, rolled back from history](diagrams/4.2-02-nvue-lifecycle.svg)
-*Figure 4.2-2 — The three NVUE states and the four verbs that move configuration between them: `nv set` into pending (1), `nv config apply` to applied (2), `nv config save` to startup (3), `nv config apply <rev>` to roll back (4).*
+![NVUE lifecycle state diagram: pending revision applied with nv config apply, persisted with nv config save, rolled back from history](diagrams/4.2-03-nvue-lifecycle.svg)
+*Figure 4.2-3 — The three NVUE states and the four verbs that move configuration between them: `nv set` into pending (1), `nv config apply` to applied (2), `nv config save` to startup (3), `nv config apply <rev>` to roll back (4).*
 
 **What it is.** Three named configuration states and the commands that read and move them:
 
@@ -74,7 +74,7 @@ By the end of this module you will be able to…
 
 **Why it exists.** A transactional model gives you three things a "type and it is live" CLI cannot: a review step (`nv config diff` shows exactly what will change before anything moves), atomic validation (apply checks the whole tree, so a VLAN referenced by an SVI must exist on the bridge in the same revision), and rollback (every applied revision is numbered and re-applicable). The cost is two classic mistakes the exam loves: reading `nv show` to "confirm" an un-applied draft (it reads applied/operational state, not pending), and rebooting after apply-without-save.
 
-**How it works** (Figure 4.2-2). `nv set` writes into your pending revision (1). `nv config apply` validates it, renders the Linux files (§2.1), triggers the daemons, waits for the kernel to converge and records `applied [rev_id: N]` (2); without `-y` it prompts with the diff first. `nv config save` copies the *applied* tree — not pending — to `/etc/nvue.d/startup.yaml` (3). Reboot loads startup. Rollback is `nv config history` to find the revision, then `nv config apply <rev>` which makes that revision pending and applies it (4) — then `save` again if you want the rollback to persist. Pending changes are per user by default; if another user has unapplied changes, `nv config apply` warns, and via REST a conflicting revision returns `409 Conflict` (Module 6.1). `nv config detach` throws your draft away.
+**How it works** (Figure 4.2-3). `nv set` writes into your pending revision (1). `nv config apply` validates it, renders the Linux files (§2.1), triggers the daemons, waits for the kernel to converge and records `applied [rev_id: N]` (2); without `-y` it prompts with the diff first. `nv config save` copies the *applied* tree — not pending — to `/etc/nvue.d/startup.yaml` (3). Reboot loads startup. Rollback is `nv config history` to find the revision, then `nv config apply <rev>` which makes that revision pending and applies it (4) — then `save` again if you want the rollback to persist. Pending changes are per user by default; if another user has unapplied changes, `nv config apply` warns, and via REST a conflicting revision returns `409 Conflict` (Module 6.1). `nv config detach` throws your draft away.
 
 **Why the exam cares:** `nv config apply` does **not** persist. A reboot after apply-without-save reverts to the last saved startup. Conversely, `nv config save` without `apply` saves whatever is *applied*, not pending. `nv show` reflects applied/operational state; `nv config diff` reflects pending.
 
@@ -106,8 +106,8 @@ nv config apply -y
 
 *Analogy:* one apartment building (`br_default`) with many floors (VLANs). An access port is a resident with a key to one floor; a trunk port is the building manager with keys to several.
 
-![VLAN-aware bridge br_default on an MLAG leaf pair with access and trunk ports, LACP bonds, SVIs with VRR, and the clagd peerlink](diagrams/4.2-03-vlan-bridge-mlag.svg)
-*Figure 4.2-3 — One VLAN-aware bridge per switch carrying VLANs 10/20/30; access ports untagged (PVID), trunks tagged; SVIs `vlan10`/`vlan20` with a VRR anycast gateway; a dual-attached server on an MLAG bond; clagd syncing over the peerlink.*
+![VLAN-aware bridge br_default on an MLAG leaf pair with access and trunk ports, LACP bonds, SVIs with VRR, and the clagd peerlink](diagrams/4.2-04-vlan-bridge-mlag.svg)
+*Figure 4.2-4 — One VLAN-aware bridge per switch carrying VLANs 10/20/30; access ports untagged (PVID), trunks tagged; SVIs `vlan10`/`vlan20` with a VRR anycast gateway; a dual-attached server on an MLAG bond; clagd syncing over the peerlink.*
 
 **What it is.** Cumulus uses a single **VLAN-aware bridge** (`br_default`) by default. One Linux bridge carries all VLANs with 802.1Q filtering; ports are access or trunk members of it (`nv set interface swp3 bridge domain br_default access 10` / `… vlan 10,20` / no VLAN list = all bridge VLANs). Traditional per-VLAN bridges exist but are legacy. **SVIs** (routed interfaces per VLAN) are `vlan<N>` interfaces with `ip address`, optionally placed in a VRF (`ip vrf tenantA`). The bridge's native/untagged VLAN on trunks defaults to 1 (`nv set bridge domain br_default untagged 1`).
 
@@ -119,7 +119,7 @@ nv config apply -y
 
 *Analogy:* two receptionists sharing one phone number and one appointment book. The caller (host) dials one number and either can answer; the shared book (`clagd` sync over the peerlink) keeps them consistent.
 
-**What it is.** **MLAG** (Multi-Chassis Link Aggregation) lets two Cumulus switches present as one LACP partner to a dual-attached host or downstream switch (Figure 4.2-3). The pieces: a **peerlink** bond between the peers carrying a dedicated peer VLAN (4094 by default, sub-interface `peerlink.4094`); the `clagd` daemon on each peer exchanging MAC tables, LACP state and VLAN/MTU consistency data over it; an identical **system MAC** on both peers (`nv set mlag mac-address 44:38:39:BE:EF:AA`) which becomes the LACP system ID the host sees; a per-bond **`mlag id`** identical on both peers that ties `bond1` on leaf01 to `bond1` on leaf02; `peer-ip linklocal` (IPv6 link-local over the peerlink, no addressing to plan); a **backup IP** over the management network (`nv set mlag backup 192.168.200.12 vrf mgmt`, the *other* peer's eth0) to tell peer death from peerlink failure; and `priority` (lower = primary, default 32768).
+**What it is.** **MLAG** (Multi-Chassis Link Aggregation) lets two Cumulus switches present as one LACP partner to a dual-attached host or downstream switch (Figure 4.2-4). The pieces: a **peerlink** bond between the peers carrying a dedicated peer VLAN (4094 by default, sub-interface `peerlink.4094`); the `clagd` daemon on each peer exchanging MAC tables, LACP state and VLAN/MTU consistency data over it; an identical **system MAC** on both peers (`nv set mlag mac-address 44:38:39:BE:EF:AA`) which becomes the LACP system ID the host sees; a per-bond **`mlag id`** identical on both peers that ties `bond1` on leaf01 to `bond1` on leaf02; `peer-ip linklocal` (IPv6 link-local over the peerlink, no addressing to plan); a **backup IP** over the management network (`nv set mlag backup 192.168.200.12 vrf mgmt`, the *other* peer's eth0) to tell peer death from peerlink failure; and `priority` (lower = primary, default 32768).
 
 **Why it exists.** Hosts and storage want two uplinks for redundancy and bandwidth, and LACP requires both links to terminate on what looks like one switch. Without MLAG you would need STP (one link blocked) or host-side active/backup. The trade-off is operational coupling: two switches must agree on VLANs, MTU, bond membership and the system MAC, and a split brain (peerlink down, both alive) must be arbitrated — that is what the backup IP and the primary/secondary roles do (the secondary shuts its MLAG bonds if it loses both the peerlink and the backup heartbeat says the primary is alive).
 
@@ -129,14 +129,14 @@ nv config apply -y
 
 *Analogy:* a **VRF** is a separate building with its own address book. The `mgmt` VRF (Module 4.3) is the security office's building — `eth0` lives there so fabric routes can never hijack SSH.
 
-![BGP unnumbered between leaf01 and spine01: IPv6 router advertisements discover link-local addresses, the eBGP session runs over them, IPv4 prefixes carry an IPv6 next hop (RFC 5549) and land in the FIB](diagrams/4.2-04-bgp-unnumbered.svg)
-*Figure 4.2-4 — BGP unnumbered mechanics: RA discovery (1), TCP/179 over link-local with `remote-as external` (2–3), IPv4 NLRI with an IPv6 next hop via the extended-next-hop capability (4–5), FIB install with `via inet6 fe80::…` (6).*
+![BGP unnumbered between leaf01 and spine01: IPv6 router advertisements discover link-local addresses, the eBGP session runs over them, IPv4 prefixes carry an IPv6 next hop (RFC 5549) and land in the FIB](diagrams/4.2-05-bgp-unnumbered.svg)
+*Figure 4.2-5 — BGP unnumbered mechanics: RA discovery (1), TCP/179 over link-local with `remote-as external` (2–3), IPv4 NLRI with an IPv6 next hop via the extended-next-hop capability (4–5), FIB install with `via inet6 fe80::…` (6).*
 
 **What it is.** Each **VRF** is a Linux VRF device with its own routing table (`nv set vrf blue`, `nv set interface swp10 ip vrf blue`); FRR runs a routing instance per VRF (`nv set vrf blue router bgp …`). **BGP unnumbered** is eBGP over interfaces with no IPv4 address: the session uses IPv6 link-local addresses discovered via router advertisements, and IPv4 routes are carried with an IPv6 next hop using the **extended next-hop capability (RFC 5549)**. Configuration is per interface, not per address: `nv set vrf default router bgp neighbor swp51 remote-as external` — `external` means "any ASN that is not mine" (eBGP), `internal` means "my ASN" (iBGP); you never type the neighbour's ASN. Spines typically share one ASN; each leaf (or leaf pair) has its own.
 
 **Why it exists.** A leaf/spine fabric has hundreds of point-to-point links. Numbering each with a /31 means an address plan, per-link neighbour statements with explicit ASNs and addresses, and a different configuration on every switch — every one a chance for a typo. Unnumbered makes every fabric link's configuration *identical* (no address, no neighbour ASN), so templates collapse to a loop over interface names (Module 6.1) and the only per-switch values are hostname, loopback and ASN. That is why it underpins every NVIDIA EVPN and Spectrum-X reference design. The trade-off is that you must understand IPv6 link-local to troubleshoot it, and that a session needs the *other* end configured the same way.
 
-**How it works** (Figure 4.2-4):
+**How it works** (Figure 4.2-5):
 
 1. With `ipv6 ra` on by default for unnumbered interfaces, each side sends Router Advertisements; from them FRR learns the peer's `fe80::` link-local address on that interface (`swp51`) without any configuration.
 2. FRR opens TCP 179 to `fe80::2%swp51`; the OPEN messages carry each side's ASN (65011 / 65000).
@@ -160,7 +160,7 @@ Observe: `nv show vrf default router bgp neighbor` (Remote-AS *learned*, State E
 
 ## 3. Live-style walkthrough
 
-We will do two things on `leaf01`: first walk the full NVUE lifecycle on a trivial change so you *see* pending, applied and startup behave differently (Part A follows the four numbered transitions of Figure 4.2-2 in order), then build the VLAN-aware bridge, SVI and LACP bond of Figure 4.2-3 (Part B) and the BGP unnumbered sessions of Figure 4.2-4 (Part C).
+We will do two things on `leaf01`: first walk the full NVUE lifecycle on a trivial change so you *see* pending, applied and startup behave differently (Part A follows the four numbered transitions of Figure 4.2-3 in order), then build the VLAN-aware bridge, SVI and LACP bond of Figure 4.2-4 (Part B) and the BGP unnumbered sessions of Figure 4.2-5 (Part C).
 
 ### Part A — the NVUE lifecycle on one MTU change
 
@@ -233,7 +233,7 @@ nv set interface swp1 link mtu 1400
 nv config detach              # throw the draft away; nv config diff is now empty
 ```
 
-Watch the pattern: `set` → `diff` → `apply` → `save` — transitions 1, 2 and 3 of Figure 4.2-2, with transition 4 (rollback) exercised by `nv config apply 11`. Two of those four are optional in a lab and mandatory in production.
+Watch the pattern: `set` → `diff` → `apply` → `save` — transitions 1, 2 and 3 of Figure 4.2-3, with transition 4 (rollback) exercised by `nv config apply 11`. Two of those four are optional in a lab and mandatory in production.
 
 ### Part B — VLAN-aware bridge, SVI, LACP bond
 
@@ -337,7 +337,7 @@ nv show vrf default router bgp neighbor  # swp51/swp52 Established, Remote-AS le
 sudo vtysh -c "show ip bgp summary"      # same data from FRR
 ```
 
-What just happened on swp51 is steps 1–6 of Figure 4.2-4: RA discovery, TCP/179 over link-local, `external` accepting any foreign ASN, and the loopback advertised with an IPv6 next hop. Prove the last point with `ip route show vrf default | grep inet6` — every spine prefix says `via inet6 fe80::…`. Peer-groups reduce repetition: `nv set vrf default router bgp peer-group fabric remote-as external` then `nv set vrf default router bgp neighbor swp51 peer-group fabric`.
+What just happened on swp51 is steps 1–6 of Figure 4.2-5: RA discovery, TCP/179 over link-local, `external` accepting any foreign ASN, and the loopback advertised with an IPv6 next hop. Prove the last point with `ip route show vrf default | grep inet6` — every spine prefix says `via inet6 fe80::…`. Peer-groups reduce repetition: `nv set vrf default router bgp peer-group fabric remote-as external` then `nv set vrf default router bgp neighbor swp51 peer-group fabric`.
 
 ### Part D — the Linux underneath
 

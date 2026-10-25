@@ -70,7 +70,7 @@ Inside Spectrum-4 the packet pipeline is, in order: parser → tunnel terminatio
 
 **How each one works.**
 
-- **ECMP hash collisions.** A standard switch chooses one equal-cost next hop per *flow* by hashing the 5-tuple (src/dst IP, protocol, src/dst UDP port — for RoCEv2 the destination port is always 4791, so the entropy is in the source port the NIC picks per QP). The choice is sticky for the life of the flow. With few flows and few uplinks, two elephant flows routinely land on the same spine link while another sits idle (Figure 4.1-2, left). Observe it on the switch: `nv show interface swp61-64 counters` shows one uplink at line rate and its neighbours nearly idle during a collective.
+- **ECMP hash collisions.** A standard switch chooses one equal-cost next hop per *flow* by hashing the 5-tuple (src/dst IP, protocol, src/dst UDP port — for RoCEv2 the destination port is always 4791, so the entropy is in the source port the NIC picks per QP). The choice is sticky for the life of the flow. With few flows and few uplinks, two elephant flows routinely land on the same spine link while another sits idle (Figure 4.1-2 in §2.3, left). Observe it on the switch: `nv show interface swp61-64 counters` shows one uplink at line rate and its neighbours nearly idle during a collective.
 - **Elephant flows.** A multi-gigabyte RDMA write is *one* flow. Flow-level load balancing cannot split it; resilient hashing (keeps flow→member mapping stable when a member fails) and flowlet switching (re-hashes on an idle gap) help marginally but still bind a flow to one path at a time. Only per-packet forwarding spreads it.
 - **Incast.** In an all-reduce or all-to-all, many senders target the same receiver inside the same window; its leaf downlink is oversubscribed instantly (N × 400G into one 400G port). Without a lossless mechanism the egress queue tail-drops; RoCE's go-back-N retransmission then re-sends everything after the lost sequence number, collapsing throughput. With **PFC** alone, pause frames propagate upstream hop by hop (leaf → spine → other leaves) and head-of-line block unrelated tenants sharing the same priority. Incast is *not* a path-selection problem: adaptive routing does nothing for it, congestion control and buffering do.
 - **Tail latency.** A collective finishes when its *slowest* participant finishes; p99.9 matters more than the mean. A 1 % slow-path event per iteration is a permanent tax on the job because every iteration waits for it. Nothing "fixes" tail latency directly — removing the other three removes most of it.
@@ -193,19 +193,19 @@ Observe it: `nv show evpn vni` (L2 VNIs with remote VTEPs, L3 VNIs with their VR
 
 ### 2.9 NVIDIA Air — the digital twin
 
-![NVIDIA Air digital-twin workflow from git and CI through a simulated leaf/spine/NetQ topology to production, showing what it can and cannot validate](diagrams/4.1-06-air-digital-twin.svg)
-*Figure 4.1-6 — The Air workflow: CI builds a twin, applies the same YAML and runs `netq check` (steps 1–3), then the identical artefacts go to hardware (4). No ASIC means no RoCE/AR/PFC data-plane proof.*
+![NVIDIA Air digital-twin workflow from git and CI through a simulated leaf/spine/NetQ topology to production, showing what it can and cannot validate](diagrams/4.1-05-air-digital-twin.svg)
+*Figure 4.1-5 — The Air workflow: CI builds a twin, applies the same YAML and runs `netq check` (steps 1–3), then the identical artefacts go to hardware (4). No ASIC means no RoCE/AR/PFC data-plane proof.*
 
 **What it is.** **NVIDIA Air** (formerly Cumulus in the Cloud; "DSX Air" in some Spectrum-X materials) is a hosted simulation platform running real Cumulus Linux, NVIDIA SONiC, NetQ and Ubuntu host images in a topology you draw or import (DOT/JSON). As a *digital twin* it lets you build the exact leaf/spine/host topology before hardware arrives, validate NVUE configuration, EVPN route exchange, BGP policy and Ansible playbooks (Module 6.1), push the identical YAML to production, and rehearse upgrades and failures safely. It exposes a REST API and SDK so CI can create a twin, run the playbook and `netq check bgp`/`netq check evpn`, and tear it down.
 
 **Why it exists.** Fabric configuration errors are cheapest to find before the switches exist, and a lab of 20 SN5600s is not a realistic staging environment. Because Cumulus is the same software image whether the forwarding plane is a Spectrum ASIC or a virtual switch, the control plane behaves identically in the twin. The limitation is structural, and the exam tests it: there is **no ASIC** in the twin — no real RoCE/AR/PFC data-plane behaviour, no WJH hardware drops, no buffer histograms, no performance numbers. Air validates control plane and configuration only.
 
-**How it works** (Figure 4.1-6): (1) a commit renders per-switch YAML; (2) CI spins up the twin from a topology file and runs `ansible-playbook --check --diff`, then applies; (3) `netq check bgp|evpn|interfaces` inside the twin gates the merge; (4) on merge the same artefacts deploy to hardware, where `ib_write_bw`/NCCL tests (Module 8.x) provide the data-plane proof Air cannot. In Air, `nv set qos roce mode lossless` is accepted and `nv show qos roce` shows the profile, but PFC/ECN counters stay at zero forever and AR is accepted but never sprays. That sentence is the "what Air cannot verify" paragraph in the assignment.
+**How it works** (Figure 4.1-5): (1) a commit renders per-switch YAML; (2) CI spins up the twin from a topology file and runs `ansible-playbook --check --diff`, then applies; (3) `netq check bgp|evpn|interfaces` inside the twin gates the merge; (4) on merge the same artefacts deploy to hardware, where `ib_write_bw`/NCCL tests (Module 8.x) provide the data-plane proof Air cannot. In Air, `nv set qos roce mode lossless` is accepted and `nv show qos roce` shows the profile, but PFC/ECN counters stay at zero forever and AR is accepted but never sprays. That sentence is the "what Air cannot verify" paragraph in the assignment.
 
 ### 2.10 Reference topology: Spectrum-X SuperPOD
 
-![Rail-optimized Spectrum-X scalable unit: 32 DGX nodes with 8 SuperNICs each, NIC n of every node cabled to leaf n, 4 spines, 800G to 2×400G breakouts](diagrams/4.1-05-rail-optimized-su.svg)
-*Figure 4.1-5 — A rail-optimized scalable unit: eight SN5600 rail leaves, each receiving NIC n from all 32 nodes over 800G→2×400G breakouts, with 16×800G uplinks per leaf to four spines.*
+![Rail-optimized Spectrum-X scalable unit: 32 DGX nodes with 8 SuperNICs each, NIC n of every node cabled to leaf n, 4 spines, 800G to 2×400G breakouts](diagrams/4.1-06-rail-optimized-su.svg)
+*Figure 4.1-6 — A rail-optimized scalable unit: eight SN5600 rail leaves, each receiving NIC n from all 32 nodes over 800G→2×400G breakouts, with 16×800G uplinks per leaf to four spines.*
 
 **What it is.** A Spectrum-X DGX SuperPOD compute fabric is **rail-optimized**: each DGX node has 8 GPUs, each with its own 400G SuperNIC; NIC *n* of every node connects to leaf *n* ("rail *n*"). A scalable unit (SU) is 32 nodes × 8 NICs = 256 × 400G host links = 128 × 800G leaf downlinks after breakout; one SN5600 per rail handles 32 nodes with 32 × 400G downlinks (16 × 800G ports broken out) and 16–32 × 800G uplinks depending on the oversubscription ratio.
 
@@ -216,7 +216,7 @@ Observe it: `nv show evpn vni` (L2 VNIs with remote VTEPs, L3 VNIs with their VR
 | Non-blocking (1:1) | 12.8T down / 12.8T up on SN5600 (32×400G down, 16×800G up) | Any-to-any full bandwidth; simplest for all-to-all workloads | Twice the spine ports/optics; higher cost |
 | 2:1 oversubscribed | 2× more downlink than uplink (8×800G up) | Cheaper; fine when rail-optimized traffic stays local | All-to-all (e.g., MoE expert parallel) suffers; AR becomes essential |
 
-**How it works** (Figure 4.1-5). Each rail leaf consumes 16 of its 64 × 800G ports as broken-out downlinks and 16 as uplinks (4 per spine with 4 spines) in the non-blocking case. Spine count = uplinks per leaf for full ECMP spread; with AR the spines act as one aggregate pool so the fabric behaves close to non-blocking even at 2:1 for typical collectives. Capacity math for the SU: 32 nodes × 8 × 400G = 102.4 Tb/s of host bandwidth; a single 51.2 Tb/s SN5600 per rail carries 12.8 Tb/s of it down and 12.8 Tb/s up, so it is far from saturated and the limit is port count, not ASIC capacity. Management and storage ride a separate conventional Ethernet network (often Spectrum, not Spectrum-X RoCE AR). Full SuperPOD RA: [`../01-ai-datacenter-design/`](../01-ai-datacenter-design/).
+**How it works** (Figure 4.1-6). Each rail leaf consumes 16 of its 64 × 800G ports as broken-out downlinks and 16 as uplinks (4 per spine with 4 spines) in the non-blocking case. Spine count = uplinks per leaf for full ECMP spread; with AR the spines act as one aggregate pool so the fabric behaves close to non-blocking even at 2:1 for typical collectives. Capacity math for the SU: 32 nodes × 8 × 400G = 102.4 Tb/s of host bandwidth; a single 51.2 Tb/s SN5600 per rail carries 12.8 Tb/s of it down and 12.8 Tb/s up, so it is far from saturated and the limit is port count, not ASIC capacity. Management and storage ride a separate conventional Ethernet network (often Spectrum, not Spectrum-X RoCE AR). Full SuperPOD RA: [`../01-ai-datacenter-design/`](../01-ai-datacenter-design/).
 
 **Why the exam cares:** "GPU 3 on node 17 → GPU 3 on node 22" stays on leaf 3; rail-optimized means same GPU index on the same leaf, not one leaf per node; 2:1 is workable *because of* AR.
 
@@ -227,7 +227,7 @@ We take `leaf01`, an SN5600 fresh out of the box on Cumulus Linux 5.x, to a work
 ![Walkthrough topology: leaf01 SN5600 with four 800G uplinks swp61–64 to spine01–04 and swp1 broken out to two 400G SuperNIC downlinks for tenants A and B](diagrams/4.1-07-walkthrough-leaf01.svg)
 *Figure 4.1-7 — The walkthrough topology. Steps 1–5 below build this leaf from the bottom up; each step ends at a checkpoint you must pass before continuing.*
 
-As you work, keep the mechanism diagrams open: Step 2 builds the underlay sessions of Figure 4.2-4 (BGP unnumbered, steps 1–6 there); Step 3 installs the RoCE profile and AR that drive Figure 4.1-2 (steps 1–4) and Figure 4.1-3 (steps 1–7); Step 4 builds the overlay of Figure 4.1-4.
+As you work, keep the mechanism diagrams open: Step 2 builds the underlay sessions of Figure 4.2-5 (BGP unnumbered, steps 1–6 there); Step 3 installs the RoCE profile and AR that drive Figure 4.1-2 (steps 1–4) and Figure 4.1-3 (steps 1–7); Step 4 builds the overlay of Figure 4.1-4.
 
 ### Step 1 — Identity and breakout
 
@@ -288,7 +288,7 @@ swp63     65000      Established  00:01:11  13       13       4        1
 swp64     65000      Established  00:01:09  13       13       4        1
 ```
 
-Watch the `Remote-AS` column: you never typed 65000; `remote-as external` learned it from the OPEN message (Figure 4.2-4, steps 2–3). A session stuck in `Active` usually means the spine side lacks the interface neighbor or IPv6 RA is disabled (step 1 of that figure never completed).
+Watch the `Remote-AS` column: you never typed 65000; `remote-as external` learned it from the OPEN message (Figure 4.2-5, steps 2–3). A session stuck in `Active` usually means the spine side lacks the interface neighbor or IPv6 RA is disabled (step 1 of that figure never completed).
 
 ### Step 3 — RoCE lossless and adaptive routing
 

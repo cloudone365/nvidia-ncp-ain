@@ -45,7 +45,7 @@ By the end of this module you will be able to…
 
 **What it is.** Three products that nest inside each other (Figure 2.2-1):
 
-![Nested boxes showing UFM Telemetry inside UFM Enterprise inside UFM Cyber-AI, with the capabilities each layer adds and the exam question that maps to each edition](diagrams/2.2-02-ufm-editions.svg)
+![Nested boxes showing UFM Telemetry inside UFM Enterprise inside UFM Cyber-AI, with the capabilities each layer adds and the exam question that maps to each edition](diagrams/2.2-01-ufm-editions.svg)
 *Figure 2.2-1 — UFM editions: Telemetry ⊂ Enterprise ⊂ Cyber-AI, and the operational question each one answers.*
 
 | Edition | What it is | Adds |
@@ -64,7 +64,7 @@ Mental model: Telemetry ⊂ Enterprise ⊂ Cyber-AI. The exam tends to ask "whic
 
 **What it is.** A UFM Enterprise server is a Linux host (or VM, or container) with at least one HCA port on the IB fabric plus a management Ethernet interface. Internally it runs several cooperating services; Figure 2.2-2 shows them on both nodes of an HA pair.
 
-![UFM Enterprise HA pair: each node runs web UI, REST API, UFM core and model DB, opensm, telemetry, event engine, sharp_am and the DRBD-backed /opt/ufm/files volume; Pacemaker heartbeat and DRBD replication link the nodes, a VIP floats to the active node, and only the active SM programs the fabric](diagrams/2.2-01-ufm-architecture.svg)
+![UFM Enterprise HA pair: each node runs web UI, REST API, UFM core and model DB, opensm, telemetry, event engine, sharp_am and the DRBD-backed /opt/ufm/files volume; Pacemaker heartbeat and DRBD replication link the nodes, a VIP floats to the active node, and only the active SM programs the fabric](diagrams/2.2-02-ufm-architecture.svg)
 *Figure 2.2-2 — UFM Enterprise components and the HA pair: the active node owns the VIP and the master SM; DRBD mirrors `/opt/ufm/files` to the standby.*
 
 | Component | Process / location | Role |
@@ -165,7 +165,7 @@ level = INFO
 
 **Why it exists.** UFM, not the operator, owns `opensm.conf` — it must, because UFM features (AR, SHARP, QoS, PKeys from the UI) are implemented by rewriting SM parameters. A single higher-level file lets UFM regenerate the SM configuration consistently at every start, and lets HA replicate one source of truth.
 
-**How it works.** Edit, then restart UFM (`systemctl restart ufm-enterprise`). The generated SM configuration lives under `/opt/ufm/files/conf/opensm/opensm.conf`; a monitoring-mode variant `opensm_mon.conf` exists alongside it. UFM rewrites some parameters at start-up, so persistent SM changes should be made through the UI (Settings → Subnet Manager) or in `gv.cfg`, not by editing the generated file. Partitions are kept in `/opt/ufm/files/conf/opensm/partitions.conf` and also regenerated from the UFM database. The flow for a PKey created by REST is exactly Figure 2.2-4: the API writes the database, UFM regenerates `partitions.conf` and signals the SM, the SM pushes `PKeyTable` SMPs on its next sweep. A hand-edit to the generated file therefore survives only until the next regeneration — the classic "my opensm.conf change disappeared after a restart".
+**How it works.** Edit, then restart UFM (`systemctl restart ufm-enterprise`). The generated SM configuration lives under `/opt/ufm/files/conf/opensm/opensm.conf`; a monitoring-mode variant `opensm_mon.conf` exists alongside it. UFM rewrites some parameters at start-up, so persistent SM changes should be made through the UI (Settings → Subnet Manager) or in `gv.cfg`, not by editing the generated file. Partitions are kept in `/opt/ufm/files/conf/opensm/partitions.conf` and also regenerated from the UFM database. The flow for a PKey created by REST is exactly Figure 2.2-4 (§2.9): the API writes the database, UFM regenerates `partitions.conf` and signals the SM, the SM pushes `PKeyTable` SMPs on its next sweep. A hand-edit to the generated file therefore survives only until the next regeneration — the classic "my opensm.conf change disappeared after a restart".
 
 **Why the exam cares:** "where do you change UFM's SM priority / routing engine?" — Settings → Subnet Manager or `gv.cfg`, never the generated file.
 
@@ -194,7 +194,7 @@ level = INFO
 
 **What it is.** UFM's telemetry and event engine turn per-port hardware counters into graphs, thresholds, events, alarms and actions — the pipeline in Figure 2.2-3.
 
-![Pipeline from fabric port counters through UFM Telemetry and the threshold engine to events, alarms and the actions chosen by the Events Policy: SNMP trap, syslog, email, script hook and port isolation, with isolation feeding back to the fabric port](diagrams/2.2-04-event-pipeline.svg)
+![Pipeline from fabric port counters through UFM Telemetry and the threshold engine to events, alarms and the actions chosen by the Events Policy: SNMP trap, syslog, email, script hook and port isolation, with isolation feeding back to the fabric port](diagrams/2.2-03-event-pipeline.svg)
 *Figure 2.2-3 — From a counter to a page: telemetry samples feed thresholds, events become alarms, and the Events Policy decides the action (including isolating the port).*
 
 | Metric family | Examples | What a bad value means |
@@ -241,7 +241,7 @@ Many events are **threshold events** generated by the telemetry engine: e.g. "Sy
 
 **How it works.** Figure 2.2-4 traces a PKey creation end to end; the numbers match the circled steps.
 
-![Sequence diagram: an automation script authenticates to the UFM REST API, posts a PKey, UFM core validates and writes the model DB, regenerates partitions.conf and signals opensm, which programs PKey tables on switches and HCAs within one sweep; the script reads back and later posts a disable_port action](diagrams/2.2-03-rest-flow.svg)
+![Sequence diagram: an automation script authenticates to the UFM REST API, posts a PKey, UFM core validates and writes the model DB, regenerates partitions.conf and signals opensm, which programs PKey tables on switches and HCAs within one sweep; the script reads back and later posts a disable_port action](diagrams/2.2-04-rest-flow.svg)
 *Figure 2.2-4 — REST integration: from a POST to a PKey programmed in the fabric, with no SM restart.*
 
 1. **Authenticate** — basic auth on every call, or `POST app/tokens` once and reuse the token (header format per the API guide for your release).
