@@ -62,6 +62,9 @@ By the end of this module you will be able to…
 
 Inference clusters care about request/response latency and **tail latency (p99) per token**, many concurrent small flows rather than a few giant ones, front-end load balancing and north-south capacity. Two patterns re-introduce east-west bandwidth into inference: tensor parallelism inside the node (NVLink) and **KV-cache transfer** between prefill and decode GPUs in disaggregated serving, which is a large RDMA transfer across the fabric.
 
+![Inference in two stages: prefill processes the whole prompt in one parallel, compute-bound pass and builds the KV cache; decode then generates one token per step, re-reading the whole cache each time, memory-bound; disaggregated serving puts the two stages on separate GPU pools and hands the KV cache across the RDMA fabric](diagrams/1.1-05-prefill-vs-decode.svg)
+*Figure 1.1-5 — Prefill reads the whole prompt once (compute-bound, sets time-to-first-token); decode writes one token at a time, re-reading the growing KV cache every step (memory-bound, sets inter-token latency). Disaggregated serving splits the two onto separate GPU pools and moves the KV cache between them over RDMA, bringing east-west elephant flows back into inference.*
+
 | Property | Training | Inference |
 |---|---|---|
 | Dominant direction | East-west (GPU↔GPU) | North-south + intra-node east-west |
