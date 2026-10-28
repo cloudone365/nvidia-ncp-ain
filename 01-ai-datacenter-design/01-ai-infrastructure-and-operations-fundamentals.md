@@ -307,6 +307,57 @@ dgx01:12345:12345 [0] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB ... [7]mlx5_7:1/IB
 
 Network-engineer view: small, short-lived TCP flows, once per job. If the in-band network or a firewall blocks the bootstrap port range, the job hangs at init with no RDMA traffic at all — a classic "the fabric is fine but the job won't start" ticket.
 
+> ### 📝 Training Notes — Step ① beyond NVIDIA: other launchers, libraries and fabrics
+>
+> Step ① has two layers: **who launches the job** and **which communication library sets up the GPU-to-GPU connections**. NVIDIA's stack uses Slurm and NCCL, but each layer has alternatives. From the network side the pattern is the same everywhere: a small TCP rendezvous over the management/in-band network, then the heavy data path over RDMA or a high-speed fabric.
+>
+> #### 1. Job launch / scheduling
+>
+> | Option | Where it's common | How ranks find each other |
+> |---|---|---|
+> | **Slurm** (`srun`, `sbatch`) | HPC and DGX SuperPOD with Base Command Manager | Slurm's PMI/PMIx hands each process its rank and peer list |
+> | **Kubernetes** + Kubeflow Training Operator, Volcano, Kueue, or Run:ai | Cloud-native and multi-tenant AI clusters | Pod DNS/service names, plus env vars like `MASTER_ADDR` injected by the operator |
+> | **MPI launchers** (`mpirun` from Open MPI, MPICH, Intel MPI) | Traditional HPC, nccl-tests | MPI's own bootstrap over SSH or PMIx |
+> | **`torchrun`** (PyTorch elastic) | PyTorch training anywhere | A rendezvous server (TCPStore or etcd) at a master address |
+> | **Ray** | Reinforcement learning and some LLM training/serving | Ray's head node coordinates the workers |
+> | **LSF / PBS Pro** | Enterprise and national-lab HPC | PMI-style, like Slurm |
+>
+> #### 2. Collective communication library (NCCL's role)
+>
+> | Library | Vendor / hardware | Notes |
+> |---|---|---|
+> | **NCCL** | NVIDIA GPUs | The default for NVIDIA. Talks to InfiniBand/RoCE via verbs, and to other fabrics through net plugins |
+> | **RCCL** | AMD Instinct GPUs (MI300 etc.) | AMD's port of NCCL, with nearly the same API and env vars (`NCCL_*` mostly still apply) |
+> | **oneCCL** | Intel (Gaudi, Xeon, Intel GPUs) | Gaudi also uses **HCCL**, and Gaudi's NICs are built into the accelerator (RoCE) |
+> | **MSCCL / MSCCL++** | Microsoft (runs on NVIDIA and AMD) | Custom collective algorithms on top of NCCL/RCCL |
+> | **Gloo** | Meta / PyTorch | CPU and TCP based. Used for control-plane collectives and small jobs, not GPU-scale training |
+> | **MPI** (CUDA-aware MPI, e.g. Open MPI + UCX) | Vendor-neutral HPC | Can move GPU memory directly over UCX/RDMA |
+> | **TPU ICI / XLA collectives** | Google TPUs | No NCCL at all. TPUs talk over their own inter-chip interconnect |
+>
+> #### 3. Data-path fabric after bootstrap (what Step ⑤ rides on)
+>
+> | Fabric / transport | Who uses it |
+> |---|---|
+> | **InfiniBand** (verbs) | NVIDIA DGX SuperPOD, most HPC |
+> | **RoCEv2 on Ethernet** (Spectrum-X, Arista, Cisco, Juniper) | Enterprise AI clusters, many clouds |
+> | **AWS EFA** (SRD protocol) | AWS, through the `aws-ofi-nccl` plugin |
+> | **Google GPUDirect-TCPX / TCPXO** | Google Cloud A3 GPU instances: GPU-direct over TCP rather than RDMA |
+> | **Ultra Ethernet (UEC)** | Emerging industry standard, aiming to replace RoCE for AI |
+>
+> #### How the bootstrap itself works, regardless of stack
+>
+> 1. **Rendezvous:** one process (rank 0, or a TCPStore/etcd/PMIx server) listens on a known IP and port. Every other rank connects over TCP and registers itself.
+> 2. **Exchange:** ranks share connection details through that rendezvous: queue-pair numbers and GIDs for RDMA, EFA addresses on AWS, and so on. NCCL packs this into its "unique ID".
+> 3. **Connect:** each pair of ranks then opens its direct high-speed connections (RDMA queue pairs, EFA endpoints), and the rendezvous goes quiet.
+>
+> #### What this means for a network engineer
+>
+> - **There's always a TCP rendezvous first**, normally on the in-band/front-end network. It needs IP reachability and open ports between every node (NCCL uses ephemeral ports; PyTorch defaults to port 29500 for `MASTER_PORT`).
+> - **The interface choice matters.** Pin it explicitly (`NCCL_SOCKET_IFNAME`, `GLOO_SOCKET_IFNAME`, or `MASTER_ADDR` on the right subnet). Otherwise libraries may pick a Docker bridge or the wrong NIC and hang at start-up.
+> - **Firewalls and ACLs between nodes** are the most common cause of "job hangs at init." Security groups on AWS, NetworkPolicies on Kubernetes and host firewalls all apply.
+> - **On Kubernetes, the secondary RDMA network is separate from the pod network.** Bootstrap rides the default CNI (pod IPs). The data path rides the secondary interface attached by Multus and the NVIDIA Network Operator — see [Module 7.1](../07-kubernetes/01-network-operator-rdma-infiniband.md).
+
+
 **Step 2 — data load from the storage fabric (Figure 1.1-3, ②).** Each step begins by pulling the next batch of training samples from the parallel filesystem through a BlueField-3 port. With **GPUDirect Storage** (GDS) the data lands directly in GPU HBM:
 
 ```bash
