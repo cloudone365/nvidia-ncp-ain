@@ -70,10 +70,22 @@ Inference clusters care about request/response latency and **tail latency (p99) 
 | Sensitivity | Tail latency of the slowest flow; any packet loss | Per-request latency, jitter |
 | Typical fabric | InfiniBand NDR/XDR or Spectrum-X | Spectrum-X / standard Ethernet, NVLink within node |
 
-**How it works.** In a training step (Figure 1.1-3) the forward and backward passes run on all GPUs (①); tensor-parallel all-reduces run thousands of times per step inside the NVLink domain (②); then the data-parallel gradient all-reduce fires on all 8 rails at once — GPU *n* to GPU *n* on the peer node, one hop on a rail-optimized fabric (③); the optimizer step is local (④); and every *N* steps a checkpoint burst goes out over the storage fabric (⑤). You can watch the pattern on the CLI: `NCCL_DEBUG=INFO` shows `via P2P` for ② and `via NET/IB/n/GDRDMA` for ③, `nvidia-smi dmon -s u` shows utilization dipping briefly at each all-reduce, and `iblinkinfo` counters on the leaf climb in lock-step across all 32 downlinks.
+**How it works.** Figure 1.1-3 numbers the nine things that happen in one training iteration, in time order. Read it as a network engineer: three steps never touch a switch you manage (③ ④ ⑥), one rides NVLink inside the box (④), and the rest each land on exactly one fabric.
 
-![One training iteration traced hop by hop: NVLink tensor-parallel all-reduce, rail-aligned data-parallel all-reduce over the compute fabric, checkpoint over the storage fabric, and management traffic](diagrams/1.1-03-training-iteration-flow.svg)
-*Figure 1.1-3 — One iteration, numbered: ① forward/backward, ② TP all-reduce on NVSwitch, ③ DP all-reduce on rail n (one hop), ④ optimizer step, ⑤ checkpoint via BlueField-3, ⑥ in-band scheduler/telemetry, ⑦ OOB.*
+- ① **Launch and NCCL bootstrap — in-band, once per job.** Slurm starts one process (rank) per GPU. Before any RDMA can flow, the ranks exchange connection details over ordinary TCP on the in-band network (`NCCL_SOCKET_IFNAME`): queue-pair numbers, GIDs/LIDs and memory keys. Small, once, but if in-band is broken the job never starts.
+- ② **Data load — storage fabric → GPU memory, every step.** The next batch of training data is read from the parallel filesystem through a BlueField-3 port; with GPUDirect Storage it lands in GPU HBM without a CPU bounce buffer. Steady read traffic, many clients, tolerant of modest oversubscription.
+- ③ **Forward and backward pass — GPU compute, no network.** The forward pass makes a prediction and computes the loss; the backward pass computes one gradient per weight. HBM-bound math; the fabrics are quiet.
+- ④ **Tensor-parallel all-reduce — NVLink/NVSwitch only.** Because the model's layers are split across the node's 8 GPUs, they exchange partial results several times per layer — thousands of times per step — at ~900 GB/s per GPU. It never leaves the chassis.
+- ⑤ **Data-parallel gradient all-reduce — the compute fabric's moment.** When the backward pass finishes, every GPU *n* averages its gradients with GPU *n* on the peer node. The bytes leave GPU HBM, cross the PCIe switch to ConnectX-7 *n* (GPUDirect RDMA: the NIC reads GPU memory directly, no CPU, no host copy), go up to Leaf *n*, and come straight back down to ConnectX-7 *n* and GPU *n* on the other node — one hop on a rail-optimized fabric, spines idle. It runs **in both directions at once** (a ring all-reduce is a reduce-scatter followed by an all-gather) on **all 8 rails simultaneously**: 8 elephant flows per node starting at the same instant. The step cannot finish until the slowest of them does.
+- ⑥ **Optimizer step — local.** Each GPU applies the averaged gradients to its weights. No traffic.
+- ⑦ **Checkpoint write — storage fabric, every *N* steps.** Every GPU dumps model and optimizer state at once: a hundreds-of-GB burst out of the BlueField-3 ports. It must never share a switch buffer with the next step's ⑤ — that is why storage is a separate fabric.
+- ⑧ **Heartbeats and telemetry — in-band, continuous.** Slurm heartbeats, Prometheus/DCGM scrapes, UFM/NetQ collection, your SSH session.
+- ⑨ **Out-of-band — BMC power and console.** Only used when something breaks: BCM power-cycles a hung node over its BMC while the job's fabrics are untouched.
+
+You can watch the pattern on the CLI: `NCCL_DEBUG=INFO` shows `via P2P` for ④ and `via NET/IB/n/GDRDMA` for ⑤, `nvidia-smi dmon -s u` shows utilization dipping briefly at each ⑤, and port counters on the leaf climb in lock-step across all 32 downlinks during ⑤ while the storage leaf climbs during ② and ⑦.
+
+![One training iteration traced hop by hop in nine numbered steps: in-band job launch and NCCL bootstrap, data load from storage into GPU memory, GPU compute, NVLink tensor-parallel all-reduce, bidirectional GPUDirect RDMA all-reduce on each rail, local optimizer step, checkpoint to storage, in-band telemetry and out-of-band management](diagrams/1.1-03-training-iteration-flow.svg)
+*Figure 1.1-3 — One iteration in time order: ① launch + NCCL bootstrap (in-band), ② data load (storage → GPU HBM), ③ forward/backward compute, ④ TP all-reduce on NVSwitch, ⑤ DP all-reduce GPU → PCIe → CX7 → Leaf n → CX7 → GPU (GPUDirect RDMA, one hop, both directions), ⑥ optimizer step, ⑦ checkpoint (storage), ⑧ heartbeats/telemetry (in-band), ⑨ OOB.*
 
 **Why the exam cares:** scenario questions describe a symptom ("average utilization is low but step time is 3× expected") and expect you to recognize bulk-synchronous behavior.
 
@@ -238,10 +250,10 @@ You see the split on the node with `ibdev2netdev -v`: ConnectX-7 devices report 
 
 ## 3. Live-style walkthrough — one training iteration, hop by hop
 
-Let's follow a single iteration of a data-parallel training job across two DGX H100 nodes (16 GPUs) and watch where the bytes go. Tensor parallelism is set to 8 (inside each node), data parallelism to 2 (across nodes). At the end of the step a checkpoint is written. Three fabrics get involved, in order: NVLink, the compute fabric, the storage fabric. Figure 1.1-3 numbers every hop; the steps below reference those numbers.
+Let's follow a single iteration of a data-parallel training job across two DGX H100 nodes (16 GPUs) and watch where the bytes go. Tensor parallelism is set to 8 (inside each node), data parallelism to 2 (across nodes). At the end of the step a checkpoint is written. Every network gets involved at some point — in-band to start the job, storage to feed it, NVLink and the compute fabric to synchronize it, storage again to checkpoint it, and in-band/OOB to watch and rescue it. Figure 1.1-3 numbers every hop ①–⑨; the steps below reference those numbers.
 
-![One training iteration traced hop by hop: NVLink tensor-parallel all-reduce, rail-aligned data-parallel all-reduce over the compute fabric, checkpoint over the storage fabric, and management traffic](diagrams/1.1-03-training-iteration-flow.svg)
-*Figure 1.1-3 (repeated from §2.2 so you can follow along) — One iteration, numbered: ① forward/backward, ② TP all-reduce on NVSwitch, ③ DP all-reduce on rail n (one hop), ④ optimizer step, ⑤ checkpoint via BlueField-3, ⑥ in-band scheduler/telemetry, ⑦ OOB.*
+![One training iteration traced hop by hop in nine numbered steps: in-band job launch and NCCL bootstrap, data load from storage into GPU memory, GPU compute, NVLink tensor-parallel all-reduce, bidirectional GPUDirect RDMA all-reduce on each rail, local optimizer step, checkpoint to storage, in-band telemetry and out-of-band management](diagrams/1.1-03-training-iteration-flow.svg)
+*Figure 1.1-3 (repeated from §2.2 so you can follow along) — One iteration in time order: ① launch + NCCL bootstrap (in-band), ② data load (storage → GPU HBM), ③ forward/backward compute, ④ TP all-reduce on NVSwitch, ⑤ DP all-reduce GPU → PCIe → CX7 → Leaf n → CX7 → GPU (GPUDirect RDMA, one hop, both directions), ⑥ optimizer step, ⑦ checkpoint (storage), ⑧ heartbeats/telemetry (in-band), ⑨ OOB.*
 
 **Step 0 — know your node before the job starts.** Watch how each GPU is paired with its own NIC. This affinity is the whole reason GPUDirect RDMA works at full speed.
 
@@ -280,7 +292,32 @@ mlxconfig -d /dev/mst/mt4129_pciconf0 q | grep LINK_TYPE   # Query NIC firmware:
                               #         ETH(2) on a Spectrum-X fabric. mt4129 = ConnectX-7 device ID.
 ```
 
-**Step 1 — forward/backward pass: tensor-parallel all-reduce on NVLink (Figure 1.1-3, ① and ②).** Each layer of the model is split across the 8 GPUs of the node. Several times per layer the GPUs all-reduce partial activations. These are latency-critical and happen thousands of times per step. Watch the NCCL log confirm they never leave the node:
+**Step 1 — launch and NCCL bootstrap over in-band (Figure 1.1-3, ①).** Slurm starts 16 ranks (8 per node). Before a single RDMA packet can flow, every rank must learn its peers' queue-pair numbers, LIDs/GIDs and memory keys — and that exchange runs over plain TCP on the in-band network:
+
+```bash
+export NCCL_SOCKET_IFNAME=<bf3-inband-netdev>   # Pin NCCL's TCP bootstrap to the in-band BF3 port (verify the netdev name with ibdev2netdev).
+export NCCL_IB_HCA=mlx5_0,mlx5_1,mlx5_2,mlx5_3,mlx5_4,mlx5_5,mlx5_6,mlx5_7   # RDMA data only on the 8 ConnectX-7 rails, never the BF3 ports.
+srun -N2 --ntasks-per-node=8 python train.py    # Slurm control traffic itself is also in-band (SN4600C).
+```
+
+```text
+dgx01:12345:12345 [0] NCCL INFO Bootstrap : Using enp...:10.10.1.11<0>          # in-band IP of dgx01 — TCP, not RDMA
+dgx01:12345:12345 [0] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB ... [7]mlx5_7:1/IB  # data path will use the 8 compute rails
+```
+
+Network-engineer view: small, short-lived TCP flows, once per job. If the in-band network or a firewall blocks the bootstrap port range, the job hangs at init with no RDMA traffic at all — a classic "the fabric is fine but the job won't start" ticket.
+
+**Step 2 — data load from the storage fabric (Figure 1.1-3, ②).** Each step begins by pulling the next batch of training samples from the parallel filesystem through a BlueField-3 port. With **GPUDirect Storage** (GDS) the data lands directly in GPU HBM:
+
+```bash
+mount | grep -E 'lustre|gpfs|nfs'           # The dataset lives on the parallel filesystem, reached via BF3 (storage fabric).
+/usr/local/cuda/gds/tools/gdscheck -p       # Is GPUDirect Storage enabled and supported on this node? (path varies by CUDA version — verify)
+ethtool -S <bf3-storage-netdev> | grep -E 'rx_bytes|rx_vport_rdma'   # Storage-port counters rise steadily during ② (and spike during ⑦).
+```
+
+Network-engineer view: a steady stream of reads from many clients — the storage fabric can tolerate modest oversubscription. If ② is slow, GPUs idle *before* compute starts; it looks like a slow job but the compute fabric counters will be quiet.
+
+**Step 3 — forward/backward pass and tensor-parallel all-reduce on NVLink (Figure 1.1-3, ③ and ④).** ③ is pure GPU math: the forward pass predicts and computes the loss, the backward pass computes one gradient per weight — no network traffic. But each layer of the model is split across the 8 GPUs of the node, so several times per layer (④) the GPUs all-reduce partial activations. These are latency-critical and happen thousands of times per step. Watch the NCCL log confirm they never leave the node:
 
 ```bash
 NCCL_DEBUG=INFO python train.py 2>&1 | grep -E 'via P2P|via NET'   # Show every channel's chosen transport.
@@ -293,7 +330,13 @@ dgx01:12345:12401 [0] NCCL INFO Channel 01/0 : 0[0] -> 1[1] via P2P/CUMEM      #
 
 Not one byte of this touches a switch you manage. Per-GPU bandwidth here is ~900 GB/s. If you ever see `via SHM` between GPUs in the same DGX, NVLink or PCIe P2P is broken and the step time will explode before any network problem shows up.
 
-**Step 2 — gradient all-reduce: data-parallel across the compute fabric (Figure 1.1-3, ③).** When the backward pass finishes, each GPU holds gradients for its shard. GPU *n* on dgx01 must average them with GPU *n* on dgx02. This is the elephant flow — gigabytes per GPU, eight flows per node, all starting at the same instant.
+**Step 4 — gradient all-reduce: data-parallel across the compute fabric (Figure 1.1-3, ⑤).** When the backward pass finishes, each GPU holds gradients for its shard. GPU *n* on dgx01 must average them with GPU *n* on dgx02. This is the elephant flow — gigabytes per GPU, eight flows per node, all starting at the same instant. Follow one byte hop by hop along ⑤:
+
+1. **GPU0 HBM → PCIe switch → ConnectX-7 `mlx5_0`.** GPU0 and NIC0 share a PCIe Gen5 switch (`PIX` in Step 0), so the NIC DMA-reads gradients straight out of GPU memory — **GPUDirect RDMA**. No CPU, no copy into host RAM.
+2. **ConnectX-7 → Leaf 0.** One 400G NDR link; the NIC segments the buffer into RDMA WRITEs on a reliable-connected queue pair.
+3. **Leaf 0 → ConnectX-7 `mlx5_0` on dgx02.** Same leaf, because both NIC 0s are on rail 0. The spines never see it.
+4. **ConnectX-7 → PCIe switch → GPU0 HBM on dgx02.** DMA-written directly into the peer GPU's memory.
+5. **Simultaneously in the other direction**, and on all 8 rails at once. A ring all-reduce runs as a reduce-scatter then an all-gather, so every link carries traffic both ways for the whole phase.
 
 ```text
 dgx01:12345:12401 [0] NCCL INFO NET/IB : Using [0]mlx5_0:1/IB [1]mlx5_1:1/IB ... [7]mlx5_7:1/IB   # all 8 rails
@@ -310,7 +353,7 @@ iblinkinfo | grep -i dgx01    # List every link involving dgx01 with width, spee
                               # Each line's far end should be a different leaf (Leaf 0..7) — one per rail.
 ```
 
-**Step 3 — checkpoint: storage fabric (Figure 1.1-3, ⑤; the optimizer step ④ in between generates no traffic).** Every N steps, all 16 GPUs write their optimizer state at once — a several-hundred-GB burst. It leaves through the BlueField-3 ports, *not* the ConnectX-7s:
+**Step 5 — checkpoint: storage fabric (Figure 1.1-3, ⑦; the optimizer step ⑥ in between generates no traffic).** Every N steps, all 16 GPUs write their optimizer state at once — a several-hundred-GB burst. It leaves through the BlueField-3 ports, *not* the ConnectX-7s:
 
 ```bash
 ibdev2netdev | grep -E 'mlx5_(8|9|10|11)'   # The BF3 netdevs; expect Up on the storage/in-band ports.
@@ -320,9 +363,9 @@ cat /proc/fs/lustre/llite/*/stats | head    # Lustre client counters climb durin
 
 Because the storage fabric is physically separate, this burst never shares a buffer with the next all-reduce. If someone had put storage on the compute NICs, step N+1's all-reduce would queue behind the checkpoint and the whole job would stall.
 
-**Step 4 and 5 — management (Figure 1.1-3, ⑥ and ⑦).** Slurm's heartbeat, Prometheus scrapes and your SSH session ride in-band on a BF3 port to the SN4600C. If dgx02 hangs, BCM power-cycles it over the BMC on the SN2201 — the OOB network — and the compute fabric never notices.
+**Step 6 — management (Figure 1.1-3, ⑧ and ⑨).** Slurm's heartbeat, Prometheus/DCGM scrapes, UFM/NetQ collection and your SSH session ride in-band on a BF3 port to the SN4600C. If dgx02 hangs, BCM power-cycles it over the BMC on the SN2201 — the OOB network — and the compute fabric never notices.
 
-**What "good" looks like for the whole iteration:** `P2P` for every intra-node channel, `NET/IB/n/GDRDMA` with matching NIC index on both ends for inter-node, all 8 ports at 400G on every node, and `nvidia-smi` showing GPU utilization near 100 % with only short dips at the all-reduce. If you can read those four signals, you can diagnose most of what Section 4 covers.
+**What "good" looks like for the whole iteration:** NCCL bootstrap on the in-band IP, steady storage-port reads during ②, `P2P` for every intra-node channel, `NET/IB/n/GDRDMA` with matching NIC index on both ends for inter-node, all 8 ports at 400G on every node, and `nvidia-smi` showing GPU utilization near 100 % with only short dips at the all-reduce. If you can read those four signals, you can diagnose most of what Section 4 covers.
 
 ## 4. Troubleshooting / common gotchas
 
@@ -395,7 +438,7 @@ nv show interface --view=brief         # On each Spectrum switch: mgmt port up, 
 - The straggler procedure contains at least one step that would catch a port negotiated at 200 Gb/s and at least one that would catch high BER on an `Active` link.
 
 ### Hint
-- Start from the node port map in Section 2.4 — every traffic type belongs to exactly one of the numbered arrows ③–⑦ in Figure 1.1-3.
+- Start from the node port map in Section 2.4 — every traffic type belongs to exactly one of the network steps ①, ②, ⑤, ⑦, ⑧ or ⑨ in Figure 1.1-3.
 - The bring-up order in Section 2.8 is already numbered; your job is to attach a command and an expected output to each number.
 - For the validation ladder, the table in Section 2.8 lists the rungs; the pass criteria come from the "what good looks like" notes in Section 3 (rate 400, `GDRDMA`, zero effective errors).
 - For straggler hunting, think bisection: a 2-node test that includes the suspect node vs. one that does not.
