@@ -62,9 +62,6 @@ By the end of this module you will be able to…
 
 Inference clusters care about request/response latency and **tail latency (p99) per token**, many concurrent small flows rather than a few giant ones, front-end load balancing and north-south capacity. Two patterns re-introduce east-west bandwidth into inference: tensor parallelism inside the node (NVLink) and **KV-cache transfer** between prefill and decode GPUs in disaggregated serving, which is a large RDMA transfer across the fabric.
 
-![Inference in two stages: prefill processes the whole prompt in one parallel, compute-bound pass and builds the KV cache; decode then generates one token per step, re-reading the whole cache each time, memory-bound; disaggregated serving puts the two stages on separate GPU pools and hands the KV cache across the RDMA fabric](diagrams/1.1-05-prefill-vs-decode.svg)
-*Figure 1.1-5 — Prefill reads the whole prompt once (compute-bound, sets time-to-first-token); decode writes one token at a time, re-reading the growing KV cache every step (memory-bound, sets inter-token latency). Disaggregated serving splits the two onto separate GPU pools and moves the KV cache between them over RDMA, bringing east-west elephant flows back into inference.*
-
 | Property | Training | Inference |
 |---|---|---|
 | Dominant direction | East-west (GPU↔GPU) | North-south + intra-node east-west |
@@ -89,6 +86,29 @@ You can watch the pattern on the CLI: `NCCL_DEBUG=INFO` shows `via P2P` for ④ 
 
 ![One training iteration traced hop by hop in nine numbered steps: in-band job launch and NCCL bootstrap, data load from storage into GPU memory, GPU compute, NVLink tensor-parallel all-reduce, bidirectional GPUDirect RDMA all-reduce on each rail, local optimizer step, checkpoint to storage, in-band telemetry and out-of-band management](diagrams/1.1-03-training-iteration-flow.svg)
 *Figure 1.1-3 — One iteration in time order: ① launch + NCCL bootstrap (in-band), ② data load (storage → GPU HBM), ③ forward/backward compute, ④ TP all-reduce on NVSwitch, ⑤ DP all-reduce GPU → PCIe → CX7 n → Leaf n → CX7 n → GPU on all 8 rails at once (GPUDirect RDMA, one hop, both directions; rail 0 highlighted), ⑥ optimizer step, ⑦ checkpoint (storage), ⑧ heartbeats/telemetry (in-band), ⑨ OOB.*
+
+Training ends with Figure 1.1-3. Inference is a different loop, and since the figure above never shows it, Figure 1.1-4 walks through one request.
+
+![Inference in two stages: prefill processes the whole prompt in one parallel, compute-bound pass and builds the KV cache; decode then generates one token per step, re-reading the whole cache each time, memory-bound; disaggregated serving puts the two stages on separate GPU pools and hands the KV cache across the RDMA fabric](diagrams/1.1-04-prefill-vs-decode.svg)
+*Figure 1.1-4 — Inference in two stages. ① The prompt arrives north-south. ② Prefill reads the whole prompt in one compute-bound pass and builds the KV cache (sets time-to-first-token). ③ Decode writes one token per memory-bound step, re-reading the growing cache each time (sets inter-token latency). ④ Disaggregated serving splits the stages onto separate GPU pools and moves the KV cache between them over RDMA.*
+
+**What it is.** Answering a prompt has two stages. **Prefill** is *reading the question*: all the prompt's tokens go through the model in one parallel pass, and for every token each layer computes and stores a Key and a Value vector. That stored set is the **KV cache**, the model's working memory of the conversation so far; prefill ends by producing the first answer token. **Decode** is *writing the answer one word at a time*: each step re-reads the entire KV cache plus all the model weights, produces exactly one token, appends that token's K and V to the cache, and repeats until the answer is done. The analogy: read the whole question first, then write the answer word by word, glancing back at everything written so far before choosing each next word.
+
+**Why it exists.** The two stages stress opposite resources, and that drives both the hardware and the network design:
+
+| | Prefill | Decode |
+|---|---|---|
+| Input | Whole prompt at once | One token at a time |
+| Bottleneck | Compute (FLOPs): big matrix math, HBM read once | Memory bandwidth: little math, the whole cache and weights re-read every step |
+| Latency metric | **Time to first token (TTFT)** | **Inter-token latency (ITL)** |
+| Scales with | Prompt length | Answer length × cache size |
+| GPU utilization | High | Low unless many requests are batched; a single request cannot be parallelized because step *n* needs step *n−1*'s token |
+
+Because prefill wants compute and decode wants memory bandwidth, newer serving designs run them on **separate GPU pools** (**disaggregated serving**, ④ in the figure): a few compute-heavy prefill GPUs and many memory-heavy decode GPUs, each batched for its own job.
+
+**How it works, from the network's side.** In the classic design one node does both stages and the only traffic is north-south request/response plus tensor-parallel exchanges on NVLink: the "many small independent flows" picture of Figure 1.1-2. Disaggregation changes that. After prefill, the KV cache must move from the prefill GPU to a decode GPU before the first decode step can run. For a long prompt that cache is **gigabytes per request**, so the hand-off is an east-west RDMA elephant flow in the middle of an inference pipeline. That is why Figure 1.1-2 says disaggregated serving "re-introduces big east-west flows", and why Spectrum-X or InfiniBand back-ends appear in inference clusters: a plain front-end network cannot carry KV-cache transfers at the rate the decode pool consumes them. You see the stage split in the serving framework's metrics (TTFT and ITL reported separately; TensorRT-LLM, vLLM and NVIDIA Dynamo all expose both) and, on a disaggregated cluster, as RDMA traffic between the prefill and decode pools on `nv show interface counters` or `ibdiagnet` port counters.
+
+**Why the exam cares:** inference questions turn on TTFT vs ITL, compute-bound vs memory-bound, and the fact that disaggregated serving needs a lossless RDMA fabric for the KV-cache hand-off even though "inference" sounds like a north-south workload.
 
 **Why the exam cares:** scenario questions describe a symptom ("average utilization is low but step time is 3× expected") and expect you to recognize bulk-synchronous behavior.
 
@@ -194,10 +214,10 @@ NCCL selects the transport automatically at communicator init: NVLink P2P for pa
 
 ### 2.8 Operations lifecycle
 
-**What it is.** The four-stage loop of Figure 1.1-4: **bring-up → validate → monitor → remediate**, with a fixed bring-up order and a bottom-up validation ladder. Every stage has an NVIDIA tool whose name the exam uses.
+**What it is.** The four-stage loop of Figure 1.1-5: **bring-up → validate → monitor → remediate**, with a fixed bring-up order and a bottom-up validation ladder. Every stage has an NVIDIA tool whose name the exam uses.
 
-![Operations lifecycle flow: bring-up, validate, monitor and remediate stages with the NVIDIA tool used at each](diagrams/1.1-04-ops-lifecycle.svg)
-*Figure 1.1-4 — The operations lifecycle. Bring-up is strictly ordered (OOB first); validation climbs from the physical layer to full-stack burn-in; remediation always re-enters validation.*
+![Operations lifecycle flow: bring-up, validate, monitor and remediate stages with the NVIDIA tool used at each](diagrams/1.1-05-ops-lifecycle.svg)
+*Figure 1.1-5 — The operations lifecycle. Bring-up is strictly ordered (OOB first); validation climbs from the physical layer to full-stack burn-in; remediation always re-enters validation.*
 
 **Why it exists.** Each stage depends on the one below it: you cannot provision nodes until the Subnet Manager has assigned **LID**s and the in-band network can PXE boot them; you cannot interpret an `all_reduce_perf` number until every link is proven at 400G with zero effective errors; and a monitoring alert without a validation ladder to re-run tells you *that* something is wrong but not *where*. Skipping the order is the classic bring-up failure (§4.3).
 
